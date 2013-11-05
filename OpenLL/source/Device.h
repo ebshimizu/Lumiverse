@@ -13,7 +13,6 @@ using namespace std;
 // an OpenLL friendly way. Conversion to network values happens in a
 // different class to separate the abstract representation of a device
 // from the practical network control details.
-
 class Device
 {
 public:

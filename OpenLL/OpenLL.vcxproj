@@ -73,6 +73,7 @@
     <ClInclude Include="source\Device.h" />
     <ClInclude Include="source\FTD2XX.H" />
     <ClInclude Include="source\ms_stdint.h" />
+    <ClInclude Include="source\Patch.h" />
     <ClInclude Include="source\pro_driver.h" />
   </ItemGroup>
   <ItemGroup>
