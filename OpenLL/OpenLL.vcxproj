@@ -70,11 +70,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="source\Device.h" />
     <ClInclude Include="source\FTD2XX.H" />
     <ClInclude Include="source\ms_stdint.h" />
     <ClInclude Include="source\pro_driver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\Device.cpp" />
     <ClCompile Include="source\usb_pro_example.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

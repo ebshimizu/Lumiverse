@@ -4,6 +4,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 #include <string>
 using namespace std;
 
@@ -28,7 +29,7 @@ public:
   string getId() { return id; }
   void setId(string newId) { id = newId; }
 
-  //Accessors for channel
+  // Accessors for channel
   unsigned int getChannel() { return channel; }
   void setChannel(unsigned int newChan) { channel = newChan; }
 
@@ -36,6 +37,42 @@ public:
   string getType() { return type; }
   void setType(string newType) { type = newType; }
 
+  // Gets a parameter value. Returns false if no parameter with the given name exists.
+  // Returns true with the parameter value in val if successful.
+  bool getParam(string param, float& val);
+  
+  // Sets a parameter and returns true if parameter changed does not exist prior to set.
+  // Returns false otherwise.
+  bool setParam(string param, float val);
+
+  // Resets the values in the parameters to 0 (or equivalent default)
+  void clearParamValues();
+
+  // Returns number of parameters in the device.
+  unsigned int numParams();
+
+  // Returns list of parameters in the device.
+  vector<string> getParamNames();
+
+  // Gets the metadata for a given key. Returns false if no key exists.
+  // 
+  bool getMetadata(string key, string& val);
+
+  // Sets metadata and returns true if metadata key does not exist prior to set.
+  // Returns false otherwise.
+  bool setMetadata(string key, string val);
+
+  // Resets metadata values to "" but leaves the keys intact.
+  void clearMetadataValues();
+
+  // Empties everything in the metadata hash: keys and values. All gone.
+  void clearAllMetadata();
+
+  // Returns the number of metadata keys.
+  unsigned int numMetadataKeys();
+
+  // Gets list of metadata keys the device has values for.
+  vector<string> getMetadataKeyNames();
 
 private:
   // Unique identifier for the device.

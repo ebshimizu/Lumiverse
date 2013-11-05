@@ -24,9 +24,15 @@
     <ClInclude Include="source\pro_driver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\Device.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\usb_pro_example.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
