@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="libjson">
+      <UniqueIdentifier>{3826daba-95bf-4e93-94d3-735cb6ddfd9a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\FTD2XX.H">
@@ -30,6 +33,84 @@
     <ClInclude Include="source\Patch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="lib\libjson\JSONOptions.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\libjson.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONStream.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONValidator.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONWorker.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\NumberToString.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\internalJSONNode.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSON_Base64.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONAllocator.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONChildren.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONDebug.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONDefs.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONGlobals.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONMemory.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONMemoryPool.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONNode.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONPreparse.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONSharedString.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONSingleton.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONStats.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Dependencies\libbase64++\libbase64++.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Dependencies\mempool++\mempool.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONDefs\GNU_C.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONDefs\Strings_Defs.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONDefs\Unknown_C.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libjson\_internal\Source\JSONDefs\Visual_C.h">
+      <Filter>libjson</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\usb_pro_example.cpp">
@@ -37,6 +118,48 @@
     </ClCompile>
     <ClCompile Include="source\Device.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\JSONValidator.cpp">
+      <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\JSONWorker.cpp">
+      <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\JSONWriter.cpp">
+      <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\libjson.cpp">
+      <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\internalJSONNode.cpp">
+      <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\JSONAllocator.cpp">
+      <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\JSONChildren.cpp">
+      <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\JSONDebug.cpp">
+      <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\JSONIterators.cpp">
+      <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\JSONMemory.cpp">
+      <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\JSONNode.cpp">
+      <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\JSONNode_Mutex.cpp">
+      <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\JSONPreparse.cpp">
+      <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libjson\_internal\Source\JSONStream.cpp">
+      <Filter>libjson</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

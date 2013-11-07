@@ -5,9 +5,17 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -21,7 +29,20 @@
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
@@ -34,12 +55,31 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ftd2xx.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
@@ -69,7 +109,50 @@
       <AdditionalLibraryDirectories>$(ProjectDir)\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>ftd2xx.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="lib\libjson\JSONOptions.h" />
+    <ClInclude Include="lib\libjson\libjson.h" />
+    <ClInclude Include="lib\libjson\_internal\Dependencies\libbase64++\libbase64++.h" />
+    <ClInclude Include="lib\libjson\_internal\Dependencies\mempool++\mempool.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\internalJSONNode.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONAllocator.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONChildren.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONDebug.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONDefs.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONDefs\GNU_C.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONDefs\Strings_Defs.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONDefs\Unknown_C.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONDefs\Visual_C.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONGlobals.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONMemory.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONMemoryPool.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONNode.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONPreparse.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONSharedString.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONSingleton.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONStats.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONStream.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONValidator.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSONWorker.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\JSON_Base64.h" />
+    <ClInclude Include="lib\libjson\_internal\Source\NumberToString.h" />
     <ClInclude Include="source\Device.h" />
     <ClInclude Include="source\FTD2XX.H" />
     <ClInclude Include="source\ms_stdint.h" />
@@ -77,6 +160,20 @@
     <ClInclude Include="source\pro_driver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="lib\libjson\_internal\Source\internalJSONNode.cpp" />
+    <ClCompile Include="lib\libjson\_internal\Source\JSONAllocator.cpp" />
+    <ClCompile Include="lib\libjson\_internal\Source\JSONChildren.cpp" />
+    <ClCompile Include="lib\libjson\_internal\Source\JSONDebug.cpp" />
+    <ClCompile Include="lib\libjson\_internal\Source\JSONIterators.cpp" />
+    <ClCompile Include="lib\libjson\_internal\Source\JSONMemory.cpp" />
+    <ClCompile Include="lib\libjson\_internal\Source\JSONNode.cpp" />
+    <ClCompile Include="lib\libjson\_internal\Source\JSONNode_Mutex.cpp" />
+    <ClCompile Include="lib\libjson\_internal\Source\JSONPreparse.cpp" />
+    <ClCompile Include="lib\libjson\_internal\Source\JSONStream.cpp" />
+    <ClCompile Include="lib\libjson\_internal\Source\JSONValidator.cpp" />
+    <ClCompile Include="lib\libjson\_internal\Source\JSONWorker.cpp" />
+    <ClCompile Include="lib\libjson\_internal\Source\JSONWriter.cpp" />
+    <ClCompile Include="lib\libjson\_internal\Source\libjson.cpp" />
     <ClCompile Include="source\Device.cpp" />
     <ClCompile Include="source\usb_pro_example.cpp" />
   </ItemGroup>
