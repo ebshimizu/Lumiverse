@@ -154,6 +154,10 @@
     <ClInclude Include="lib\libjson\_internal\Source\JSON_Base64.h" />
     <ClInclude Include="lib\libjson\_internal\Source\NumberToString.h" />
     <ClInclude Include="source\Device.h" />
+    <ClInclude Include="source\DMXDevicePatch.h" />
+    <ClInclude Include="source\DMXInterface.h" />
+    <ClInclude Include="source\DMXPatch.h" />
+    <ClInclude Include="source\DMXPro2Interface.h" />
     <ClInclude Include="source\FTD2XX.H" />
     <ClInclude Include="source\ms_stdint.h" />
     <ClInclude Include="source\Patch.h" />
@@ -175,7 +179,14 @@
     <ClCompile Include="lib\libjson\_internal\Source\JSONWriter.cpp" />
     <ClCompile Include="lib\libjson\_internal\Source\libjson.cpp" />
     <ClCompile Include="source\Device.cpp" />
-    <ClCompile Include="source\usb_pro_example.cpp" />
+    <ClCompile Include="source\DMXDevicePatch.cpp" />
+    <ClCompile Include="source\DMXPatch.cpp" />
+    <ClCompile Include="source\DMXPro2Interface.cpp" />
+    <ClCompile Include="source\test.cpp" />
+    <ClCompile Include="source\usb_pro_example.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

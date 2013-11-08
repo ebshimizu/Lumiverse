@@ -1,7 +1,6 @@
 #ifndef _PRO_DRIVER_H
 #define _PRO_DRIVER_H
 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <windows.h>
@@ -22,12 +21,13 @@
 /******************** PRO MK2 LABELS: ASSIGN AS PER YOUR API *********************/
 // THE API Key is LSB First: so if it says 11223344 .. define it as ... 44,33,22,11
 
-unsigned char APIKey[]					= {0x00, 0x00, 0x00, 0x00};
-#define SET_PORT_ASSIGNMENT_LABEL	    1
-#define SEND_DMX_PORT2					0
-#define RECEIVE_DMX_PORT2				0
-#define SEND_MIDI_PORT					0
-#define RECEIVE_MIDI_PORT				0
+const unsigned char APIKey[] = {0x17, 0xE1, 0x3A, 0x32};
+
+#define SET_PORT_ASSIGNMENT_LABEL	    209
+#define SEND_DMX_PORT2					150
+#define RECEIVE_DMX_PORT2				194
+#define SEND_MIDI_PORT					228
+#define RECEIVE_MIDI_PORT				214
 
 /***********************************************************************************/
 
@@ -90,22 +90,22 @@ struct ReceivedDmxCosStruct
 #define HEAD 0
 #define IO_ERROR 9
 
-
-int FTDI_SendData(int label, unsigned char *data, int length);
-int FTDI_ReceiveData(int label, unsigned char *data, unsigned int expected_length);
-uint8_t FTDI_SendDataToPro(uint8_t label, unsigned char *data, uint32_t length);
-void* Get_Pro_Handle();
-uint8_t FTDI_ReceiveDataFromPro(uint8_t label, unsigned char *data, uint32_t expected_length);
-uint16_t FTDI_OpenDevice(int device_num, int* VersionMSB, int* VersionLSB,bool full_mode = true);
-int FTDI_ListDevices(uint64_t * Locations);
-void FTDI_ClosePort();
-void FTDI_PurgeBuffer();
-void ReceiveMIDI(int PortLabel);
-void SendMIDI(int PortLabel, unsigned char channel, unsigned char note, unsigned char velocity);
-void ReceiveDMX(int PortLabel);
-void SendDMX(int PortLabel);
-void enable_midi();
-void init_promk2();
-void FTDI_Reload();
+// API calls from the original sample code.
+//int FTDI_SendData(int label, unsigned char *data, int length);
+//int FTDI_ReceiveData(int label, unsigned char *data, unsigned int expected_length);
+//uint8_t FTDI_SendDataToPro(uint8_t label, unsigned char *data, uint32_t length);
+//void* Get_Pro_Handle();
+//uint8_t FTDI_ReceiveDataFromPro(uint8_t label, unsigned char *data, uint32_t expected_length);
+//uint16_t FTDI_OpenDevice(int device_num, int* VersionMSB, int* VersionLSB,bool full_mode = true);
+//int FTDI_ListDevices(uint64_t * Locations);
+//void FTDI_ClosePort();
+//void FTDI_PurgeBuffer();
+//void ReceiveMIDI(int PortLabel);
+//void SendMIDI(int PortLabel, unsigned char channel, unsigned char note, unsigned char velocity);
+//void ReceiveDMX(int PortLabel);
+//void SendDMX(int PortLabel);
+//void enable_midi();
+//void init_promk2();
+//void FTDI_Reload();
 
 #endif

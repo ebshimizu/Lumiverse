@@ -16,15 +16,12 @@
     <Filter Include="libjson">
       <UniqueIdentifier>{3826daba-95bf-4e93-94d3-735cb6ddfd9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DMXPatch">
+      <UniqueIdentifier>{9fa4ceff-2d2b-44a3-9d01-b05c9d1b9d86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\FTD2XX.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\ms_stdint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\pro_driver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\Device.h">
@@ -111,6 +108,24 @@
     <ClInclude Include="lib\libjson\_internal\Source\JSONDefs\Visual_C.h">
       <Filter>libjson</Filter>
     </ClInclude>
+    <ClInclude Include="source\DMXDevicePatch.h">
+      <Filter>DMXPatch</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DMXPatch.h">
+      <Filter>DMXPatch</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DMXInterface.h">
+      <Filter>DMXPatch</Filter>
+    </ClInclude>
+    <ClInclude Include="source\pro_driver.h">
+      <Filter>DMXPatch</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DMXPro2Interface.h">
+      <Filter>DMXPatch</Filter>
+    </ClInclude>
+    <ClInclude Include="source\FTD2XX.H">
+      <Filter>DMXPatch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\usb_pro_example.cpp">
@@ -160,6 +175,18 @@
     </ClCompile>
     <ClCompile Include="lib\libjson\_internal\Source\JSONStream.cpp">
       <Filter>libjson</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DMXDevicePatch.cpp">
+      <Filter>DMXPatch</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DMXPatch.cpp">
+      <Filter>DMXPatch</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DMXPro2Interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\test.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

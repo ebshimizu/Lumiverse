@@ -25,16 +25,16 @@ public:
   ~Device();
 
   // Accessors for id
-  string getId() { return id; }
-  void setId(string newId) { id = newId; }
+  string getId() { return m_id; }
+  void setId(string newId) { m_id = newId; }
 
   // Accessors for channel
-  unsigned int getChannel() { return channel; }
-  void setChannel(unsigned int newChan) { channel = newChan; }
+  unsigned int getChannel() { return m_channel; }
+  void setChannel(unsigned int newChan) { m_channel = newChan; }
 
   // Accesors for type
-  string getType() { return type; }
-  void setType(string newType) { type = newType; }
+  string getType() { return m_type; }
+  void setType(string newType) { m_type = newType; }
 
   // Gets a parameter value. Returns false if no parameter with the given name exists.
   // Returns true with the parameter value in val if successful.
@@ -54,7 +54,7 @@ public:
   vector<string> getParamNames();
 
   // Gets the metadata for a given key. Returns false if no key exists.
-  // 
+  // Returns the value in val otherwise.
   bool getMetadata(string key, string& val);
 
   // Sets metadata and returns true if metadata key does not exist prior to set.
@@ -76,21 +76,21 @@ public:
 private:
   // Unique identifier for the device.
   // Uniqueness isn't quite enforceable at the device level.
-  string id;
+  string m_id;
 
   // Channel number for the fixture. Does not have to be unique.
-  unsigned int channel;
+  unsigned int m_channel;
 
   // Device type name. "Source Four ERS" for example.
-  string type;
+  string m_type;
 
   // Map for time-varying parameters.
   // Type may change in the future as more specialized datatypes come up.
-  map<string, float> parameters;
+  map<string, float> m_parameters;
 
   // Map for static information.
   // User-defined data helps to add search filters and query devices.
-  map<string, string> metadata;
+  map<string, string> m_metadata;
 };
 
 #endif
