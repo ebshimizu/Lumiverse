@@ -52,8 +52,8 @@ void DMXDevicePatch::floatToSingle(unsigned char* data, unsigned int address, fl
 }
 
 void DMXDevicePatch::setDMXVal(unsigned char* data, unsigned int address, unsigned char val) {
-  if (address < 0 || address >= 512) {
+  if (m_baseAddress + address < 0 || m_baseAddress + address >= 512) {
     throw logic_error("Attempting to set data outside of DMX address range (0-511).");
   }
-  data[address] = val;
+  data[m_baseAddress + address] = val;
 }
