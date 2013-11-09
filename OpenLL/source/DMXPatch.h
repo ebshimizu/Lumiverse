@@ -26,7 +26,7 @@ public:
   DMXPatch();
 
   // Destroys the object.
-  ~DMXPatch();
+  virtual ~DMXPatch();
 
   // Updates the values sent to the DMX network given the list of devices
   // in the rig. The list of devices should be maintained outside of this class.
@@ -39,6 +39,9 @@ public:
   // Call this AFTER all interfaces have been assigned. May need to call again
   // if interfaces change.
   virtual void init();
+
+  // Closes connections to the interfaces.
+  virtual void close();
 
   // Gets a mapping of device parameters to addresses for the patch type.
   // This is the full patch map.

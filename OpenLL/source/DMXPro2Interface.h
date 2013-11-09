@@ -17,7 +17,7 @@ public:
   DMXPro2Interface(string id, int proNum = 0, int out1 = 0, int out2 = 1);
 
   // Destroys the interface (not the physical one)
-  ~DMXPro2Interface();
+  virtual ~DMXPro2Interface();
 
   // Initializes the DMX USB Pro Mk 2 device.
   virtual void init();

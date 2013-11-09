@@ -12,6 +12,9 @@ using namespace std;
 class DMXInterface
 {
 public:
+  // Virtual destructor yay
+  virtual ~DMXInterface() { };
+
   // Initalizes the interface.
   // This function will throw exceptions if something comes up during
   // the initialization stage.

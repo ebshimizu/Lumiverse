@@ -11,11 +11,11 @@
 #include <conio.h>
 #include "Ftd2xx.h"
 
-#ifdef _MSC_VER
-	#include "ms_stdint.h"
-#else
+//#ifdef _MSC_VER
+//	#include "ms_stdint.h"
+//#else
 	#include <stdint.h>
-#endif
+//#endif
 
 /********************** PLEASE SET THESE FIRST **********************************/
 /******************** PRO MK2 LABELS: ASSIGN AS PER YOUR API *********************/

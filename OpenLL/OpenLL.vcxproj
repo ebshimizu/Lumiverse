@@ -162,6 +162,7 @@
     <ClInclude Include="source\ms_stdint.h" />
     <ClInclude Include="source\Patch.h" />
     <ClInclude Include="source\pro_driver.h" />
+    <ClInclude Include="source\Rig.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\libjson\_internal\Source\internalJSONNode.cpp" />
@@ -182,6 +183,7 @@
     <ClCompile Include="source\DMXDevicePatch.cpp" />
     <ClCompile Include="source\DMXPatch.cpp" />
     <ClCompile Include="source\DMXPro2Interface.cpp" />
+    <ClCompile Include="source\Rig.cpp" />
     <ClCompile Include="source\test.cpp" />
     <ClCompile Include="source\usb_pro_example.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

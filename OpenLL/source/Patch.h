@@ -13,6 +13,8 @@ using namespace std;
 class Patch
 {
 public:
+  virtual ~Patch() { };
+
   // Grabs values from list of Devices, translates them to proper format for the
   // given network, and outputs the values to the network if the device is patched.
   // This function should be able to do incremental updates, so if just one
@@ -23,6 +25,9 @@ public:
   // Initializes settings for the patch. This can be starting up serial interfaces,
   // network configuration, etc.
   virtual void init() = 0;
+
+  // It's like an "uninit." Prepares for patch shutdown.
+  virtual void close() = 0;
 
   // Gets a mapping of device parameters to addresses for the patch type.
   // This is the full patch map.

@@ -43,6 +43,12 @@ void DMXPatch::init() {
   }
 }
 
+void DMXPatch::close() {
+  for (auto& interfaces : m_interfaces) {
+    interfaces.second->close();
+  }
+}
+
 void DMXPatch::assignInterface(DMXInterface* iface, unsigned int universe) {
   string id = iface->getInterfaceId();
 

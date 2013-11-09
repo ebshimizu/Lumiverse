@@ -126,6 +126,9 @@
     <ClInclude Include="source\FTD2XX.H">
       <Filter>DMXPatch</Filter>
     </ClInclude>
+    <ClInclude Include="source\Rig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\usb_pro_example.cpp">
@@ -187,6 +190,9 @@
     </ClCompile>
     <ClCompile Include="source\DMXPro2Interface.cpp">
       <Filter>DMXPatch</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Rig.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
