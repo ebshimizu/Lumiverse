@@ -32,9 +32,18 @@ public:
   // Returns the name of this DMX interface.
   string getInterfaceName() { return m_ifaceName; }
 
+  // Returns the ID of this DMX interface.
+  string getInterfaceId() { return m_ifaceId; }
+
+  // Sets the interface ID
+  void setInterfaceId(string id) { m_ifaceId = id; }
+
 protected:
   // Name of the DMX interface. Can (and probably should) be hard coded in a derived-class.
   string m_ifaceName;
+
+  // Interface ID. Unique string identifying this particular interface.
+  string m_ifaceId;
 };
 
 #endif

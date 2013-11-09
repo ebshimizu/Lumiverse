@@ -44,6 +44,9 @@ public:
   // Returns false otherwise.
   bool setParam(string param, float val);
 
+  // Simply returns true if the parameter exists.
+  bool paramExists(string param);
+
   // Resets the values in the parameters to 0 (or equivalent default)
   void clearParamValues();
 

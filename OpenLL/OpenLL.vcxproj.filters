@@ -182,11 +182,11 @@
     <ClCompile Include="source\DMXPatch.cpp">
       <Filter>DMXPatch</Filter>
     </ClCompile>
-    <ClCompile Include="source\DMXPro2Interface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\test.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DMXPro2Interface.cpp">
+      <Filter>DMXPatch</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

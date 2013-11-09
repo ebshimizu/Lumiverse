@@ -12,8 +12,9 @@ class DMXPro2Interface : public DMXInterface
 public:
   // Makes a new interface for the ENTTEC DMX USB Pro Mk 2 interface.
   // If you have more than one interface connected, specify which interface
-  // to open in the constructor.
-  DMXPro2Interface(int proNum = 0, int out1 = 1, int out2 = 2);
+  // to open in the constructor. Default maps output 1 to universe 1 and output
+  // 2 to universe 2 and opens the first found D2XX device.
+  DMXPro2Interface(string id, int proNum = 0, int out1 = 0, int out2 = 1);
 
   // Destroys the interface (not the physical one)
   ~DMXPro2Interface();

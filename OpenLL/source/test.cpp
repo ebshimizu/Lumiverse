@@ -1,17 +1,16 @@
 #include <string>
 #include "Device.h"
+#include "Patch.h"
 
 #include "DMXInterface.h"
 #include "DMXPro2Interface.h"
+#include "DMXPatch.h"
 using namespace std;
 
 int main(int argc, char**argv) {
   Device test("test", 0, "Source Four ERS");
 
   test.setParam("intensity", 1.0);
-  test.setParam("testParam", 1.0);
-
-  test.clearParamValues();
 
   test.setMetadata("color", "R80");
   test.setMetadata("angle", "back");
@@ -23,15 +22,26 @@ int main(int argc, char**argv) {
   test.clearMetadataValues();
   test.clearAllMetadata();
 
-  DMXInterface* testInt = new DMXPro2Interface();
-  testInt->init();
+  DMXInterface* testInt = new DMXPro2Interface("DMXPRO1");
   _getch();
 
-  unsigned char dmx[512];
-  dmx[1] = 124;
-  dmx[2] = 156;
+  DMXPatch patch;
+  DMXDevicePatch* dev1 = new DMXDevicePatch(0, 0);
+  dev1->addParameter("intensity", 0, conversionType::FLOAT_TO_SINGLE);
 
-  testInt->sendDMX(dmx, 1);
-  testInt->sendDMX(dmx, 2);
+  patch.assignInterface(testInt, 0);
+  patch.patchDevice(&test, dev1);
+
+  vector<Device *> devices;
+  devices.push_back(&test);
+
+  patch.init();
+  patch.update(devices);
+  patch.dumpUniverses();
+  _getch();
+
+  test.setParam("intensity", 0.5);
+  patch.update(devices);
+  patch.dumpUniverses();
   _getch();
 }

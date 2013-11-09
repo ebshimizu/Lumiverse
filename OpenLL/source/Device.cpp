@@ -35,6 +35,10 @@ bool Device::setParam(string param, float val) {
   return ret;
 }
 
+bool Device::paramExists(string param) {
+  return (m_parameters.count(param) > 0);
+}
+
 void Device::clearParamValues() {
   for (auto& kv : m_parameters) {
     kv.second = 0.0;
