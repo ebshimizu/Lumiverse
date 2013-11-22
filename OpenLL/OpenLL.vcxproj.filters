@@ -19,6 +19,12 @@
     <Filter Include="DMXPatch">
       <UniqueIdentifier>{9fa4ceff-2d2b-44a3-9d01-b05c9d1b9d86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\types">
+      <UniqueIdentifier>{01ea6001-4dc8-4f8d-9d44-3f0e738d6268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\types">
+      <UniqueIdentifier>{4f0466f0-6d6b-4675-bee2-8ed249ef6f6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ms_stdint.h">
@@ -129,6 +135,12 @@
     <ClInclude Include="source\Rig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\OpenLLFloat.h">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="source\OpenLLType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\usb_pro_example.cpp">
@@ -193,6 +205,9 @@
     </ClCompile>
     <ClCompile Include="source\Rig.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\OpenLLFloat.cpp">
+      <Filter>Source Files\types</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

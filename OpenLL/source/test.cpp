@@ -22,24 +22,31 @@ int main(int argc, char**argv) {
 
   Device* test3 = new Device("Seachanger1.2", 2, "Ocean Optics Seachanger");
   test3->setParam("cyan", 0.0);
-  test3->setParam("magenta", 0.5);
+  test3->setParam("magenta", 0.0);
   test3->setParam("yellow", 0.0);
-  test3->setParam("green", 0.0);
+  test3->setParam("green", 1.0);
 
   // config patch
   DMXInterface* testInt = new DMXPro2Interface("DMXPRO1");
   DMXPatch* patch = new DMXPatch();
-  DMXDevicePatch* dev1 = new DMXDevicePatch(0, 0);
-  dev1->addParameter("intensity", 0, conversionType::FLOAT_TO_SINGLE);
 
-  DMXDevicePatch* dev2 = new DMXDevicePatch(6, 0);
-  dev2->addParameter("intensity", 0, conversionType::FLOAT_TO_SINGLE);
+  // Make DMX Maps and stick them into the patch.
+  map<string, patchData> dimmerMap;
+  dimmerMap["intensity"] = patchData(0, conversionType::FLOAT_TO_SINGLE);
 
-  DMXDevicePatch* dev3 = new DMXDevicePatch(109, 1);
-  dev3->addParameter("cyan", 0, conversionType::FLOAT_TO_SINGLE);
-  dev3->addParameter("magenta", 1, conversionType::FLOAT_TO_SINGLE);
-  dev3->addParameter("yellow", 2, conversionType::FLOAT_TO_SINGLE);
-  dev3->addParameter("green", 3, conversionType::FLOAT_TO_SINGLE);
+  map<string, patchData> seachangerMap;
+  seachangerMap["cyan"] = patchData(0, conversionType::FLOAT_TO_SINGLE);
+  seachangerMap["magenta"] = patchData(1, conversionType::FLOAT_TO_SINGLE);
+  seachangerMap["yellow"] = patchData(2, conversionType::FLOAT_TO_SINGLE);
+  seachangerMap["green"] = patchData(3, conversionType::FLOAT_TO_SINGLE);
+
+  patch->addDeviceMap("dimmer", dimmerMap);
+  patch->addDeviceMap("seachanger", seachangerMap);
+
+  // Add the devices with proper mapping to DMX maps
+  DMXDevicePatch* dev1 = new DMXDevicePatch("dimmer", 0, 0);
+  DMXDevicePatch* dev2 = new DMXDevicePatch("dimmer", 6, 0);
+  DMXDevicePatch* dev3 = new DMXDevicePatch("seachanger", 109, 1);
 
   patch->assignInterface(testInt, 0);
   patch->assignInterface(testInt, 1);
@@ -55,20 +62,18 @@ int main(int argc, char**argv) {
   rig.addPatch("DMX1", patch);
 
   // Init rig
-  rig.init();
-  rig.run();
+  //rig.init();
+  //rig.run();
 
   // Do things. Remember that the update loops is only 40Hz and changes aren't instant
   // in computer time
   Sleep(100);
-  ((DMXPatch*)rig.getPatch("DMX1"))->dumpUniverses();
   _getch();
 
   rig["test"]->setParam("intensity", 0.5);
   rig["Seachanger1.1"]->setParam("intensity", 1.0);
-  rig["Seachanger1.2"]->setParam("magenta", 0.0);
+  rig["Seachanger1.2"]->setParam("green", 0.0);
   Sleep(100);
-  ((DMXPatch*)rig.getPatch("DMX1"))->dumpUniverses();
 
   _getch();
 

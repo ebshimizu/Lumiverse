@@ -2,8 +2,8 @@
 #include "DMXDevicePatch.h"
 
 
-DMXDevicePatch::DMXDevicePatch(unsigned int baseAddress, unsigned int universe)
-  : m_baseAddress(baseAddress), m_universe(universe) {
+DMXDevicePatch::DMXDevicePatch(string mapKey, unsigned int baseAddress, unsigned int universe)
+  : m_dmxMapKey(mapKey), m_baseAddress(baseAddress), m_universe(universe) {
   // Empty for now
 }
 
@@ -12,8 +12,8 @@ DMXDevicePatch::~DMXDevicePatch() {
   // Empty for now
 }
 
-void DMXDevicePatch::updateDMX(unsigned char* data, Device* device) {
-  for (auto& instr : m_dmxMap) {
+void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, patchData> dmxMap) {
+  for (auto& instr : dmxMap) {
     // Validation checks.
     if (!device->paramExists(instr.first)) {
       // DMX mapping has a parameter that the device does not have.
@@ -40,10 +40,6 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device) {
       }
     }
   }
-}
-
-void DMXDevicePatch::addParameter(string id, unsigned int address, conversionType type) {
-  m_dmxMap[id] = patchData(address, type);
 }
 
 void DMXDevicePatch::floatToSingle(unsigned char* data, unsigned int address, float val) {

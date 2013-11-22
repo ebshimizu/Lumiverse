@@ -28,7 +28,7 @@ void DMXPatch::update(vector<Device *> devices) {
     // For each device, find the device patch stored.
     DMXDevicePatch devPatch = *(m_patch)[d->getId()];
     unsigned int uni = devPatch.getUniverse();
-    devPatch.updateDMX(&m_universes[uni].front(), d);
+    devPatch.updateDMX(&m_universes[uni].front(), d, m_deviceMaps[devPatch.getDMXMapKey()]);
   }
 
   // Send updated data to interfaces
@@ -104,8 +104,17 @@ void DMXPatch::patchDevice(Device* device, DMXDevicePatch* patch) {
   m_patch[device->getId()] = patch;
 }
 
+
+void DMXPatch::addDeviceMap(string id, map<string, patchData> deviceMap) {
+  m_deviceMaps[id] = deviceMap; // Replaces existing maps.
+}
+
+void DMXPatch::addParameter(string mapId, string paramId, unsigned int address, conversionType type) {
+  m_deviceMaps[mapId][paramId] = patchData(address, type);
+}
+
 void DMXPatch::dumpUniverses() {
-  for (int i = 0; i < m_universes.size(); i++) {
+  for (unsigned int i = 0; i < m_universes.size(); i++) {
     dumpUniverse(i);
   }
 }

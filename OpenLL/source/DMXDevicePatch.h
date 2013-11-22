@@ -25,18 +25,20 @@ struct patchData {
 // for a given device to dmx values.
 // This information can be loaded from a JSON document while the base address
 // is always set dynamically.
+// Note that this information is stored not in this object, but in the
+// DMX Patch. This allows reuse of the patch data for similar instruments.
 class DMXDevicePatch
 {
 public:
   // Constructs an empty patch
-  DMXDevicePatch(unsigned int baseAddress, unsigned int universe);
+  DMXDevicePatch(string mapKey, unsigned int baseAddress, unsigned int universe);
 
   // Destroys the patch object
   ~DMXDevicePatch();
 
   // Given a universe of DMX, update the device.
   // This function will throw logic errors if the device and the patch don't match up.
-  void updateDMX(unsigned char* data, Device* device);
+  void updateDMX(unsigned char* data, Device* device, map<string, patchData> dmxMap);
 
   // Gets the universe the device is patched to.
   unsigned int getUniverse() { return m_universe; }
@@ -50,9 +52,9 @@ public:
   // Sets the base address for the device
   void setBaseAddress(unsigned int newAddress) { m_baseAddress = newAddress; }
 
-  // Map an OpenLL device parameter to a DMX parameter starting at given address
-  // using the given conversion type.
-  void addParameter(string id, unsigned int address, conversionType type);
+  // Gets the key for the DMX map this device should use to translate
+  // its OpenLL values to DMX values.
+  string getDMXMapKey() { return m_dmxMapKey; }
 
 private:
   // Base address for the device (zero-indexed)
@@ -67,7 +69,9 @@ private:
   // Maps device parameters to a start DMX address. The actual translation is
   // handled by a function specified by the conversionType enum in the patchData
   // struct.
-  map<string, patchData> m_dmxMap;
+  // This value can be shared by multiple devices.
+  //map<string, patchData> m_dmxMap;
+  string m_dmxMapKey;
 
   // Conversion Functions
   // These functions all take in a universe of DMX and stick their converted

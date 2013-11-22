@@ -12,12 +12,14 @@ Device::Device(string id, unsigned int channel, string type) {
 
 
 Device::~Device() {
-  // Hey look it's empty for now.
+  for (auto& kv : m_parameters) {
+    delete kv.second;
+  }
 }
 
 bool Device::getParam(string param, float& val) {
   if (m_parameters.count(param) > 0) {
-    val = m_parameters[param];
+    val = ((OpenLLFloat*)m_parameters[param])->getVal();;
     return true;
   }
 
@@ -29,9 +31,10 @@ bool Device::setParam(string param, float val) {
 
   if (m_parameters.count(param) == 0) {
     ret = true;
+    m_parameters[param] = (OpenLLType*) new OpenLLFloat();
   }
 
-  m_parameters[param] = val;
+  *((OpenLLFloat *)m_parameters[param]) = val;
   return ret;
 }
 
@@ -41,7 +44,7 @@ bool Device::paramExists(string param) {
 
 void Device::clearParamValues() {
   for (auto& kv : m_parameters) {
-    kv.second = 0.0;
+    kv.second->reset();
   }
 }
 

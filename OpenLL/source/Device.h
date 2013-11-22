@@ -6,6 +6,9 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <memory>
+#include "OpenLLType.h"
+#include "OpenLLFloat.h"
 using namespace std;
 
 // A Device in OpenLL maintains information about a lighting device.
@@ -43,6 +46,8 @@ public:
   // Sets a parameter and returns true if parameter changed does not exist prior to set.
   // Returns false otherwise.
   bool setParam(string param, float val);
+
+  // Will need additional overloads for each new type. Which kinda sucks.
 
   // Simply returns true if the parameter exists.
   bool paramExists(string param);
@@ -89,7 +94,7 @@ private:
 
   // Map for time-varying parameters.
   // Type may change in the future as more specialized datatypes come up.
-  map<string, float> m_parameters;
+  map<string, OpenLLType*> m_parameters;
 
   // Map for static information.
   // User-defined data helps to add search filters and query devices.

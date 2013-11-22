@@ -80,6 +80,13 @@ public:
   // (like looking up profiles on patch).
   void patchDevice(Device* device, DMXDevicePatch* patch);
 
+  // Adds a device map to the Patch's database of mappings.
+  // This function will REPLACE a map that already exists.
+  void addDeviceMap(string id, map<string, patchData> deviceMap);
+
+  // Adds a parameter to a deviceMap.
+  void addParameter(string mapId, string paramId, unsigned int address, conversionType type);
+
   // Debug function that prints out all DMX values for all universes in the patch.
   void dumpUniverses();
 
@@ -103,6 +110,10 @@ private:
   // Maps devices to DMX outputs. See the DMXDevicePatch class for details.
   // This class will free DevicePatch objects given to it on destruction.
   map<string, DMXDevicePatch*> m_patch;
+
+  // Stores information about device maps, which can be reused across
+  // devices. Key is the device map name.
+  map<string, map<string, patchData>> m_deviceMaps;
 };
 
 #endif
