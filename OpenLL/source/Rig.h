@@ -9,6 +9,7 @@
 
 #include "Patch.h"
 #include "Device.h"
+#include "../lib/libjson/libjson.h"
 
 // The Rig contains information about the state of the lighting system.
 // It will manage devices and patches added to it by the user and
@@ -18,6 +19,9 @@ class Rig
 public:
   // Makes an empty rig
   Rig();
+
+  // Initialize Rig from JSON file
+  Rig(string filename);
 
   // Makes a rig that loads data from the specified file
   // Rig(string filename)
