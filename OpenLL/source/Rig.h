@@ -6,9 +6,12 @@
 #include <chrono>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
 
 #include "Patch.h"
 #include "Device.h"
+#include "Logger.h"
 #include "../lib/libjson/libjson.h"
 
 // The Rig contains information about the state of the lighting system.
@@ -22,9 +25,6 @@ public:
 
   // Initialize Rig from JSON file
   Rig(string filename);
-
-  // Makes a rig that loads data from the specified file
-  // Rig(string filename)
 
   // Destroys and frees all objects in the rig. Once this is called
   // all resources used by this class are free.
@@ -72,7 +72,17 @@ public:
 
   // Shorthand for getDevice(string)
   Device* operator[](string id);
+
 private:
+  // Loads the rig info from the parsed JSON data.
+  void loadJSON(JSONNode root);
+
+  // Loads the devices in the JSON file.
+  void loadDevices(JSONNode root);
+
+  // Load patches in the JSON file.
+  void loadPatches(JSONNode root);
+
   // Actually updates the network and stuff.
   void update();
 

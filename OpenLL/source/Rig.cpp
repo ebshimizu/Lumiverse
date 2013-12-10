@@ -6,6 +6,84 @@ Rig::Rig() {
   setRefreshRate(40);
 }
 
+Rig::Rig(string filename) {
+  ifstream data;
+  data.open(filename, ios::in|ios::binary|ios::ate);
+
+  if (data.is_open()) {
+    size_t size = data.tellg();
+    char* memblock = new char[size];
+
+    data.seekg(0, ios::beg);
+
+    stringstream ss;
+    ss << "Loading " << size << " bytes from " << filename;
+    Logger::log(LOG_LEVEL::INFO, ss.str());
+
+    data.read(memblock, size);
+    data.close();
+
+    JSONNode n = libjson::parse(memblock);
+
+    // This could get to be a large function, so let's break off into a helper.
+    loadJSON(n);
+  }
+  else {
+    stringstream ss;
+    ss << "Error opening " << filename;
+    Logger::log(LOG_LEVEL::ERROR, ss.str());
+
+    Logger::log(LOG_LEVEL::WARN, "Proceeding with default rig initialization");
+
+    m_running = false;
+    setRefreshRate(40);
+  }
+}
+
+void Rig::loadJSON(JSONNode root) {
+  JSONNode::const_iterator i = root.begin();
+
+  while (i != root.end()){
+    // get the node name and value as a string
+    std::string nodeName = i->name();
+
+    if (nodeName == "devices") {
+      loadDevices(*i);
+    }
+    else if (nodeName == "patches") {
+      loadPatches(*i);
+    }
+    else if (nodeName == "refreshRate") {
+      m_refreshRate = i->as_int();
+    }
+
+    //increment the iterator
+    ++i;
+  }
+}
+
+void Rig::loadDevices(JSONNode root) {
+  JSONNode::const_iterator i = root.begin();
+
+  // for this we want to iterate through all children and have the device class
+  // parse the sub-element.
+  while (i != root.end()){
+    // get the node name and value as a string
+    std::string nodeName = i->name();
+
+    // Node name is the Device id
+    Device* device = new Device(nodeName, *i);
+    addDevice(device);
+
+    //increment the iterator
+    ++i;
+  }
+}
+
+void Rig::loadPatches(JSONNode root) {
+
+}
+
 Rig::~Rig() {
   // Stop the update thread.
   stop();

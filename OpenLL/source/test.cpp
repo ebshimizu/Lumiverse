@@ -9,6 +9,9 @@
 using namespace std;
 
 int main(int argc, char**argv) {
+  Rig jsonTest("C:/Users/Falindrith/Dropbox/College_Senior/52401/code/OpenLL/OpenLL/data/testRig.json");
+
+    /*
   Device* test = new Device("test", 1, "Source Four ERS");
 
   test->setParam("intensity", 1.0);
@@ -87,4 +90,5 @@ int main(int argc, char**argv) {
   rig["Seachanger1.2"]->clearParamValues();
 
   _getch();
+  */
 }

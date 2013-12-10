@@ -10,6 +10,82 @@ Device::Device(string id, unsigned int channel, string type) {
   // Right now we just leave the maps empty and stuff.
 }
 
+Device::Device(string id, const JSONNode data) {
+  m_id = id;
+
+  JSONNode::const_iterator i = data.begin();
+
+  // for this we want to iterate through all children and have the device class
+  // parse the sub-element.
+  while (i != data.end()){
+    // get the node name and value as a string
+    std::string nodeName = i->name();
+
+    if (nodeName == "channel") {
+      m_channel = i->as_int();
+    }
+    else if (nodeName == "type") {
+      m_type = i->as_string();
+    }
+    else if (nodeName == "parameters") {
+      loadParams(*i);
+    }
+    else if (nodeName == "metadata") {
+
+    }
+
+    //increment the iterator
+    ++i;
+  }
+}
+
+void Device::loadParams(const JSONNode data) {
+  JSONNode::const_iterator i = data.begin();
+
+  while (i != data.end()){
+    bool err = false;
+
+    // get the node name and value as a string
+    std::string paramName = i->name();
+
+    // Go into the child node that has all the param data
+    JSONNode paramData = *i;
+
+    auto type = paramData.find("type");
+    if (type != paramData.end()) {
+      // TODO: Currently the only supported OpenLLType is float
+      if (type->as_string() == "float") {
+        auto valNode = paramData.find("val");
+        auto defNode = paramData.find("default");
+
+        if (valNode != paramData.end() && defNode != paramData.end()) {
+          OpenLLFloat* param = new OpenLLFloat(valNode->as_float(), defNode->as_float());
+          setParam(paramName, (OpenLLType*) param);
+        }
+        else {
+          err = true;
+        }
+      }
+      else {
+        stringstream ss;
+        ss << "Unsupported type " << type->as_string() << " in " << paramName << " in " << m_id << ". Parameter not set.";
+        Logger::log(LOG_LEVEL::WARN, ss.str());
+      }
+    }
+    else {
+      err = true;
+    }
+
+    if (err) {
+      stringstream ss;
+      ss << "Invalid format for paramter " << paramName << " in " << m_id << ". Parameter not set.";
+      Logger::log(LOG_LEVEL::WARN, ss.str());
+    }
+
+    //increment the iterator
+    ++i;
+  }
+}
 
 Device::~Device() {
   for (auto& kv : m_parameters) {
@@ -25,6 +101,18 @@ bool Device::getParam(string param, float& val) {
 
   return false;
 }
+
+bool Device::setParam(string param, OpenLLType* val) {
+  bool ret = false;
+
+  if (m_parameters.count(param) == 0) {
+    ret = true;
+  }
+
+  m_parameters[param] = val;
+  return ret;
+}
+
 
 bool Device::setParam(string param, float val) {
   bool ret = false;

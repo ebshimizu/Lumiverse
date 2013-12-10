@@ -72,12 +72,16 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>ftd2xx.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -159,6 +163,7 @@
     <ClInclude Include="source\DMXPatch.h" />
     <ClInclude Include="source\DMXPro2Interface.h" />
     <ClInclude Include="source\FTD2XX.H" />
+    <ClInclude Include="source\Logger.h" />
     <ClInclude Include="source\ms_stdint.h" />
     <ClInclude Include="source\OpenLLFloat.h" />
     <ClInclude Include="source\OpenLLType.h" />
@@ -185,6 +190,7 @@
     <ClCompile Include="source\DMXDevicePatch.cpp" />
     <ClCompile Include="source\DMXPatch.cpp" />
     <ClCompile Include="source\DMXPro2Interface.cpp" />
+    <ClCompile Include="source\Logger.cpp" />
     <ClCompile Include="source\OpenLLFloat.cpp" />
     <ClCompile Include="source\Rig.cpp" />
     <ClCompile Include="source\test.cpp" />

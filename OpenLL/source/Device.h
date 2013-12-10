@@ -7,8 +7,12 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <sstream>
+
+#include "Logger.h"
 #include "OpenLLType.h"
 #include "OpenLLFloat.h"
+#include "../lib/libjson/libjson.h"
 using namespace std;
 
 // A Device in OpenLL maintains information about a lighting device.
@@ -23,6 +27,9 @@ public:
   // May in the future pull default parameter map from a database of known
   // fixture types.
   Device(string id, unsigned int channel, string type);
+
+  // Make a device given a JSON node
+  Device(string id, const JSONNode data);
 
   // Destructor. Obviously.
   ~Device();
@@ -43,6 +50,10 @@ public:
   // Returns true with the parameter value in val if successful.
   bool getParam(string param, float& val);
   
+  // Sets a parameter and returns true if parameter changed does not exist prior to set.
+  // Can give arbitrary data with this overload.
+  bool setParam(string param, OpenLLType* val);
+
   // Sets a parameter and returns true if parameter changed does not exist prior to set.
   // Returns false otherwise.
   bool setParam(string param, float val);
@@ -82,6 +93,9 @@ public:
   vector<string> getMetadataKeyNames();
 
 private:
+  // Loads the parameters of the device from JSON data.
+  void loadParams(const JSONNode data);
+
   // Unique identifier for the device.
   // Uniqueness isn't quite enforceable at the device level.
   string m_id;

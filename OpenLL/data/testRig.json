@@ -1,0 +1,50 @@
+{
+  "version" : "0.1",
+  "refreshRate" : 40,
+  "devices" : {
+    "test" : {
+      "channel" : 1,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : {
+          "type" : "float",
+          "val" : 1.0,
+          "default" : 0.0
+        }
+      },
+      "metadata" : {
+        "color" : "R80",
+        "angle" : "back",
+        "area" : "4"
+      }
+    }
+  },
+  "patches" : {
+    "DMX1" : {
+      "type" : "DMXPatch",
+      "interfaces" : {
+        "DMXPRO1" : {
+          "type" : "DMXPro2Interface"
+        }
+      },
+      "universes" : {
+        "DMXPRO1" : 0,
+        "DMXPRO1" : 1
+      },
+      "deviceMaps" : {
+        "dimmer" : {
+          "0" : "FLOAT_TO_SINGLE"
+        },
+        "seachanger" : {
+          "0" : "FLOAT_TO_SINGLE",
+          "1" : "FLOAT_TO_SINGLE",
+          "2" : "FLOAT_TO_SINGLE",
+          "3" : "FLOAT_TO_SINGLE"
+        }
+      },
+      "devicePatch" : {
+        "test" : { "mapType" : "dimmer", "addr" : 0, "universe" : 0 }
+      }
+    }
+  }
+}
