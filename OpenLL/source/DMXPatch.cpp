@@ -39,7 +39,7 @@ void DMXPatch::loadJSON(const JSONNode data) {
               ifaceMap[iface->name()] = (DMXInterface*)intface;
             }
 
-            Logger::log(LOG_LEVEL::WARN, "Added DMX USB Pro Mk 2 Interface");
+            Logger::log(LOG_LEVEL::INFO, "Added DMX USB Pro Mk 2 Interface");
           }
           else {
             stringstream ss;
