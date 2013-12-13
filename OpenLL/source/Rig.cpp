@@ -31,7 +31,7 @@ Rig::Rig(string filename) {
   else {
     stringstream ss;
     ss << "Error opening " << filename;
-    Logger::log(LOG_LEVEL::ERROR, ss.str());
+    Logger::log(LOG_LEVEL::ERR, ss.str());
 
     Logger::log(LOG_LEVEL::WARN, "Proceeding with default rig initialization");
 
@@ -49,12 +49,14 @@ void Rig::loadJSON(JSONNode root) {
 
     if (nodeName == "devices") {
       loadDevices(*i);
+      Logger::log(LOG_LEVEL::INFO, "Device load complete");
     }
     else if (nodeName == "patches") {
       loadPatches(*i);
+      Logger::log(LOG_LEVEL::INFO, "Patch load complete");
     }
     else if (nodeName == "refreshRate") {
-      m_refreshRate = i->as_int();
+      setRefreshRate(i->as_int());
     }
 
     //increment the iterator
@@ -81,7 +83,43 @@ void Rig::loadDevices(JSONNode root) {
 }
 
 void Rig::loadPatches(JSONNode root) {
+  JSONNode::const_iterator i = root.begin();
 
+  // for this we want to iterate through all children and have the device class
+  // parse the sub-element.
+  while (i != root.end()){
+    // get the node name and value as a string
+    std::string nodeName = i->name();
+
+    stringstream ss;
+    ss << "Loading patch " << nodeName;
+    Logger::log(LOG_LEVEL::INFO, ss.str());
+
+    Patch* patch;
+    
+    auto type = i->find("type");
+    if (type == i->end()) {
+      stringstream ss;
+      ss << "Unable to determine Patch type for " << nodeName << ". Patch not loaded.";
+      Logger::log(LOG_LEVEL::WARN, ss.str());
+    }
+
+    string patchType = type->as_string();
+
+    // New patch types will need new seralization definitions.
+    if (patchType == "DMXPatch") {
+      patch = (Patch*) new DMXPatch(*i);
+      addPatch(nodeName, patch);
+    }
+    else {
+      stringstream ss;
+      ss << "Unknown Patch type " << patchType << " in Patch ID " << nodeName << "Patch not loaded.";
+      Logger::log(LOG_LEVEL::WARN, ss.str());
+    }
+
+    //increment the iterator
+    ++i;
+  }
 }
 
 Rig::~Rig() {
@@ -191,7 +229,7 @@ void Rig::update() {
       this_thread::sleep_for(chrono::milliseconds(ms));
     }
     else {
-      cerr << "Warning: Rig Update loop running slowly.\n";
+      Logger::log(LOG_LEVEL::WARN, "Rig Update loop running slowly");
     }
   }
 }

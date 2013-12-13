@@ -18,7 +18,7 @@ namespace Logger {
       case (DEBUG) : return "DEBUG";
       case (INFO) : return "INFO";
       case (WARN) : return "WARN";
-      case (ERROR) : return "ERROR";
+      case (ERR) : return "ERROR";
       case (CRITICAL) : return "CRITICAL";
       case (FATAL) : return "FATAL";
       default: return "";

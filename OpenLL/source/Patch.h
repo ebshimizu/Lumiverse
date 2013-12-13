@@ -4,6 +4,7 @@
 #pragma once
 
 #include "Device.h"
+
 using namespace std;
 
 // An OpenLL Patch is a class that maps devices to output channels and

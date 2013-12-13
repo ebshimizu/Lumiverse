@@ -6,6 +6,124 @@ DMXPatch::DMXPatch() {
   // Empty for now
 }
 
+DMXPatch::DMXPatch(const JSONNode data) {
+  loadJSON(data);
+}
+
+void DMXPatch::loadJSON(const JSONNode data) {
+  string patchName = data.name();
+  map<string, DMXInterface*> ifaceMap;
+
+  auto i = data.begin();
+  // This is a two pass process. First pass initializes the interfaces and Device mappings
+  // Second pass actually patches devices and assigns the interfaces to universes.
+  while (i != data.end()) {
+    std::string nodeName = i->name();
+
+    if (nodeName == "interfaces") {
+      JSONNode interfaces = *i;
+
+      auto iface = interfaces.begin();
+      while (iface != interfaces.end()) {
+        auto type = iface->find("type");
+
+        if (type != iface->end()) {
+          // Currently the only supported type is the DMX Pro Mk 2 Interface
+          if (type->as_string() == "DMXPro2Interface") {
+            auto proNumNode = iface->find("proNum");
+            auto out1Node = iface->find("out1");
+            auto out2Node = iface->find("out2");
+
+            if (proNumNode != iface->end() && out1Node != iface->end() && out2Node != iface->end()) {
+              DMXPro2Interface* intface = new DMXPro2Interface(iface->name(), proNumNode->as_int(), out1Node->as_int(), out2Node->as_int());
+              ifaceMap[iface->name()] = (DMXInterface*)intface;
+            }
+
+            Logger::log(LOG_LEVEL::WARN, "Added DMX USB Pro Mk 2 Interface");
+          }
+          else {
+            stringstream ss;
+            ss << "Unsupported Interface Type " << type->name() << " in " << patchName;
+            Logger::log(LOG_LEVEL::WARN, ss.str());
+          }
+        }
+
+        ++iface;
+      }
+    }
+    if (nodeName == "deviceMaps") {
+      loadDeviceMaps(*i);
+    }
+
+    ++i;
+  }
+
+  // Assign universes to interfaces
+  auto universes = data.find("universes");
+  if (universes != data.end()) {
+    auto universe = universes->begin();
+    while (universe != universes->end()) {
+      assignInterface(ifaceMap[universe->name()], universe->as_int());
+      ++universe;
+    }
+  }
+  else {
+    Logger::log(LOG_LEVEL::WARN, "No interfaces assignments found in rig");
+  }
+
+  // Patch the devices
+  auto devices = data.find("devicePatch");
+  if (devices != data.end()) {
+    auto device = devices->begin();
+    while (device != devices->end()) {
+      string mapKey = (*device)["mapType"].as_string();
+      unsigned int addr = (*device)["addr"].as_int();
+      unsigned int universe = (*device)["universe"].as_int();
+
+      DMXDevicePatch* patch = new DMXDevicePatch(mapKey, addr, universe);
+      patchDevice(device->name(), patch);
+
+      stringstream ss;
+      ss << "Patched " << device->name() << " to " << universe << "/" << addr << " using profile " << mapKey;
+      Logger::log(LOG_LEVEL::INFO, ss.str());
+
+      ++device;
+    }
+  }
+  else {
+    Logger::log(LOG_LEVEL::WARN, "No devices found in rig");
+  }
+}
+
+void DMXPatch::loadDeviceMaps(const JSONNode data) {
+  auto i = data.begin();
+
+  while (i != data.end()) {
+    string name = i->name();
+    map<string, patchData> dmxMap;
+
+    auto j = i->begin();
+    while (j != i->end()) {
+      string paramName = j->name();
+
+      // This assumes the next piece of data is arranged in a [ int, string ] format
+      unsigned int addr = (*j)[0].as_int();
+      string conversion = (*j)[1].as_string();
+
+      dmxMap[paramName] = patchData(addr, conversion);
+
+      stringstream ss;
+      ss << "Added DMX Map for " << paramName;
+      Logger::log(LOG_LEVEL::INFO, ss.str());
+
+      ++j;
+    }
+
+    addDeviceMap(name, dmxMap);
+    ++i;
+  }
+}
+
 DMXPatch::~DMXPatch() {
   // Deallocate all interfaces after closing them.
   for (auto& interfaces : m_interfaces) {
@@ -104,6 +222,9 @@ void DMXPatch::patchDevice(Device* device, DMXDevicePatch* patch) {
   m_patch[device->getId()] = patch;
 }
 
+void DMXPatch::patchDevice(string id, DMXDevicePatch* patch) {
+  m_patch[id] = patch;
+}
 
 void DMXPatch::addDeviceMap(string id, map<string, patchData> deviceMap) {
   m_deviceMaps[id] = deviceMap; // Replaces existing maps.

@@ -6,6 +6,8 @@
 #include "Patch.h"
 #include "DMXDevicePatch.h"
 #include "DMXInterface.h"
+#include "DMXPro2Interface.h"
+#include "../lib/libjson/libjson.h"
 
 #include <iostream>
 
@@ -24,6 +26,9 @@ class DMXPatch : public Patch
 public:
   // Constructs a DMXPatch object
   DMXPatch();
+
+  // Construct DMXPatch from JSON data.
+  DMXPatch(const JSONNode data);
 
   // Destroys the object.
   virtual ~DMXPatch();
@@ -80,6 +85,9 @@ public:
   // (like looking up profiles on patch).
   void patchDevice(Device* device, DMXDevicePatch* patch);
 
+  // Alternate patch function which just specifies an ID in a string.
+  void patchDevice(string id, DMXDevicePatch* patch);
+
   // Adds a device map to the Patch's database of mappings.
   // This function will REPLACE a map that already exists.
   void addDeviceMap(string id, map<string, patchData> deviceMap);
@@ -94,6 +102,12 @@ public:
   void dumpUniverse(unsigned int universe);
 
 private:
+  // Loads data from a parsed JSON object
+  void loadJSON(const JSONNode data);
+
+  // Loads the device maps from a JSON node
+  void loadDeviceMaps(const JSONNode data);
+
   // Stores the state of the DMX universes.
   // Note that DMX Universe 1 is index 0 here due to one-indexing.
   vector<vector<unsigned char>> m_universes;

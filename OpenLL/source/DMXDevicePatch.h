@@ -18,7 +18,16 @@ struct patchData {
   conversionType type;
 
   patchData() : startAddress(0), type(conversionType::FLOAT_TO_SINGLE) { }
+  
   patchData(unsigned int addr, conversionType t) : startAddress(addr), type(t) { }
+  
+  patchData(unsigned int addr, string t) : startAddress(addr) {
+    if (t == "FLOAT_TO_SINGLE") { type = conversionType::FLOAT_TO_SINGLE; }
+    else {
+      Logger::log(LOG_LEVEL::WARN, "Unknown conversion type. Defaulting to float to single.");
+      type = conversionType::FLOAT_TO_SINGLE;
+    }
+  }
 };
 
 // This class includes information on how to translate the device properties

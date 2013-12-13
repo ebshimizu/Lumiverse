@@ -93,6 +93,9 @@ public:
   vector<string> getMetadataKeyNames();
 
 private:
+  // Takes parsed JSON data and makes a device.
+  void loadJSON(const JSONNode data);
+
   // Loads the parameters of the device from JSON data.
   void loadParams(const JSONNode data);
 

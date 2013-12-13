@@ -12,7 +12,10 @@ Device::Device(string id, unsigned int channel, string type) {
 
 Device::Device(string id, const JSONNode data) {
   m_id = id;
+  loadJSON(data);
+}
 
+void Device::loadJSON(const JSONNode data) {
   JSONNode::const_iterator i = data.begin();
 
   // for this we want to iterate through all children and have the device class
@@ -31,12 +34,27 @@ Device::Device(string id, const JSONNode data) {
       loadParams(*i);
     }
     else if (nodeName == "metadata") {
+      JSONNode metaData = *i;
 
+      auto meta = metaData.begin();
+      while (meta != metaData.end()) {
+        setMetadata(meta->name(), meta->as_string());
+        ++meta;
+      }
+    }
+    else {
+      stringstream ss;
+      ss << "Unknown child " << nodeName << " found in " << m_id;
+      Logger::log(LOG_LEVEL::WARN, ss.str());
     }
 
     //increment the iterator
     ++i;
   }
+
+  stringstream ss;
+  ss << "Loaded " << m_type << " Device " << m_id << " (Channel " << m_channel << ")";
+  Logger::log(LOG_LEVEL::INFO, ss.str());
 }
 
 void Device::loadParams(const JSONNode data) {

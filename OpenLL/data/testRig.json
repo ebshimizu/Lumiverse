@@ -6,10 +6,7 @@
       "channel" : 1,
       "type" : "Source Four ERS",
       "parameters" : {
-        "intensity" : {
-          "type" : "float",
-          "val" : 1.0,
-          "default" : 0.0
+        "intensity" : { "type" : "float", "val" : 1.0, "default" : 0.0 }
         }
       },
       "metadata" : {
@@ -17,6 +14,29 @@
         "angle" : "back",
         "area" : "4"
       }
+    },
+    "Seachanger1.1" : {
+      "channel" : 2,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : {
+          "type" : "float",
+          "val" : 1.0,
+          "default" : 0.0
+        }
+      },
+      "metadata" : { }
+    },
+    "Seachanger1.2" : {
+      "channel" : 2,
+      "type" : "Ocean Optics Seachanger",
+      "parameters" : {
+        "cyan" : { "type" : "float", "val" : 0.0, "default" : 1.0 },
+        "magenta" : { "type" : "float", "val" : 0.0, "default" : 1.0 },
+        "yellow" : { "type" : "float", "val" : 0.0, "default" : 1.0 },
+        "green" : { "type" : "float", "val" : 0.0, "default" : 1.0 }
+      },
+      "metadata" : { }
     }
   },
   "patches" : {
@@ -24,7 +44,10 @@
       "type" : "DMXPatch",
       "interfaces" : {
         "DMXPRO1" : {
-          "type" : "DMXPro2Interface"
+          "type" : "DMXPro2Interface",
+          "proNum" : 0,
+          "out1" : 0,
+          "out2" : 1
         }
       },
       "universes" : {
@@ -33,17 +56,19 @@
       },
       "deviceMaps" : {
         "dimmer" : {
-          "0" : "FLOAT_TO_SINGLE"
+          "intensity" : [ 0,  "FLOAT_TO_SINGLE" ]
         },
         "seachanger" : {
-          "0" : "FLOAT_TO_SINGLE",
-          "1" : "FLOAT_TO_SINGLE",
-          "2" : "FLOAT_TO_SINGLE",
-          "3" : "FLOAT_TO_SINGLE"
+          "cyan" : [ 0, "FLOAT_TO_SINGLE" ],
+          "magenta" : [ 1, "FLOAT_TO_SINGLE" ],
+          "yellow" : [ 2, "FLOAT_TO_SINGLE" ],
+          "green" : [ 3, "FLOAT_TO_SINGLE" ]
         }
       },
       "devicePatch" : {
-        "test" : { "mapType" : "dimmer", "addr" : 0, "universe" : 0 }
+        "test" : { "mapType" : "dimmer", "addr" : 0, "universe" : 0 },
+        "Seachanger1.1" : { "mapType" : "dimmer", "addr" : 6, "universe" : 0 },
+        "Seachanger1.2" : { "mapType" : "seachanger", "addr" : 109, "universe" : 1 }
       }
     }
   }

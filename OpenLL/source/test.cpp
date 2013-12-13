@@ -9,7 +9,15 @@
 using namespace std;
 
 int main(int argc, char**argv) {
-  Rig jsonTest("C:/Users/Falindrith/Dropbox/College_Senior/52401/code/OpenLL/OpenLL/data/testRig.json");
+  Rig rig("C:/Users/Falindrith/Dropbox/College_Senior/52401/code/OpenLL/OpenLL/data/testRig.json");
+
+  // TODO: (roughly in order of importance)
+  // -Grouping and selection
+  // -Filtering by metadata
+  // -Complex queries
+  // -Color Mixing and other types
+  // -Saving rigs
+  // -Robust file reads
 
     /*
   Device* test = new Device("test", 1, "Source Four ERS");
@@ -63,10 +71,11 @@ int main(int argc, char**argv) {
   rig.addDevice(test2);
   rig.addDevice(test3);
   rig.addPatch("DMX1", patch);
+  */
 
   // Init rig
-  //rig.init();
-  //rig.run();
+  rig.init();
+  rig.run();
 
   // Do things. Remember that the update loops is only 40Hz and changes aren't instant
   // in computer time
@@ -90,5 +99,4 @@ int main(int argc, char**argv) {
   rig["Seachanger1.2"]->clearParamValues();
 
   _getch();
-  */
 }

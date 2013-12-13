@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include "Patch.h"
+#include "DMXPatch.h"
 #include "Device.h"
 #include "Logger.h"
 #include "../lib/libjson/libjson.h"
