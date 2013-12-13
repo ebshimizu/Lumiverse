@@ -144,6 +144,9 @@
     <ClInclude Include="source\Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\DeviceSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\usb_pro_example.cpp">
@@ -213,6 +216,9 @@
       <Filter>Source Files\types</Filter>
     </ClCompile>
     <ClCompile Include="source\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DeviceSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

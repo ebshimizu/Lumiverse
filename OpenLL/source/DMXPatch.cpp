@@ -112,14 +112,15 @@ void DMXPatch::loadDeviceMaps(const JSONNode data) {
 
       dmxMap[paramName] = patchData(addr, conversion);
 
-      stringstream ss;
-      ss << "Added DMX Map for " << paramName;
-      Logger::log(LOG_LEVEL::INFO, ss.str());
-
       ++j;
     }
 
     addDeviceMap(name, dmxMap);
+
+    stringstream ss;
+    ss << "Added DMX Map for " << name;
+    Logger::log(LOG_LEVEL::INFO, ss.str());
+
     ++i;
   }
 }
@@ -137,7 +138,7 @@ DMXPatch::~DMXPatch() {
   }
 }
 
-void DMXPatch::update(vector<Device *> devices) {
+void DMXPatch::update(set<Device *> devices) {
   for (Device* d : devices) {
     // Skip if there is no DMX patch for the device stored
     if (m_patch.count(d->getId()) == 0)

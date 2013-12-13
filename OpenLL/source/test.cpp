@@ -2,6 +2,7 @@
 #include "Device.h"
 #include "Patch.h"
 #include "Rig.h"
+#include "DeviceSet.h"
 
 #include "DMXInterface.h"
 #include "DMXPro2Interface.h"
@@ -74,8 +75,11 @@ int main(int argc, char**argv) {
   */
 
   // Init rig
-  rig.init();
-  rig.run();
+  //rig.init();
+  //rig.run();
+
+  // get all devices that aren't in a back angle
+  DeviceSet myDevices = rig.getAllDevices().remove("angle", "back", false);
 
   // Do things. Remember that the update loops is only 40Hz and changes aren't instant
   // in computer time

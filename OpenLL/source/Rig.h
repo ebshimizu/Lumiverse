@@ -8,18 +8,27 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <set>
 
 #include "Patch.h"
 #include "DMXPatch.h"
 #include "Device.h"
 #include "Logger.h"
+#include "DeviceSet.h"
 #include "../lib/libjson/libjson.h"
+
+class DeviceSet;
 
 // The Rig contains information about the state of the lighting system.
 // It will manage devices and patches added to it by the user and
 // provides functions for manipulating those devices.
+// TODO: Right now if you change a device channel or id the rig doesn't
+// know about it. Need to add functions in the Rig that allow
+// this sort of change.
 class Rig
 {
+  friend class DeviceSet;
+
 public:
   // Makes an empty rig
   Rig();
@@ -74,6 +83,20 @@ public:
   // Shorthand for getDevice(string)
   Device* operator[](string id);
 
+  // Queries. Most everything starts with the creation of a DeviceSet.
+  // Detailed filtering happens there, the Rig provides a few convenience functions
+  // to get things started.
+
+  // Returns a set consisting of all devices in the rig
+  DeviceSet getAllDevices();
+
+  // Gets all the devices in a channel
+  DeviceSet getChannel(unsigned int channel);
+
+  // Gets devices by metadata info. isEqual determines if the set consists
+  // of all devices that have the same value as val or not.
+  DeviceSet getDevices(string key, string val, bool isEqual);
+
 private:
   // Loads the rig info from the parsed JSON data.
   void loadJSON(JSONNode root);
@@ -100,13 +123,16 @@ private:
   float m_loopTime;
 
   // Raw list of devices for sending to the Patch->update function.
-  vector<Device *> m_devices;
+  set<Device *> m_devices;
 
   // Patches mapped by an identifier chosen by the user.
   map<string, Patch *> m_patches;
 
   // Devices mapped by their device ID.
   map<string, Device *> m_devicesById;
+
+  // Devices mapped by channel number.
+  multimap<unsigned int, Device *> m_devicesByChannel;
 
   // May have more indicies in the future, like mapping by channel number.
 };

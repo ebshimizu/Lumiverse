@@ -36,7 +36,6 @@ public:
 
   // Accessors for id
   string getId() { return m_id; }
-  void setId(string newId) { m_id = newId; }
 
   // Accessors for channel
   unsigned int getChannel() { return m_channel; }
@@ -93,6 +92,15 @@ public:
   vector<string> getMetadataKeyNames();
 
 private:
+  // Note that this is private because changing the unique ID after creation
+  // can lead to a number of unintended side effects (DMX patch doesn't work,
+  // Rig can't find the device, other indexes may fail). This is a little annoying,
+  // but in the big scheme of devices and rigs, the ID shouldn't change after initial
+  // creation. If the user needs a different display name, the metadata fields say hi.
+  // In ACN terms, this would be the CID (if I remember this right), which is unique and
+  // immutable for each device).
+  void setId(string newId) { m_id = newId; }
+
   // Takes parsed JSON data and makes a device.
   void loadJSON(const JSONNode data);
 

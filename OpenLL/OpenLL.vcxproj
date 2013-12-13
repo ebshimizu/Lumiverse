@@ -169,6 +169,7 @@
     <ClInclude Include="source\OpenLLType.h" />
     <ClInclude Include="source\Patch.h" />
     <ClInclude Include="source\pro_driver.h" />
+    <ClInclude Include="source\DeviceSet.h" />
     <ClInclude Include="source\Rig.h" />
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +193,7 @@
     <ClCompile Include="source\DMXPro2Interface.cpp" />
     <ClCompile Include="source\Logger.cpp" />
     <ClCompile Include="source\OpenLLFloat.cpp" />
+    <ClCompile Include="source\DeviceSet.cpp" />
     <ClCompile Include="source\Rig.cpp" />
     <ClCompile Include="source\test.cpp" />
     <ClCompile Include="source\usb_pro_example.cpp">

@@ -38,7 +38,7 @@ public:
   // This function is able to do incremental updates, so if just one
   // device had parameters change, you are able to maintain the previous state
   // of the patch and just update that one device's value.
-  virtual void update(vector<Device *> devices);
+  virtual void update(set<Device *> devices);
 
   // Initializes connections and other network settings for the patch.
   // Call this AFTER all interfaces have been assigned. May need to call again

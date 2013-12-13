@@ -4,6 +4,7 @@
 #pragma once
 
 #include "Device.h"
+#include <set>
 
 using namespace std;
 
@@ -21,7 +22,7 @@ public:
   // This function should be able to do incremental updates, so if just one
   // device had parameters change, you should be able to maintain the previous state
   // of the patch and just update that one device's value.
-  virtual void update(vector<Device *> devices) = 0;
+  virtual void update(set<Device *> devices) = 0;
   
   // Initializes settings for the patch. This can be starting up serial interfaces,
   // network configuration, etc.

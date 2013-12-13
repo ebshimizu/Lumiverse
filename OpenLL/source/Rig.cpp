@@ -157,10 +157,16 @@ void Rig::stop() {
 void Rig::addDevice(Device* device) {
   // Don't add duplicates.
   if (m_devicesById.count(device->getId()) > 0)
+  {
+    stringstream ss;
+    ss << "Failed to add device with ID " << device->getId() << " to rig because ID already exists";
+    Logger::log(LOG_LEVEL::ERR, ss.str());
     return;
+  }
 
-  m_devices.push_back(device);
+  m_devices.insert(device);
   m_devicesById[device->getId()] = device;
+  m_devicesByChannel.insert(make_pair(device->getChannel(), device));
 }
 
 Device* Rig::getDevice(string id) {
@@ -174,6 +180,16 @@ Device* Rig::getDevice(string id) {
 void Rig::deleteDevice(string id) {
   if (m_devicesById.count(id) == 0)
     return;
+
+  // Find the device pointer so we can delete it in the other indexes
+  Device * toDelete = m_devicesById[id];
+  auto range = m_devicesByChannel.equal_range(toDelete->getChannel());
+  for (auto it = range.first; it != range.second; it++) {
+    if (it->second->getId() == toDelete->getId()) {
+      m_devicesByChannel.erase(it);
+      break;
+    }
+  }
 
   // Find the device in the vector and delete it. Yay vectors.
   m_devices.erase(find(m_devices.begin(), m_devices.end(), m_devicesById[id]));
@@ -236,4 +252,18 @@ void Rig::update() {
 
 Device* Rig::operator[](string id) {
   return getDevice(id);
+}
+
+DeviceSet Rig::getAllDevices() {
+  return DeviceSet(this, m_devices);
+}
+
+DeviceSet Rig::getChannel(unsigned int channel) {
+  DeviceSet working(this);
+  return working.add(channel);
+}
+
+DeviceSet Rig::getDevices(string key, string val, bool isEqual) {
+  DeviceSet working(this);
+  return working.add(key, val, isEqual);
 }
