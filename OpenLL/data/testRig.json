@@ -2,33 +2,188 @@
   "version" : "0.1",
   "refreshRate" : 40,
   "devices" : {
-    "test" : {
+    "s41" : {
       "channel" : 1,
       "type" : "Source Four ERS",
       "parameters" : {
-        "intensity" : { "type" : "float", "val" : 1.0, "default" : 0.0 }
-        }
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R02",
+        "angle" : "front right",
+        "area" : "2"
+      }
+    },
+    "par1" : {
+      "channel" : 2,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "N/C",
+        "angle" : "front right",
+        "area" : "2"
+      }
+    },
+    "s42" : {
+      "channel" : 3,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R02",
+        "angle" : "front",
+        "area" : "2"
+      }
+    },
+    "par2" : {
+      "channel" : 4,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "N/C",
+        "angle" : "front",
+        "area" : "2"
+      }
+    },
+    "s43" : {
+      "channel" : 5,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R02",
+        "angle" : "front left",
+        "area" : "2"
+      }
+    },
+    "par3" : {
+      "channel" : 6,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "N/C",
+        "angle" : "front left",
+        "area" : "2"
+      }
+    },
+    "s44" : {
+      "channel" : 7,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "L139",
+        "angle" : "high side right",
+        "area" : "2"
+      }
+    },
+    "s45" : {
+      "channel" : 8,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "L148",
+        "angle" : "high side right",
+        "area" : "2"
+      }
+    },
+    "s46" : {
+      "channel" : 9,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "L139",
+        "angle" : "high side left",
+        "area" : "2"
+      }
+    },
+    "s47" : {
+      "channel" : 10,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "L148",
+        "angle" : "high side left",
+        "area" : "2"
+      }
+    },
+    "s48" : {
+      "channel" : 11,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
       },
       "metadata" : {
         "color" : "R80",
-        "angle" : "back",
-        "area" : "4"
+        "angle" : "top",
+        "area" : "2"
       }
     },
-    "Seachanger1.1" : {
-      "channel" : 2,
+    "par4" : {
+      "channel" : 12,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R27",
+        "angle" : "top",
+        "area" : "2"
+      }
+    },
+    "par5" : {
+      "channel" : 13,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R21",
+        "angle" : "back right",
+        "area" : "2"
+      }
+    },
+    "par6" : {
+      "channel" : 14,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R349",
+        "angle" : "back right",
+        "area" : "2"
+      }
+    },
+    "s49" : {
+      "channel" : 15,
       "type" : "Source Four ERS",
       "parameters" : {
-        "intensity" : {
-          "type" : "float",
-          "val" : 1.0,
-          "default" : 0.0
-        }
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
       },
-      "metadata" : { }
+      "metadata" : {
+        "color" : "R119",
+        "angle" : "back",
+        "area" : "2"
+      }
     },
-    "Seachanger1.2" : {
-      "channel" : 2,
+    "s49_seachanger" : {
+      "channel" : 15,
       "type" : "Ocean Optics Seachanger",
       "parameters" : {
         "cyan" : { "type" : "float", "val" : 0.0, "default" : 1.0 },
@@ -36,7 +191,428 @@
         "yellow" : { "type" : "float", "val" : 0.0, "default" : 1.0 },
         "green" : { "type" : "float", "val" : 0.0, "default" : 1.0 }
       },
+      "metadata" : {
+        "angle" : "back",
+        "area" : "2",
+        "color" : "R119"
+      }
+    },
+    "s410" : {
+      "channel" : 16,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R382",
+        "angle" : "back",
+        "area" : "2"
+      }
+    },
+    "par7" : {
+      "channel" : 17,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R349",
+        "angle" : "back left",
+        "area" : "2"
+      }
+    },
+    "par8" : {
+      "channel" : 18,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R21",
+        "angle" : "back left",
+        "area" : "2"
+      }
+    },
+    "s411" : {
+      "channel" : 19,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R119",
+        "angle" : "mid side right",
+        "area" : "2"
+      }
+    },
+    "s412" : {
+      "channel" : 20,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R119",
+        "angle" : "shin side right",
+        "area" : "2"
+      }
+    },
+    "s413" : {
+      "channel" : 21,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R02",
+        "angle" : "front right",
+        "area" : "1"
+      }
+    },
+    "par9" : {
+      "channel" : 22,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "N/C",
+        "angle" : "front right",
+        "area" : "1"
+      }
+    },
+    "s414" : {
+      "channel" : 23,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R02",
+        "angle" : "front",
+        "area" : "1"
+      }
+    },
+    "par10" : {
+      "channel" : 24,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "N/C",
+        "angle" : "front",
+        "area" : "1"
+      }
+    },
+    "s415" : {
+      "channel" : 25,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R02",
+        "angle" : "front left",
+        "area" : "1"
+      }
+    },
+    "par11" : {
+      "channel" : 26,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "N/C",
+        "angle" : "front left",
+        "area" : "1"
+      }
+    },
+    "s416" : {
+      "channel" : 27,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "L139",
+        "angle" : "high side right",
+        "area" : "1"
+      }
+    },
+    "s417" : {
+      "channel" : 28,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "L148",
+        "angle" : "high side right",
+        "area" : "1"
+      }
+    },
+    "s418" : {
+      "channel" : 29,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "L139",
+        "angle" : "high side left",
+        "area" : "1"
+      }
+    },
+    "s419" : {
+      "channel" : 30,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "L148",
+        "angle" : "high side left",
+        "area" : "1"
+      }
+    },
+    "s420" : {
+      "channel" : 31,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R80",
+        "angle" : "top",
+        "area" : "1"
+      }
+    },
+    "par12" : {
+      "channel" : 32,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R27",
+        "angle" : "top",
+        "area" : "1"
+      }
+    },
+    "par13" : {
+      "channel" : 33,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R21",
+        "angle" : "back right",
+        "area" : "1"
+      }
+    },
+    "par14" : {
+      "channel" : 34,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R349",
+        "angle" : "back right",
+        "area" : "1"
+      }
+    },
+    "s421" : {
+      "channel" : 35,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R382",
+        "angle" : "back",
+        "area" : "1"
+      }
+    },
+    "s422_seachanger" : {
+      "channel" : 36,
+      "type" : "Ocean Optics Seachanger",
+      "parameters" : {
+        "cyan" : { "type" : "float", "val" : 0.0, "default" : 1.0 },
+        "magenta" : { "type" : "float", "val" : 0.0, "default" : 1.0 },
+        "yellow" : { "type" : "float", "val" : 0.0, "default" : 1.0 },
+        "green" : { "type" : "float", "val" : 0.0, "default" : 1.0 }
+      },
+      "metadata" : {
+        "angle" : "back",
+        "area" : "1",
+        "color" : "R119"
+      }
+    },
+    "s422" : {
+      "channel" : 36,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R119",
+        "angle" : "back",
+        "area" : "1"
+      }
+    },
+    "par15" : {
+      "channel" : 37,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R349",
+        "angle" : "back left",
+        "area" : "1"
+      }
+    },
+    "par16" : {
+      "channel" : 38,
+      "type" : "Source Four PAR",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R21",
+        "angle" : "back left",
+        "area" : "1"
+      }
+    },
+    "s423" : {
+      "channel" : 39,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R119",
+        "angle" : "mid side left",
+        "area" : "1"
+      }
+    },
+    "s424" : {
+      "channel" : 40,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R119",
+        "angle" : "shin side left",
+        "area" : "1"
+      }
+    },
+    "upperCyc" : {
+      "_comment" : "Note that this really only works since the patch has them in consecutive circuits",
+      "channel" : 41,
+      "type" : "L&E Mini-Strip",
+      "parameters" : {
+        "color1" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "color2" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "color3" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color1" : "R124",
+        "color2" : "R125",
+        "color3" : "R126",
+        "area" : "upper cyc"
+      }
+    },
+    "lowerCyc" : {
+      "channel" : 46,
+      "type" : "L&E Mini-Strip",
+      "parameters" : {
+        "color1" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "color2" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "color3" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color1" : "R124",
+        "color2" : "R125",
+        "color3" : "R126",
+        "area" : "lower cyc"
+      }
+    },
+    "rover1" : {
+      "_comment" : "would have to specify metadata during runtime since position changes for these",
+      "channel" : 51,
+      "type" : "Generic Dimmer",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
       "metadata" : { }
+    },
+    "rover2" : {
+      "channel" : 52,
+      "type" : "Generic Dimmer",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : { }
+    },
+    "rover3" : {
+      "channel" : 53,
+      "type" : "Generic Dimmer",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : { }
+    },
+    "rover4" : {
+      "channel" : 54,
+      "type" : "Generic Dimmer",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : { }
+    },
+    "s4LED1" : {
+      "channel" : 61,
+      "type" : "ETC Source Four Lustr+",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "red" : { "type" : "float", "val" : 1.0, "default" : 1.0 },
+        "amber" : { "type" : "float", "val" : 1.0, "default" : 1.0 },
+        "green" : { "type" : "float", "val" : 1.0, "default" : 1.0 },
+        "cyan" : { "type" : "float", "val" : 1.0, "default" : 1.0 },
+        "blue" : { "type" : "float", "val" : 1.0, "default" : 1.0 },
+        "indigo" : { "type" : "float", "val" : 1.0, "default" : 1.0 },
+        "white" : { "type" : "float", "val" : 1.0, "default" : 1.0 }
+      },
+      "metadata" : {
+        "angle" : "front right",
+        "area" : "2",
+        "color" : "R119"
+      }
+    },
+    "s4LED2" : {
+      "channel" : 62,
+      "type" : "ETC Source Four Lustr+",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "red" : { "type" : "float", "val" : 1.0, "default" : 1.0 },
+        "amber" : { "type" : "float", "val" : 1.0, "default" : 1.0 },
+        "green" : { "type" : "float", "val" : 1.0, "default" : 1.0 },
+        "cyan" : { "type" : "float", "val" : 1.0, "default" : 1.0 },
+        "blue" : { "type" : "float", "val" : 1.0, "default" : 1.0 },
+        "indigo" : { "type" : "float", "val" : 1.0, "default" : 1.0 },
+        "white" : { "type" : "float", "val" : 1.0, "default" : 1.0 }
+      },
+      "metadata" : {
+        "angle" : "front right",
+        "area" : "1",
+        "color" : "R119"
+      }
     }
   },
   "patches" : {
@@ -58,17 +634,79 @@
         "dimmer" : {
           "intensity" : [ 0,  "FLOAT_TO_SINGLE" ]
         },
+        "strip" : {
+          "color1" : [ 0,  "FLOAT_TO_SINGLE" ],
+          "color2" : [ 1,  "FLOAT_TO_SINGLE" ],
+          "color3" : [ 2,  "FLOAT_TO_SINGLE" ]
+        },
         "seachanger" : {
           "cyan" : [ 0, "FLOAT_TO_SINGLE" ],
           "magenta" : [ 1, "FLOAT_TO_SINGLE" ],
           "yellow" : [ 2, "FLOAT_TO_SINGLE" ],
           "green" : [ 3, "FLOAT_TO_SINGLE" ]
+        },
+        "Lustr+" : {
+          "intensity" : [ 7, "FLOAT_TO_SINGLE" ],
+          "red" : [ 0, "FLOAT_TO_SINGLE" ],
+          "amber" : [ 1, "FLOAT_TO_SINGLE" ],
+          "green" : [ 2, "FLOAT_TO_SINGLE" ],
+          "cyan" : [ 3, "FLOAT_TO_SINGLE" ],
+          "blue" : [ 4, "FLOAT_TO_SINGLE" ],
+          "indigo" : [ 5, "FLOAT_TO_SINGLE" ],
+          "white" : [ 6, "FLOAT_TO_SINGLE" ]
         }
       },
       "devicePatch" : {
-        "test" : { "mapType" : "dimmer", "addr" : 0, "universe" : 0 },
-        "Seachanger1.1" : { "mapType" : "dimmer", "addr" : 6, "universe" : 0 },
-        "Seachanger1.2" : { "mapType" : "seachanger", "addr" : 109, "universe" : 1 }
+        "s41" : { "mapType" : "dimmer", "addr" : 0, "universe" : 0 },
+        "par1" : { "mapType" : "dimmer", "addr" : 1, "universe" : 0 },
+        "s42" : { "mapType" : "dimmer", "addr" : 2, "universe" : 0 },
+        "par2" : { "mapType" : "dimmer", "addr" : 3, "universe" : 0 },
+        "s43" : { "mapType" : "dimmer", "addr" : 4, "universe" : 0 },
+        "par3" : { "mapType" : "dimmer", "addr" : 5, "universe" : 0 },
+        "s44" : { "mapType" : "dimmer", "addr" : 38, "universe" : 0 },
+        "s45" : { "mapType" : "dimmer", "addr" : 39, "universe" : 0 },
+        "s46" : { "mapType" : "dimmer", "addr" : 9, "universe" : 0 },
+        "s47" : { "mapType" : "dimmer", "addr" : 11, "universe" : 0 },
+        "s48" : { "mapType" : "dimmer", "addr" : 7, "universe" : 0 },
+        "par4" : { "mapType" : "dimmer", "addr" : 18, "universe" : 0 },
+        "par5" : { "mapType" : "dimmer", "addr" : 25, "universe" : 0 },
+        "par6" : { "mapType" : "dimmer", "addr" : 25, "universe" : 0 },
+        "s49" : { "mapType" : "dimmer", "addr" : 6, "universe" : 0 },
+        "s49_seachanger" : { "mapType" : "seachanger", "addr" : 109, "universe" : 1 },
+        "s410" : { "mapType" : "dimmer", "addr" : 8, "universe" : 0 },
+        "par7" : { "mapType" : "dimmer", "addr" : 26, "universe" : 0 },
+        "par8" : { "mapType" : "dimmer", "addr" : 26, "universe" : 0 },
+        "s411" : { "mapType" : "dimmer", "addr" : 41, "universe" : 0 },
+        "s412" : { "mapType" : "dimmer", "addr" : 40, "universe" : 0 },
+        "s413" : { "mapType" : "dimmer", "addr" : 12, "universe" : 0 },
+        "par9" : { "mapType" : "dimmer", "addr" : 13, "universe" : 0 },
+        "s414" : { "mapType" : "dimmer", "addr" : 14, "universe" : 0 },
+        "par10" : { "mapType" : "dimmer", "addr" : 15, "universe" : 0 },
+        "s415" : { "mapType" : "dimmer", "addr" : 16, "universe" : 0 },
+        "par11" : { "mapType" : "dimmer", "addr" : 17, "universe" : 0 },
+        "s416" : { "mapType" : "dimmer", "addr" : 10, "universe" : 0 },
+        "s417" : { "mapType" : "dimmer", "addr" : 19, "universe" : 0 },
+        "s418" : { "mapType" : "dimmer", "addr" : 20, "universe" : 0 },
+        "s419" : { "mapType" : "dimmer", "addr" : 21, "universe" : 0 },
+        "s420" : { "mapType" : "dimmer", "addr" : 22, "universe" : 0 },
+        "par12" : { "mapType" : "dimmer", "addr" : 23, "universe" : 0 },
+        "par13" : { "mapType" : "dimmer", "addr" : 27, "universe" : 0 },
+        "par14" : { "mapType" : "dimmer", "addr" : 27, "universe" : 0 },
+        "s421" : { "mapType" : "dimmer", "addr" : 29, "universe" : 0 },
+        "s421_seachanger" : { "mapType" : "seachanger", "addr" : 119, "universe" : 1 },
+        "s422" : { "mapType" : "dimmer", "addr" : 28, "universe" : 0 },
+        "par15" : { "mapType" : "dimmer", "addr" : 24, "universe" : 0 },
+        "par16" : { "mapType" : "dimmer", "addr" : 24, "universe" : 0 },
+        "s423" : { "mapType" : "dimmer", "addr" : 30, "universe" : 0 },
+        "s424" : { "mapType" : "dimmer", "addr" : 34, "universe" : 0 },
+        "upperCyc" : { "mapType" : "strip", "addr" : 42, "universe" : 0 },
+        "lowerCyc" : { "mapType" : "strip", "addr" : 46, "universe" : 0 },
+        "rover1" : { "mapType" : "dimmer", "addr" : 35, "universe" : 0 },
+        "rover2" : { "mapType" : "dimmer", "addr" : 31, "universe" : 0 },
+        "rover3" : { "mapType" : "dimmer", "addr" : 36, "universe" : 0 },
+        "rover4" : { "mapType" : "dimmer", "addr" : 37, "universe" : 0 },
+        "s4LED1" : { "mapType" : "Lustr+", "addr" : 99, "universe" : 1 },
+        "s4LED2" : { "mapType" : "Lustr+", "addr" : 189, "universe" : 1 }
       }
     }
   }
