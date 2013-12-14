@@ -11,7 +11,7 @@
 
 #include "Logger.h"
 #include "OpenLLType.h"
-#include "OpenLLFloat.h"
+#include "types/OpenLLFloat.h"
 #include "../lib/libjson/libjson.h"
 using namespace std;
 

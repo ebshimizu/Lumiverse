@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "Patch.h"
+#include "../Patch.h"
 #include "DMXDevicePatch.h"
 #include "DMXInterface.h"
 #include "DMXPro2Interface.h"

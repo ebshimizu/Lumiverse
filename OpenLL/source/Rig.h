@@ -11,7 +11,7 @@
 #include <set>
 
 #include "Patch.h"
-#include "DMXPatch.h"
+#include "DMX/DMXPatch.h"
 #include "Device.h"
 #include "Logger.h"
 #include "DeviceSet.h"

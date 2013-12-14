@@ -2,7 +2,7 @@
 #define _DMXDEVICEPATCH_H_
 
 #pragma once
-#include "Device.h"
+#include "../Device.h"
 #include <sstream>
 
 // Enumeration maps to a function that performs the appropriate conversion

@@ -1,5 +1,5 @@
 #include "pro_driver.h"
-#include "Device.h"
+#include "../Device.h"
 
 //// old school globals
 DMXUSBPROParamsType PRO_Params;

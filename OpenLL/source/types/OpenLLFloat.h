@@ -2,7 +2,7 @@
 #define _OPENLLFLOAT_H_
 #pragma once
 
-#include "OpenLLType.h"
+#include "../OpenLLType.h"
 #include <string>
 
 // Defines a float in OpenLL

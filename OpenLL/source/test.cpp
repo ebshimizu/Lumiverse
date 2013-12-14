@@ -4,9 +4,9 @@
 #include "Rig.h"
 #include "DeviceSet.h"
 
-#include "DMXInterface.h"
-#include "DMXPro2Interface.h"
-#include "DMXPatch.h"
+#include "DMX/DMXInterface.h"
+#include "DMX/DMXPro2Interface.h"
+#include "DMX/DMXPatch.h"
 using namespace std;
 
 int main(int argc, char**argv) {
