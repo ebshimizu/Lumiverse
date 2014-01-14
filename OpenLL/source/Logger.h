@@ -27,6 +27,12 @@ namespace Logger {
   // Set the logging level
   static unsigned int logLevel = 0;
   
+  // Log file, if specified.
+  static ofstream logFile;
+
+  // Opens a log file for writing to instead of writing to stdout
+  void setLogFile(string name);
+
   // Sticks the current time and date into a string.
   string printTime();
 

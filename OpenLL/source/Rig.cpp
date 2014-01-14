@@ -254,6 +254,10 @@ Device* Rig::operator[](string id) {
   return getDevice(id);
 }
 
+DeviceSet Rig::operator[](unsigned int channel) {
+  return getChannel(channel);
+}
+
 DeviceSet Rig::getAllDevices() {
   return DeviceSet(this, m_devices);
 }
@@ -261,6 +265,11 @@ DeviceSet Rig::getAllDevices() {
 DeviceSet Rig::getChannel(unsigned int channel) {
   DeviceSet working(this);
   return working.add(channel);
+}
+
+DeviceSet Rig::getChannel(unsigned int lower, unsigned int upper) {
+  DeviceSet working(this);
+  return working.add(lower, upper);
 }
 
 DeviceSet Rig::getDevices(string key, string val, bool isEqual) {

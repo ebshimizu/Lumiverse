@@ -12,6 +12,21 @@
 
 class Rig;
 
+// Notes on a query syntax that's more easily readable:
+// -strings with no special characters are treated as IDs
+// -#[number] is treated as a channel number: #14 (channel 14)
+// -#[number]-[number] is a range: #10-20 (channels 10-20)
+// -@parameter=value selects all devices where the parameter is equal to value
+// --@parameter= syntax also handles >=, <=, <, > for numeric types. It'll compare strings but might have odd results
+// --@parameter= corresponds to openLL types, so might get a bit weird
+// -$metadata=value selects all devices where the metadata parameter is equal to value
+// --$metadata is similar to jquery and accepts |= (prefix), *= (contains), ~= (contains word), $= (ends with), ^= (starts with), 
+// -@ and $ filters can be placed after channel ranges or ids with [] to further filter: #10-20[$color=R80]
+// -![selector] is everything that's not the selector: !id1 (all devices that aren't id1)
+// -Multiple selectors can be combined with a ,: $color=R80,$angle=front
+// -Selectors can be grouped with []: [id1,id2,id3,id4][$color=R80] (selects the lights that have color R80 within the group specified previously)
+
+
 // A DeviceSet is a set of devices. More specifically, the set resulting
 // from a particular query or series of filtering operations.
 // These devices can be manupulated by setting properties as a group,
@@ -39,10 +54,17 @@ public:
   // Destructor woo
   ~DeviceSet();
 
+  // Main function to select devices from a rig. Follows specific syntax rules. See
+  // the implementation for syntax details.
+  DeviceSet select(string selector);
+
   // Adds a device to the set. Overloads for other common additions.
   DeviceSet add(Device* device);
   DeviceSet add(string id);
   DeviceSet add(unsigned int channel);
+
+  // Adds a group of devices based on inclusive channel range
+  DeviceSet add(unsigned int lower, unsigned int upper);
 
   // Adds devices based on metadata. isEqual determines if a device should be
   // added if the values are equal/not equal
@@ -52,6 +74,9 @@ public:
   DeviceSet remove(Device* device);
   DeviceSet remove(string id);
   DeviceSet remove(unsigned int channel);
+
+  // Removes a group of devices based on inclusive channel range
+  DeviceSet remove(unsigned int lower, unsigned int upper);
 
   // Filters out devices matching/not matching a particular metadata key.
   DeviceSet remove(string key, string val, bool isEqual);

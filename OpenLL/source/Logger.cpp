@@ -1,6 +1,10 @@
 #include "Logger.h"
 
 namespace Logger {
+  void setLogFile(string name) {
+    logFile.open(name, ios::out | ios::app);
+  }
+
   // Sticks the current time and date into a string.
   string printTime() {
     time_t now = time(0);
@@ -29,7 +33,12 @@ namespace Logger {
     if ((unsigned int)level >= logLevel) {
 
       // TODO: Change to configurable file output or something
-      cout << "[" << printLevel(level) << "]\t" << printTime() << " " << message << "\n";
+      if (logFile.is_open()) {
+        logFile << "[" << printLevel(level) << "]\t" << printTime() << " " << message << "\n";
+      }
+      else {
+        cout << "[" << printLevel(level) << "]\t" << printTime() << " " << message << "\n";
+      }
     }
   }
 };

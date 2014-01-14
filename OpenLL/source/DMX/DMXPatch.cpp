@@ -158,7 +158,12 @@ void DMXPatch::update(set<Device *> devices) {
 
 void DMXPatch::init() {
   for (auto& iface : m_interfaces) {
-    iface.second->init();
+    try {
+      iface.second->init();
+    }
+    catch (exception e) {
+      Logger::log(LOG_LEVEL::ERR, e.what());
+    }
   }
 }
 

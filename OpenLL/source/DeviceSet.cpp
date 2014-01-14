@@ -17,6 +17,12 @@ DeviceSet::~DeviceSet() {
   // Nothing for now
 }
 
+DeviceSet DeviceSet::select(string selector) {
+  // Select a group of ids \[?([^\]\[]+)\]? - after this will need to parse
+  // Metadata selector (may need to be more general at some point) \[\$([\w\d\-]+)([\|\*~\$\^]?[=])([\w\d\-]+)\]
+
+}
+
 DeviceSet DeviceSet::add(Device* device) {
   DeviceSet newSet(*this);
   newSet.addDevice(device);
@@ -34,6 +40,19 @@ DeviceSet DeviceSet::add(unsigned int channel) {
   auto range = m_rig->m_devicesByChannel.equal_range(channel);
   for (auto it = range.first; it != range.second; it++) {
     newSet.addDevice(it->second);
+  }
+
+  return newSet;
+}
+
+DeviceSet DeviceSet::add(unsigned int lower, unsigned int upper) {
+  DeviceSet newSet(*this);
+  
+  for (unsigned int i = lower; i <= upper; i++) {
+    auto range = m_rig->m_devicesByChannel.equal_range(i);
+    for (auto it = range.first; it != range.second; it++) {
+      newSet.addDevice(it->second);
+    }
   }
 
   return newSet;
@@ -70,6 +89,19 @@ DeviceSet DeviceSet::remove(unsigned int channel) {
   auto range = m_rig->m_devicesByChannel.equal_range(channel);
   for (auto it = range.first; it != range.second; it++) {
     newSet.removeDevice(it->second);
+  }
+
+  return newSet;
+}
+
+DeviceSet DeviceSet::remove(unsigned int lower, unsigned int upper) {
+  DeviceSet newSet(*this);
+
+  for (unsigned int i = lower; i <= upper; i++) {
+    auto range = m_rig->m_devicesByChannel.equal_range(i);
+    for (auto it = range.first; it != range.second; it++) {
+      newSet.removeDevice(it->second);
+    }
   }
 
   return newSet;

@@ -10,17 +10,30 @@
 using namespace std;
 
 int main(int argc, char**argv) {
+  //Logger::setLogFile("OLLlog.txt");
+  
   Rig rig("C:/Users/Falindrith/Dropbox/College_Senior/52401/code/OpenLL/OpenLL/data/testRig.json");
 
   // TODO: (roughly in order of importance)
-  // -Sample command line control system
+  // -Sample command line control
   // -Color Mixing and other types
   // -Saving rigs
   // -Robust file reads
 
+  // In OpenLL FX
+  // -Presets
+  // -Named Groups
+  // -Cues / timeline
+
   // Init rig
+
   rig.init();
   rig.run();
+
+  DeviceSet channelRange = rig.getChannel(1, 10);
+  channelRange = channelRange.remove(5, 7);
+
+  _getch();
 
   // get all devices that aren't in a back angle
   DeviceSet myDevices = rig.getAllDevices().remove("angle", "back", false);

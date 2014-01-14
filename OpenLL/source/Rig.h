@@ -83,6 +83,9 @@ public:
   // Shorthand for getDevice(string)
   Device* operator[](string id);
 
+  // shorthand for getChannel(unsigned int channel);
+  DeviceSet operator[](unsigned int channel);
+
   // Queries. Most everything starts with the creation of a DeviceSet.
   // Detailed filtering happens there, the Rig provides a few convenience functions
   // to get things started.
@@ -92,6 +95,9 @@ public:
 
   // Gets all the devices in a channel
   DeviceSet getChannel(unsigned int channel);
+
+  // Gets a range of channels
+  DeviceSet getChannel(unsigned int lower, unsigned int upper);
 
   // Gets devices by metadata info. isEqual determines if the set consists
   // of all devices that have the same value as val or not.
