@@ -108,6 +108,9 @@ private:
   void loadParams(const JSONNode data);
 
   // Unique identifier for the device.
+  // Note that while you can use any characters you want in this, you really shouldn't
+  // use special characters such as @#$%^=()[]/{} etc.
+  // TODO: This should be built in to the set ID function at some point
   // Uniqueness isn't quite enforceable at the device level.
   string m_id;
 

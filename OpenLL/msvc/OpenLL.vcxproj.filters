@@ -19,6 +19,9 @@
     <Filter Include="DMXPatch">
       <UniqueIdentifier>{9fa4ceff-2d2b-44a3-9d01-b05c9d1b9d86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\types">
+      <UniqueIdentifier>{76459836-54c6-4cdc-bff5-587b5938e246}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\Device.h">
@@ -204,7 +207,7 @@
       <Filter>libjson</Filter>
     </ClCompile>
     <ClCompile Include="..\source\types\OpenLLFloat.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\types</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -5,27 +5,13 @@
 
 #include <sstream>
 #include <set>
+#include <regex>
 
 #include "Logger.h"
 #include "Device.h"
 #include "Rig.h"
 
 class Rig;
-
-// Notes on a query syntax that's more easily readable:
-// -strings with no special characters are treated as IDs
-// -#[number] is treated as a channel number: #14 (channel 14)
-// -#[number]-[number] is a range: #10-20 (channels 10-20)
-// -@parameter=value selects all devices where the parameter is equal to value
-// --@parameter= syntax also handles >=, <=, <, > for numeric types. It'll compare strings but might have odd results
-// --@parameter= corresponds to openLL types, so might get a bit weird
-// -$metadata=value selects all devices where the metadata parameter is equal to value
-// --$metadata is similar to jquery and accepts |= (prefix), *= (contains), ~= (contains word), $= (ends with), ^= (starts with), 
-// -@ and $ filters can be placed after channel ranges or ids with [] to further filter: #10-20[$color=R80]
-// -![selector] is everything that's not the selector: !id1 (all devices that aren't id1)
-// -Multiple selectors can be combined with a ,: $color=R80,$angle=front
-// -Selectors can be grouped with []: [id1,id2,id3,id4][$color=R80] (selects the lights that have color R80 within the group specified previously)
-
 
 // A DeviceSet is a set of devices. More specifically, the set resulting
 // from a particular query or series of filtering operations.
@@ -39,6 +25,8 @@ class Rig;
 // it does allow for the construction of a query history and saving of
 // that query during any point of its construction. This history is currently
 // not saved, but may in the future be part of this class.
+// Alternately, DeviceSets can be constructed from concise queries: 
+// https://bitbucket.org/falindrith/openll/wiki/Query%20Syntax%20Notes
 class DeviceSet
 {
 public:
@@ -49,15 +37,35 @@ public:
   DeviceSet(Rig* rig, set<Device *> devices);
 
   // Copy Constructor
-  DeviceSet(DeviceSet& dc);
+  DeviceSet(const DeviceSet& dc);
 
   // Destructor woo
   ~DeviceSet();
+
+  // string override
+  std::ostream & operator<< (std::ostream &str) {
+    str << info();
+    return str;
+  };
 
   // Main function to select devices from a rig. Follows specific syntax rules. See
   // the implementation for syntax details.
   DeviceSet select(string selector);
 
+private:
+  // Grouped here for convenience
+  // Parses a single selector. Redirects to appropriate functions.
+  // Boolean flag determines if selected fixtures are added or subtracted from
+  // the current DeviceSet
+  DeviceSet parseSelector(string selector, bool filter);
+
+  // Processes a metadata selector-
+  DeviceSet parseMetadataSelector(string selector, bool filter);
+
+  // Processes a channel selector
+  DeviceSet parseChannelSelector(string selector, bool filter);
+
+public:
   // Adds a device to the set. Overloads for other common additions.
   DeviceSet add(Device* device);
   DeviceSet add(string id);
@@ -70,6 +78,10 @@ public:
   // added if the values are equal/not equal
   DeviceSet add(string key, string val, bool isEqual);
 
+  // And the regex version of add by popular demand (meaning that I wanted it)
+  // Like the other add, isEqual determines if a device is added on a match or a non-match
+  DeviceSet add(string key, regex val, bool isEqual);
+
   // Removes a device from the set. Overloads for other common removals.
   DeviceSet remove(Device* device);
   DeviceSet remove(string id);
@@ -78,18 +90,24 @@ public:
   // Removes a group of devices based on inclusive channel range
   DeviceSet remove(unsigned int lower, unsigned int upper);
 
-  // Filters out devices matching/not matching a particular metadata key.
+  // Filters out devices matching/not matching a particular metadata value.
   DeviceSet remove(string key, string val, bool isEqual);
 
-  // These are the filters we'll start with. Later we should have
-  // ranged additions (channels 1-10), lists of ids, metadata contains,
-  // metadata doesn't contain, metadata > some value, etc.
+  // Filters out devices matching/not matching a particular metadata value specified by a regex.
+  DeviceSet remove(string key, regex val, bool isEqual);
+
+  // Inverts the selection.
+  DeviceSet invert();
 
   // These must mirror the device setparam functions.
   // This sets the value of a parameter on every device in the group
   // if the parameter already exists in the device (will not add params,
   // just modify).
   void setParam(string param, float val);
+
+  // Returns a string containing info about the DeviceSet.
+  // the heavy lifter of the toString override
+  string info();
 
 private:
   // Adds to the set without returning a new copy.
@@ -99,6 +117,10 @@ private:
   // Removes from the set without returning a new copy.
   // Internal use only.
   void removeDevice(Device* device);
+
+  // Internal set oprations
+  // Equivalent of a union.
+  void addSet(DeviceSet otherSet);
 
   // Set of devices we're currently working with.
   set<Device *> m_workingSet;

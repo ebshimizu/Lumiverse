@@ -8,7 +8,7 @@ DeviceSet::DeviceSet(Rig* rig, set<Device *> devices) : m_rig(rig) {
   m_workingSet = set<Device *>(devices);
 }
 
-DeviceSet::DeviceSet(DeviceSet& dc) {
+DeviceSet::DeviceSet(const DeviceSet& dc) {
   m_workingSet = set<Device *>(dc.m_workingSet);
   m_rig = dc.m_rig;
 }
@@ -18,9 +18,217 @@ DeviceSet::~DeviceSet() {
 }
 
 DeviceSet DeviceSet::select(string selector) {
-  // Select a group of ids \[?([^\]\[]+)\]? - after this will need to parse
-  // Metadata selector (may need to be more general at some point) \[\$([\w\d\-]+)([\|\*~\$\^]?[=])([\w\d\-]+)\]
+  // First step is to split the entire string into groups.
+  vector<string> groups;
 
+  size_t lbracket = selector.find('[', 0);
+  size_t rbracket;
+
+  // If we're not starting with a bracket, that's ok just treat everything before a bracket as a group.
+  if (lbracket != 0) {
+    groups.push_back(selector.substr(0, lbracket));
+  }
+
+  while (lbracket != string::npos) {
+    rbracket = selector.find(']', lbracket);
+
+    if (rbracket == string::npos) {
+      stringstream ss;
+      ss << "Selector parse error: no matching ] for [ in " << selector << " (" << lbracket << ")";
+      Logger::log(LOG_LEVEL::ERR, ss.str());
+    }
+
+    groups.push_back(selector.substr(lbracket + 1, rbracket - lbracket - 1));
+    lbracket = selector.find('[', rbracket);
+  }
+
+  // The first selector is always an add.
+  bool filter = false;
+
+  // Group by group, add devices to the DeviceSet according to the selectors
+  for (string& s : groups) {
+    size_t start = 0;
+    size_t end = 0;
+    vector<DeviceSet> queryResults;
+
+    while (start != string::npos) {
+      // Flag indicating the end of an or section.
+      bool consolidate = true;
+
+      // Skip whitespace
+      while (s[start] == ' ' || s[start] == '\n' || s[start] == '\t') {
+        start++;
+      }
+
+      // Time to handle |
+      end = s.find(',', start);
+
+      // This is only relevant in a filter
+      if (filter) {
+        size_t bar = s.find('|', start);
+        if (bar < end) {
+          end = bar;
+          consolidate = false;
+        }
+      }
+
+      string sel = s.substr(start, end - start);
+      DeviceSet temp = parseSelector(sel, filter);
+
+      // Consolidation step. Either wait until all the or ops have finished
+      // and then consolidate results into one set, or just replace selector result with current
+      // working set.
+      if (!consolidate) {
+        queryResults.push_back(temp);
+      }
+      else {
+        m_workingSet = set<Device*>(temp.m_workingSet);
+
+        for (auto& res : queryResults) {
+          m_workingSet.insert(res.m_workingSet.begin(), res.m_workingSet.end());
+        }
+      }
+
+      start = (end == string::npos) ? end : end + 1;
+    }
+
+    filter = true;
+  }
+
+  return *this;
+}
+
+DeviceSet DeviceSet::parseSelector(string selector, bool filter) {
+  char type;
+  // first check for !
+  type = (selector[0] == '!') ? selector[1] : selector[0];
+
+  // First check for #, @ or $
+  switch (type) {
+    // Channel selector
+    case '#':
+      return parseChannelSelector(selector, filter);
+      break;
+    // Parameter selector
+    case '@':
+      break;
+    // Metadata seletor
+    case '$': 
+      return parseMetadataSelector(selector, filter);
+    // Everything else is an ID
+    default:
+      return (filter) ? remove(m_rig->m_devicesById[selector]) : add(m_rig->m_devicesById[selector]);
+  }
+}
+
+DeviceSet DeviceSet::parseMetadataSelector(string selector, bool filter) {
+  regex metadataRegex("\\$([\\w\\d\\-]+)([\\!\\*~\\$\\^]?[=])(.+)");
+  smatch matches;
+  regex_match(selector, matches, metadataRegex);
+
+  // Matches size is 4 since entire string is the first match
+  if (matches.size() != 4) {
+    stringstream ss;
+    ss << "Selector parse error: invalid metadata selector format: " << selector;
+    Logger::log(LOG_LEVEL::ERR, ss.str());
+  }
+
+  // TODO: Need to implement the !$ metadata selector
+  bool eq = true;
+
+  string metadataKey = matches[1];
+  string op = matches[2];
+  string arg = matches[3];
+  regex testArg;
+
+  switch (op[0]) {
+    // Contains
+    case '*':
+      testArg = regex(".*" + arg + ".*");
+      break;
+    // Ends with
+    case '$':
+      testArg = regex(".*" + arg + "$");
+      break;
+    // Starts with
+    case '^':
+      testArg = regex("^" + arg + ".*");
+      break;
+    // Not equal to
+    case '!':
+      eq = false;
+      testArg = regex(arg);
+      break;
+    // Exactly equal to
+    case '=':
+      // Anything else is same as =
+    default:
+      testArg = regex("^" + arg + "$");
+      break;
+  }
+
+  DeviceSet selected(*this);
+
+  return (filter) ? selected.remove(metadataKey, testArg, !eq) : selected.add(metadataKey, testArg, eq);
+}
+
+DeviceSet DeviceSet::parseChannelSelector(string selector, bool filter) {
+  regex metadataRegex("(!\?)#(\\d+)-\?(\\d*)");
+  smatch matches;
+  regex_match(selector, matches, metadataRegex);
+
+  // Matches size is 4 since entire string is the first match
+  if (matches.size() != 4) {
+    stringstream ss;
+    ss << "Selector parse error: invalid metadata selector format: " << selector;
+    Logger::log(LOG_LEVEL::ERR, ss.str());
+  }
+
+  string invert = matches[1];
+  bool eq = (invert.size() > 0) ? false : true;
+
+  size_t first, second;
+  stringstream(matches[2]) >> first;
+
+  string secondStr = matches[3];
+  if (secondStr.size() > 0) {
+    stringstream(matches[3]) >> second;
+
+    if (first > second) {
+      // Flip channel ranges if the first value is greater than the second value
+      size_t tmp = first;
+      first = second;
+      second = first;
+    }
+  }
+
+  // Non-inverted range
+  if (eq) {
+    if (secondStr.size() == 0) {
+      return (filter) ? this->remove(first) : this->add(first);
+    }
+    else {
+      return (filter) ? this->remove(first, second) : this->add(first, second);
+    }
+  }
+  // Inverted range
+  else {
+    if (secondStr.size() == 0) {
+      size_t lowerEnd = first - 1;
+      size_t upperStart = first + 1;
+      size_t maxChan = m_rig->m_devicesByChannel.rbegin()->first;
+
+      return (filter) ? this->remove(0, lowerEnd).remove(upperStart, maxChan) : this->add(0, lowerEnd).add(upperStart, maxChan);
+    }
+    else
+    {
+      size_t lowerEnd = first - 1;
+      size_t upperStart = second + 1;
+      size_t maxChan = m_rig->m_devicesByChannel.rbegin()->first;
+
+      return (filter) ? this->remove(0, lowerEnd).remove(upperStart, maxChan) : this->add(0, lowerEnd).add(upperStart, maxChan);
+    }
+  }
 }
 
 DeviceSet DeviceSet::add(Device* device) {
@@ -73,6 +281,22 @@ DeviceSet DeviceSet::add(string key, string val, bool isEqual) {
   return newSet;
 }
 
+DeviceSet DeviceSet::add(string key, regex val, bool isEqual) {
+  DeviceSet newSet(*this);
+  smatch matches;
+
+  for (auto d : m_rig->m_devices) {
+    string data;
+    if (d->getMetadata(key, data)) {
+      if (regex_match(data, matches, val) == isEqual) {
+        newSet.addDevice(d);
+      }
+    }
+  }
+
+  return newSet;
+}
+
 DeviceSet DeviceSet::remove(Device* device) {
   DeviceSet newSet(*this);
   newSet.removeDevice(device);
@@ -108,14 +332,22 @@ DeviceSet DeviceSet::remove(unsigned int lower, unsigned int upper) {
 }
 
 DeviceSet DeviceSet::remove(string key, string val, bool isEqual) {
+  return remove(key, regex("^" + val + "$"), isEqual);
+}
+
+DeviceSet DeviceSet::remove(string key, regex val, bool isEqual) {
   DeviceSet newSet(*this);
 
-  for (auto d : m_rig->m_devices) {
+  for (auto d : m_workingSet) {
     string data;
     if (d->getMetadata(key, data)) {
-      if ((data == val) == isEqual) {
+      if (regex_match(data, val) == isEqual) {
         newSet.removeDevice(d);
       }
+    }
+    // reject devices that don't have the desired key.
+    else {
+      newSet.removeDevice(d);
     }
   }
 
@@ -128,6 +360,10 @@ void DeviceSet::addDevice(Device* device) {
 
 void DeviceSet::removeDevice(Device* device) {
   m_workingSet.erase(device);
+}
+
+void DeviceSet::addSet(DeviceSet otherSet) {
+  m_workingSet.insert(otherSet.m_workingSet.begin(), otherSet.m_workingSet.end());
 }
 
 void DeviceSet::setParam(string param, float val) {

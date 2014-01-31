@@ -12,7 +12,7 @@ using namespace std;
 int main(int argc, char**argv) {
   //Logger::setLogFile("OLLlog.txt");
   
-  Rig rig("C:/Users/Falindrith/Dropbox/College_Senior/52401/code/OpenLL/OpenLL/data/testRig.json");
+  Rig rig("E:/Users/falindrith/Dropbox/College_Senior/52401/code/OpenLL/OpenLL/data/testRig.json");
 
   // TODO: (roughly in order of importance)
   // -Sample command line control
@@ -32,6 +32,8 @@ int main(int argc, char**argv) {
 
   DeviceSet channelRange = rig.getChannel(1, 10);
   channelRange = channelRange.remove(5, 7);
+
+  DeviceSet query = rig.query("!#1-20[$color=R02]");
 
   _getch();
 

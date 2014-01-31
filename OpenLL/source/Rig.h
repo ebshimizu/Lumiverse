@@ -83,6 +83,9 @@ public:
   // Shorthand for getDevice(string)
   Device* operator[](string id);
 
+  // This will actually probably replace operator[] at some point, but that point is not now.
+  DeviceSet query(string q);
+
   // shorthand for getChannel(unsigned int channel);
   DeviceSet operator[](unsigned int channel);
 

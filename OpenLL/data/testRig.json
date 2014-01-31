@@ -33,7 +33,7 @@
         "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
       },
       "metadata" : {
-        "color" : "R02",
+        "color" : "L201",
         "angle" : "front",
         "area" : "2"
       }

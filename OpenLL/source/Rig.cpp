@@ -254,6 +254,11 @@ Device* Rig::operator[](string id) {
   return getDevice(id);
 }
 
+DeviceSet Rig::query(string q) {
+  DeviceSet working(this);
+  return working.select(q);
+}
+
 DeviceSet Rig::operator[](unsigned int channel) {
   return getChannel(channel);
 }
