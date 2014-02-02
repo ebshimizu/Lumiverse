@@ -123,12 +123,12 @@ DeviceSet DeviceSet::parseSelector(string selector, bool filter) {
 }
 
 DeviceSet DeviceSet::parseMetadataSelector(string selector, bool filter) {
-  regex metadataRegex("\\$(!\?)([\\w\\d\\-]+)([\\!\\*~\\$\\^]?[=])(.+)");
+  regex metadataRegex("(!\?)\\$([\\w\\d\\-]+)([\\!\\*~\\$\\^]?[=])(.+)");
   smatch matches;
   regex_match(selector, matches, metadataRegex);
 
-  // Matches size is 4 since entire string is the first match
-  if (matches.size() != 4) {
+  // Matches size is 5 since entire string is the first match
+  if (matches.size() != 5) {
     stringstream ss;
     ss << "Selector parse error: invalid metadata selector format: " << selector;
     Logger::log(LOG_LEVEL::ERR, ss.str());
@@ -157,7 +157,7 @@ DeviceSet DeviceSet::parseMetadataSelector(string selector, bool filter) {
       break;
     // Not equal to
     case '!':
-      eq = false;
+      eq = !eq;
       testArg = regex(arg);
       break;
     // Exactly equal to
@@ -168,9 +168,7 @@ DeviceSet DeviceSet::parseMetadataSelector(string selector, bool filter) {
       break;
   }
 
-  DeviceSet selected(*this);
-
-  return (filter) ? selected.remove(metadataKey, testArg, !eq) : selected.add(metadataKey, testArg, eq);
+  return (filter) ? remove(metadataKey, testArg, !eq) : add(metadataKey, testArg, eq);
 }
 
 DeviceSet DeviceSet::parseChannelSelector(string selector, bool filter) {

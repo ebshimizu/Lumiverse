@@ -34,7 +34,7 @@ int main(int argc, char**argv) {
   channelRange = channelRange.remove(5, 7);
   channelRange.setParam("intensity", 1.0f);
 
-  DeviceSet query = rig.query("@intensity<1.0f");
+  DeviceSet query = rig.query("!$color=R80");
 
   _getch();
 
