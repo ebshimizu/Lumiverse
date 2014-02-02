@@ -23,8 +23,6 @@ public:
   // Override for =
   void operator=(float val) { m_val = val; }
 
-  // Override for == (eventually)
-
   // Gets the value
   float getVal() { return m_val; }
 
@@ -41,5 +39,39 @@ private:
   // Default value for this float.
   float m_default;
 };
+
+// Ops ops ops all overloaded woo
+
+// Compares two OpenLLFloats. Uses normal float comparison
+inline bool operator==(OpenLLFloat& a, OpenLLFloat& b) {
+  if (a.getTypeName() != "float" || b.getTypeName() != "float")
+    return false;
+
+  return a.getVal() == b.getVal();
+}
+
+inline bool operator!=(OpenLLFloat& a, OpenLLFloat& b) {
+  return !(a == b);
+}
+
+// OpenLLFloat uses the normal < op for floats.
+inline bool operator<(OpenLLFloat& a, OpenLLFloat& b) {
+  if (a.getTypeName() != "float" || b.getTypeName() != "float")
+    return false;
+
+  return a.getVal() < b.getVal();
+}
+
+inline bool operator>(OpenLLFloat& a, OpenLLFloat& b) {
+  return b < a;
+}
+
+inline bool operator<=(OpenLLFloat& a, OpenLLFloat& b) {
+  return !(a > b);
+}
+
+inline bool operator>=(OpenLLFloat& a, OpenLLFloat b) {
+  return !(a < b);
+}
 
 #endif

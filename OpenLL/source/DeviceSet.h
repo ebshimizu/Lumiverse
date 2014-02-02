@@ -6,6 +6,7 @@
 #include <sstream>
 #include <set>
 #include <regex>
+#include <functional>
 
 #include "Logger.h"
 #include "Device.h"
@@ -65,6 +66,12 @@ private:
   // Processes a channel selector
   DeviceSet parseChannelSelector(string selector, bool filter);
 
+  // Processes a parameter selector
+  DeviceSet parseParameterSelector(string selector, bool filter);
+
+  // Processes a float parameter selector
+  DeviceSet parseFloatParameter(string param, string op, float val, bool filter, bool eq);
+
 public:
   // Adds a device to the set. Overloads for other common additions.
   DeviceSet add(Device* device);
@@ -82,6 +89,9 @@ public:
   // Like the other add, isEqual determines if a device is added on a match or a non-match
   DeviceSet add(string key, regex val, bool isEqual);
 
+  // Adds devices based on a parameter comparison function provided by the caller.
+  DeviceSet add(string key, OpenLLType* val, function<bool(OpenLLType* a, OpenLLType* b)> cmp, bool isEqual);
+
   // Removes a device from the set. Overloads for other common removals.
   DeviceSet remove(Device* device);
   DeviceSet remove(string id);
@@ -95,6 +105,9 @@ public:
 
   // Filters out devices matching/not matching a particular metadata value specified by a regex.
   DeviceSet remove(string key, regex val, bool isEqual);
+
+  // Removes a device based on a parameter comparison function provided by the caller
+  DeviceSet remove(string key, OpenLLType* val, function<bool(OpenLLType* a, OpenLLType* b)> cmp, bool isEqual);
 
   // Inverts the selection.
   DeviceSet invert();

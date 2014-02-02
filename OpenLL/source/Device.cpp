@@ -120,6 +120,14 @@ bool Device::getParam(string param, float& val) {
   return false;
 }
 
+OpenLLType* Device::getParam(string param) {
+  if (m_parameters.count(param) > 0) {
+    return m_parameters[param];
+  }
+
+  return nullptr;
+}
+
 bool Device::setParam(string param, OpenLLType* val) {
   bool ret = false;
 

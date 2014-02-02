@@ -111,6 +111,7 @@ DeviceSet DeviceSet::parseSelector(string selector, bool filter) {
       break;
     // Parameter selector
     case '@':
+      return parseParameterSelector(selector, filter);
       break;
     // Metadata seletor
     case '$': 
@@ -133,7 +134,6 @@ DeviceSet DeviceSet::parseMetadataSelector(string selector, bool filter) {
     Logger::log(LOG_LEVEL::ERR, ss.str());
   }
 
-  // TODO: Need to implement the !$ metadata selector
   bool eq = true;
 
   string metadataKey = matches[1];
@@ -180,7 +180,7 @@ DeviceSet DeviceSet::parseChannelSelector(string selector, bool filter) {
   // Matches size is 4 since entire string is the first match
   if (matches.size() != 4) {
     stringstream ss;
-    ss << "Selector parse error: invalid metadata selector format: " << selector;
+    ss << "Selector parse error: invalid channel selector format: " << selector;
     Logger::log(LOG_LEVEL::ERR, ss.str());
   }
 
@@ -231,6 +231,74 @@ DeviceSet DeviceSet::parseChannelSelector(string selector, bool filter) {
   }
 }
 
+DeviceSet DeviceSet::parseParameterSelector(string selector, bool filter) {
+  // Paramters are special in that we need to know the type of parameter we're filtering
+  // before we can construct the actual query in C++
+
+  // Supported Types: OpenLLFloat
+  regex paramRegex("(!\?)@(\\w+)([><!]\?[><=])(\\d*\\.\?\\d*)([f])");
+  smatch matches;
+  regex_match(selector, matches, paramRegex);
+  
+  // Matches size is 6 since entire string is the first match
+  if (matches.size() != 6) {
+    stringstream ss;
+    ss << "Selector parse error: invalid parameter selector format: " << selector;
+    Logger::log(LOG_LEVEL::ERR, ss.str());
+  }
+
+  string type = matches[5];
+  string invert = matches[1];
+  bool eq = (invert.size() > 0) ? false : true;
+
+  switch (type[0]) {
+    // OpenLLFloat
+    case 'f':
+      float val;
+      stringstream(matches[4]) >> val;
+      return parseFloatParameter(matches[2], matches[3], val, filter, eq);
+    // Error
+    default:
+      stringstream ss;
+      ss << "Selector parse error: invalid parameter selector type: " << type << " in " << selector;
+      Logger::log(LOG_LEVEL::ERR, ss.str());
+      return DeviceSet(*this);
+  }
+}
+
+DeviceSet DeviceSet::parseFloatParameter(string param, string op, float val, bool filter, bool eq) {
+  OpenLLFloat oVal(val);
+  OpenLLType* gVal = (OpenLLType *)(&oVal);
+
+  // There is some serious boxing and unboxing here to make this thing work with multiple types.
+  // Not sure if worth.
+  if (op == "<") {
+    function<bool(OpenLLType* a, OpenLLType* b)> ltFunc = [](OpenLLType* a, OpenLLType* b){ return (*(OpenLLFloat *)a) < (*(OpenLLFloat *)b); };
+    return (filter) ? remove(param, gVal, ltFunc, eq) : add(param, gVal, ltFunc, eq);
+  }
+  if (op == ">") {
+    function<bool(OpenLLType* a, OpenLLType* b)> gtFunc = [](OpenLLType* a, OpenLLType* b){ return (*(OpenLLFloat *)a) > (*(OpenLLFloat *)b); };
+    return (filter) ? remove(param, gVal, gtFunc, eq) : add(param, gVal, gtFunc, eq);
+  }
+  if (op == "<=") {
+    function<bool(OpenLLType* a, OpenLLType* b)> leqFunc = [](OpenLLType* a, OpenLLType* b){ return (*(OpenLLFloat *)a) <= (*(OpenLLFloat *)b); };
+    return (filter) ? remove(param, gVal, leqFunc, eq) : add(param, gVal, leqFunc, eq);
+  }
+  if (op == ">=") {
+    function<bool(OpenLLType* a, OpenLLType* b)> geqFunc = [](OpenLLType* a, OpenLLType* b){ return (*(OpenLLFloat *)a) >= (*(OpenLLFloat *)b); };
+    return (filter) ? remove(param, gVal, geqFunc, eq) : add(param, gVal, geqFunc, eq);
+  }
+  if (op == "!=") {
+    function<bool(OpenLLType* a, OpenLLType* b)> neqFunc = [](OpenLLType* a, OpenLLType* b){ return (*(OpenLLFloat *)a) != (*(OpenLLFloat *)b); };
+    return (filter) ? remove(param, gVal, neqFunc, eq) : add(param, gVal, neqFunc, eq);
+  }
+  // Defaults to =
+  else {
+    function<bool(OpenLLType* a, OpenLLType* b)> eqFunc = [](OpenLLType* a, OpenLLType* b){ return (*(OpenLLFloat *)a) == (*(OpenLLFloat *)b); };
+    return (filter) ? remove(param, gVal, eqFunc, eq) : add(param, gVal, eqFunc, eq);
+  }
+}
+
 DeviceSet DeviceSet::add(Device* device) {
   DeviceSet newSet(*this);
   newSet.addDevice(device);
@@ -267,12 +335,16 @@ DeviceSet DeviceSet::add(unsigned int lower, unsigned int upper) {
 }
 
 DeviceSet DeviceSet::add(string key, string val, bool isEqual) {
+  return add(key, regex("^" + val + "$"), isEqual);
+}
+
+DeviceSet DeviceSet::add(string key, regex val, bool isEqual) {
   DeviceSet newSet(*this);
 
   for (auto d : m_rig->m_devices) {
     string data;
     if (d->getMetadata(key, data)) {
-      if ((data == val) == isEqual) {
+      if (regex_match(data, val) == isEqual) {
         newSet.addDevice(d);
       }
     }
@@ -281,14 +353,13 @@ DeviceSet DeviceSet::add(string key, string val, bool isEqual) {
   return newSet;
 }
 
-DeviceSet DeviceSet::add(string key, regex val, bool isEqual) {
+DeviceSet DeviceSet::add(string key, OpenLLType* val, function<bool(OpenLLType* a, OpenLLType* b)> cmp, bool isEqual) {
   DeviceSet newSet(*this);
-  smatch matches;
 
   for (auto d : m_rig->m_devices) {
-    string data;
-    if (d->getMetadata(key, data)) {
-      if (regex_match(data, matches, val) == isEqual) {
+    OpenLLType* data = d->getParam(key);
+    if (data != nullptr) {
+      if (cmp(data, val) == isEqual) {
         newSet.addDevice(d);
       }
     }
@@ -342,6 +413,25 @@ DeviceSet DeviceSet::remove(string key, regex val, bool isEqual) {
     string data;
     if (d->getMetadata(key, data)) {
       if (regex_match(data, val) == isEqual) {
+        newSet.removeDevice(d);
+      }
+    }
+    // reject devices that don't have the desired key.
+    else {
+      newSet.removeDevice(d);
+    }
+  }
+
+  return newSet;
+}
+
+DeviceSet DeviceSet::remove(string key, OpenLLType* val, function<bool(OpenLLType* a, OpenLLType* b)> cmp, bool isEqual) {
+  DeviceSet newSet(*this);
+
+  for (auto d : m_workingSet) {
+    OpenLLType* data = d->getParam(key);
+    if (data != nullptr) {
+      if (cmp(data, val) == isEqual) {
         newSet.removeDevice(d);
       }
     }

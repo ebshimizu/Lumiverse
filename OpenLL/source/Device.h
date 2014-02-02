@@ -48,6 +48,9 @@ public:
   // Gets a parameter value. Returns false if no parameter with the given name exists.
   // Returns true with the parameter value in val if successful.
   bool getParam(string param, float& val);
+
+  // Returns a pointer to the raw OpenLLType data associated with a parameter
+  OpenLLType* getParam(string param);
   
   // Sets a parameter and returns true if parameter changed does not exist prior to set.
   // Can give arbitrary data with this overload.
