@@ -123,7 +123,7 @@ DeviceSet DeviceSet::parseSelector(string selector, bool filter) {
 }
 
 DeviceSet DeviceSet::parseMetadataSelector(string selector, bool filter) {
-  regex metadataRegex("\\$([\\w\\d\\-]+)([\\!\\*~\\$\\^]?[=])(.+)");
+  regex metadataRegex("\\$(!\?)([\\w\\d\\-]+)([\\!\\*~\\$\\^]?[=])(.+)");
   smatch matches;
   regex_match(selector, matches, metadataRegex);
 
@@ -134,11 +134,12 @@ DeviceSet DeviceSet::parseMetadataSelector(string selector, bool filter) {
     Logger::log(LOG_LEVEL::ERR, ss.str());
   }
 
-  bool eq = true;
+  string invert = matches[1];
+  bool eq = (invert.size() > 0) ? false : true;
 
-  string metadataKey = matches[1];
-  string op = matches[2];
-  string arg = matches[3];
+  string metadataKey = matches[2];
+  string op = matches[3];
+  string arg = matches[4];
   regex testArg;
 
   switch (op[0]) {
