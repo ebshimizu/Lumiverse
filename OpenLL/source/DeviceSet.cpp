@@ -462,3 +462,18 @@ void DeviceSet::setParam(string param, float val) {
     }
   }
 }
+
+string DeviceSet::info() {
+  stringstream ss;
+
+  ss << "Device set contains " << size() << " devices.\n";
+  ss << "IDs: ";
+
+  bool first = true;
+  for (auto& d : m_workingSet) {
+    ss << ((first) ? "" : ", ") << d->getId();
+    first = false;
+  }
+
+  return ss.str();
+}

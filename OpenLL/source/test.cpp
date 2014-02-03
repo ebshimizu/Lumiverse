@@ -32,7 +32,7 @@ int main(int argc, char**argv) {
 
   // Loop for stuff
   cout << "Lumiverse Test Command Line\n";
-  cout << "Available commands: select [query], set [parameter]=[value], info [device id]\n";
+  cout << "Available commands: select [query], set [parameter]=[value], info [device id], info selected\n";
   cout << "Only floating point parameters are currently supported.\n";
   DeviceSet current;
   
@@ -46,6 +46,9 @@ int main(int argc, char**argv) {
       current = rig.query(input.substr(7));
 
       cout << "Query returned " << current.size() << " devices.\n";
+    }
+    else if (input.substr(0, 13) == "info selected") {
+      cout << current.info() << "\n";
     }
     else if (input.substr(0, 5) == "info ") {
       string id = input.substr(5);
