@@ -34,6 +34,12 @@ public:
   // Destructor. Obviously.
   ~Device();
 
+  // string override
+  std::ostream & operator<< (std::ostream &str) {
+    str << toString();
+    return str;
+  };
+
   // Accessors for id
   string getId() { return m_id; }
 
@@ -94,6 +100,13 @@ public:
   // Gets list of metadata keys the device has values for.
   vector<string> getMetadataKeyNames();
 
+  // Converts the device into a string.
+  // Data will be output in JSON format
+  string toString();
+
+  // Converts the device to a JSONNode.
+  JSONNode toJSON();
+
 private:
   // Note that this is private because changing the unique ID after creation
   // can lead to a number of unintended side effects (DMX patch doesn't work,
@@ -109,6 +122,12 @@ private:
 
   // Loads the parameters of the device from JSON data.
   void loadParams(const JSONNode data);
+
+  // Serializes the parameters into a JSON node
+  JSONNode parametersToJSON();
+
+  // Serializes the metadata to a JSON node
+  JSONNode metadataToJSON();
 
   // Unique identifier for the device.
   // Note that while you can use any characters you want in this, you really shouldn't

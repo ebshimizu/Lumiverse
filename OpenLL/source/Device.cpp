@@ -15,96 +15,6 @@ Device::Device(string id, const JSONNode data) {
   loadJSON(data);
 }
 
-void Device::loadJSON(const JSONNode data) {
-  JSONNode::const_iterator i = data.begin();
-
-  // for this we want to iterate through all children and have the device class
-  // parse the sub-element.
-  while (i != data.end()){
-    // get the node name and value as a string
-    std::string nodeName = i->name();
-
-    if (nodeName == "channel") {
-      m_channel = i->as_int();
-    }
-    else if (nodeName == "type") {
-      m_type = i->as_string();
-    }
-    else if (nodeName == "parameters") {
-      loadParams(*i);
-    }
-    else if (nodeName == "metadata") {
-      JSONNode metaData = *i;
-
-      auto meta = metaData.begin();
-      while (meta != metaData.end()) {
-        setMetadata(meta->name(), meta->as_string());
-        ++meta;
-      }
-    }
-    else {
-      stringstream ss;
-      ss << "Unknown child " << nodeName << " found in " << m_id;
-      Logger::log(LOG_LEVEL::WARN, ss.str());
-    }
-
-    //increment the iterator
-    ++i;
-  }
-
-  stringstream ss;
-  ss << "Loaded " << m_type << " Device " << m_id << " (Channel " << m_channel << ")";
-  Logger::log(LOG_LEVEL::INFO, ss.str());
-}
-
-void Device::loadParams(const JSONNode data) {
-  JSONNode::const_iterator i = data.begin();
-
-  while (i != data.end()){
-    bool err = false;
-
-    // get the node name and value as a string
-    std::string paramName = i->name();
-
-    // Go into the child node that has all the param data
-    JSONNode paramData = *i;
-
-    auto type = paramData.find("type");
-    if (type != paramData.end()) {
-      // TODO: Currently the only supported OpenLLType is float
-      if (type->as_string() == "float") {
-        auto valNode = paramData.find("val");
-        auto defNode = paramData.find("default");
-
-        if (valNode != paramData.end() && defNode != paramData.end()) {
-          OpenLLFloat* param = new OpenLLFloat(valNode->as_float(), defNode->as_float());
-          setParam(paramName, (OpenLLType*) param);
-        }
-        else {
-          err = true;
-        }
-      }
-      else {
-        stringstream ss;
-        ss << "Unsupported type " << type->as_string() << " in " << paramName << " in " << m_id << ". Parameter not set.";
-        Logger::log(LOG_LEVEL::WARN, ss.str());
-      }
-    }
-    else {
-      err = true;
-    }
-
-    if (err) {
-      stringstream ss;
-      ss << "Invalid format for paramter " << paramName << " in " << m_id << ". Parameter not set.";
-      Logger::log(LOG_LEVEL::WARN, ss.str());
-    }
-
-    //increment the iterator
-    ++i;
-  }
-}
-
 Device::~Device() {
   for (auto& kv : m_parameters) {
     delete kv.second;
@@ -216,4 +126,142 @@ vector<string> Device::getMetadataKeyNames() {
   }
 
   return keys;
+}
+
+string Device::toString() {
+  JSONNode dev = toJSON();
+
+  string out = dev.write_formatted();
+  return out;
+}
+
+JSONNode Device::toJSON() {
+  JSONNode root;
+
+  // Set node name to id.
+  root.set_name(m_id);
+
+  // Add the device's properties
+  root.push_back(JSONNode("channel", m_channel));
+  root.push_back(JSONNode("type", m_type));
+
+  // Add the parameters
+  root.push_back(parametersToJSON());
+
+  // Add the metadata
+  root.push_back(metadataToJSON());
+
+  return root;
+}
+
+JSONNode Device::parametersToJSON() {
+  JSONNode params;
+  params.set_name("parameters");
+
+  for (auto& p : m_parameters) {
+    params.push_back(p.second->toJSON(p.first));
+  }
+
+  return params;
+}
+
+JSONNode Device::metadataToJSON() {
+  JSONNode metadata;
+  metadata.set_name("metadata");
+
+  for (auto& m : m_metadata) {
+    metadata.push_back(JSONNode(m.first, m.second));
+  }
+
+  return metadata;
+}
+
+void Device::loadJSON(const JSONNode data) {
+  JSONNode::const_iterator i = data.begin();
+
+  // for this we want to iterate through all children and have the device class
+  // parse the sub-element.
+  while (i != data.end()){
+    // get the node name and value as a string
+    std::string nodeName = i->name();
+
+    if (nodeName == "channel") {
+      m_channel = i->as_int();
+    }
+    else if (nodeName == "type") {
+      m_type = i->as_string();
+    }
+    else if (nodeName == "parameters") {
+      loadParams(*i);
+    }
+    else if (nodeName == "metadata") {
+      JSONNode metaData = *i;
+
+      auto meta = metaData.begin();
+      while (meta != metaData.end()) {
+        setMetadata(meta->name(), meta->as_string());
+        ++meta;
+      }
+    }
+    else {
+      stringstream ss;
+      ss << "Unknown child " << nodeName << " found in " << m_id;
+      Logger::log(LOG_LEVEL::WARN, ss.str());
+    }
+
+    //increment the iterator
+    ++i;
+  }
+
+  stringstream ss;
+  ss << "Loaded " << m_type << " Device " << m_id << " (Channel " << m_channel << ")";
+  Logger::log(LOG_LEVEL::INFO, ss.str());
+}
+
+void Device::loadParams(const JSONNode data) {
+  JSONNode::const_iterator i = data.begin();
+
+  while (i != data.end()){
+    bool err = false;
+
+    // get the node name and value as a string
+    std::string paramName = i->name();
+
+    // Go into the child node that has all the param data
+    JSONNode paramData = *i;
+
+    auto type = paramData.find("type");
+    if (type != paramData.end()) {
+      // TODO: Currently the only supported OpenLLType is float
+      if (type->as_string() == "float") {
+        auto valNode = paramData.find("val");
+        auto defNode = paramData.find("default");
+
+        if (valNode != paramData.end() && defNode != paramData.end()) {
+          OpenLLFloat* param = new OpenLLFloat(valNode->as_float(), defNode->as_float());
+          setParam(paramName, (OpenLLType*)param);
+        }
+        else {
+          err = true;
+        }
+      }
+      else {
+        stringstream ss;
+        ss << "Unsupported type " << type->as_string() << " in " << paramName << " in " << m_id << ". Parameter not set.";
+        Logger::log(LOG_LEVEL::WARN, ss.str());
+      }
+    }
+    else {
+      err = true;
+    }
+
+    if (err) {
+      stringstream ss;
+      ss << "Invalid format for paramter " << paramName << " in " << m_id << ". Parameter not set.";
+      Logger::log(LOG_LEVEL::WARN, ss.str());
+    }
+
+    //increment the iterator
+    ++i;
+  }
 }

@@ -31,6 +31,9 @@ public:
 
   // Resets the value to default
   virtual void reset() { m_val = m_default; }
+
+  // Converts a float to a JSON object with specified name.
+  virtual JSONNode toJSON(string name);
   
 private:
   // Um, it's a float.
