@@ -10,7 +10,7 @@
 using namespace std;
 
 int main(int argc, char**argv) {
-  //Logger::setLogFile("OLLlog.txt");
+  Logger::setLogFile("OLLlog.txt");
   
   Rig rig("E:/Users/falindrith/Dropbox/College_Senior/52401/code/OpenLL/OpenLL/data/testRig.json");
 
@@ -30,23 +30,61 @@ int main(int argc, char**argv) {
   rig.init();
   rig.run();
 
-  DeviceSet channelRange = rig.getChannel(1, 10);
-  channelRange = channelRange.remove(5, 7);
-  channelRange.setParam("intensity", 1.0f);
+  // Loop for stuff
+  cout << "Lumiverse Test Command Line\n";
+  cout << "Available commands: select [query], set [parameter]=[value]\n";
+  cout << "Only floating point parameters are currently supported.\n";
+  DeviceSet current;
+  
+  while (1) {
+    cout << ">> ";
 
-  DeviceSet query = rig.query("!$color=R80");
+    string input;
+    getline(cin, input);
 
-  _getch();
+    if (input.substr(0, 7) == "select ") {
+      current = rig.query(input.substr(7));
 
-  // get all devices that aren't in a back angle
-  DeviceSet myDevices = rig.getAllDevices().remove("angle", "back", false);
+      cout << "Query returned " << current.size() << " devices.\n";
+    }
+    else if (input.substr(0, 4) == "set ") {
+      // Can only set float currently
+      regex paramRegex("(\\w+)=(\\d*\\.\?\\d*)([f])");
+      string param = input.substr(4);
+      smatch matches;
 
-  // Do things. Remember that the update loops is only 40Hz and changes aren't instant
-  // in computer time
-  Sleep(100);
-  _getch();
+      regex_match(param, matches, paramRegex);
 
-  rig.getDevices("angle", "front", true).add("angle", "front left", true).add("angle", "front right", true).setParam("intensity", 0.75f);
+      if (matches.size() != 4) {
+        cout << "Invalid set command\n";
+      }
 
-  _getch();
+      string key = matches[1];
+      float val;
+      stringstream(matches[2]) >> val;
+
+      current.setParam(key, val);
+    }
+  }
+
+
+  //DeviceSet channelRange = rig.getChannel(1, 10);
+  //channelRange = channelRange.remove(5, 7);
+  //channelRange.setParam("intensity", 1.0f);
+
+  //DeviceSet query = rig.query("!$color=R80");
+
+  //_getch();
+
+  //// get all devices that aren't in a back angle
+  //DeviceSet myDevices = rig.getAllDevices().remove("angle", "back", false);
+
+  //// Do things. Remember that the update loops is only 40Hz and changes aren't instant
+  //// in computer time
+  //Sleep(100);
+  //_getch();
+
+  //rig.getDevices("angle", "front", true).add("angle", "front left", true).add("angle", "front right", true).setParam("intensity", 0.75f);
+
+  //_getch();
 }

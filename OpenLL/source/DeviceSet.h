@@ -31,6 +31,9 @@ class Rig;
 class DeviceSet
 {
 public:
+  // Constructs a DeviceSet unassociated with a particular Rig
+  DeviceSet() { };
+
   // Constructs an empty set
   DeviceSet(Rig* rig);
 
@@ -121,6 +124,9 @@ public:
   // Returns a string containing info about the DeviceSet.
   // the heavy lifter of the toString override
   string info();
+
+  // Returns the number of devices in the selected set.
+  size_t size() { return m_workingSet.size(); }
 
 private:
   // Adds to the set without returning a new copy.
