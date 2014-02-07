@@ -1,0 +1,4 @@
+// Configruation file for LumiverseDemo project
+
+#define LumiverseDemo_VERSION_MAJOR @LumiverseDemo_VERSION_MAJOR@
+#define LumiverseDemo_VERSION_MINOR @LumiverseDemo_VERSION_MINOR@

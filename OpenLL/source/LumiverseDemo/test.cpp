@@ -1,12 +1,7 @@
 #include <string>
-#include "Device.h"
-#include "Patch.h"
-#include "Rig.h"
-#include "DeviceSet.h"
+#include "LumiverseDemoConfig.h"
+#include "LumiverseCore.h"
 
-#include "DMX/DMXInterface.h"
-#include "DMX/DMXPro2Interface.h"
-#include "DMX/DMXPatch.h"
 using namespace std;
 
 int main(int argc, char**argv) {

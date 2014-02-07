@@ -12,7 +12,7 @@
 #include "Logger.h"
 #include "OpenLLType.h"
 #include "types/OpenLLFloat.h"
-#include "../lib/libjson/libjson.h"
+#include "lib/libjson/libjson.h"
 using namespace std;
 
 // A Device in OpenLL maintains information about a lighting device.

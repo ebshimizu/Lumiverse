@@ -1,0 +1,13 @@
+// Include file for all of LumiverseCore in one conveninent location
+#include "Logger.h"
+#include "Device.h"
+#include "Rig.h"
+#include "DeviceSet.h"
+#include "Patch.h"
+#include "OpenLLType.h"
+#include "types/OpenLLFloat.h"
+#include "DMX/DMXPatch.h"
+#include "DMX/DMXDevicePatch.h"
+#include "DMX/DMXInterface.h"
+#include "DMX/DMXPro2Interface.h"
+#include "lib/libjson/libjson.h"

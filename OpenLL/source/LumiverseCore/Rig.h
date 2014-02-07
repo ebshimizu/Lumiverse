@@ -15,7 +15,7 @@
 #include "Device.h"
 #include "Logger.h"
 #include "DeviceSet.h"
-#include "../lib/libjson/libjson.h"
+#include "lib/libjson/libjson.h"
 
 class DeviceSet;
 

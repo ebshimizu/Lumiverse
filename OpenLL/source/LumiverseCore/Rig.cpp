@@ -1,6 +1,5 @@
 #include "Rig.h"
 
-
 Rig::Rig() {
   m_running = false;
   setRefreshRate(40);
