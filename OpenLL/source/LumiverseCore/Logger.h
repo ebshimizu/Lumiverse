@@ -20,7 +20,7 @@ enum LOG_LEVEL {
   FATAL = 5       // Program's gonna crash now / something really bad happened.
 };
 
-// Logging interface. Just some functions to help control and rout OpenLL 
+// Logging interface. Just some functions to help control and rout Lumiverse 
 // error and status messages
 // Currently this logs to std out. Eventually it will be to a file.
 namespace Logger {

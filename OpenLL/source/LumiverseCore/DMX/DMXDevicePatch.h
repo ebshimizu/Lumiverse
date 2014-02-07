@@ -6,7 +6,7 @@
 #include <sstream>
 
 // Enumeration maps to a function that performs the appropriate conversion
-// from OpenLL value to DMX value.
+// from Lumiverse value to DMX value.
 enum conversionType {
   FLOAT_TO_SINGLE
 };
@@ -62,7 +62,7 @@ public:
   void setBaseAddress(unsigned int newAddress) { m_baseAddress = newAddress; }
 
   // Gets the key for the DMX map this device should use to translate
-  // its OpenLL values to DMX values.
+  // its Lumiverse values to DMX values.
   string getDMXMapKey() { return m_dmxMapKey; }
 
 private:

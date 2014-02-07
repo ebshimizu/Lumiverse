@@ -23,14 +23,14 @@ Device::~Device() {
 
 bool Device::getParam(string param, float& val) {
   if (m_parameters.count(param) > 0) {
-    val = ((OpenLLFloat*)m_parameters[param])->getVal();;
+    val = ((LumiverseFloat*)m_parameters[param])->getVal();;
     return true;
   }
 
   return false;
 }
 
-OpenLLType* Device::getParam(string param) {
+LumiverseType* Device::getParam(string param) {
   if (m_parameters.count(param) > 0) {
     return m_parameters[param];
   }
@@ -38,7 +38,7 @@ OpenLLType* Device::getParam(string param) {
   return nullptr;
 }
 
-bool Device::setParam(string param, OpenLLType* val) {
+bool Device::setParam(string param, LumiverseType* val) {
   bool ret = false;
 
   if (m_parameters.count(param) == 0) {
@@ -55,10 +55,10 @@ bool Device::setParam(string param, float val) {
 
   if (m_parameters.count(param) == 0) {
     ret = true;
-    m_parameters[param] = (OpenLLType*) new OpenLLFloat();
+    m_parameters[param] = (LumiverseType*) new LumiverseFloat();
   }
 
-  *((OpenLLFloat *)m_parameters[param]) = val;
+  *((LumiverseFloat *)m_parameters[param]) = val;
   return ret;
 }
 
@@ -232,14 +232,14 @@ void Device::loadParams(const JSONNode data) {
 
     auto type = paramData.find("type");
     if (type != paramData.end()) {
-      // TODO: Currently the only supported OpenLLType is float
+      // TODO: Currently the only supported LumiverseType is float
       if (type->as_string() == "float") {
         auto valNode = paramData.find("val");
         auto defNode = paramData.find("default");
 
         if (valNode != paramData.end() && defNode != paramData.end()) {
-          OpenLLFloat* param = new OpenLLFloat(valNode->as_float(), defNode->as_float());
-          setParam(paramName, (OpenLLType*)param);
+          LumiverseFloat* param = new LumiverseFloat(valNode->as_float(), defNode->as_float());
+          setParam(paramName, (LumiverseType*)param);
         }
         else {
           err = true;

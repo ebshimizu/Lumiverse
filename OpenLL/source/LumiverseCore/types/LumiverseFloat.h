@@ -1,21 +1,21 @@
-#ifndef _OPENLLFLOAT_H_
-#define _OPENLLFLOAT_H_
+#ifndef _LumiverseFLOAT_H_
+#define _LumiverseFLOAT_H_
 #pragma once
 
-#include "../OpenLLType.h"
+#include "../LumiverseType.h"
 #include <string>
 
-// Defines a float in OpenLL
+// Defines a float in Lumiverse
 // Typically this will range from 0 to 1 inclusive, but it doesn't
 // have to really.
-class OpenLLFloat : OpenLLType
+class LumiverseFloat : LumiverseType
 {
 public:
   // Constructs a float, default value is 0.
-  OpenLLFloat(float val = 0.0f, float def = 0.0f);
+  LumiverseFloat(float val = 0.0f, float def = 0.0f);
 
   // Destroys the float.
-  ~OpenLLFloat();
+  ~LumiverseFloat();
 
   // Says that this object is a float.
   virtual string getTypeName() { return "float"; }
@@ -45,35 +45,35 @@ private:
 
 // Ops ops ops all overloaded woo
 
-// Compares two OpenLLFloats. Uses normal float comparison
-inline bool operator==(OpenLLFloat& a, OpenLLFloat& b) {
+// Compares two LumiverseFloats. Uses normal float comparison
+inline bool operator==(LumiverseFloat& a, LumiverseFloat& b) {
   if (a.getTypeName() != "float" || b.getTypeName() != "float")
     return false;
 
   return a.getVal() == b.getVal();
 }
 
-inline bool operator!=(OpenLLFloat& a, OpenLLFloat& b) {
+inline bool operator!=(LumiverseFloat& a, LumiverseFloat& b) {
   return !(a == b);
 }
 
-// OpenLLFloat uses the normal < op for floats.
-inline bool operator<(OpenLLFloat& a, OpenLLFloat& b) {
+// LumiverseFloat uses the normal < op for floats.
+inline bool operator<(LumiverseFloat& a, LumiverseFloat& b) {
   if (a.getTypeName() != "float" || b.getTypeName() != "float")
     return false;
 
   return a.getVal() < b.getVal();
 }
 
-inline bool operator>(OpenLLFloat& a, OpenLLFloat& b) {
+inline bool operator>(LumiverseFloat& a, LumiverseFloat& b) {
   return b < a;
 }
 
-inline bool operator<=(OpenLLFloat& a, OpenLLFloat& b) {
+inline bool operator<=(LumiverseFloat& a, LumiverseFloat& b) {
   return !(a > b);
 }
 
-inline bool operator>=(OpenLLFloat& a, OpenLLFloat b) {
+inline bool operator>=(LumiverseFloat& a, LumiverseFloat b) {
   return !(a < b);
 }
 

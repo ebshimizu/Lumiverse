@@ -27,7 +27,7 @@ class Rig;
 // that query during any point of its construction. This history is currently
 // not saved, but may in the future be part of this class.
 // Alternately, DeviceSets can be constructed from concise queries: 
-// https://bitbucket.org/falindrith/openll/wiki/Query%20Syntax%20Notes
+// https://bitbucket.org/falindrith/OpenLL/wiki/Query%20Syntax%20Notes
 class DeviceSet
 {
 public:
@@ -93,7 +93,7 @@ public:
   DeviceSet add(string key, regex val, bool isEqual);
 
   // Adds devices based on a parameter comparison function provided by the caller.
-  DeviceSet add(string key, OpenLLType* val, function<bool(OpenLLType* a, OpenLLType* b)> cmp, bool isEqual);
+  DeviceSet add(string key, LumiverseType* val, function<bool(LumiverseType* a, LumiverseType* b)> cmp, bool isEqual);
 
   // Removes a device from the set. Overloads for other common removals.
   DeviceSet remove(Device* device);
@@ -110,7 +110,7 @@ public:
   DeviceSet remove(string key, regex val, bool isEqual);
 
   // Removes a device based on a parameter comparison function provided by the caller
-  DeviceSet remove(string key, OpenLLType* val, function<bool(OpenLLType* a, OpenLLType* b)> cmp, bool isEqual);
+  DeviceSet remove(string key, LumiverseType* val, function<bool(LumiverseType* a, LumiverseType* b)> cmp, bool isEqual);
 
   // Inverts the selection.
   DeviceSet invert();

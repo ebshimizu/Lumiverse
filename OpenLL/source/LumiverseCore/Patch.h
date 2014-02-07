@@ -8,7 +8,7 @@
 
 using namespace std;
 
-// An OpenLL Patch is a class that maps devices to output channels and
+// An Lumiverse Patch is a class that maps devices to output channels and
 // handles the outputting of data to the network.
 // This Patch class is an abstract base class that defines the actions any
 // implementation of a patch must have.

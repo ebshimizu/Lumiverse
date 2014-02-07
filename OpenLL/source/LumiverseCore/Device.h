@@ -10,14 +10,14 @@
 #include <sstream>
 
 #include "Logger.h"
-#include "OpenLLType.h"
-#include "types/OpenLLFloat.h"
+#include "LumiverseType.h"
+#include "types/LumiverseFloat.h"
 #include "lib/libjson/libjson.h"
 using namespace std;
 
-// A Device in OpenLL maintains information about a lighting device.
+// A Device in Lumiverse maintains information about a lighting device.
 // This class is meant to hold information about different parameters in
-// an OpenLL friendly way. Conversion to network values happens in a
+// an Lumiverse friendly way. Conversion to network values happens in a
 // different class to separate the abstract representation of a device
 // from the practical network control details.
 class Device
@@ -55,12 +55,12 @@ public:
   // Returns true with the parameter value in val if successful.
   bool getParam(string param, float& val);
 
-  // Returns a pointer to the raw OpenLLType data associated with a parameter
-  OpenLLType* getParam(string param);
+  // Returns a pointer to the raw LumiverseType data associated with a parameter
+  LumiverseType* getParam(string param);
   
   // Sets a parameter and returns true if parameter changed does not exist prior to set.
   // Can give arbitrary data with this overload.
-  bool setParam(string param, OpenLLType* val);
+  bool setParam(string param, LumiverseType* val);
 
   // Sets a parameter and returns true if parameter changed does not exist prior to set.
   // Returns false otherwise.
@@ -144,7 +144,7 @@ private:
 
   // Map for time-varying parameters.
   // Type may change in the future as more specialized datatypes come up.
-  map<string, OpenLLType*> m_parameters;
+  map<string, LumiverseType*> m_parameters;
 
   // Map for static information.
   // User-defined data helps to add search filters and query devices.

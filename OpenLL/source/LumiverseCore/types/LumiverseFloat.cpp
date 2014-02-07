@@ -1,12 +1,12 @@
-#include "OpenLLFloat.h"
+#include "LumiverseFloat.h"
 
 // This is really not interesting huh.
 
-OpenLLFloat::OpenLLFloat(float val, float def) : m_val(val), m_default(def) { }
+LumiverseFloat::LumiverseFloat(float val, float def) : m_val(val), m_default(def) { }
 
-OpenLLFloat::~OpenLLFloat() { }
+LumiverseFloat::~LumiverseFloat() { }
 
-JSONNode OpenLLFloat::toJSON(string name) {
+JSONNode LumiverseFloat::toJSON(string name) {
   JSONNode node;
   node.set_name(name);
 

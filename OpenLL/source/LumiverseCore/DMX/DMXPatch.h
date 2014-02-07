@@ -12,7 +12,7 @@
 #include <iostream>
 
 // The DMX Patch object manages the communication between the DMX network
-// and the OpenLL devices.
+// and the Lumiverse devices.
 // To add interfaces to this particular patch, you make a new interface object
 // and assign it to a universe. You can assign multiple interfaces to the same
 // universe, and you can assign a single device to multiple universes. However

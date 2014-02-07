@@ -234,7 +234,7 @@ DeviceSet DeviceSet::parseParameterSelector(string selector, bool filter) {
   // Paramters are special in that we need to know the type of parameter we're filtering
   // before we can construct the actual query in C++
 
-  // Supported Types: OpenLLFloat
+  // Supported Types: LumiverseFloat
   regex paramRegex("(!\?)@(\\w+)([><!]\?[><=])(\\d*\\.\?\\d*)([f])");
   smatch matches;
   regex_match(selector, matches, paramRegex);
@@ -251,7 +251,7 @@ DeviceSet DeviceSet::parseParameterSelector(string selector, bool filter) {
   bool eq = (invert.size() > 0) ? false : true;
 
   switch (type[0]) {
-    // OpenLLFloat
+    // LumiverseFloat
     case 'f':
       float val;
       stringstream(matches[4]) >> val;
@@ -266,34 +266,34 @@ DeviceSet DeviceSet::parseParameterSelector(string selector, bool filter) {
 }
 
 DeviceSet DeviceSet::parseFloatParameter(string param, string op, float val, bool filter, bool eq) {
-  OpenLLFloat oVal(val);
-  OpenLLType* gVal = (OpenLLType *)(&oVal);
+  LumiverseFloat oVal(val);
+  LumiverseType* gVal = (LumiverseType *)(&oVal);
 
   // There is some serious boxing and unboxing here to make this thing work with multiple types.
   // Not sure if worth.
   if (op == "<") {
-    function<bool(OpenLLType* a, OpenLLType* b)> ltFunc = [](OpenLLType* a, OpenLLType* b){ return (*(OpenLLFloat *)a) < (*(OpenLLFloat *)b); };
+    function<bool(LumiverseType* a, LumiverseType* b)> ltFunc = [](LumiverseType* a, LumiverseType* b){ return (*(LumiverseFloat *)a) < (*(LumiverseFloat *)b); };
     return (filter) ? remove(param, gVal, ltFunc, eq) : add(param, gVal, ltFunc, eq);
   }
   if (op == ">") {
-    function<bool(OpenLLType* a, OpenLLType* b)> gtFunc = [](OpenLLType* a, OpenLLType* b){ return (*(OpenLLFloat *)a) > (*(OpenLLFloat *)b); };
+    function<bool(LumiverseType* a, LumiverseType* b)> gtFunc = [](LumiverseType* a, LumiverseType* b){ return (*(LumiverseFloat *)a) > (*(LumiverseFloat *)b); };
     return (filter) ? remove(param, gVal, gtFunc, eq) : add(param, gVal, gtFunc, eq);
   }
   if (op == "<=") {
-    function<bool(OpenLLType* a, OpenLLType* b)> leqFunc = [](OpenLLType* a, OpenLLType* b){ return (*(OpenLLFloat *)a) <= (*(OpenLLFloat *)b); };
+    function<bool(LumiverseType* a, LumiverseType* b)> leqFunc = [](LumiverseType* a, LumiverseType* b){ return (*(LumiverseFloat *)a) <= (*(LumiverseFloat *)b); };
     return (filter) ? remove(param, gVal, leqFunc, eq) : add(param, gVal, leqFunc, eq);
   }
   if (op == ">=") {
-    function<bool(OpenLLType* a, OpenLLType* b)> geqFunc = [](OpenLLType* a, OpenLLType* b){ return (*(OpenLLFloat *)a) >= (*(OpenLLFloat *)b); };
+    function<bool(LumiverseType* a, LumiverseType* b)> geqFunc = [](LumiverseType* a, LumiverseType* b){ return (*(LumiverseFloat *)a) >= (*(LumiverseFloat *)b); };
     return (filter) ? remove(param, gVal, geqFunc, eq) : add(param, gVal, geqFunc, eq);
   }
   if (op == "!=") {
-    function<bool(OpenLLType* a, OpenLLType* b)> neqFunc = [](OpenLLType* a, OpenLLType* b){ return (*(OpenLLFloat *)a) != (*(OpenLLFloat *)b); };
+    function<bool(LumiverseType* a, LumiverseType* b)> neqFunc = [](LumiverseType* a, LumiverseType* b){ return (*(LumiverseFloat *)a) != (*(LumiverseFloat *)b); };
     return (filter) ? remove(param, gVal, neqFunc, eq) : add(param, gVal, neqFunc, eq);
   }
   // Defaults to =
   else {
-    function<bool(OpenLLType* a, OpenLLType* b)> eqFunc = [](OpenLLType* a, OpenLLType* b){ return (*(OpenLLFloat *)a) == (*(OpenLLFloat *)b); };
+    function<bool(LumiverseType* a, LumiverseType* b)> eqFunc = [](LumiverseType* a, LumiverseType* b){ return (*(LumiverseFloat *)a) == (*(LumiverseFloat *)b); };
     return (filter) ? remove(param, gVal, eqFunc, eq) : add(param, gVal, eqFunc, eq);
   }
 }
@@ -352,11 +352,11 @@ DeviceSet DeviceSet::add(string key, regex val, bool isEqual) {
   return newSet;
 }
 
-DeviceSet DeviceSet::add(string key, OpenLLType* val, function<bool(OpenLLType* a, OpenLLType* b)> cmp, bool isEqual) {
+DeviceSet DeviceSet::add(string key, LumiverseType* val, function<bool(LumiverseType* a, LumiverseType* b)> cmp, bool isEqual) {
   DeviceSet newSet(*this);
 
   for (auto d : m_rig->m_devices) {
-    OpenLLType* data = d->getParam(key);
+    LumiverseType* data = d->getParam(key);
     if (data != nullptr) {
       if (cmp(data, val) == isEqual) {
         newSet.addDevice(d);
@@ -424,11 +424,11 @@ DeviceSet DeviceSet::remove(string key, regex val, bool isEqual) {
   return newSet;
 }
 
-DeviceSet DeviceSet::remove(string key, OpenLLType* val, function<bool(OpenLLType* a, OpenLLType* b)> cmp, bool isEqual) {
+DeviceSet DeviceSet::remove(string key, LumiverseType* val, function<bool(LumiverseType* a, LumiverseType* b)> cmp, bool isEqual) {
   DeviceSet newSet(*this);
 
   for (auto d : m_workingSet) {
-    OpenLLType* data = d->getParam(key);
+    LumiverseType* data = d->getParam(key);
     if (data != nullptr) {
       if (cmp(data, val) == isEqual) {
         newSet.removeDevice(d);

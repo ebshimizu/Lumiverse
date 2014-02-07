@@ -15,10 +15,10 @@ add_library(LumiverseCore
     Rig.cpp
     DeviceSet.h
     DeviceSet.cpp
-    OpenLLType.h
+    LumiverseType.h
     Patch.h
-    types/OpenLLFloat.h
-    types/OpenLLFloat.cpp
+    types/LumiverseFloat.h
+    types/LumiverseFloat.cpp
     DMX/DMXPatch.h
     DMX/DMXPatch.cpp
     DMX/DMXDevicePatch.h
