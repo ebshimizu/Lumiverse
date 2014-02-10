@@ -1,3 +1,5 @@
+#ifdef USE_DMXPRO2
+
 #ifndef _PRO_DRIVER_H
 #define _PRO_DRIVER_H
 
@@ -110,5 +112,7 @@ struct ReceivedDmxCosStruct
 //void enable_midi();
 //void init_promk2();
 //void FTDI_Reload();
+
+#endif
 
 #endif

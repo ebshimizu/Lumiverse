@@ -1,3 +1,5 @@
+#ifdef USE_DMXPRO2
+
 #ifndef _DMXPRO2INTERFACE_H_
 #define _DMXPRO2INTERFACE_H_
 
@@ -112,5 +114,7 @@ private:
   int m_versionMSB = 0;
   int m_versionLSB = 0;
 };
+
+#endif
 
 #endif

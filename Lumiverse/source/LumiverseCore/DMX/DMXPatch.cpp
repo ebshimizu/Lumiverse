@@ -30,6 +30,7 @@ void DMXPatch::loadJSON(const JSONNode data) {
         if (type != iface->end()) {
           // Currently the only supported type is the DMX Pro Mk 2 Interface
           if (type->as_string() == "DMXPro2Interface") {
+#ifdef USE_DMXPRO2
             auto proNumNode = iface->find("proNum");
             auto out1Node = iface->find("out1");
             auto out2Node = iface->find("out2");
@@ -39,7 +40,10 @@ void DMXPatch::loadJSON(const JSONNode data) {
               ifaceMap[iface->name()] = (DMXInterface*)intface;
             }
 
-            Logger::log(LOG_LEVEL::INFO, "Added DMX USB Pro Mk 2 Interface");
+            Logger::log(INFO, "Added DMX USB Pro Mk 2 Interface");
+#else
+            Logger::log(WARN, "LumverseCore built without DMX Pro Mk II Interface, cannot add interface in Rig");
+#endif
           }
           else {
             stringstream ss;
@@ -63,7 +67,14 @@ void DMXPatch::loadJSON(const JSONNode data) {
   if (universes != data.end()) {
     auto universe = universes->begin();
     while (universe != universes->end()) {
-      assignInterface(ifaceMap[universe->name()], universe->as_int());
+      if (ifaceMap[universe->name()] == nullptr) {
+        stringstream ss;
+        ss << "Can't add universe " << universe->as_int() << " to interface " << universe->name() << " because interface does not exist.";
+        Logger::log(ERR, ss.str());
+      }
+      else {
+        assignInterface(ifaceMap[universe->name()], universe->as_int());
+      }
       ++universe;
     }
   }
@@ -143,10 +154,15 @@ void DMXPatch::update(set<Device *> devices) {
     // Skip if there is no DMX patch for the device stored
     if (m_patch.count(d->getId()) == 0)
       continue;
-
+    
     // For each device, find the device patch stored.
     DMXDevicePatch devPatch = *(m_patch)[d->getId()];
     unsigned int uni = devPatch.getUniverse();
+    
+    // Skip if universes aren't allocated because the interface doesn't exist.
+    if (uni >= m_universes.size())
+      continue;
+    
     devPatch.updateDMX(&m_universes[uni].front(), d, m_deviceMaps[devPatch.getDMXMapKey()]);
   }
 

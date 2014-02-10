@@ -1,3 +1,5 @@
+#ifdef USE_DMXPRO2
+
 #include "DMXPro2Interface.h"
 #include "DMXPro2Interface.h"
 
@@ -316,3 +318,5 @@ void DMXPro2Interface::setPorts(uint8_t port1, uint8_t port2) {
   this_thread::sleep_for(chrono::milliseconds(200));
   printf("\nPRO Mk2 ... Ready for DMX on both ports ... ");
 }
+
+#endif

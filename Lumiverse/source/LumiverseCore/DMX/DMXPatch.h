@@ -6,8 +6,11 @@
 #include "../Patch.h"
 #include "DMXDevicePatch.h"
 #include "DMXInterface.h"
-#include "DMXPro2Interface.h"
 #include "../lib/libjson/libjson.h"
+
+#ifdef USE_DMXPRO2
+  #include "DMXPro2Interface.h"
+#endif
 
 #include <iostream>
 
