@@ -67,15 +67,17 @@
 #undef FTD2XX_API
 #define FTD2XX_API
 #endif
-#endif
+
 typedef struct _EVENT_HANDLE{
 	pthread_cond_t eCondVar;
 	pthread_mutex_t eMutex;
 	int iVar;
 } EVENT_HANDLE;
 
-typedef PVOID			FT_HANDLE;
-typedef ULONG			FT_STATUS;
+#endif
+
+typedef PVOID	FT_HANDLE;
+typedef ULONG	FT_STATUS;
 
 //
 // Device status
