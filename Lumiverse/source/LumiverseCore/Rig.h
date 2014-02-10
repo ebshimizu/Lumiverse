@@ -2,6 +2,7 @@
 #define _RIG_H_
 
 #pragma once
+
 #include <thread>
 #include <chrono>
 #include <iostream>
@@ -10,6 +11,7 @@
 #include <sstream>
 #include <set>
 
+#include "LumiverseCoreConfig.h"
 #include "Patch.h"
 #include "DMX/DMXPatch.h"
 #include "Device.h"

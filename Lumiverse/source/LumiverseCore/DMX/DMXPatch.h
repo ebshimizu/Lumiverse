@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "LumiverseCoreConfig.h"
 #include "../Patch.h"
 #include "DMXDevicePatch.h"
 #include "DMXInterface.h"

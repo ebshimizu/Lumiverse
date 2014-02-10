@@ -1,4 +1,5 @@
 // Include file for all of LumiverseCore in one conveninent location
+#include "LumiverseCoreConfig.h"
 #include "Logger.h"
 #include "Device.h"
 #include "Rig.h"

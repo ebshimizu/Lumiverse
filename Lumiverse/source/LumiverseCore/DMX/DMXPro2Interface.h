@@ -1,9 +1,10 @@
-#ifdef USE_DMXPRO2
-
 #ifndef _DMXPRO2INTERFACE_H_
 #define _DMXPRO2INTERFACE_H_
 
 #pragma once
+#include "LumiverseCoreConfig.h"
+
+#ifdef USE_DMXPRO2
 
 #include "DMXInterface.h"
 #include "pro_driver.h"

@@ -9,6 +9,7 @@
 #include <memory>
 #include <sstream>
 
+#include "LumiverseCoreConfig.h"
 #include "Logger.h"
 #include "LumiverseType.h"
 #include "types/LumiverseFloat.h"
