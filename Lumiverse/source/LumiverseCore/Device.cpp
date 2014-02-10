@@ -129,6 +129,9 @@ vector<string> Device::getMetadataKeyNames() {
 }
 
 string Device::toString() {
+  if (this == nullptr) {
+    return "Device does not exist";
+  }
   JSONNode dev = toJSON();
 
   string out = dev.write_formatted();

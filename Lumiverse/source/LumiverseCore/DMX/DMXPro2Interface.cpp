@@ -120,10 +120,7 @@ int DMXPro2Interface::sendData(int label, unsigned char *data, int length)
 {
   unsigned char end_code = DMX_END_CODE;
   FT_STATUS res = 0;
-  DWORD bytes_to_write = length;
   DWORD bytes_written = 0;
-  HANDLE event = NULL;
-  int size = 0;
 
   // Form Packet Header
   unsigned char header[DMX_HEADER_LENGTH];
@@ -157,10 +154,8 @@ int DMXPro2Interface::receiveData(int label, unsigned char *data, unsigned int e
 {
   FT_STATUS res = 0;
   DWORD length = 0;
-  DWORD bytes_to_read = 1;
   DWORD bytes_read = 0;
   unsigned char byte = 0;
-  HANDLE event = NULL;
   char buffer[600];
 
   // Check for Start Code and matching Label
@@ -206,8 +201,6 @@ bool DMXPro2Interface::openDevice(int device_num)
   uint8_t temp[4];
   long version;
   uint8_t major_ver, minor_ver, build_ver;
-  int recvd = 0;
-  unsigned char byte = 0;
   int size = 0;
   int res = 0;
   int tries = 0;

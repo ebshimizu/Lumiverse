@@ -3,7 +3,7 @@
 
 
 DMXDevicePatch::DMXDevicePatch(string mapKey, unsigned int baseAddress, unsigned int universe)
-  : m_dmxMapKey(mapKey), m_baseAddress(baseAddress), m_universe(universe) {
+  : m_baseAddress(baseAddress), m_universe(universe), m_dmxMapKey(mapKey) {
   // Empty for now
 }
 
@@ -48,7 +48,7 @@ void DMXDevicePatch::floatToSingle(unsigned char* data, unsigned int address, fl
 }
 
 void DMXDevicePatch::setDMXVal(unsigned char* data, unsigned int address, unsigned char val) {
-  if (m_baseAddress + address < 0 || m_baseAddress + address >= 512) {
+  if (m_baseAddress + address >= 512) {
     throw logic_error("Attempting to set data outside of DMX address range (0-511).");
   }
   data[m_baseAddress + address] = val;

@@ -197,7 +197,7 @@ DeviceSet DeviceSet::parseChannelSelector(string selector, bool filter) {
       // Flip channel ranges if the first value is greater than the second value
       size_t tmp = first;
       first = second;
-      second = first;
+      second = tmp;
     }
   }
 
