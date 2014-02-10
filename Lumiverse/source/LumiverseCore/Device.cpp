@@ -206,7 +206,7 @@ void Device::loadJSON(const JSONNode data) {
     else {
       stringstream ss;
       ss << "Unknown child " << nodeName << " found in " << m_id;
-      Logger::log(LOG_LEVEL::WARN, ss.str());
+      Logger::log(WARN, ss.str());
     }
 
     //increment the iterator
@@ -215,7 +215,7 @@ void Device::loadJSON(const JSONNode data) {
 
   stringstream ss;
   ss << "Loaded " << m_type << " Device " << m_id << " (Channel " << m_channel << ")";
-  Logger::log(LOG_LEVEL::INFO, ss.str());
+  Logger::log(INFO, ss.str());
 }
 
 void Device::loadParams(const JSONNode data) {
@@ -248,7 +248,7 @@ void Device::loadParams(const JSONNode data) {
       else {
         stringstream ss;
         ss << "Unsupported type " << type->as_string() << " in " << paramName << " in " << m_id << ". Parameter not set.";
-        Logger::log(LOG_LEVEL::WARN, ss.str());
+        Logger::log(WARN, ss.str());
       }
     }
     else {
@@ -258,7 +258,7 @@ void Device::loadParams(const JSONNode data) {
     if (err) {
       stringstream ss;
       ss << "Invalid format for paramter " << paramName << " in " << m_id << ". Parameter not set.";
-      Logger::log(LOG_LEVEL::WARN, ss.str());
+      Logger::log(WARN, ss.str());
     }
 
     //increment the iterator

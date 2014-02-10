@@ -44,7 +44,7 @@ void DMXPro2Interface::init() {
   int res;
   
   res = sendData(SET_API_KEY_LABEL, const_cast<unsigned char *>(APIKey), 4);
-  Sleep(200);
+  this_thread::sleep_for(chrono::milliseconds(200));
   printf("\nPRO Mk2 ... Activated ... ");
 
   // Activate ports 1 and 2 in DMX mode.
@@ -81,6 +81,8 @@ void DMXPro2Interface::sendDMX(unsigned char* data, unsigned int universe) {
 }
 
 void DMXPro2Interface::reset() {
+// Note that this approach only works on windows at the moment
+#ifdef _MSC_VER
   WORD wVID = 0x0403;
   WORD wPID = 0x6001;
   FT_STATUS ftStatus;
@@ -89,11 +91,15 @@ void DMXPro2Interface::reset() {
   ftStatus = FT_Reload(wVID, wPID);
 
   // Must wait a while for devices to be re-enumerated
-  Sleep(3500);
+  this_thread::sleep_for(chrono::milliseconds(3500));
   if (ftStatus != FT_OK)
     printf("\nReloading Driver FAILED");
   else
     printf("\nReloading Driver D2XX PASSED");
+#else
+  // TODO
+  // Can't use FT_Reload to reload entire driver, need other approach
+#endif
 }
 
 void DMXPro2Interface::close() {
@@ -214,7 +220,7 @@ bool DMXPro2Interface::openDevice(int device_num)
   do  {
     printf("\n------ D2XX ------- Opening [Device %d] ------ Try %d", device_num, tries);
     ftStatus = FT_Open(device_num, &m_deviceHandle);
-    Sleep(500);
+    this_thread::sleep_for(chrono::milliseconds(500));
     tries++;
   } while ((ftStatus != FT_OK) && (tries < 3));
 
@@ -314,6 +320,6 @@ void DMXPro2Interface::setPorts(uint8_t port1, uint8_t port2) {
 
   // Enable Ports to DMX on both 
   res = sendData(SET_PORT_ASSIGNMENT_LABEL, portSet, 2);
-  Sleep(200);
+  this_thread::sleep_for(chrono::milliseconds(200));
   printf("\nPRO Mk2 ... Ready for DMX on both ports ... ");
 }

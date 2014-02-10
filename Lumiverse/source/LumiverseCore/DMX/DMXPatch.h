@@ -110,7 +110,7 @@ private:
 
   // Stores the state of the DMX universes.
   // Note that DMX Universe 1 is index 0 here due to one-indexing.
-  vector<vector<unsigned char>> m_universes;
+  vector<vector<unsigned char> > m_universes;
 
   // Maps interface id to universe number (zero-indexed)
   // An interface can be mapped to multiple universes, since some devices have
@@ -127,7 +127,7 @@ private:
 
   // Stores information about device maps, which can be reused across
   // devices. Key is the device map name.
-  map<string, map<string, patchData>> m_deviceMaps;
+  map<string, map<string, patchData> > m_deviceMaps;
 };
 
 #endif

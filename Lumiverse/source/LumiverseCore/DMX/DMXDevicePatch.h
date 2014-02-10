@@ -17,15 +17,15 @@ struct patchData {
   unsigned int startAddress;
   conversionType type;
 
-  patchData() : startAddress(0), type(conversionType::FLOAT_TO_SINGLE) { }
+  patchData() : startAddress(0), type(FLOAT_TO_SINGLE) { }
   
   patchData(unsigned int addr, conversionType t) : startAddress(addr), type(t) { }
   
   patchData(unsigned int addr, string t) : startAddress(addr) {
-    if (t == "FLOAT_TO_SINGLE") { type = conversionType::FLOAT_TO_SINGLE; }
+    if (t == "FLOAT_TO_SINGLE") { type = FLOAT_TO_SINGLE; }
     else {
-      Logger::log(LOG_LEVEL::WARN, "Unknown conversion type. Defaulting to float to single.");
-      type = conversionType::FLOAT_TO_SINGLE;
+      Logger::log(WARN, "Unknown conversion type. Defaulting to float to single.");
+      type = FLOAT_TO_SINGLE;
     }
   }
 };

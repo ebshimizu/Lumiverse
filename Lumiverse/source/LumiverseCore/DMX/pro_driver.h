@@ -3,13 +3,16 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <windows.h>
-#include <process.h>
 #include <assert.h>
-#include <tchar.h>
 #include <time.h>
-#include <conio.h>
-#include "../lib/ftd2xx/Ftd2xx.h"
+#include "../lib/ftd2xx/ftd2xx.h"
+
+#ifdef _MSC_VER
+  #include <windows.h>
+  #include <process.h>
+  #include <tchar.h>
+  #include <conio.h>
+#endif
 
 //#ifdef _MSC_VER
 //	#include "ms_stdint.h"

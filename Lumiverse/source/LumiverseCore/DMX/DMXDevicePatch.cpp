@@ -26,7 +26,7 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
     // sure we can process it. Right now it's just floats all day erry day.
 
     switch (instr.second.type) {
-      case (conversionType::FLOAT_TO_SINGLE):
+      case (FLOAT_TO_SINGLE):
       {
         float val;
         device->getParam(instr.first, val);

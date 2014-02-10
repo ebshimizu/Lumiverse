@@ -17,7 +17,7 @@ Rig::Rig(string filename) {
 
     stringstream ss;
     ss << "Loading " << size << " bytes from " << filename;
-    Logger::log(LOG_LEVEL::INFO, ss.str());
+    Logger::log(INFO, ss.str());
 
     data.read(memblock, size);
     data.close();
@@ -30,9 +30,9 @@ Rig::Rig(string filename) {
   else {
     stringstream ss;
     ss << "Error opening " << filename;
-    Logger::log(LOG_LEVEL::ERR, ss.str());
+    Logger::log(ERR, ss.str());
 
-    Logger::log(LOG_LEVEL::WARN, "Proceeding with default rig initialization");
+    Logger::log(WARN, "Proceeding with default rig initialization");
 
     m_running = false;
     setRefreshRate(40);
@@ -48,11 +48,11 @@ void Rig::loadJSON(JSONNode root) {
 
     if (nodeName == "devices") {
       loadDevices(*i);
-      Logger::log(LOG_LEVEL::INFO, "Device load complete");
+      Logger::log(INFO, "Device load complete");
     }
     else if (nodeName == "patches") {
       loadPatches(*i);
-      Logger::log(LOG_LEVEL::INFO, "Patch load complete");
+      Logger::log(INFO, "Patch load complete");
     }
     else if (nodeName == "refreshRate") {
       setRefreshRate(i->as_int());
@@ -92,7 +92,7 @@ void Rig::loadPatches(JSONNode root) {
 
     stringstream ss;
     ss << "Loading patch " << nodeName;
-    Logger::log(LOG_LEVEL::INFO, ss.str());
+    Logger::log(INFO, ss.str());
 
     Patch* patch;
     
@@ -100,7 +100,7 @@ void Rig::loadPatches(JSONNode root) {
     if (type == i->end()) {
       stringstream ss;
       ss << "Unable to determine Patch type for " << nodeName << ". Patch not loaded.";
-      Logger::log(LOG_LEVEL::WARN, ss.str());
+      Logger::log(WARN, ss.str());
     }
 
     string patchType = type->as_string();
@@ -113,7 +113,7 @@ void Rig::loadPatches(JSONNode root) {
     else {
       stringstream ss;
       ss << "Unknown Patch type " << patchType << " in Patch ID " << nodeName << "Patch not loaded.";
-      Logger::log(LOG_LEVEL::WARN, ss.str());
+      Logger::log(WARN, ss.str());
     }
 
     //increment the iterator
@@ -159,7 +159,7 @@ void Rig::addDevice(Device* device) {
   {
     stringstream ss;
     ss << "Failed to add device with ID " << device->getId() << " to rig because ID already exists";
-    Logger::log(LOG_LEVEL::ERR, ss.str());
+    Logger::log(ERR, ss.str());
     return;
   }
 
@@ -244,7 +244,7 @@ void Rig::update() {
       this_thread::sleep_for(chrono::milliseconds(ms));
     }
     else {
-      Logger::log(LOG_LEVEL::WARN, "Rig Update loop running slowly");
+      Logger::log(WARN, "Rig Update loop running slowly");
     }
   }
 }
