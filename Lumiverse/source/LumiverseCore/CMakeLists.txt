@@ -2,10 +2,11 @@ include_directories("${CMAKE_CURRENT_LIST_DIR}/types"
   "${CMAKE_CURRENT_LIST_DIR}/DMX"
   "${CMAKE_CURRENT_LIST_DIR}/lib/libjson"
   "${CMAKE_CURRENT_LIST_DIR}/lib/ftd2xx")
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules/")
 
-SET(CLANG_FLAGS "-std=c++11 -stdlib=libc++")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_FLAGS}")
+IF(APPLE)
+    SET(CLANG_FLAGS "-std=c++11 -stdlib=libc++")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_FLAGS}")
+ENDIF(APPLE)
 
 add_subdirectory(lib)
 
@@ -39,7 +40,7 @@ target_link_libraries(LumiverseCore libjson)
 IF(WIN32)
     add_library(ftd2xx STATIC IMPORTED)
     set_property(TARGET ftd2xx PROPERTY IMPORTED_LOCATION
-        ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/ftd2xx/ftd2xx.a)
+        ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/ftd2xx/ftd2xx.lib)
     target_link_libraries(LumiverseCore ftd2xx)
 ENDIF(WIN32)
 

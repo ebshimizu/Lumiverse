@@ -1,18 +1,18 @@
 #ifndef _PRO_DRIVER_H
 #define _PRO_DRIVER_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
-#include <time.h>
-#include "../lib/ftd2xx/ftd2xx.h"
-
 #ifdef _MSC_VER
   #include <windows.h>
   #include <process.h>
   #include <tchar.h>
   #include <conio.h>
 #endif
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
+#include <time.h>
+#include "../lib/ftd2xx/ftd2xx.h"
 
 //#ifdef _MSC_VER
 //	#include "ms_stdint.h"
