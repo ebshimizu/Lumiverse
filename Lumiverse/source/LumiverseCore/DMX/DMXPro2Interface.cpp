@@ -1,8 +1,6 @@
+#include "DMXPro2Interface.h"
+
 #ifdef USE_DMXPRO2
-
-#include "DMXPro2Interface.h"
-#include "DMXPro2Interface.h"
-
 
 DMXPro2Interface::DMXPro2Interface(string id, int proNum, int out1, int out2) : 
   m_proNum(proNum), m_connected(0), m_out1Universe(out1), m_out2Universe(out2)
