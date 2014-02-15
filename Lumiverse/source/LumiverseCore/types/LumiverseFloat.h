@@ -5,6 +5,8 @@
 #include "../LumiverseType.h"
 #include <string>
 
+class LumiverseType;
+
 // Defines a float in Lumiverse
 // Typically this will range from 0 to 1 inclusive, but it doesn't
 // have to really.
@@ -13,6 +15,12 @@ class LumiverseFloat : LumiverseType
 public:
   // Constructs a float, default value is 0.
   LumiverseFloat(float val = 0.0f, float def = 0.0f);
+
+  // Copies a float
+  LumiverseFloat(LumiverseFloat* other);
+
+  // Copies a generic Lumiverse Type
+  LumiverseFloat(LumiverseType* other);
 
   // Destroys the float.
   ~LumiverseFloat();

@@ -10,8 +10,8 @@ Rig::Rig(string filename) {
   data.open(filename, ios::in|ios::binary|ios::ate);
 
   if (data.is_open()) {
-    size_t size = data.tellg();
-    char* memblock = new char[size];
+    streamoff size = data.tellg();
+    char* memblock = new char[(unsigned int)size];
 
     data.seekg(0, ios::beg);
 

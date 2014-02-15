@@ -108,6 +108,9 @@ public:
   // Converts the device to a JSONNode.
   JSONNode toJSON();
 
+  // Gets the raw map of parameters to type
+  // User shouldn't modify this map directly.
+  const map<string, LumiverseType*>* getRawParameters() { return &m_parameters; }
 private:
   // Note that this is private because changing the unique ID after creation
   // can lead to a number of unintended side effects (DMX patch doesn't work,

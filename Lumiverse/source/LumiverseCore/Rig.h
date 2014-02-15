@@ -108,6 +108,10 @@ public:
   // of all devices that have the same value as val or not.
   DeviceSet getDevices(string key, string val, bool isEqual);
 
+  // Gets the raw list of devices.
+  // Users are not allowed to modify devices through this direct method,
+  // but may read the data.
+  const set<Device *>* getDeviceRaw() { return &m_devices; }
 private:
   // Loads the rig info from the parsed JSON data.
   void loadJSON(JSONNode root);
