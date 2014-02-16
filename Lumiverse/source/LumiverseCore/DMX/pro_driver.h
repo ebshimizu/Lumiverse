@@ -1,3 +1,5 @@
+#include "../LumiverseCoreConfig.h"
+
 #ifdef USE_DMXPRO2
 
 #ifndef _PRO_DRIVER_H
@@ -14,7 +16,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
-#include "../lib/ftd2xx/ftd2xx.h"
+#include "../lib/ftd2xx/FTD2XX.H"
 
 //#ifdef _MSC_VER
 //	#include "ms_stdint.h"

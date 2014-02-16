@@ -18,6 +18,12 @@ IF(APPLE)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_FLAGS}")
 ENDIF(APPLE)
 
+IF(UNIX)
+    SET(GCC_FLAGS "-std=c++11 -pthread")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_FLAGS}")
+    MESSAGE("Adding -std=c++11 to g++ flags")
+ENDIF(UNIX)
+
 add_subdirectory(lib)
 
 add_library(LumiverseCore
@@ -50,6 +56,8 @@ target_link_libraries(LumiverseCore libjson)
 
 # CMake is a bit weird and wants this defined here instead of inside the ftd2xx folder
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+    SET (LumiverseCore_USE_DMXPRO2 "#define USE_DMXPRO2" STRING)
+
     IF(WIN32)
         add_library(ftd2xx STATIC IMPORTED)
         set_property(TARGET ftd2xx PROPERTY IMPORTED_LOCATION

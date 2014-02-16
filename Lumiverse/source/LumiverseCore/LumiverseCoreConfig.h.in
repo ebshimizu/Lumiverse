@@ -3,8 +3,4 @@
 #define LumiverseCore_VERSION_MAJOR @LumiverseCore_VERSION_MAJOR@
 #define LumiverseCore_VERSION_MINOR @LumiverseCore_VERSION_MINOR@
 
-#define LumiverseCore_INCLUDE_DMXPRO2INTERFACE @LumiverseCore_INCLUDE_DMXPRO2INTERFACE@
-
-#if LumiverseCore_INCLUDE_DMXPRO2INTERFACE == ON
-  #define USE_DMXPRO2
-#endif
+@LumiverseCore_USE_DMXPRO2@

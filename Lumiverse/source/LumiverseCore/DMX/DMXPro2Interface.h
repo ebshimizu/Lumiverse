@@ -10,6 +10,7 @@
 #include "pro_driver.h"
 #include <chrono>
 #include <thread>
+#include <cstring>
 
 // Class for using an ENTTEC DMX USB Pro Mk 2 Interface.
 class DMXPro2Interface : public DMXInterface

@@ -8,11 +8,12 @@ namespace Logger {
   // Sticks the current time and date into a string.
   string printTime() {
     // C++11 chrono used for timestamp
-    time_t now = chrono::system_clock::to_time_t(chrono::system_clock::now());
-    stringstream buf;
-    buf << put_time(localtime(&now), "%Y-%m-%d %H:%M:%S");
+    //time_t now = chrono::system_clock::to_time_t(chrono::system_clock::now());
+    //stringstream buf;
+    //buf << put_time(localtime(&now), "%Y-%m-%d %H:%M:%S");
 
-    return buf.str();
+    //return buf.str();
+    return "";
   }
 
   // Translates the log level to a string.
