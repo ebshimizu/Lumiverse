@@ -12,11 +12,10 @@ namespace LumiverseTypeUtils {
   LumiverseType* copy(LumiverseType* data);
 
   // Copies the data from source into target.
-  // Essentially just invokes operator= on each side based on the type of the
-  // data.
+  // Essentially just invokes operator= based on the type of the data.
   void copyByVal(LumiverseType* source, LumiverseType* target);
   
-  // Compares two generic LumiverseType pointers
+  // Compares two generic LumiverseType pointers for equality
   bool equals(LumiverseType* lhs, LumiverseType* rhs);
 }
 

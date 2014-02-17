@@ -43,7 +43,12 @@ void CueList::update(float num, Rig* rig, bool track) {
     ++tracking;
 
     while (tracking != m_cues.end()) {
-      //tracking->second.
+      tracking->second.trackedUpdate(changed, rig);
+
+      // Keep going until there's nothing left to track,
+      // or the while loop reaches the end of the cue list.
+      if (changed.size() == 0)
+        break;
 
       ++tracking;
     }

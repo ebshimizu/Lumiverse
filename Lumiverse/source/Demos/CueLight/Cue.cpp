@@ -1,5 +1,9 @@
 #include "Cue.h"
 
+Cue::Cue(Rig* rig) : m_upfade(3.0f), m_downfade(3.0f) {
+  update(rig);
+}
+
 Cue::Cue(Rig* rig, float time) : m_upfade(time), m_downfade(time) {
   update(rig);
 }
@@ -8,10 +12,36 @@ Cue::Cue(Rig* rig, float up, float down) : m_upfade(up), m_downfade(down) {
   update(rig);
 }
 
+Cue::Cue(Cue& other) {
+  m_upfade = other.m_upfade;
+  m_downfade = other.m_downfade;
+
+  // Fully copy over cue data. Other instance may go out of scope whenever and
+  // delete the cue data.
+  for (auto it : other.m_cueData) {
+    for (auto param : it.second) {
+      m_cueData[it.first][param.first] = LumiverseTypeUtils::copy(param.second);
+    }
+  }
+}
+
 Cue::~Cue() {
   for (auto m : m_cueData) {
     for (auto t : m.second) {
       delete t.second;
+    }
+  }
+}
+
+void Cue::operator=(Cue& other) {
+  m_upfade = other.m_upfade;
+  m_downfade = other.m_downfade;
+
+  // Fully copy over cue data. Other instance may go out of scope whenever and
+  // delete the cue data.
+  for (auto it : other.m_cueData) {
+    for (auto param : it.second) {
+      m_cueData[it.first][param.first] = LumiverseTypeUtils::copy(param.second);
     }
   }
 }
@@ -36,6 +66,34 @@ Cue::changedParams Cue::update(Rig* rig) {
   }
 
   return params;
+}
+
+void Cue::trackedUpdate(Cue::changedParams& oldVals, Rig* rig) {
+  auto it = oldVals.begin();
+
+  while (it != oldVals.end()) {
+    auto params = it->second.begin();
+
+    while (params != it->second.end()) {
+      // Update if the param is the same as in oldVal
+      if (LumiverseTypeUtils::equals(m_cueData[it->first][params->first], params->second.get())) {
+        LumiverseTypeUtils::copyByVal(rig->getDevice(it->first)->getParam(params->first), m_cueData[it->first][params->first]);
+        ++params;
+      }
+      // Otherwise stop tracking changes
+      else {
+        oldVals[it->first].erase(params++);
+      }
+    }
+
+    // If a device has no changes to track, delete it from the tracking list.
+    if (oldVals[it->first].size() == 0) {
+      oldVals.erase(it++);
+    }
+    else {
+      ++it;
+    }
+  }
 }
 
 void Cue::setTime(float time) {

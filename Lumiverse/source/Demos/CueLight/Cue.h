@@ -17,15 +17,24 @@ public:
   // Makes a blank cue.
   Cue() : m_upfade(3.0f), m_downfade(3.0f) { }
 
+  // Constructs a cue from a rig. Default time is 3.
+  Cue(Rig* rig);
+
   // Creates a cue from the current state of the rig.
-  // Default fade time is 3.
-  Cue(Rig* rig, float time = 3.0f);
+  // Set fade time manually
+  Cue(Rig* rig, float time);
 
   // Creates a cue with different up and down fades.
-  Cue(Rig* rig, float up = 3.0f, float down = 3.0f);
+  Cue(Rig* rig, float up, float down);
+
+  // Copy a cue. Woooooo.
+  Cue(Cue& other);
 
   // Destructor
   ~Cue();
+
+  // Overloading the = to do a deep copy of the cue data.
+  void operator=(Cue& other);
 
   // Modifiers
   // Updates the changes between the rig and this cue.
@@ -36,7 +45,9 @@ public:
   changedParams update(Rig* rig);
 
   // Only updates the devices with IDs in the changedParams.
-  changedParams selctiveUpdate(Rig* rig);
+  // Will remove IDs in oldVals if parameters don't match the older values, which
+  // is when you'd stop tracking the changes through.
+  void trackedUpdate(changedParams& oldVals, Rig* rig);
 
   // Sets the time for the cue.
   void setTime(float time);
