@@ -22,7 +22,9 @@ public:
   ~CueList();
 
   // Stores a cue in the list.
-  void storeCue(float num, Cue cue);
+  // Returns false if there's already a cue with the given number in the map.
+  // Set overwrite to true to force.
+  bool storeCue(float num, Cue cue, bool overwrite = false);
 
   // Delets a cue.
   void deleteCue(float num);

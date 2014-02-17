@@ -4,6 +4,7 @@
 #pragma once
 
 #include <LumiverseCore.h>
+#include <memory>
 
 // A cue stores data for a particular look (called a cue)
 // Cues can be transitioned between, typically as a crossfade.
@@ -11,6 +12,11 @@
 // and downfade time.
 class Cue {
 public:
+  typedef map<string, map<string, shared_ptr<LumiverseType>>> changedParams;
+
+  // Makes a blank cue.
+  Cue() : m_upfade(3.0f), m_downfade(3.0f) { }
+
   // Creates a cue from the current state of the rig.
   // Default fade time is 3.
   Cue(Rig* rig, float time = 3.0f);
@@ -24,7 +30,13 @@ public:
   // Modifiers
   // Updates the changes between the rig and this cue.
   // Tracking happens at the cue list level
-  void update(Rig* rig);
+  // Returns a mapping of device id -> changed parameter and old value
+  // Hopefully the use of unique_ptr will deal with the case where you don't care
+  // about the return value and want to free the memory from LumiverseTypes.
+  changedParams update(Rig* rig);
+
+  // Only updates the devices with IDs in the changedParams.
+  changedParams selctiveUpdate(Rig* rig);
 
   // Sets the time for the cue.
   void setTime(float time);
@@ -48,7 +60,9 @@ private:
   map<string, LumiverseType*> getParams(Device* d);
 
   // Updates the parameters for a device in the cue.
-  void updateParams(Device* d);
+  // If a parameter changes, returns the name of the param and the
+  // old value of the param.
+  void updateParams(Device* d, map<string, shared_ptr<LumiverseType>>& changed);
 
   // Reserved for future use
   // map<string, timestruct[upfade, downfade, delay]> m_discreteTiming - for setting times on individual devices

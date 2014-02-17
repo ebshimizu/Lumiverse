@@ -10,6 +10,21 @@ LumiverseType* LumiverseTypeUtils::copy(LumiverseType* data) {
     return nullptr;
 }
 
+void LumiverseTypeUtils::copyByVal(LumiverseType* source, LumiverseType* target) {
+  if (source == nullptr || target == nullptr)
+    return;
+
+  if (source->getTypeName() != target->getTypeName())
+    return;
+
+  if (source->getTypeName() == "float") {
+    *((LumiverseFloat*)target) = *((LumiverseFloat*)source);
+  }
+  else {
+    return;
+  }
+}
+
 bool LumiverseTypeUtils::equals(LumiverseType* lhs, LumiverseType* rhs) {
   if (lhs == nullptr || rhs == nullptr)
     return false;

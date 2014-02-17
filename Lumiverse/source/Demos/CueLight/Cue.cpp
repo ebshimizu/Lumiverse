@@ -16,15 +16,26 @@ Cue::~Cue() {
   }
 }
 
-void Cue::update(Rig* rig) {
+Cue::changedParams Cue::update(Rig* rig) {
+  changedParams params;
+  
   for (auto d : *(rig->getDeviceRaw())) {
     if (m_cueData.count(d->getId()) == 0) {
+      // New cues don't send back changed parameters since there weren't really
+      // things to change before they got added.
       m_cueData[d->getId()] = getParams(d);
     }
     else {
-      updateParams(d);
+      map<string, shared_ptr<LumiverseType>> changed;
+      updateParams(d, changed);
+
+      if (changed.size() > 0) {
+        params[d->getId()] = changed;
+      }
     }
   }
+
+  return params;
 }
 
 void Cue::setTime(float time) {
@@ -47,15 +58,14 @@ map<string, LumiverseType*> Cue::getParams(Device* d) {
   return params;
 }
 
-void Cue::updateParams(Device* d) {
+void Cue::updateParams(Device* d, map<string, shared_ptr<LumiverseType>>& changed) {
   for (auto p : m_cueData[d->getId()]) {
     // If parameter data is new, replace this cue's data with the new data.
     if (!LumiverseTypeUtils::equals(d->getParam(p.first), p.second)) {
-      // Remember that the LumiverseType* in the cue data was allocated by new
-      // and delete it to prevent memory leaks.
-      delete p.second;
+      // Make a full copy of the old data before overwriting old data.
+      changed[p.first] = shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(p.second));
 
-      p.second = LumiverseTypeUtils::copy(d->getParam(p.first));
+      LumiverseTypeUtils::copyByVal(d->getParam(p.first), p.second);
     }
   }
 }
