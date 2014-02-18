@@ -3,7 +3,32 @@
 
 #pragma once
 
+#include <memory>
+
 #include <LumiverseCore.h>
+#include "Cue.h"
+#include "CueList.h"
+
+// Data for tracking timings for cues and individual parameters.
+struct paramTiming {
+  string name;
+  float time;
+  float delay;
+};
+
+// Data that tracks the progress of a cue and stores the data used in the cue transition.
+struct PlaybackData {
+  Cue from;
+  Cue to;
+  clock_t start;    // Cue start time. More accurate to take difference between now and start instead of summing.
+  map<string, paramTiming> activeParams;
+
+  PlaybackData(const PlaybackData& other) : start(other.start), activeParams(other.activeParams) {
+    from = other.from;
+    to = other.to;
+  }
+  PlaybackData() {} 
+};
 
 // A playback takes a cue (or cues) and manages the live transion between them
 // Eventually a playback may be able to run multiple cues at once
@@ -13,8 +38,66 @@
 class Playback
 {
 public:
-  Playback();
+  // Initializes a playback object with desired refresh rate in Hz
+  Playback(Rig* rig, unsigned int refreshRate);
+
+  // Deletes a playback object.
   ~Playback();
+
+  // Starts the playback loop.
+  void start();
+
+  // Stops the playback loop.
+  void stop();
+
+  // Sets the current state of the rig to the specified cue.
+  void goToCue(Cue& cue);
+
+  // Goes from the specified cue into the next specified cue.
+  // Set assert to true to make the cue overwrite anything else running on
+  // top of it. Useful for resetting, since only fixtures that change are
+  // typically adjusted.
+  void goToCue(Cue& first, Cue& next, bool assert = false);
+
+  // Goes from one cue to another in a list.
+  // Set assert to true to make all cue values animate.
+  void goToCue(CueList& list, float first, float next, bool assert = false);
+
+  // Goes from the specified cue in the Cue List to the next one in the list.
+  // Set assert to true to make all cue values animate.
+  void goToNextCue(CueList& list, float num, bool assert = false);
+
+  // Goes to the first cue in a list.
+  void goToList(CueList& list);
+
+  // Sets the playback update rate
+  void setRefreshRate(unsigned int rate);
+
+private:
+  // Runs the cue update loop.
+  void update();
+
+  // Returns the difference between cue a and cue b. Also returns
+  // the timing for the transition (upfade, downfade, or discrete timing)
+  map<string, paramTiming> diff(Cue& a, Cue& b);
+
+  // Stores the data used during playback.
+  vector<PlaybackData> m_playbackData;
+
+  // Does the updating of the rig while running.
+  unique_ptr<thread> m_updateLoop;
+
+  // True when the update loop is running
+  bool m_running;
+
+  // Refresh rate used by the update loop.
+  unsigned int m_refreshRate;
+
+  // Loop time in seconds
+  float m_loopTime;
+
+  // Pointer to the rig that this playback runs on
+  Rig* m_rig;
 };
 
 #endif

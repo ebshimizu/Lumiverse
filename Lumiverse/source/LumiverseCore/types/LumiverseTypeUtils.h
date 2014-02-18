@@ -17,6 +17,19 @@ namespace LumiverseTypeUtils {
   
   // Compares two generic LumiverseType pointers for equality
   bool equals(LumiverseType* lhs, LumiverseType* rhs);
+
+  // Returns the following:
+  // 0 if lhs and rhs are equal
+  // 1 if lhs > rhs
+  // -1 if lhs < rhs
+  // -2 if lhs and rhs are not the same type, are null, or are of unknown type
+  int cmp(LumiverseType* lhs, LumiverseType* rhs);
+
+  // Lerps the values of a LumiverseType and returns the value
+  shared_ptr<LumiverseType> lerp(LumiverseType* lhs, LumiverseType* rhs, float t);
+
+  // Returns true if lhs and rhs are not null and both the same type
+  inline bool areSameType(LumiverseType* lhs, LumiverseType* rhs);
 }
 
 #endif

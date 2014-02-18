@@ -33,7 +33,7 @@ Cue::~Cue() {
   }
 }
 
-void Cue::operator=(Cue& other) {
+void Cue::operator=(const Cue& other) {
   m_upfade = other.m_upfade;
   m_downfade = other.m_downfade;
 

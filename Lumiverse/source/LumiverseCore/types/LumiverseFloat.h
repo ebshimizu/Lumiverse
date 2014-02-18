@@ -30,6 +30,20 @@ public:
 
   // Override for =
   void operator=(float val) { m_val = val; }
+  void operator=(LumiverseFloat val) { m_val = val.m_val; }
+
+  // Arithmetic overrides
+  LumiverseFloat& operator+=(float val) { m_val += val; return *this; }
+  LumiverseFloat& operator+=(LumiverseFloat& val) { m_val += val.m_val; return *this; }
+
+  LumiverseFloat& operator-=(float val) { m_val -= val; return *this; }
+  LumiverseFloat& operator-=(LumiverseFloat& val) { m_val -= val.m_val; return *this; }
+
+  LumiverseFloat& operator*=(float val) { m_val *= val; return *this; }
+  LumiverseFloat& operator*=(LumiverseFloat& val) { m_val *= val.m_val; return *this; }
+
+  LumiverseFloat& operator/=(float val) { m_val /= val; return *this; }
+  LumiverseFloat& operator/=(LumiverseFloat& val) { m_val /= val.m_val; return *this; }
 
   // Gets the value
   float getVal() { return m_val; }
@@ -84,5 +98,18 @@ inline bool operator<=(LumiverseFloat& a, LumiverseFloat& b) {
 inline bool operator>=(LumiverseFloat& a, LumiverseFloat b) {
   return !(a < b);
 }
+
+// Arithmetic overrides
+inline LumiverseFloat operator+(LumiverseFloat& lhs, float rhs) { lhs += rhs; return lhs; }
+inline LumiverseFloat operator+(LumiverseFloat& lhs, LumiverseFloat& rhs) { lhs += rhs; return lhs; }
+
+inline LumiverseFloat operator-(LumiverseFloat& lhs, float rhs) { lhs -= rhs; return lhs; }
+inline LumiverseFloat operator-(LumiverseFloat& lhs, LumiverseFloat& rhs) { lhs -= rhs; return lhs; }
+
+inline LumiverseFloat operator*(LumiverseFloat& lhs, float rhs) { lhs *= rhs; return lhs; }
+inline LumiverseFloat operator*(LumiverseFloat& lhs, LumiverseFloat& rhs) { lhs *= rhs; return lhs; }
+
+inline LumiverseFloat operator/(LumiverseFloat& lhs, float rhs) { lhs /= rhs; return lhs; }
+inline LumiverseFloat operator/(LumiverseFloat& lhs, LumiverseFloat& rhs) { lhs /= rhs; return lhs; }
 
 #endif

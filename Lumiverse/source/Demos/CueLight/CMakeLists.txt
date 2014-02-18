@@ -6,6 +6,6 @@ add_executable (CueLight
 	Playback.h
 	Cue.cpp
 	CueList.cpp
-	Playback.h
+	Playback.cpp
 	CueLightDemo.cpp)
 target_link_libraries(CueLight LumiverseCore)

@@ -34,7 +34,7 @@ public:
   ~Cue();
 
   // Overloading the = to do a deep copy of the cue data.
-  void operator=(Cue& other);
+  void operator=(const Cue& other);
 
   // Modifiers
   // Updates the changes between the rig and this cue.
@@ -54,6 +54,18 @@ public:
 
   // Sets a time with an up and down fade that are different
   void setTime(float up, float down);
+
+  // Returns the cue data stored in this cue.
+  map<string, map<string, LumiverseType*>>* getCueData() { return &m_cueData; }
+
+  // Gets the upfade
+  float getUpfade() { return m_upfade; }
+
+  // Gets the downfade
+  float getDownfade() { return m_downfade; }
+
+  // Returns the cue data for a device's parameter
+  LumiverseType* getParamData(string deviceId, string param) { return m_cueData[deviceId][param]; }
 
 private:
   // Upfade time

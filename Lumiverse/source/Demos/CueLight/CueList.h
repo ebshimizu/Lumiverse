@@ -34,7 +34,7 @@ public:
   void update(float num, Rig* rig, bool track = true);
 
   // Gets a cue and allows user to modify it.
-  Cue* getCue(float num);
+  Cue* getCue(float num) { return &(m_cues[num]); }
 private:
   // List of cues. Cue numbers can be floats.
   map<float, Cue> m_cues;
