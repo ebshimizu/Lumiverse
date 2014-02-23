@@ -6,6 +6,36 @@
 #include <LumiverseCore.h>
 #include <memory>
 
+struct Keyframe {
+  // Time at which this keyframe is located. t=0 is start of timeline.
+  float t;
+
+  // Value of the keyframe at time t
+  // If this is nullptr, the keyframe is at the end of a cue and should take its value
+  // from the next cue in the sequence.
+  shared_ptr<LumiverseType> val;
+
+  // If true, t will be set to [previous keyframe time] + up/down fade time at runtime.
+  // If set to false, it will use the time specified in t.
+  // Has no effect if val is not-null.
+  bool useCueTiming;
+
+  // Planned interpolation mode selection here. Additional parameters probably needed
+  // once this thing gets activated
+  // enum interpMode
+
+  bool operator<(Keyframe other) const {
+    return t < other.t;
+  }
+
+  // Empty constructor
+  Keyframe() { }
+
+  // Constructor with all values filled in.
+  Keyframe(float time, shared_ptr<LumiverseType> v, bool uct) :
+    t(time), val(v), useCueTiming(uct) { }
+};
+
 // A cue stores data for a particular look (called a cue)
 // Cues can be transitioned between, typically as a crossfade.
 // This class currently stores just a set look and transitions with upfade
@@ -37,11 +67,11 @@ public:
   void operator=(const Cue& other);
 
   // Modifiers
+
   // Updates the changes between the rig and this cue.
   // Tracking happens at the cue list level
-  // Returns a mapping of device id -> changed parameter and old value
-  // Hopefully the use of unique_ptr will deal with the case where you don't care
-  // about the return value and want to free the memory from LumiverseTypes.
+  // Returns a mapping of device id -> changed parameter and old value.
+  // Note that if you have internal cues, this will try to track changes through to those keyframes.
   changedParams update(Rig* rig);
 
   // Only updates the devices with IDs in the changedParams.
@@ -56,7 +86,7 @@ public:
   void setTime(float up, float down);
 
   // Returns the cue data stored in this cue.
-  map<string, map<string, LumiverseType*>>* getCueData() { return &m_cueData; }
+  map<string, map<string, set<Keyframe> > >* getCueData() { return &m_cueData; }
 
   // Gets the upfade
   float getUpfade() { return m_upfade; }
@@ -65,7 +95,7 @@ public:
   float getDownfade() { return m_downfade; }
 
   // Returns the cue data for a device's parameter
-  LumiverseType* getParamData(string deviceId, string param) { return m_cueData[deviceId][param]; }
+  set<Keyframe> getParamData(string deviceId, string param) { return m_cueData[deviceId][param]; }
 
 private:
   // Upfade time
@@ -75,12 +105,12 @@ private:
   float m_downfade;
 
   // Data for this particular cue.
-  // Stored in a map from ID -> list of parameters
+  // Stored in a map from ID -> parameter -> set of keyframes in ascending order (t=0 first)
   // It's pretty much the device without the metadata.
-  map<string, map<string, LumiverseType*>> m_cueData;
+  map<string, map<string, set<Keyframe> > > m_cueData;
 
   // Gets the parameters for the device and returns them in a map
-  map<string, LumiverseType*> getParams(Device* d);
+  map<string, set<Keyframe> > getParams(Device* d);
 
   // Updates the parameters for a device in the cue.
   // If a parameter changes, returns the name of the param and the

@@ -17,20 +17,17 @@ Cue::Cue(Cue& other) {
   m_downfade = other.m_downfade;
 
   // Fully copy over cue data. Other instance may go out of scope whenever and
-  // delete the cue data.
+  // delete the cue data but since we have a shared_ptr, we should still have it.
   for (auto it : other.m_cueData) {
     for (auto param : it.second) {
-      m_cueData[it.first][param.first] = LumiverseTypeUtils::copy(param.second);
+      m_cueData[it.first][param.first] = param.second;
     }
   }
 }
 
 Cue::~Cue() {
-  for (auto m : m_cueData) {
-    for (auto t : m.second) {
-      delete t.second;
-    }
-  }
+  // shared_ptr should keep an internal count of references and delete itself
+  // after the container is destroyed.
 }
 
 void Cue::operator=(const Cue& other) {
@@ -38,10 +35,10 @@ void Cue::operator=(const Cue& other) {
   m_downfade = other.m_downfade;
 
   // Fully copy over cue data. Other instance may go out of scope whenever and
-  // delete the cue data.
+  // delete the cue data but since we have a shared_ptr, we should still have it.
   for (auto it : other.m_cueData) {
     for (auto param : it.second) {
-      m_cueData[it.first][param.first] = LumiverseTypeUtils::copy(param.second);
+      m_cueData[it.first][param.first] = param.second;
     }
   }
 }
@@ -53,6 +50,8 @@ Cue::changedParams Cue::update(Rig* rig) {
     if (m_cueData.count(d->getId()) == 0) {
       // New cues don't send back changed parameters since there weren't really
       // things to change before they got added.
+      // In a timeline system, this first update sets the initial state and the ending keyframes
+      // based on the timing provided in the beginning.
       m_cueData[d->getId()] = getParams(d);
     }
     else {
@@ -74,15 +73,25 @@ void Cue::trackedUpdate(Cue::changedParams& oldVals, Rig* rig) {
   while (it != oldVals.end()) {
     auto params = it->second.begin();
 
+    // Tracking individual keyframe values is a bit more involved as we have to check each keyframe except
+    // the ones with val set to nullptr. 
+    // For each parameter...
     while (params != it->second.end()) {
-      // Update if the param is the same as in oldVal
-      if (LumiverseTypeUtils::equals(m_cueData[it->first][params->first], params->second.get())) {
-        LumiverseTypeUtils::copyByVal(rig->getDevice(it->first)->getParam(params->first), m_cueData[it->first][params->first]);
-        ++params;
-      }
-      // Otherwise stop tracking changes
-      else {
-        oldVals[it->first].erase(params++);
+      // For each keyframe associated with that parameter in the cue...
+      for (auto keyframe : m_cueData[it->first][params->first]) {
+        // Theoretically this should be the last thing in a list of keyframes for a parameter
+        if (keyframe.val == nullptr)
+          continue;
+
+        // If the param is the same as in oldVal, update it in the keyframe
+        if (LumiverseTypeUtils::equals(keyframe.val.get(), params->second.get())) {
+          LumiverseTypeUtils::copyByVal(rig->getDevice(it->first)->getParam(params->first), keyframe.val.get());
+          ++params;
+        }
+        // Otherwise stop.
+        else {
+          oldVals[it->first].erase(params++);
+        }
       }
     }
 
@@ -105,25 +114,54 @@ void Cue::setTime(float up, float down) {
   m_downfade = down;
 }
 
-map<string, LumiverseType*> Cue::getParams(Device* d) {
-  map<string, LumiverseType*> params;
+map<string, set<Keyframe> > Cue::getParams(Device* d) {
+  map<string, set<Keyframe> > paramKeyframes;
 
   // Copy all parameters to cue data list
   for (auto a : *(d->getRawParameters())) {
-    params[a.first] = LumiverseTypeUtils::copy(a.second);
+    // Insert the starting point as a keyframe.
+    paramKeyframes[a.first].insert(Keyframe(0, shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
+
+    // The ending keyframe is a bit of an odd case. Since we don't know if it's an upfade or downfade
+    // there's no way to know the final default timing. So we just pick upfade and set useCueTiming
+    // to true so that the keyframe's t value is overwritten at runtime by the Playback object.
+    // This can be set to not use cue timing later and then the timing is deterministic.
+    paramKeyframes[a.first].insert(Keyframe(m_upfade, nullptr, true));
   }
 
-  return params;
+  return paramKeyframes;
 }
 
 void Cue::updateParams(Device* d, map<string, shared_ptr<LumiverseType>>& changed) {
   for (auto p : m_cueData[d->getId()]) {
-    // If parameter data is new, replace this cue's data with the new data.
-    if (!LumiverseTypeUtils::equals(d->getParam(p.first), p.second)) {
-      // Make a full copy of the old data before overwriting old data.
-      changed[p.first] = shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(p.second));
+    for (auto k : p.second) {
+      // If this keyframe isn't the first, then do something a bit different.
+      if (changed.count(p.first) > 0) {
+        // End the loop if a keyframe with nullptr is found. That data is in the next cue,
+        // if the cue is in a list.
+        if (k.val == nullptr)
+          break;
 
-      LumiverseTypeUtils::copyByVal(d->getParam(p.first), p.second);
+        // If the old value is the same as in this keyframe, update this keyframe.
+        // This allows tracking even with autogenerated delay keyframes.
+        if (LumiverseTypeUtils::equals(changed[p.first].get(), k.val.get())) {
+          LumiverseTypeUtils::copyByVal(d->getParam(p.first), k.val.get());
+        }
+        // If they're not equal, we've got some special internal keyframes, so remove
+        // the changed value from the returned map to prevent accidental tracking
+        else {
+          changed.erase(p.first);
+        }
+      }
+
+      // If parameter data is new, replace this cue's data with the new data.
+      if (!LumiverseTypeUtils::equals(d->getParam(p.first), k.val.get())) {
+        // Make a full copy of the old data before overwriting old data.
+        changed[p.first] = shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(k.val.get()));
+
+        LumiverseTypeUtils::copyByVal(d->getParam(p.first), k.val.get());
+      }
     }
+    
   }
 }
