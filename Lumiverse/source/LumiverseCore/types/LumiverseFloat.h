@@ -100,16 +100,48 @@ inline bool operator>=(LumiverseFloat& a, LumiverseFloat b) {
 }
 
 // Arithmetic overrides
-inline LumiverseFloat operator+(LumiverseFloat& lhs, float rhs) { lhs += rhs; return lhs; }
-inline LumiverseFloat operator+(LumiverseFloat& lhs, LumiverseFloat& rhs) { lhs += rhs; return lhs; }
+inline LumiverseFloat operator+(LumiverseFloat& lhs, float rhs) {
+  LumiverseFloat val = LumiverseFloat(lhs);
+  val += rhs;
+  return val;
+}
+inline LumiverseFloat operator+(LumiverseFloat& lhs, LumiverseFloat& rhs) {
+  LumiverseFloat val = LumiverseFloat(lhs);
+  val += rhs;
+  return val;
+}
 
-inline LumiverseFloat operator-(LumiverseFloat& lhs, float rhs) { lhs -= rhs; return lhs; }
-inline LumiverseFloat operator-(LumiverseFloat& lhs, LumiverseFloat& rhs) { lhs -= rhs; return lhs; }
+inline LumiverseFloat operator-(LumiverseFloat& lhs, float rhs) {
+  LumiverseFloat val = LumiverseFloat(lhs);
+  val -= rhs;
+  return val;
+}
+inline LumiverseFloat operator-(LumiverseFloat& lhs, LumiverseFloat& rhs) {
+  LumiverseFloat val = LumiverseFloat(lhs);
+  val -= rhs;
+  return val;   
+}
 
-inline LumiverseFloat operator*(LumiverseFloat& lhs, float rhs) { lhs *= rhs; return lhs; }
-inline LumiverseFloat operator*(LumiverseFloat& lhs, LumiverseFloat& rhs) { lhs *= rhs; return lhs; }
+inline LumiverseFloat operator*(LumiverseFloat& lhs, float rhs) {
+  LumiverseFloat val = LumiverseFloat(lhs);
+  val *= rhs;
+  return val;
+}
+inline LumiverseFloat operator*(LumiverseFloat& lhs, LumiverseFloat& rhs) {
+  LumiverseFloat val = LumiverseFloat(lhs);
+  val *= rhs;
+  return val;
+}
 
-inline LumiverseFloat operator/(LumiverseFloat& lhs, float rhs) { lhs /= rhs; return lhs; }
-inline LumiverseFloat operator/(LumiverseFloat& lhs, LumiverseFloat& rhs) { lhs /= rhs; return lhs; }
+inline LumiverseFloat operator/(LumiverseFloat& lhs, float rhs) {
+  LumiverseFloat val = LumiverseFloat(lhs);
+  val /= rhs;
+  return val;
+}
+inline LumiverseFloat operator/(LumiverseFloat& lhs, LumiverseFloat& rhs) {
+  LumiverseFloat val = LumiverseFloat(lhs);
+  val /= rhs;
+  return val;
+}
 
 #endif

@@ -14,17 +14,11 @@ int main(int argc, char**argv) {
   rig.init();
   rig.run();
 
-  rig.query("#1-10").setParam("intensity", 1.0f);
+  rig.query("#1-10").setParam("intensity", 0.0f);
   list1.storeCue(1,Cue(&rig, 3.0f, 5.0f));
 
-  rig.query("#1-10").setParam("intensity", 0.75f);
+  rig.query("#1-10").setParam("intensity", 1.0f);
   list1.storeCue(2, Cue(&rig));
-
-  rig.query("#11-20").setParam("intensity", 1.0f);
-  list1.storeCue(3, Cue(&rig));
-
-  rig.query("#1-20").setParam("intensity", 0.0f);
-  list1.storeCue(4, Cue(&rig));
 
   getch();
 

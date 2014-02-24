@@ -9,25 +9,10 @@
 #include "Cue.h"
 #include "CueList.h"
 
-// Data for tracking timings for cues and individual parameters.
-struct paramTiming {
-  string name;
-  float time;
-  float delay;
-};
-
 // Data that tracks the progress of a cue and stores the data used in the cue transition.
 struct PlaybackData {
-  Cue from;
-  Cue to;
   clock_t start;    // Cue start time. More accurate to take difference between now and start instead of summing.
-  map<string, paramTiming> activeParams;
-
-  PlaybackData(const PlaybackData& other) : start(other.start), activeParams(other.activeParams) {
-    from = other.from;
-    to = other.to;
-  }
-  PlaybackData() {} 
+  map<string, map<string, set<Keyframe>>> activeKeyframes;
 };
 
 // A playback takes a cue (or cues) and manages the live transion between them
@@ -77,9 +62,9 @@ private:
   // Runs the cue update loop.
   void update();
 
-  // Returns the difference between cue a and cue b. Also returns
-  // the timing for the transition (upfade, downfade, or discrete timing)
-  map<string, paramTiming> diff(Cue& a, Cue& b);
+  // Returns the set of parameters to animate along with their keyframes
+  // in going from cue A to cue B
+  map<string, map<string, set<Keyframe>>> diff(Cue& a, Cue& b);
 
   // Stores the data used during playback.
   vector<PlaybackData> m_playbackData;
