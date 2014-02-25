@@ -82,6 +82,18 @@ public:
   // is when you'd stop tracking the changes through.
   void trackedUpdate(changedParams& oldVals, Rig* rig);
 
+  // TODO
+  // Delay has a few scenarios that need to be addressed.
+  // 1. Delay was previously 0 going to non-zero
+  //    -Move all other keyframes forwards by delay
+  //    -Add a keyframe with the same value as the first keyframe at time t=delay
+  // 2. Delay was previously non-zero
+  //    -Move all keyframes except the first by newDelay - oldDelay. May need to traverse in forwards or backwards
+  //     order depending on if the diff is positive or negative
+  // If at any point a keyframe would go below t=0, return false and print an error message.
+  // Should probably test that before doing the actual operation
+  // bool setDelay(float delay)
+
   // Sets the time for the cue.
   void setTime(float time);
 
@@ -97,6 +109,11 @@ public:
   // Set uct to false if you don't want to use cue timing if the inserted point is at the end of a cue
   // Overwrites old keyframes if they exist.
   void insertKeyframe(float time, DeviceSet devices, bool uct = true);
+
+  // Not implemented yet but planned
+  // If ripple = true, will move the next cue to the location of the deleted cue
+  // and subtract time on future cues accordingly.
+  // void deleteKeyframe(float time, DeviceSet devices, bool ripple = false);
 
   // Returns the cue data stored in this cue.
   map<string, map<string, set<Keyframe> > >* getCueData() { return &m_cueData; }
