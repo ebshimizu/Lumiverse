@@ -42,15 +42,15 @@ public:
   };
 
   // Accessors for id
-  string getId() { return m_id; }
+  inline string getId() { return m_id; }
 
   // Accessors for channel
-  unsigned int getChannel() { return m_channel; }
-  void setChannel(unsigned int newChan) { m_channel = newChan; }
+  inline unsigned int getChannel() { return m_channel; }
+  inline void setChannel(unsigned int newChan) { m_channel = newChan; }
 
   // Accesors for type
-  string getType() { return m_type; }
-  void setType(string newType) { m_type = newType; }
+  inline string getType() { return m_type; }
+  inline void setType(string newType) { m_type = newType; }
 
   // Gets a parameter value. Returns false if no parameter with the given name exists.
   // Returns true with the parameter value in val if successful.

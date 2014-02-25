@@ -1,14 +1,18 @@
 #include "Cue.h"
 
-Cue::Cue(Rig* rig) : m_upfade(3.0f), m_downfade(3.0f) {
+Cue::Cue(Rig* rig) : m_upfade(3.0f), m_downfade(3.0f), m_delay(0) {
   update(rig);
 }
 
-Cue::Cue(Rig* rig, float time) : m_upfade(time), m_downfade(time) {
+Cue::Cue(Rig* rig, float time) : m_upfade(time), m_downfade(time), m_delay(0) {
   update(rig);
 }
 
-Cue::Cue(Rig* rig, float up, float down) : m_upfade(up), m_downfade(down) {
+Cue::Cue(Rig* rig, float up, float down) : m_upfade(up), m_downfade(down), m_delay(0) {
+  update(rig);
+}
+
+Cue::Cue(Rig* rig, float up, float down, float delay) : m_upfade(up), m_downfade(down), m_delay(delay) {
   update(rig);
 }
 
@@ -114,6 +118,34 @@ void Cue::setTime(float up, float down) {
   m_downfade = down;
 }
 
+void Cue::insertKeyframe(string id, string param, LumiverseType* data, float time, bool uct) {
+  Keyframe end = *prev(m_cueData[id][param].end());
+
+  Keyframe k(time, shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(data)), false);
+
+  // If we're inserting past or at the end, use cue timing as directed.
+  if (time >= end.t)
+    k.useCueTiming = uct;
+
+  auto old = m_cueData[id][param].insert(k);
+
+  // If a keyframe already existed, delete it an reinsert.
+  if (!old.second) {
+    m_cueData[id][param].erase(old.first);
+    m_cueData[id][param].insert(k);
+  }
+}
+
+void Cue::insertKeyframe(float time, DeviceSet devices, bool uct) {
+  // For each device
+  for (auto d : *devices.getDevices()) {
+    // For each parameter
+    for (auto p : *d->getRawParameters()) {
+      insertKeyframe(d->getId(), p.first, d->getParam(p.first), time, uct);
+    }
+  }
+}
+
 map<string, set<Keyframe> > Cue::getParams(Device* d) {
   map<string, set<Keyframe> > paramKeyframes;
 
@@ -121,12 +153,17 @@ map<string, set<Keyframe> > Cue::getParams(Device* d) {
   for (auto a : *(d->getRawParameters())) {
     // Insert the starting point as a keyframe.
     paramKeyframes[a.first].insert(Keyframe(0, shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
+    
+    // Add extra keyframe if default cue delay is present.
+    if (m_delay > 0) {
+      paramKeyframes[a.first].insert(Keyframe(m_delay, shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
+    }
 
     // The ending keyframe is a bit of an odd case. Since we don't know if it's an upfade or downfade
     // there's no way to know the final default timing. So we just pick upfade and set useCueTiming
     // to true so that the keyframe's t value is overwritten at runtime by the Playback object.
     // This can be set to not use cue timing later and then the timing is deterministic.
-    paramKeyframes[a.first].insert(Keyframe(m_upfade, nullptr, true));
+    paramKeyframes[a.first].insert(Keyframe(m_upfade + m_delay, nullptr, true));
   }
 
   return paramKeyframes;

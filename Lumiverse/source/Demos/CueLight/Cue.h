@@ -57,6 +57,9 @@ public:
   // Creates a cue with different up and down fades.
   Cue(Rig* rig, float up, float down);
 
+  // Creates a cue with different up and down fades, and a different delay
+  Cue(Rig* rig, float up, float down, float delay);
+
   // Copy a cue. Woooooo.
   Cue(Cue& other);
 
@@ -85,6 +88,16 @@ public:
   // Sets a time with an up and down fade that are different
   void setTime(float up, float down);
 
+  // Keyframe modifiers
+  // Does a raw insert of a single parameter's data into a keyframe
+  inline void insertKeyframe(string id, string param, LumiverseType* data, float time, bool uct = true);
+
+  // Inserts a new keyframe for all selected devices and all parameters taken from the
+  // current state of the rig.
+  // Set uct to false if you don't want to use cue timing if the inserted point is at the end of a cue
+  // Overwrites old keyframes if they exist.
+  void insertKeyframe(float time, DeviceSet devices, bool uct = true);
+
   // Returns the cue data stored in this cue.
   map<string, map<string, set<Keyframe> > >* getCueData() { return &m_cueData; }
 
@@ -104,6 +117,9 @@ private:
   // Downfade time
   float m_downfade;
 
+  // Delay before doing any fades, default timing.
+  float m_delay;
+
   // Data for this particular cue.
   // Stored in a map from ID -> parameter -> set of keyframes in ascending order (t=0 first)
   // It's pretty much the device without the metadata.
@@ -116,10 +132,8 @@ private:
   // If a parameter changes, returns the name of the param and the
   // old value of the param.
   void updateParams(Device* d, map<string, shared_ptr<LumiverseType>>& changed);
-
-  // Reserved for future use
-  // map<string, timestruct[upfade, downfade, delay]> m_discreteTiming - for setting times on individual devices
-  // m_delay - cue delay
+  
+  // Reserved for future use.
   // m_follow - cue follow time (time to wait before automatically taking the next cue)
 };
 

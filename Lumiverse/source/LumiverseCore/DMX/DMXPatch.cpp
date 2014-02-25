@@ -266,7 +266,7 @@ void DMXPatch::dumpUniverse(unsigned int universe) {
   vector<unsigned char> uni = m_universes[universe];
 
   cout << "Universe " << universe << "\n";
-  for (int i = 0; i < uni.size(); i++) {
+  for (unsigned int i = 0; i < uni.size(); i++) {
     cout << i << ":" << (int)uni[i] << "\n";
   }
   cout << "\n";

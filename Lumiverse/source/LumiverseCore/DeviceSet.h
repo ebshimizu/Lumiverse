@@ -121,12 +121,15 @@ public:
   // just modify).
   void setParam(string param, float val);
 
+  // Gets the devices managed by this set.
+  inline const set<Device *>* getDevices() { return &m_workingSet; }
+
   // Returns a string containing info about the DeviceSet.
   // the heavy lifter of the toString override
   string info();
 
   // Returns the number of devices in the selected set.
-  size_t size() { return m_workingSet.size(); }
+  inline size_t size() { return m_workingSet.size(); }
 
 private:
   // Adds to the set without returning a new copy.

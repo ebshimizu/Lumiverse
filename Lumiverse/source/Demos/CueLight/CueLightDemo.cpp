@@ -15,10 +15,18 @@ int main(int argc, char**argv) {
   rig.run();
 
   rig.query("#1-10").setParam("intensity", 0.0f);
-  list1.storeCue(1,Cue(&rig, 3.0f, 5.0f));
+  list1.storeCue(1,Cue(&rig, 5.0f, 5.0f, 3.0f));
 
   rig.query("#1-10").setParam("intensity", 1.0f);
   list1.storeCue(2, Cue(&rig));
+
+  DeviceSet chan1 = rig.query("#1");
+  chan1.setParam("intensity", 0.5f);
+  list1.getCue(1)->insertKeyframe(4, chan1);
+  list1.getCue(1)->insertKeyframe(5, chan1);
+
+  chan1.setParam("intensity", 1.0f);
+  list1.getCue(1)->insertKeyframe(4.5f, chan1);
 
   getch();
 
