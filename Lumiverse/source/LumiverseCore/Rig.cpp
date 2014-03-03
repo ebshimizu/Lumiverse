@@ -227,17 +227,16 @@ void Rig::setRefreshRate(unsigned int rate) {
 void Rig::update() {
   while (m_running) {
     // Get start time
-    clock_t start, end;
-    start = clock();
-
+    auto start = chrono::high_resolution_clock::now();
+    
     // Run the whole update thing for all patches
     for (auto& p : m_patches) {
       p.second->update(m_devices);
     }
 
     // Sleep a bit depending on how long the update took.
-    end = clock();
-    float elapsed = (float)(end - start) / CLOCKS_PER_SEC;
+    auto end = chrono::high_resolution_clock::now();
+    float elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count() / 1000.0f;
 
     if (elapsed < m_loopTime) {
       unsigned int ms = (unsigned int)(1000 * (m_loopTime - elapsed));
