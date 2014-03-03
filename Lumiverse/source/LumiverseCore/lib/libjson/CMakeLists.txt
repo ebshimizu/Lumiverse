@@ -1,4 +1,5 @@
 add_library(libjson
+  JSONOptions.h
   _internal/Source/libjson.cpp
   _internal/Source/internalJSONNode.cpp
   _internal/Source/JSONAllocator.cpp
