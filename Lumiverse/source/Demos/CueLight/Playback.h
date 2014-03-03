@@ -4,6 +4,7 @@
 #pragma once
 
 #include <memory>
+#include <chrono>
 
 #include <LumiverseCore.h>
 #include "Cue.h"
@@ -11,8 +12,8 @@
 
 // Data that tracks the progress of a cue and stores the data used in the cue transition.
 struct PlaybackData {
-  clock_t start;    // Cue start time. More accurate to take difference between now and start instead of summing.
-  map<string, map<string, set<Keyframe>>> activeKeyframes;
+  chrono::time_point<chrono::high_resolution_clock> start;    // Cue start time. More accurate to take difference between now and start instead of summing.
+  map<string, map<string, set<Keyframe> > > activeKeyframes;
 };
 
 // A playback takes a cue (or cues) and manages the live transion between them
@@ -64,7 +65,7 @@ private:
 
   // Returns the set of parameters to animate along with their keyframes
   // in going from cue A to cue B
-  map<string, map<string, set<Keyframe>>> diff(Cue& a, Cue& b);
+  map<string, map<string, set<Keyframe> > > diff(Cue& a, Cue& b);
 
   // Stores the data used during playback.
   vector<PlaybackData> m_playbackData;

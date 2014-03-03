@@ -38,10 +38,10 @@ void Playback::goToCue(Cue& first, Cue& next, bool assert) {
     pbData.activeKeyframes = diff(first, next);
   }
 
-  pbData.start = clock();
+  pbData.start = chrono::high_resolution_clock::now();
 
   stringstream ss;
-  ss << "Added cue to playback at " << pbData.start << "\n";
+  ss << "Added cue to playback at " << chrono::duration_cast<chrono::seconds>(pbData.start.time_since_epoch()).count() << "\n";
   Logger::log(DEBUG, ss.str());
 
   m_playbackData.push_back(pbData);
@@ -55,9 +55,8 @@ void Playback::setRefreshRate(unsigned int rate) {
 
 void Playback::update() {
   while (m_running) {
-    // Get start time
-    clock_t start, end;
-    start = clock();
+    // Gets start time
+    auto start = chrono::high_resolution_clock::now();
 
     // Update playback data and set rig state if there is anything currently active
     // Note that in the event of conflicts this would be a Latest Takes Precedence system
@@ -65,7 +64,7 @@ void Playback::update() {
       auto pb = m_playbackData.begin();
 
       while (pb != m_playbackData.end()) {
-        float cueTime = (float)(start - pb->start) / CLOCKS_PER_SEC;
+        float cueTime = chrono::duration_cast<chrono::milliseconds>(start - pb->start).count() / 1000.0f;
 
         auto devices = pb->activeKeyframes.begin();
 
@@ -132,11 +131,12 @@ void Playback::update() {
     }
 
     // Sleep a bit depending on how long the update took.
-    end = clock();
-    float elapsed = (float)(end - start) / CLOCKS_PER_SEC;
-
-    if (elapsed < m_loopTime) {
-      unsigned int ms = (unsigned int)(1000 * (m_loopTime - elapsed));
+    auto end = chrono::high_resolution_clock::now();
+    auto elapsed = end - start;
+    float elapsedSec = chrono::duration_cast<chrono::milliseconds>(elapsed).count() / 1000.0f;
+    
+    if (elapsedSec < m_loopTime) {
+      unsigned int ms = (unsigned int)(1000 * (m_loopTime - elapsedSec));
       this_thread::sleep_for(chrono::milliseconds(ms));
     }
     else {
@@ -145,8 +145,8 @@ void Playback::update() {
   }
 }
 
-map<string, map<string, set<Keyframe>>> Playback::diff(Cue& a, Cue& b) {
-  map<string, map<string, set<Keyframe>>> data;
+map<string, map<string, set<Keyframe> > > Playback::diff(Cue& a, Cue& b) {
+  map<string, map<string, set<Keyframe> > > data;
 
   // The entire rig is stored, so comparison from a to be should be sufficient.
   map<string, map<string, set<Keyframe> > >* cueAData = a.getCueData();

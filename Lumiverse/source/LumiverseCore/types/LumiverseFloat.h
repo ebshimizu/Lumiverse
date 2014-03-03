@@ -105,7 +105,15 @@ inline LumiverseFloat operator+(LumiverseFloat& lhs, float rhs) {
   val += rhs;
   return val;
 }
+
 inline LumiverseFloat operator+(LumiverseFloat& lhs, LumiverseFloat& rhs) {
+  LumiverseFloat val = LumiverseFloat(lhs);
+  val += rhs;
+  return val;
+}
+
+// Apparently clang needs this form of the overload to make it happy
+inline LumiverseFloat operator+(LumiverseFloat lhs, LumiverseFloat rhs) {
   LumiverseFloat val = LumiverseFloat(lhs);
   val += rhs;
   return val;
@@ -116,6 +124,7 @@ inline LumiverseFloat operator-(LumiverseFloat& lhs, float rhs) {
   val -= rhs;
   return val;
 }
+
 inline LumiverseFloat operator-(LumiverseFloat& lhs, LumiverseFloat& rhs) {
   LumiverseFloat val = LumiverseFloat(lhs);
   val -= rhs;
@@ -127,6 +136,7 @@ inline LumiverseFloat operator*(LumiverseFloat& lhs, float rhs) {
   val *= rhs;
   return val;
 }
+
 inline LumiverseFloat operator*(LumiverseFloat& lhs, LumiverseFloat& rhs) {
   LumiverseFloat val = LumiverseFloat(lhs);
   val *= rhs;
@@ -138,6 +148,7 @@ inline LumiverseFloat operator/(LumiverseFloat& lhs, float rhs) {
   val /= rhs;
   return val;
 }
+
 inline LumiverseFloat operator/(LumiverseFloat& lhs, LumiverseFloat& rhs) {
   LumiverseFloat val = LumiverseFloat(lhs);
   val /= rhs;

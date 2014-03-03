@@ -42,7 +42,7 @@ struct Keyframe {
 // and downfade time.
 class Cue {
 public:
-  typedef map<string, map<string, shared_ptr<LumiverseType>>> changedParams;
+  typedef map<string, map<string, shared_ptr<LumiverseType> > > changedParams;
 
   // Makes a blank cue.
   Cue() : m_upfade(3.0f), m_downfade(3.0f) { }
@@ -148,7 +148,7 @@ private:
   // Updates the parameters for a device in the cue.
   // If a parameter changes, returns the name of the param and the
   // old value of the param.
-  void updateParams(Device* d, map<string, shared_ptr<LumiverseType>>& changed);
+  void updateParams(Device* d, map<string, shared_ptr<LumiverseType> >& changed);
   
   // Reserved for future use.
   // m_follow - cue follow time (time to wait before automatically taking the next cue)

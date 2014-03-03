@@ -7,7 +7,7 @@
 using namespace std;
 
 int main(int argc, char**argv) {
-  Rig rig("E:/Users/falindrith/Dropbox/College_Senior/52401/code/OpenLL/Lumiverse/data/testRig.json");
+  Rig rig("/Users/Evan/Documents/Programming/Lumiverse/lumiverse/Lumiverse/data/testRig.json");
   CueList list1;
   Playback pb(&rig, 60);
 
@@ -15,10 +15,12 @@ int main(int argc, char**argv) {
   rig.run();
 
   rig.query("#1-10").setParam("intensity", 0.0f);
-  list1.storeCue(1,Cue(&rig, 5.0f, 5.0f, 3.0f));
+  Cue cue1(&rig, 5.0f, 1.0f, 3.0f);
+  list1.storeCue(1, cue1);
 
   rig.query("#1-10").setParam("intensity", 1.0f);
-  list1.storeCue(2, Cue(&rig));
+  Cue cue2(&rig);
+  list1.storeCue(2, cue2);
 
   // Test keyframe insertion
   DeviceSet chan1 = rig.query("#1");
@@ -33,7 +35,7 @@ int main(int argc, char**argv) {
   chan1.setParam("intensity", 0.0f);
   list1.getCue(1)->insertKeyframe(4.5f, chan1);
 
-  getch();
+  getchar();
 
   pb.start();
   pb.goToCue(*list1.getCue(1), *list1.getCue(2));

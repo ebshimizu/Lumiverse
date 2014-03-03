@@ -59,7 +59,7 @@ shared_ptr<LumiverseType> LumiverseTypeUtils::lerp(LumiverseType* lhs, Lumiverse
     // Defaults and other meta-stuff are taken from lhs. Generally you should lerp
     // things that have the same defaults, etc.
     LumiverseFloat* ret = new LumiverseFloat();
-    *ret = (*(LumiverseFloat*)lhs) * (1 - t) + (*(LumiverseFloat*)rhs) * t;
+    *ret = ((*(LumiverseFloat*)lhs) * (1 - t)) + ((*(LumiverseFloat*)rhs) * t);
     return shared_ptr<LumiverseType>((LumiverseType *)ret);
   }
   else

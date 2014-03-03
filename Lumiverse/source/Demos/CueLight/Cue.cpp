@@ -59,7 +59,7 @@ Cue::changedParams Cue::update(Rig* rig) {
       m_cueData[d->getId()] = getParams(d);
     }
     else {
-      map<string, shared_ptr<LumiverseType>> changed;
+      map<string, shared_ptr<LumiverseType> > changed;
       updateParams(d, changed);
 
       if (changed.size() > 0) {
@@ -169,7 +169,7 @@ map<string, set<Keyframe> > Cue::getParams(Device* d) {
   return paramKeyframes;
 }
 
-void Cue::updateParams(Device* d, map<string, shared_ptr<LumiverseType>>& changed) {
+void Cue::updateParams(Device* d, map<string, shared_ptr<LumiverseType> >& changed) {
   for (auto p : m_cueData[d->getId()]) {
     for (auto k : p.second) {
       // If this keyframe isn't the first, then do something a bit different.
