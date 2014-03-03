@@ -41,8 +41,8 @@ add_library(LumiverseCore
     Patch.h
     types/LumiverseFloat.h
     types/LumiverseFloat.cpp
-	types/LumiverseTypeUtils.h
-	types/LumiverseTypeUtils.cpp
+	  types/LumiverseTypeUtils.h
+	  types/LumiverseTypeUtils.cpp
     DMX/DMXPatch.h
     DMX/DMXPatch.cpp
     DMX/DMXDevicePatch.h
