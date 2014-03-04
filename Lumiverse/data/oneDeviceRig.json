@@ -1,0 +1,18 @@
+{
+  "version" : "0.1",
+  "refreshRate" : 40,
+  "devices" : {
+    "device1" : {
+      "channel" : 1,
+      "type" : "Source Four ERS",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "color" : "R02",
+        "angle" : "front right",
+        "area" : "1"
+      }
+    }
+  }
+}
