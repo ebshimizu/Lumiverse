@@ -7,6 +7,7 @@ include_directories("${CMAKE_CURRENT_LIST_DIR}/types"
 set (LumiverseCore_VERSION_MAJOR 1)
 set (LumiverseCore_VERSION_MINOR 0)
 set (LumiverseCore_INCLUDE_DMXPRO2INTERFACE ON CACHE BOOL "Build LumiverseCore with Enttec USB DMX Pro Mk II Driver")
+set (LumiverseCore_RUBY_BINDINGS ON CACHE BOOL "Build LumiverseCore bindings for Ruby")
 
 configure_file (
   "${CMAKE_CURRENT_LIST_DIR}/LumiverseCoreConfig.h.in"
@@ -41,8 +42,8 @@ add_library(LumiverseCore
     Patch.h
     types/LumiverseFloat.h
     types/LumiverseFloat.cpp
-	  types/LumiverseTypeUtils.h
-	  types/LumiverseTypeUtils.cpp
+	types/LumiverseTypeUtils.h
+	types/LumiverseTypeUtils.cpp
     DMX/DMXPatch.h
     DMX/DMXPatch.cpp
     DMX/DMXDevicePatch.h
@@ -78,3 +79,46 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
             /usr/local/lib/libftd2xx.1.2.2.dylib)
     ENDIF(APPLE)
 ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+
+# Time for fun other library binding generation time
+IF (LumiverseCore_RUBY_BINDINGS)
+	FIND_PACKAGE(SWIG REQUIRED)
+	INCLUDE(${SWIG_USE_FILE})
+
+	FIND_PACKAGE(Ruby REQUIRED)
+	INCLUDE_DIRECTORIES(${RUBY_INCLUDE_DIRS})
+
+	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+	SET(CMAKE_SWIG_FLAGS "")
+
+	SET_SOURCE_FILES_PROPERTIES(LumiverseCore.i PROPERTIES CPLUSPLUS ON)
+	SET_SOURCE_FILES_PROPERTIES(LumiverseCore.i PROPERTIES SWIG_FLAGS "-includeall")
+	
+	SWIG_ADD_MODULE(lumiverse-ruby ruby LumiverseCore.i LumiverseCoreConfig.h
+    LumiverseCore.h
+    Logger.h
+    Logger.cpp
+    Device.h
+    Device.cpp
+    Rig.h
+    Rig.cpp
+    DeviceSet.h
+    DeviceSet.cpp
+    LumiverseType.h
+    Patch.h
+    types/LumiverseFloat.h
+    types/LumiverseFloat.cpp
+	types/LumiverseTypeUtils.h
+	types/LumiverseTypeUtils.cpp
+    DMX/DMXPatch.h
+    DMX/DMXPatch.cpp
+    DMX/DMXDevicePatch.h
+    DMX/DMXDevicePatch.cpp
+    DMX/DMXInterface.h
+    DMX/DMXPro2Interface.h
+    DMX/pro_driver.h
+    DMX/DMXPro2Interface.cpp)
+
+	SWIG_LINK_LIBRARIES(lumiverse-ruby ${RUBY_LIBRARY} ftd2xx libjson)
+ENDIF (LumiverseCore_RUBY_BINDINGS)
