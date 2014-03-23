@@ -5,13 +5,16 @@ IF(APPLE)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_FLAGS}")
 ENDIF(APPLE)
 
-add_executable (CueLight
+add_library (CueLight
 	Cue.h
 	CueList.h
 	Playback.h
 	Cue.cpp
 	CueList.cpp
-	Playback.cpp
+	Playback.cpp)
+
+add_executable (CueLightDemo
 	CueLightDemo.cpp)
 
-target_link_libraries(CueLight LumiverseCore)
+target_link_libraries(CueLightDemo LumiverseCore)
+target_link_libraries(CueLightDemo CueLight)

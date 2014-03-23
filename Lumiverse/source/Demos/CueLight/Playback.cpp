@@ -42,7 +42,7 @@ void Playback::goToCue(Cue& first, Cue& next, bool assert) {
 
   stringstream ss;
   ss << "Added cue to playback at " << chrono::duration_cast<chrono::seconds>(pbData.start.time_since_epoch()).count() << "\n";
-  Logger::log(DEBUG, ss.str());
+  Logger::log(LDEBUG, ss.str());
 
   m_playbackData.push_back(pbData);
 }

@@ -15,7 +15,7 @@ using namespace std;
 
 // Log levels.
 enum LOG_LEVEL {
-  DEBUG = 0,      // Debugging info
+  LDEBUG = 0,      // Debugging info
   INFO = 1,       // Status messages
   WARN = 2,       // Warnings
   ERR = 3,      // Recoverable Errors

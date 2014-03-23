@@ -19,7 +19,7 @@ namespace Logger {
   // Translates the log level to a string.
   string printLevel(LOG_LEVEL level) {
     switch (level) {
-      case (DEBUG) : return "DEBUG";
+      case (LDEBUG) : return "LDEBUG";
       case (INFO) : return "INFO";
       case (WARN) : return "WARN";
       case (ERR) : return "ERROR";
