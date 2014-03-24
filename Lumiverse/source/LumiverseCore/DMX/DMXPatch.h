@@ -105,6 +105,14 @@ public:
   // Debug funtion that prints out all DMX values for a single universe.
   void dumpUniverse(unsigned int universe);
 
+  // Directly modifies the DMX data in the specified universe. Pushed the data
+  // to the proper interface after updating. Note that if the update loop is active,
+  // this probably won't do much of anything as the manual values will get overwritten
+  // by the update loop.
+  // Must give an entire universe to this function. If you don't provide the entire universe,
+  // the function returns false and doesn't do any updates.
+  bool setRawData(unsigned int universe, vector<unsigned char> univData);
+
 private:
   // Loads data from a parsed JSON object
   void loadJSON(const JSONNode data);

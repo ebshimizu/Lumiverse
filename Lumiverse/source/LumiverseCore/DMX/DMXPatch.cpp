@@ -271,3 +271,17 @@ void DMXPatch::dumpUniverse(unsigned int universe) {
   }
   cout << "\n";
 }
+
+bool DMXPatch::setRawData(unsigned int universe, vector<unsigned char> univData) {
+  if (univData.size() != 512) {
+    Logger::log(LOG_LEVEL::ERR, "Set raw DMX data failure: buffer is not 512 bytes long.");
+    return false;
+  }
+
+  m_universes[universe] = univData;
+
+  // Send updated data to interfaces
+  for (auto& i : m_ifacePatch) {
+    m_interfaces[i.first]->sendDMX(&m_universes[i.second].front(), i.second);
+  }
+}

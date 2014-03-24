@@ -73,6 +73,10 @@ public:
   // Returns a nullptr if patch with specified ID doesn't exist.
   Patch* getPatch(string id);
 
+  // Gets a patch from a rig and treats it as a DMXPatch.
+  // Use carefully.
+  DMXPatch* getPatchAsDMXPatch(string id) { return (DMXPatch*)getPatch(id); }
+
   // Deletes an entire patch from the rig.
   void deletePatch(string id);
 
