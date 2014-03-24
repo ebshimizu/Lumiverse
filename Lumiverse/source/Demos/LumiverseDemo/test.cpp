@@ -5,9 +5,9 @@
 using namespace std;
 
 int main(int argc, char**argv) {
-  Logger::setLogFile("OLLlog.txt");
+  // Logger::setLogFile("OLLlog.txt");
   
-  Rig rig("/Users/Evan/Dropbox/College_Senior/52401/code/OpenLL/Lumiverse/data/testRig.json");
+  Rig rig("/Users/Evan/Documents/Programming/Lumiverse/lumiverse/Lumiverse/data/movingLights.json");
 
   // TODO: (roughly in order of importance)
   // -Sample command line control
