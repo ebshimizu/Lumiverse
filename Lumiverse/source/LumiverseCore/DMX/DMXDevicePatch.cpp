@@ -33,6 +33,13 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
         floatToSingle(data, instr.second.startAddress, val);
         break;
       }
+      case (FLOAT_TO_FINE):
+      {
+        float val;
+        device->getParam(instr.first, val);
+        floatToFine(data, instr.second.startAddress, val);
+        break;
+      }
       default:
       {
         // Unsupported conversion.
@@ -51,8 +58,8 @@ void DMXDevicePatch::floatToFine(unsigned char* data, unsigned int address, floa
   unsigned short cvt = (unsigned short)(65535 * val);
   unsigned char coarse = (unsigned char)(cvt >> 8);
   unsigned char fine = (unsigned char) cvt;
-  setDMXVal(data, coarse, address);
-  setDMXVal(data, fine, address + 1);
+  setDMXVal(data, address, coarse);
+  setDMXVal(data, address + 1, fine);
 }
 
 void DMXDevicePatch::setDMXVal(unsigned char* data, unsigned int address, unsigned char val) {
