@@ -1,0 +1,71 @@
+{
+  "version" : "0.1",
+  "refreshRate" : 40,
+  "devices" : {
+    "vizi" : {
+      "channel" : 1,
+      "type" : "Vizi LED Spot",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "pan" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "tilt" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "colorWheel" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "gobo" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "goboRot" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "prism" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "shutter" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "moveSpeed" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "control" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "location" : "floor right"
+      }
+    }
+  },
+  "patches" : {
+    "DMX1" : {
+      "type" : "DMXPatch",
+      "deviceMaps" : {
+        "dimmer" : {
+          "intensity" : [ 0,  "FLOAT_TO_SINGLE" ]
+        },
+        "strip" : {
+          "color1" : [ 0,  "FLOAT_TO_SINGLE" ],
+          "color2" : [ 1,  "FLOAT_TO_SINGLE" ],
+          "color3" : [ 2,  "FLOAT_TO_SINGLE" ]
+        },
+        "seachanger" : {
+          "cyan" : [ 0, "FLOAT_TO_SINGLE" ],
+          "magenta" : [ 1, "FLOAT_TO_SINGLE" ],
+          "yellow" : [ 2, "FLOAT_TO_SINGLE" ],
+          "green" : [ 3, "FLOAT_TO_SINGLE" ]
+        },
+        "ViziSpot12" : {
+          "intensity" : [ 9, "FLOAT_TO_SINGLE" ],
+          "pan" : [ 0, "FLOAT_TO_FINE" ],
+          "tilt" : [ 2, "FLOAT_TO_FINE" ],
+          "colorWheel" : [ 4, "FLOAT_TO_SINGLE" ],
+          "gobo" : [ 5, "FLOAT_TO_SINGLE" ],
+          "goboRot" : [ 6, "FLOAT_TO_SINGLE" ],
+          "prism" : [ 7, "FLOAT_TO_SINGLE" ],
+          "shutter" : [ 8, "FLOAT_TO_SINGLE" ],
+          "moveSpeed" : [ 10, "FLOAT_TO_SINGLE" ],
+          "control" : [ 11, "FLOAT_TO_SINGLE" ]
+        },
+        "Lustr+" : {
+          "intensity" : [ 7 , "FLOAT_TO_SINGLE" ],
+          "red" : [ 0, "FLOAT_TO_SINGLE" ],
+          "amber" : [ 1, "FLOAT_TO_SINGLE" ],
+          "green" : [ 2, "FLOAT_TO_SINGLE" ],
+          "cyan" : [ 3, "FLOAT_TO_SINGLE" ],
+          "blue" : [ 4, "FLOAT_TO_SINGLE" ],
+          "indigo" : [ 5, "FLOAT_TO_SINGLE" ],
+          "white" : [ 6, "FLOAT_TO_SINGLE" ]
+        }
+      },
+      "devicePatch" : {
+        "vizi" : { "mapType" : "ViziSpot12", "addr" : 0, "universe" : 0 }
+      }
+    }
+  }
+}
