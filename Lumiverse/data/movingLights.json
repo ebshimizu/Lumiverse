@@ -20,6 +20,26 @@
       "metadata" : {
         "location" : "floor right"
       }
+    },
+    "inno" : {
+      "channel" : 1,
+      "type" : "Inno Color Beam LED",
+      "parameters" : {
+        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "pan" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "tilt" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "red" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "green" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "blue" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "white" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "shutter" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "rainbow" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "moveSpeed" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "control" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+      },
+      "metadata" : {
+        "location" : "floor right"
+      }
     }
   },
   "patches" : {
@@ -64,6 +84,19 @@
           "moveSpeed" : [ 10, "FLOAT_TO_SINGLE" ],
           "control" : [ 11, "FLOAT_TO_SINGLE" ]
         },
+        "InnoColorBeam13" : {
+          "intensity" : [ 9, "FLOAT_TO_SINGLE" ],
+          "pan" : [ 0, "FLOAT_TO_FINE" ],
+          "tilt" : [ 2, "FLOAT_TO_FINE" ],
+          "red" : [ 4, "FLOAT_TO_SINGLE" ],
+          "green" : [ 5, "FLOAT_TO_SINGLE" ],
+          "blue" : [ 6, "FLOAT_TO_SINGLE" ],
+          "white" : [ 7, "FLOAT_TO_SINGLE" ],
+          "shutter" : [ 8, "FLOAT_TO_SINGLE" ],
+          "rainbow" : [ 10, "FLOAT_TO_SINGLE" ],
+          "moveSpeed" : [ 11, "FLOAT_TO_SINGLE" ],
+          "control" : [ 12, "FLOAT_TO_SINGLE" ]
+        },
         "Lustr+" : {
           "intensity" : [ 7 , "FLOAT_TO_SINGLE" ],
           "red" : [ 0, "FLOAT_TO_SINGLE" ],
@@ -76,7 +109,8 @@
         }
       },
       "devicePatch" : {
-        "vizi" : { "mapType" : "ViziSpot12", "addr" : 0, "universe" : 0 }
+        "vizi" : { "mapType" : "ViziSpot12", "addr" : 0, "universe" : 0 },
+        "inno" : { "mapType" : "InnoColorBeam13", "addr" : 20, "universe" : 0 }
       }
     }
   }

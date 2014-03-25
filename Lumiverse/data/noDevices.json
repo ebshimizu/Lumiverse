@@ -1,0 +1,21 @@
+{
+  "version" : "0.1",
+  "refreshRate" : 40,
+  "patches" : {
+    "DMX1" : {
+      "type" : "DMXPatch",
+      "interfaces" : {
+        "DMXPRO1" : {
+          "type" : "DMXPro2Interface",
+          "proNum" : 0,
+          "out1" : 0,
+          "out2" : 1
+        }
+      },
+      "universes" : {
+        "DMXPRO1" : 0,
+        "DMXPRO1" : 1
+      }
+    }
+  }
+}
