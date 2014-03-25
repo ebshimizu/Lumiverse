@@ -149,8 +149,10 @@ void Rig::run() {
 }
 
 void Rig::stop() {
-  m_running = false;
-  m_updateLoop->join();
+  if (m_running) {
+    m_running = false;
+    m_updateLoop->join();
+  }
 }
 
 void Rig::addDevice(Device* device) {
