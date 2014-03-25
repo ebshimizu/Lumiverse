@@ -22,7 +22,7 @@
       }
     },
     "inno" : {
-      "channel" : 1,
+      "channel" : 2,
       "type" : "Inno Color Beam LED",
       "parameters" : {
         "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
