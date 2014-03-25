@@ -7,7 +7,7 @@ include_directories("${CMAKE_CURRENT_LIST_DIR}/types"
 set (LumiverseCore_VERSION_MAJOR 1)
 set (LumiverseCore_VERSION_MINOR 0)
 set (LumiverseCore_INCLUDE_DMXPRO2INTERFACE ON CACHE BOOL "Build LumiverseCore with Enttec USB DMX Pro Mk II Driver")
-set (LumiverseCore_RUBY_BINDINGS ON CACHE BOOL "Build LumiverseCore bindings for Ruby")
+set (LumiverseCore_PYTHON_BINDINGS ON CACHE BOOL "Build LumiverseCore bindings for Python")
 
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
     SET (LumiverseCore_USE_DMXPRO2 "#define USE_DMXPRO2")
@@ -85,7 +85,7 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 
 # Time for fun other library binding generation time
-IF (LumiverseCore_RUBY_BINDINGS)
+IF (LumiverseCore_PYTHON_BINDINGS)
 	FIND_PACKAGE(SWIG REQUIRED)
 	INCLUDE(${SWIG_USE_FILE})
 
@@ -113,8 +113,8 @@ IF (LumiverseCore_RUBY_BINDINGS)
     Patch.h
     types/LumiverseFloat.h
     types/LumiverseFloat.cpp
-	types/LumiverseTypeUtils.h
-	types/LumiverseTypeUtils.cpp
+	  types/LumiverseTypeUtils.h
+  	types/LumiverseTypeUtils.cpp
     DMX/DMXPatch.h
     DMX/DMXPatch.cpp
     DMX/DMXDevicePatch.h
@@ -125,4 +125,4 @@ IF (LumiverseCore_RUBY_BINDINGS)
     DMX/DMXPro2Interface.cpp)
 
 	SWIG_LINK_LIBRARIES(lumiversepython ${PYTHON_LIBRARY} ftd2xx libjson)
-ENDIF (LumiverseCore_RUBY_BINDINGS)
+ENDIF (LumiverseCore_PYTHON_BINDINGS)
