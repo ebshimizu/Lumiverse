@@ -46,6 +46,8 @@ add_library(LumiverseCore
     Patch.h
     types/LumiverseFloat.h
     types/LumiverseFloat.cpp
+	types/LumiverseEnum.h
+	types/LumiverseEnum.cpp
 	types/LumiverseTypeUtils.h
 	types/LumiverseTypeUtils.cpp
     DMX/DMXPatch.h
@@ -113,8 +115,10 @@ IF (LumiverseCore_PYTHON_BINDINGS)
     Patch.h
     types/LumiverseFloat.h
     types/LumiverseFloat.cpp
-	  types/LumiverseTypeUtils.h
-  	types/LumiverseTypeUtils.cpp
+	types/LumiverseEnum.h
+	types/LumiverseEnum.cpp
+	types/LumiverseTypeUtils.h
+	types/LumiverseTypeUtils.cpp
     DMX/DMXPatch.h
     DMX/DMXPatch.cpp
     DMX/DMXDevicePatch.h

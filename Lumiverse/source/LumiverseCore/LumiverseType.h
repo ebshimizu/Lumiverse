@@ -3,6 +3,7 @@
 #pragma once
 
 #include <string>
+#include "Logger.h"
 #include "lib/libjson/libjson.h"
 
 using namespace std;

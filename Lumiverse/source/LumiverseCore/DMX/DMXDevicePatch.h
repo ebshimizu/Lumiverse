@@ -9,7 +9,8 @@
 // from Lumiverse value to DMX value.
 enum conversionType {
   FLOAT_TO_SINGLE,
-  FLOAT_TO_FINE
+  FLOAT_TO_FINE,
+  ENUM
 };
 
 // Small struct containing information on where the DMX parameter starts and
@@ -25,6 +26,7 @@ struct patchData {
   patchData(unsigned int addr, string t) : startAddress(addr) {
     if (t == "FLOAT_TO_SINGLE") { type = FLOAT_TO_SINGLE; }
     else if (t == "FLOAT_TO_FINE") { type = FLOAT_TO_FINE; }
+    else if (t == "ENUM") { type = ENUM; }
     else {
       Logger::log(WARN, "Unknown conversion type. Defaulting to float to single.");
       type = FLOAT_TO_SINGLE;
@@ -96,6 +98,9 @@ private:
   // Converts a float value to two DMX channels of data. 0.0-1.0 -> 0 - 65535
   // The first channel is the upper bits (coarse) and the second channel is the lower (fine)
   void floatToFine(unsigned char* data, unsigned int address, LumiverseFloat* val);
+
+  // Converts an enum to a single DMX channel of data
+  void toEnum(unsigned char* data, unsigned int address, LumiverseEnum* val);
 
   // Helper for setting DMX values. Not as helpful for small functions but better
   // to just write it once.

@@ -7,6 +7,7 @@
 #include "Patch.h"
 #include "LumiverseType.h"
 #include "types/LumiverseFloat.h"
+#include "types/LumiverseEnum.h"
 #include "types/LumiverseTypeUtils.h"
 #include "DMX/DMXPatch.h"
 #include "DMX/DMXDevicePatch.h"

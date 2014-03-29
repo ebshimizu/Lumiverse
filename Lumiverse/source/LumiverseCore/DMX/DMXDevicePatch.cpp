@@ -38,6 +38,12 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
         floatToFine(data, instr.second.startAddress, val);
         break;
       }
+      case (ENUM) :
+      {
+        LumiverseEnum val = (LumiverseEnum*)device->getParam(instr.first);
+        toEnum(data, instr.second.startAddress, val);
+        break;
+      }
       default:
       {
         // Unsupported conversion.
@@ -58,6 +64,10 @@ void DMXDevicePatch::floatToFine(unsigned char* data, unsigned int address, Lumi
   unsigned char fine = (unsigned char) cvt;
   setDMXVal(data, address, coarse);
   setDMXVal(data, address + 1, fine);
+}
+
+void DMXDevicePatch::toEnum(unsigned char* data, unsigned int address, LumiverseEnum* val) {
+  
 }
 
 void DMXDevicePatch::setDMXVal(unsigned char* data, unsigned int address, unsigned char val) {

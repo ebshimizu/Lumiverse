@@ -13,6 +13,7 @@
 #include "Logger.h"
 #include "LumiverseType.h"
 #include "types/LumiverseFloat.h"
+#include "types/LumiverseEnum.h"
 #include "lib/libjson/libjson.h"
 using namespace std;
 
