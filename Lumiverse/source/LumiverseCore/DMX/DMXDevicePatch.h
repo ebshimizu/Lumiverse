@@ -91,11 +91,11 @@ private:
 
   // Converts a float value to a single DMX channel of data. 0.0-1.0 -> 0-255.
   // Corresponds to the FLOAT_TO_SINGLE value of conversionType
-  void floatToSingle(unsigned char* data, unsigned int address, float val);
+  void floatToSingle(unsigned char* data, unsigned int address, LumiverseFloat* val);
   
   // Converts a float value to two DMX channels of data. 0.0-1.0 -> 0 - 65535
   // The first channel is the upper bits (coarse) and the second channel is the lower (fine)
-  void floatToFine(unsigned char* data, unsigned int address, float val);
+  void floatToFine(unsigned char* data, unsigned int address, LumiverseFloat* val);
 
   // Helper for setting DMX values. Not as helpful for small functions but better
   // to just write it once.

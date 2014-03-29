@@ -28,15 +28,13 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
     switch (instr.second.type) {
       case (FLOAT_TO_SINGLE):
       {
-        float val;
-        device->getParam(instr.first, val);
+        LumiverseFloat* val = (LumiverseFloat*) device->getParam(instr.first);
         floatToSingle(data, instr.second.startAddress, val);
         break;
       }
       case (FLOAT_TO_FINE):
       {
-        float val;
-        device->getParam(instr.first, val);
+        LumiverseFloat* val = (LumiverseFloat*)device->getParam(instr.first);
         floatToFine(data, instr.second.startAddress, val);
         break;
       }
@@ -49,13 +47,13 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
   }
 }
 
-void DMXDevicePatch::floatToSingle(unsigned char* data, unsigned int address, float val) {
-  unsigned char cvt = (unsigned char)(255 * val);
+void DMXDevicePatch::floatToSingle(unsigned char* data, unsigned int address, LumiverseFloat* val) {
+  unsigned char cvt = (unsigned char)(255 * val->asPercent());
   setDMXVal(data, address, cvt);
 }
 
-void DMXDevicePatch::floatToFine(unsigned char* data, unsigned int address, float val) {
-  unsigned short cvt = (unsigned short)(65535 * val);
+void DMXDevicePatch::floatToFine(unsigned char* data, unsigned int address, LumiverseFloat* val) {
+  unsigned short cvt = (unsigned short)(65535 * val->asPercent());
   unsigned char coarse = (unsigned char)(cvt >> 8);
   unsigned char fine = (unsigned char) cvt;
   setDMXVal(data, address, coarse);

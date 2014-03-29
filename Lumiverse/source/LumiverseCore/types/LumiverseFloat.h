@@ -14,7 +14,7 @@ class LumiverseFloat : LumiverseType
 {
 public:
   // Constructs a float, default value is 0.
-  LumiverseFloat(float val = 0.0f, float def = 0.0f);
+  LumiverseFloat(float val = 0.0f, float def = 0.0f, float max = 1.0f, float min = 0.0f);
 
   // Copies a float
   LumiverseFloat(LumiverseFloat* other);
@@ -29,40 +29,64 @@ public:
   virtual string getTypeName() { return "float"; }
 
   // Override for =
-  void operator=(float val) { m_val = val; }
-  void operator=(LumiverseFloat val) { m_val = val.m_val; }
+  void operator=(float val);
+  void operator=(LumiverseFloat val);
 
   // Arithmetic overrides
-  LumiverseFloat& operator+=(float val) { m_val += val; return *this; }
-  LumiverseFloat& operator+=(LumiverseFloat& val) { m_val += val.m_val; return *this; }
+  LumiverseFloat& operator+=(float val);
+  LumiverseFloat& operator+=(LumiverseFloat& val);
 
-  LumiverseFloat& operator-=(float val) { m_val -= val; return *this; }
-  LumiverseFloat& operator-=(LumiverseFloat& val) { m_val -= val.m_val; return *this; }
+  LumiverseFloat& operator-=(float val);
+  LumiverseFloat& operator-=(LumiverseFloat& val);
 
-  LumiverseFloat& operator*=(float val) { m_val *= val; return *this; }
-  LumiverseFloat& operator*=(LumiverseFloat& val) { m_val *= val.m_val; return *this; }
+  LumiverseFloat& operator*=(float val);
+  LumiverseFloat& operator*=(LumiverseFloat& val);
 
-  LumiverseFloat& operator/=(float val) { m_val /= val; return *this; }
-  LumiverseFloat& operator/=(LumiverseFloat& val) { m_val /= val.m_val; return *this; }
+  LumiverseFloat& operator/=(float val);
+  LumiverseFloat& operator/=(LumiverseFloat& val);
 
   // Gets the value
   float getVal() { return m_val; }
 
   // Sets the value
   void setVal(float val) { m_val = val; }
+  
+  // Set maximum value
+  void setMax(float val) { m_max = val; }
+  float getMax() { return m_max; }
+
+  // Set miniumum value
+  void setMin(float val) { m_min = val; }
+  float getMin() { return m_min; }
+
+  // Set the default value
+  void setDefault(float val) { m_default = val; }
+  float getDefault() { return m_default; }
 
   // Resets the value to default
   virtual void reset() { m_val = m_default; }
+
+  // Returns the value of this float as a percentage in the range [min, max]
+  float asPercent();
 
   // Converts a float to a JSON object with specified name.
   virtual JSONNode toJSON(string name);
   
 private:
+  // Ensures that the value of this float is between min and max.
+  inline void clamp();
+
   // Um, it's a float.
   float m_val;
 
   // Default value for this float.
   float m_default;
+
+  // Maximum value for the float (default 1.0)
+  float m_max;
+
+  // Minimum value for the float (default 0.0)
+  float m_min;
 };
 
 // Ops ops ops all overloaded woo

@@ -284,4 +284,6 @@ bool DMXPatch::setRawData(unsigned int universe, vector<unsigned char> univData)
   for (auto& i : m_ifacePatch) {
     m_interfaces[i.first]->sendDMX(&m_universes[i.second].front(), i.second);
   }
+
+  return true;
 }
