@@ -24,6 +24,26 @@ m_mode(mode), m_rangeMax(rangeMax)
   else m_default = def;
 }
 
+LumiverseEnum::LumiverseEnum(map<string, int> keys, string mode, int rangeMax, string def) :
+  m_rangeMax(rangeMax)
+{
+  m_mode = stringToMode(mode);
+
+  m_nameToStart = keys;
+
+  for (auto kvp : keys) {
+    m_startToName[kvp.second] = kvp.first;
+  }
+
+  // Set the active enumeration to the first in the range.
+  m_active = m_startToName.begin()->second;
+  setTweakWithMode();
+
+  if (def == "") m_default = m_active;
+  else m_default = def;
+}
+
+
 LumiverseEnum::~LumiverseEnum()
 {
 }
@@ -36,8 +56,8 @@ JSONNode LumiverseEnum::toJSON(string name) {
   JSONNode keys;
   keys.set_name("keys");
 
-  for (auto kvp : m_nameToStart) {
-    keys.push_back(JSONNode(kvp.first, kvp.second));
+  for (auto kvp : m_startToName) {
+    keys.push_back(JSONNode(kvp.second, kvp.first));
   }
 
   JSONNode node;
@@ -46,10 +66,7 @@ JSONNode LumiverseEnum::toJSON(string name) {
   node.push_back(JSONNode("type", getTypeName()));
   node.push_back(JSONNode("active", m_active));
   node.push_back(JSONNode("tweak", m_tweak));
-
-  // TODO: Push mode as a string for readability
-  node.push_back(JSONNode("mode", m_mode));
-
+  node.push_back(JSONNode("mode", modeAsString()));
   node.push_back(JSONNode("default", m_default));
   node.push_back(JSONNode("rangeMax", m_rangeMax));
   node.push_back(keys);
@@ -97,6 +114,24 @@ bool LumiverseEnum::setVal(string name, float tweak) {
   return false;
 }
 
+void LumiverseEnum::setTweak(float tweak) {
+  if (tweak < 0) tweak = 0;
+  if (tweak > 1) tweak = 1;
+  m_tweak = tweak;
+}
+
+float LumiverseEnum::getRangeVal() {
+  int start = m_nameToStart[m_active];
+
+  // Get the next value in the range. If at end use rangeMax.
+  auto it = m_startToName.find(start)++;
+  int end;
+
+  end = (it++ == m_startToName.end()) ? m_rangeMax : it->first - 1;
+
+  return start + (end - start) * m_tweak;
+}
+
 void LumiverseEnum::operator=(string name) {
   setVal(name);
 }
@@ -121,4 +156,30 @@ void LumiverseEnum::setTweakWithMode() {
     Logger::log(ERR, "Invalud LumiverseEnum mode.");
     break;
   }
+}
+
+string LumiverseEnum::modeAsString() {
+  switch (m_mode)
+  {
+  case FIRST:
+    return "FIRST";
+  case CENTER:
+    return "CENTER";
+  case LAST:
+    return "LAST";
+  default:
+    Logger::log(ERR, "Invalud LumiverseEnum mode.");
+    return "";
+  }
+}
+
+LumiverseEnum::Mode LumiverseEnum::stringToMode(string input) {
+  if (input == "FIRST") return FIRST;
+  if (input == "CENTER") return CENTER;
+  if (input == "LAST") return LAST;
+
+  stringstream ss;
+  ss << "Invalid mode string provided: " << input << ". Options are FIRST, CENTER, LAST";
+  Logger::log(ERR, ss.str());
+  return CENTER;
 }

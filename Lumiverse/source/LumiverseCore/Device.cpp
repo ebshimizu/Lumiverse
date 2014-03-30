@@ -161,7 +161,7 @@ JSONNode Device::parametersToJSON() {
   JSONNode params;
   params.set_name("parameters");
 
-  for (auto& p : m_parameters) {
+  for (std::pair<string, LumiverseType*> p : m_parameters) {
     params.push_back(p.second->toJSON(p.first));
   }
 
@@ -235,10 +235,11 @@ void Device::loadParams(const JSONNode data) {
 
     auto type = paramData.find("type");
     if (type != paramData.end()) {
-      // TODO: Currently the only supported LumiverseType is float
+      // Add loading support for new types here
       if (type->as_string() == "float") {
         auto valNode = paramData.find("val");
         auto defNode = paramData.find("default");
+        // TODO: Add in max and min fields
 
         if (valNode != paramData.end() && defNode != paramData.end()) {
           LumiverseFloat* param = new LumiverseFloat(valNode->as_float(), defNode->as_float());
@@ -247,6 +248,43 @@ void Device::loadParams(const JSONNode data) {
         else {
           err = true;
         }
+      }
+      else if (type->as_string() == "enum") {
+        auto activeNode = paramData.find("active");
+        auto tweakNode = paramData.find("tweak");
+        auto modeNode = paramData.find("mode");
+        auto defaultNode = paramData.find("default");
+        auto rangeNode = paramData.find("rangeMax");
+        auto keysNode = paramData.find("keys");
+
+        // If any of the above are missing we should abort
+        if (modeNode != paramData.end() && defaultNode != paramData.end() &&
+            rangeNode != paramData.end() && keysNode != paramData.end()) {
+          // Get the keys into a map.
+          map<string, int> enumKeys;
+          JSONNode::const_iterator k = keysNode->begin();
+          
+          while (k != keysNode->end()) {
+            JSONNode keyData = *k;
+
+            enumKeys[keyData.name()] = keyData.as_int();
+            k++;
+          }
+
+          // Make the enum
+          LumiverseEnum* param = new LumiverseEnum(enumKeys, modeNode->as_string(), rangeNode->as_int(), defaultNode->as_string());
+          
+          if (activeNode != paramData.end())
+            param->setVal(activeNode->as_string());
+          if (tweakNode != paramData.end())
+            param->setTweak(tweakNode->as_float());
+
+          setParam(paramName, (LumiverseType*)param);
+        }
+        else {
+          err = true;
+        }
+
       }
       else {
         stringstream ss;

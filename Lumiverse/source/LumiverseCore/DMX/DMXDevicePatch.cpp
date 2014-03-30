@@ -40,7 +40,7 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
       }
       case (ENUM) :
       {
-        LumiverseEnum val = (LumiverseEnum*)device->getParam(instr.first);
+        LumiverseEnum* val = (LumiverseEnum*)device->getParam(instr.first);
         toEnum(data, instr.second.startAddress, val);
         break;
       }
@@ -67,7 +67,10 @@ void DMXDevicePatch::floatToFine(unsigned char* data, unsigned int address, Lumi
 }
 
 void DMXDevicePatch::toEnum(unsigned char* data, unsigned int address, LumiverseEnum* val) {
-  
+  // It should be noted here that this function currently expects that the range of the enum
+  // is within the DMX value.
+  unsigned short cvt = (unsigned char)val->getRangeVal();
+  setDMXVal(data, address, cvt);
 }
 
 void DMXDevicePatch::setDMXVal(unsigned char* data, unsigned int address, unsigned char val) {

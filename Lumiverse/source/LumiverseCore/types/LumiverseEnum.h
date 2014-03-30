@@ -12,7 +12,7 @@
 // This class will allow specification of specific settings by name or number
 // and also will allow users to tweak the values in the range for controls
 // that may use the range as a speed control.
-class LumiverseEnum
+class LumiverseEnum : LumiverseType
 {
 public:
   // When you select an enumeration, mode determines where in the range
@@ -32,6 +32,9 @@ public:
   // If nothing is passed in for default, the first key (sorted by range start)
   // will be set as default
   LumiverseEnum(map<string, int> keys, Mode mode = CENTER, int rangeMax = 255, string def = "");
+
+  // Same as normal contsructor except mode is passed as a string.
+  LumiverseEnum(map<string, int> keys, string mode, int rangeMax = 255, string def = "");
 
   // Destructor fun times.
   ~LumiverseEnum();
@@ -61,7 +64,7 @@ public:
   bool setVal(string name, float tweak);
 
   // Tweaks the value of the enum
-  void setTweak(float tweak) { m_tweak = tweak; }
+  void setTweak(float tweak);
 
   // Sets the default value of the enumeration
   void setDefault(string name) { m_default = name; }
@@ -75,6 +78,10 @@ public:
   // Gets the default value
   string getDefault() { return m_default; }
 
+  // Returns the exact value in the range given the active parameter and
+  // the tweak value
+  float getRangeVal();
+
   // Operator overrides woo
   void operator=(string name);
   void operator=(LumiverseEnum val);
@@ -82,6 +89,12 @@ public:
 private:
   // Sets the tweak value based on the mode.
   void setTweakWithMode();
+
+  // Returns the current mode as a string
+  string modeAsString();
+
+  // Converts a string to a mode.
+  Mode stringToMode(string input);
 
   // The selected enumeration
   string m_active;
