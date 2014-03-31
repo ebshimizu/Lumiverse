@@ -277,10 +277,11 @@ void Device::loadParams(const JSONNode data) {
         auto defaultNode = paramData.find("default");
         auto rangeNode = paramData.find("rangeMax");
         auto keysNode = paramData.find("keys");
+        auto interpModeNode = paramData.find("interpMode");
 
         // If any of the above are missing we should abort
         if (modeNode != paramData.end() && defaultNode != paramData.end() &&
-            rangeNode != paramData.end() && keysNode != paramData.end()) {
+            rangeNode != paramData.end() && keysNode != paramData.end() && interpModeNode != paramData.end()) {
           // Get the keys into a map.
           map<string, int> enumKeys;
           JSONNode::const_iterator k = keysNode->begin();
@@ -293,7 +294,8 @@ void Device::loadParams(const JSONNode data) {
           }
 
           // Make the enum
-          LumiverseEnum* param = new LumiverseEnum(enumKeys, modeNode->as_string(), rangeNode->as_int(), defaultNode->as_string());
+          LumiverseEnum* param = new LumiverseEnum(enumKeys, modeNode->as_string(), interpModeNode->as_string(),
+            rangeNode->as_int(), defaultNode->as_string());
           
           if (activeNode != paramData.end())
             param->setVal(activeNode->as_string());

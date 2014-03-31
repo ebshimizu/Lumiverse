@@ -1,20 +1,14 @@
 #include "LumiverseEnum.h"
 
 
-LumiverseEnum::LumiverseEnum(Mode mode, int rangeMax) :
-  m_mode(mode), m_rangeMax(rangeMax) 
-{
-  m_active = "";
+LumiverseEnum::LumiverseEnum(Mode mode, int rangeMax, InterpolationMode interpMode) {
+  init(map<string, int>(), "", mode, "", 0.5f, rangeMax, interpMode);
 }
 
-LumiverseEnum::LumiverseEnum(map<string, int> keys, Mode mode, int rangeMax, string def) :
+LumiverseEnum::LumiverseEnum(map<string, int> keys, Mode mode, int rangeMax, string def, InterpolationMode interpMode) :
   m_mode(mode), m_rangeMax(rangeMax)
 {
-  m_nameToStart = keys;
-
-  for (auto kvp : keys) {
-    m_startToName[kvp.second] = kvp.first;
-  }
+  init(keys, "", mode, def, 0.5f, rangeMax, interpMode);
 
   // Set the active enumeration to the first in the range.
   m_active = m_startToName.begin()->second;
@@ -24,16 +18,8 @@ LumiverseEnum::LumiverseEnum(map<string, int> keys, Mode mode, int rangeMax, str
   else m_default = def;
 }
 
-LumiverseEnum::LumiverseEnum(map<string, int> keys, string mode, int rangeMax, string def) :
-  m_rangeMax(rangeMax)
-{
-  m_mode = stringToMode(mode);
-
-  m_nameToStart = keys;
-
-  for (auto kvp : keys) {
-    m_startToName[kvp.second] = kvp.first;
-  }
+LumiverseEnum::LumiverseEnum(map<string, int> keys, string mode, string interpMode, int rangeMax, string def) {
+  init(keys, "", stringToMode(mode), def, 0.5f, rangeMax, stringToInterpMode(interpMode));
 
   // Set the active enumeration to the first in the range.
   m_active = m_startToName.begin()->second;
@@ -43,12 +29,9 @@ LumiverseEnum::LumiverseEnum(map<string, int> keys, string mode, int rangeMax, s
   else m_default = def;
 }
 
-LumiverseEnum::LumiverseEnum(LumiverseEnum* other) :
-  m_active(other->m_active), m_default(other->m_default), m_mode(other->m_mode),
-  m_rangeMax(other->m_rangeMax), m_tweak(other->m_tweak)
-{
-  m_nameToStart = map<string, int>(other->m_nameToStart);
-  m_startToName = map<int, string>(other->m_startToName);
+LumiverseEnum::LumiverseEnum(LumiverseEnum* other) {
+  init(other->m_nameToStart, other->m_active, other->m_mode, other->m_default,
+    other->m_tweak, other->m_rangeMax, other->m_interpMode);
 }
 
 LumiverseEnum::LumiverseEnum(LumiverseType* other) {
@@ -58,14 +41,25 @@ LumiverseEnum::LumiverseEnum(LumiverseType* other) {
   }
   else {
     LumiverseEnum* otherEnum = (LumiverseEnum*)other;
-    m_active = otherEnum->m_active;
-    m_default = otherEnum->m_default;
-    m_mode = otherEnum->m_mode;
-    m_rangeMax = otherEnum->m_rangeMax;
-    m_tweak = otherEnum->m_tweak;
 
-    m_nameToStart = map<string, int>(otherEnum->m_nameToStart);
-    m_startToName = map<int, string>(otherEnum->m_startToName);
+    init(otherEnum->m_nameToStart, otherEnum->m_active, otherEnum->m_mode, otherEnum->m_default,
+      otherEnum->m_tweak, otherEnum->m_rangeMax, otherEnum->m_interpMode);
+  }
+}
+
+void LumiverseEnum::init(map<string, int> keys, string active, Mode mode, string default,
+  float tweak, int rangeMax, InterpolationMode interpMode) {
+  m_active = active;
+  m_mode = mode;
+  m_default = default;
+  m_tweak = tweak;
+  m_rangeMax = rangeMax;
+  m_interpMode = interpMode;
+
+  m_nameToStart = keys;
+
+  for (auto kvp : keys) {
+    m_startToName[kvp.second] = kvp.first;
   }
 }
 
@@ -94,6 +88,7 @@ JSONNode LumiverseEnum::toJSON(string name) {
   node.push_back(JSONNode("mode", modeAsString()));
   node.push_back(JSONNode("default", m_default));
   node.push_back(JSONNode("rangeMax", m_rangeMax));
+  node.push_back(JSONNode("interpMode", interpModeAsString()));
   node.push_back(keys);
 
   return node;
@@ -216,4 +211,30 @@ LumiverseEnum::Mode LumiverseEnum::stringToMode(string input) {
   ss << "Invalid mode string provided: " << input << ". Options are FIRST, CENTER, LAST";
   Logger::log(ERR, ss.str());
   return CENTER;
+}
+
+string LumiverseEnum::interpModeAsString() {
+  switch (m_mode)
+  {
+  case SNAP:
+    return "SNAP";
+  case SMOOTH_WITHIN_OPTION:
+    return "SMOOTH_WITHIN_OPTION";
+  case SMOOTH:
+    return "SMOOTH";
+  default:
+    Logger::log(ERR, "Invalud LumiverseEnum interpolation mode.");
+    return "";
+  }
+}
+
+LumiverseEnum::InterpolationMode LumiverseEnum::stringToInterpMode(string input) {
+  if (input == "SNAP") return SNAP;
+  if (input == "SMOOTH_WITHIN_OPTION") return SMOOTH_WITHIN_OPTION;
+  if (input == "SMOOTH") return SMOOTH;
+
+  stringstream ss;
+  ss << "Invalid mode string provided: " << input << ". Options are FIRST, CENTER, LAST";
+  Logger::log(ERR, ss.str());
+  return SMOOTH_WITHIN_OPTION;
 }

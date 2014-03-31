@@ -16,6 +16,7 @@
           "tweak" : 0.5,
           "rangeMax" : 255,
           "mode" : "CENTER",
+          "interpMode" : "SMOOTH_WITHIN_OPTION",
           "keys" : {
             "OPEN" : 0,
             "COLOR 1" : 15,
@@ -38,6 +39,7 @@
           "tweak" : 0.5,
           "rangeMax" : 255,
           "mode" : "CENTER",
+          "interpMode" : "SMOOTH_WITHIN_OPTION",
           "keys" : {
             "OPEN" : 0,
             "GOBO 1" : 10,
@@ -64,6 +66,7 @@
           "tweak" : 0.5,
           "rangeMax" : 255,
           "mode" : "CENTER",
+          "interpMode" : "SMOOTH_WITHIN_OPTION",
           "keys" : {
             "INDEXING" : 0,
             "FORWARDS ROTATION" : 128,
@@ -78,6 +81,7 @@
           "tweak" : 0.5,
           "rangeMax" : 255,
           "mode" : "CENTER",
+          "interpMode" : "SMOOTH_WITHIN_OPTION",
           "keys" : {
             "OPEN" : 0,
             "3 FACET" : 32,
@@ -108,6 +112,7 @@
           "tweak" : 0.5,
           "rangeMax" : 255,
           "mode" : "CENTER",
+          "interpMode" : "SMOOTH_WITHIN_OPTION",
           "keys" : {
             "OFF" : 0,
             "ON" : 32,
@@ -126,6 +131,7 @@
           "tweak" : 0.0,
           "rangeMax" : 255,
           "mode" : "FIRST",
+          "interpMode" : "SMOOTH_WITHIN_OPTION",
           "keys" : {
             "SPEED" : 0,
             "BLACKOUT MOVEMENT" : 226,
@@ -140,6 +146,7 @@
           "tweak" : 0.5,
           "rangeMax" : 255,
           "mode" : "CENTER",
+          "interpMode" : "SMOOTH_WITHIN_OPTION",
           "keys" : {
             "COLOR CHANGE NORMAL" : 0,
             "COLOR CHANGE TO ANY POSITION" : 20,

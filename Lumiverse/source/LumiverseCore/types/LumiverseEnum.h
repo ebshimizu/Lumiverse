@@ -24,17 +24,33 @@ public:
     CENTER,
     LAST
   };
+
+  // Enumerations on lighting devices can be tricky to deal with in
+  // transitions. This setting provides a way for LumiverseTypeUtils to
+  // do a linear (or other) interpolation between two enums.
+  // Default is SMOOTH_WITHIN_OPTION
+  enum InterpolationMode {
+    // Snap to new value immediately
+    SNAP,
+    // This mode will interpolate within a particular setting.
+    // For example, if you have a color wheel rotate option where values closer to
+    // 128 are slow, and closer to 255 are fast, this would interpolate the value
+    // (the tweak) while you stayed within this particular option.
+    SMOOTH_WITHIN_OPTION,
+    // Smoothly interpolate everything.
+    SMOOTH
+  };
   
   // Constructs an enumeration with nothing in it
-  LumiverseEnum(Mode mode = CENTER, int rangeMax = 255);
+  LumiverseEnum(Mode mode = CENTER, int rangeMax = 255, InterpolationMode interpMode = SMOOTH_WITHIN_OPTION);
 
   // Constructs an enumeration with the given keys and range start values.
   // If nothing is passed in for default, the first key (sorted by range start)
   // will be set as default
-  LumiverseEnum(map<string, int> keys, Mode mode = CENTER, int rangeMax = 255, string def = "");
+  LumiverseEnum(map<string, int> keys, Mode mode = CENTER, int rangeMax = 255, string def = "", InterpolationMode = SMOOTH_WITHIN_OPTION);
 
   // Same as normal contsructor except mode is passed as a string.
-  LumiverseEnum(map<string, int> keys, string mode, int rangeMax = 255, string def = "");
+  LumiverseEnum(map<string, int> keys, string mode, string interpMode, int rangeMax = 255, string def = "");
 
   // Copies an enumeration.
   LumiverseEnum(LumiverseEnum* other);
@@ -93,6 +109,10 @@ public:
   void operator=(LumiverseEnum val);
 
 private:
+  // Initializes the enumeration. Called from constructors.
+  void init(map<string, int> keys, string active, Mode mode, string default,
+    float tweak, int rangeMax, InterpolationMode interpMode);
+
   // Sets the tweak value based on the mode.
   void setTweakWithMode();
 
@@ -101,6 +121,12 @@ private:
 
   // Converts a string to a mode.
   Mode stringToMode(string input);
+
+  // Returns the interpolation mode as a string
+  string interpModeAsString();
+
+  // Converts a string to an interpolation mode
+  InterpolationMode stringToInterpMode(string input);
 
   // The selected enumeration
   string m_active;
@@ -117,6 +143,9 @@ private:
 
   // Enumeration mode
   Mode m_mode;
+
+  // Interpolation mode
+  InterpolationMode m_interpMode;
 
   // Tweak determines where in the range we are. Middle = 0.5 and the
   // value can go from 0 to 1, with 0 being the front of the range, and 1 being the end.
