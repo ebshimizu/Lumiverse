@@ -60,13 +60,20 @@ public:
   // Returns a pointer to the raw LumiverseType data associated with a parameter
   LumiverseType* getParam(string param);
   
-  // Sets a parameter and returns true if parameter changed does not exist prior to set.
+  // Sets a parameter and returns false if parameter changed does not exist prior to set.
   // Can give arbitrary data with this overload.
   bool setParam(string param, LumiverseType* val);
 
-  // Sets a parameter and returns true if parameter changed does not exist prior to set.
+  // Sets a parameter and returns false if parameter changed does not exist prior to set.
   // Returns false otherwise.
   bool setParam(string param, float val);
+
+  // Sets an enumeration.
+  // Returns false if the parameter changed does not exist prior to set. If the parameter doesn't
+  // exist, it's not actually going to be very useful as an enum so we don't actually create it
+  // because we don't know what the enumeration actually consists of.
+  // If val2 is not set, the tweak value isn't passed to the enumeration, allowing it to do default behavior.
+  bool setParam(string param, string val, float val2 = -1.0f);
 
   // Will need additional overloads for each new type. Which kinda sucks.
 
@@ -101,6 +108,9 @@ public:
 
   // Gets list of metadata keys the device has values for.
   vector<string> getMetadataKeyNames();
+
+  // Resets all parameters to default values
+  void reset();
 
   // Converts the device into a string.
   // Data will be output in JSON format

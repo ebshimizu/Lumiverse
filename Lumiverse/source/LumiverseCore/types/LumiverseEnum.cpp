@@ -124,10 +124,11 @@ float LumiverseEnum::getRangeVal() {
   int start = m_nameToStart[m_active];
 
   // Get the next value in the range. If at end use rangeMax.
-  auto it = m_startToName.find(start)++;
+  auto it = m_startToName.find(start);
+  it++;
   int end;
 
-  end = (it++ == m_startToName.end()) ? m_rangeMax : it->first - 1;
+  end = (it == m_startToName.end()) ? m_rangeMax : it->first - 1;
 
   return start + (end - start) * m_tweak;
 }

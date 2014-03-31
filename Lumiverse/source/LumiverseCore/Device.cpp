@@ -39,10 +39,10 @@ LumiverseType* Device::getParam(string param) {
 }
 
 bool Device::setParam(string param, LumiverseType* val) {
-  bool ret = false;
+  bool ret = true;
 
   if (m_parameters.count(param) == 0) {
-    ret = true;
+    ret = false;
   }
 
   m_parameters[param] = val;
@@ -51,15 +51,30 @@ bool Device::setParam(string param, LumiverseType* val) {
 
 
 bool Device::setParam(string param, float val) {
-  bool ret = false;
+  bool ret = true;
 
   if (m_parameters.count(param) == 0) {
-    ret = true;
+    ret = false;
     m_parameters[param] = (LumiverseType*) new LumiverseFloat();
   }
 
   *((LumiverseFloat *)m_parameters[param]) = val;
   return ret;
+}
+
+bool Device::setParam(string param, string val, float val2) {
+  if (m_parameters.count(param) == 0) {
+    return false;
+  }
+
+  LumiverseEnum* data = (LumiverseEnum *)m_parameters[param];
+  data->setVal(val);
+
+  if (val2 >= 0) {
+    data->setTweak(val2);
+  }
+
+  return true;
 }
 
 bool Device::paramExists(string param) {
@@ -126,6 +141,12 @@ vector<string> Device::getMetadataKeyNames() {
   }
 
   return keys;
+}
+
+void Device::reset() {
+  for (auto p : m_parameters) {
+    p.second->reset();
+  }
 }
 
 string Device::toString() {

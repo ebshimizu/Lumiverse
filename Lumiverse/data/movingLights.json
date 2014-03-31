@@ -9,7 +9,7 @@
         "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
         "pan" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
         "tilt" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
-        "colorWheel" :	{
+        "colorWheel" : {
           "type" : "enum",
           "active" : "OPEN",
           "default" : "OPEN",
@@ -31,12 +31,135 @@
             "BACKWARDS RAINBOW" : 194
           }
         },
-        "gobo" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
-        "goboRot" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
-        "prism" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
-        "shutter" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
-        "moveSpeed" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
-        "control" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+        "gobo" : {
+          "type" : "enum",
+          "active" : "OPEN",
+          "default" : "OPEN",
+          "tweak" : 0.5,
+          "rangeMax" : 255,
+          "mode" : "CENTER",
+          "keys" : {
+            "OPEN" : 0,
+            "GOBO 1" : 10,
+            "GOBO 2" : 20,
+            "GOBO 3" : 30,
+            "GOBO 4" : 40,
+            "GOBO 5" : 50,
+            "GOBO 6" : 60,
+            "GOBO 7" : 70,
+            "GOBO 1 SHAKE" : 80,
+            "GOBO 2 SHAKE" : 96,
+            "GOBO 3 SHAKE" : 112,
+            "GOBO 4 SHAKE" : 128,
+            "GOBO 5 SHAKE" : 144,
+            "GOBO 6 SHAKE" : 160,
+            "GOBO 7 SHAKE" : 176,
+            "CONTINUOUS ROTATION" : 192
+          }
+        },
+        "goboRot" : {
+          "type" : "enum",
+          "active" : "INDEXING",
+          "default" : "INDEXING",
+          "tweak" : 0.5,
+          "rangeMax" : 255,
+          "mode" : "CENTER",
+          "keys" : {
+            "INDEXING" : 0,
+            "FORWARDS ROTATION" : 128,
+            "NO ROTATION" : 190,
+            "BACKWARDS ROTATION" : 194
+          }
+        },
+        "prism" : {
+          "type" : "enum",
+          "active" : "OPEN",
+          "default" : "OPEN",
+          "tweak" : 0.5,
+          "rangeMax" : 255,
+          "mode" : "CENTER",
+          "keys" : {
+            "OPEN" : 0,
+            "3 FACET" : 32,
+            "5 FACET" : 64,
+            "TRAPEZOID" : 96,
+            "MACRO 1" : 128,
+            "MACRO 2" : 136,
+            "MACRO 3" : 144,
+            "MACRO 4" : 152,
+            "MACRO 5" : 160,
+            "MACRO 6" : 168,
+            "MACRO 7" : 176,
+            "MACRO 8" : 184,
+            "MACRO 9" : 192,
+            "MACRO 10" : 200,
+            "MACRO 11" : 208,
+            "MACRO 12" : 216,
+            "MACRO 13" : 224,
+            "MACRO 14" : 232,
+            "MACRO 15" : 240,
+            "MACRO 16" : 248
+          }
+        },
+        "shutter" : {
+          "type" : "enum",
+          "active" : "OFF",
+          "default" : "OFF",
+          "tweak" : 0.5,
+          "rangeMax" : 255,
+          "mode" : "CENTER",
+          "keys" : {
+            "OFF" : 0,
+            "ON" : 32,
+            "STROBE" : 64,
+            "ON 2" : 96,
+            "PULSE" : 128,
+            "ON 3" : 160,
+            "RANDOM STROBE" : 192,
+            "ON 4" : 224
+          }
+        },
+        "moveSpeed" : {
+          "type" : "enum",
+          "active" : "SPEED",
+          "default" : "SPEED",
+          "tweak" : 0.0,
+          "rangeMax" : 255,
+          "mode" : "FIRST",
+          "keys" : {
+            "SPEED" : 0,
+            "BLACKOUT MOVEMENT" : 226,
+            "BLACKOUT WHEEL" : 236,
+            "NO FUNCTION" : 246
+          }
+        },
+        "control" : {
+          "type" : "enum",
+          "active" : "COLOR CHANGE NORMAL",
+          "default" : "COLOR CHANGE NORMAL",
+          "tweak" : 0.5,
+          "rangeMax" : 255,
+          "mode" : "CENTER",
+          "keys" : {
+            "COLOR CHANGE NORMAL" : 0,
+            "COLOR CHANGE TO ANY POSITION" : 20,
+            "NO FUNCTION" : 40,
+            "ALL MOTOR RESET" : 80,
+            "SCAN MOTOR RESET" : 85,
+            "COLOR MOTOR RESET" : 88,
+            "GOBO MOTOR RESET" : 91,
+            "NO FUNCTION 2" : 94,
+            "OTHER MOTOR RESET" : 97,
+            "INTERNAL PROGRAM 1" : 100,
+            "INTERNAL PROGRAM 2" : 120,
+            "INTERNAL PROGRAM 3" : 140,
+            "INTERNAL PROGRAM 4" : 160,
+            "INTERNAL PROGRAM 5" : 180,
+            "INTERNAL PROGRAM 6" : 200,
+            "INTERNAL PROGRAM 7" : 220,
+            "SOUND ACTIVE PROGRAM" : 240
+          }
+        }
       },
       "metadata" : {
         "location" : "floor right"
@@ -98,12 +221,12 @@
           "pan" : [ 0, "FLOAT_TO_FINE" ],
           "tilt" : [ 2, "FLOAT_TO_FINE" ],
           "colorWheel" : [ 4, "ENUM" ],
-          "gobo" : [ 5, "FLOAT_TO_SINGLE" ],
-          "goboRot" : [ 6, "FLOAT_TO_SINGLE" ],
-          "prism" : [ 7, "FLOAT_TO_SINGLE" ],
-          "shutter" : [ 8, "FLOAT_TO_SINGLE" ],
-          "moveSpeed" : [ 10, "FLOAT_TO_SINGLE" ],
-          "control" : [ 11, "FLOAT_TO_SINGLE" ]
+          "gobo" : [ 5, "ENUM" ],
+          "goboRot" : [ 6, "ENUM" ],
+          "prism" : [ 7, "ENUM" ],
+          "shutter" : [ 8, "ENUM" ],
+          "moveSpeed" : [ 10, "ENUM" ],
+          "control" : [ 11, "ENUM" ]
         },
         "InnoColorBeam13" : {
           "intensity" : [ 9, "FLOAT_TO_SINGLE" ],

@@ -113,13 +113,19 @@ public:
   DeviceSet remove(string key, LumiverseType* val, function<bool(LumiverseType* a, LumiverseType* b)> cmp, bool isEqual);
 
   // Inverts the selection.
-  DeviceSet invert();
+  //DeviceSet invert();
+
+  // Resets all the parameters in each device in the device set
+  void reset();
 
   // These must mirror the device setparam functions.
   // This sets the value of a parameter on every device in the group
   // if the parameter already exists in the device (will not add params,
   // just modify).
   void setParam(string param, float val);
+
+  // Sets an enumeration. See Device.h for more detailed info.
+  void setParam(string param, string val, float val2 = -1.0f);
 
   // Gets the devices managed by this set.
   inline const set<Device *>* getDevices() { return &m_workingSet; }

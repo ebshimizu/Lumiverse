@@ -27,7 +27,7 @@ int main(int argc, char**argv) {
 
   // Loop for stuff
   cout << "Lumiverse Test Command Line\n";
-  cout << "Available commands: select [query], set [parameter]=[value], info [device id], info selected\n";
+  cout << "Available commands: select [query], set [parameter]=[value], reset, info [device id], info selected\n";
   cout << "Only floating point parameters are currently supported.\n";
   DeviceSet current;
   
@@ -42,6 +42,9 @@ int main(int argc, char**argv) {
 
       cout << "Query returned " << current.size() << " devices.\n";
     }
+    else if (input.substr(0, 5) == "reset") {
+      current.reset();
+    }
     else if (input.substr(0, 13) == "info selected") {
       cout << current.info() << "\n";
     }
@@ -51,7 +54,7 @@ int main(int argc, char**argv) {
       cout << rig.getDevice(id)->toString() << "\n";
     }
     else if (input.substr(0, 4) == "set ") {
-      // Can only set float currently
+      // Set float
       regex paramRegex("(\\w+)=(\\d*\\.\?\\d*)([f])");
       string param = input.substr(4);
       smatch matches;
@@ -59,7 +62,26 @@ int main(int argc, char**argv) {
       regex_match(param, matches, paramRegex);
 
       if (matches.size() != 4) {
-        cout << "Invalid set command\n";
+        // Try to set an enumeration
+        regex paramRegex("(\\w+)=([\\w_\\s\\b]+),\?(\\d*\\.\?\\d*)");
+        string param = input.substr(4);
+        smatch matches;
+
+        regex_match(param, matches, paramRegex);
+
+        if (matches.size() != 4) {
+          cout << "Invalid set command\n";
+        }
+
+        string key = matches[1];
+        string val = matches[2].str();
+
+        float val2 = -1.0f;
+        if (matches[3].length() > 0) {
+          stringstream(matches[3]) >> val2;
+        }
+
+        current.setParam(key, val, val2);
       }
 
       string key = matches[1];

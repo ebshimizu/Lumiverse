@@ -443,6 +443,12 @@ DeviceSet DeviceSet::remove(string key, LumiverseType* val, function<bool(Lumive
   return newSet;
 }
 
+void DeviceSet::reset() {
+  for (auto d : m_workingSet) {
+    d->reset();
+  }
+}
+
 void DeviceSet::addDevice(Device* device) {
   m_workingSet.insert(device);
 }
@@ -459,6 +465,14 @@ void DeviceSet::setParam(string param, float val) {
   for (auto d : m_workingSet) {
     if (d->paramExists(param)) {
       d->setParam(param, val);
+    }
+  }
+}
+
+void DeviceSet::setParam(string param, string val, float val2) {
+  for (auto d : m_workingSet) {
+    if (d->paramExists(param)) {
+      d->setParam(param, val, val2);
     }
   }
 }
