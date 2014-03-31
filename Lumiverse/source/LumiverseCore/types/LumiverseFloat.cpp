@@ -6,7 +6,7 @@ LumiverseFloat::LumiverseFloat(float val, float def, float max, float min) :
   m_val(val), m_default(def), m_max(max), m_min(min) { }
 
 LumiverseFloat::LumiverseFloat(LumiverseFloat* other) :
-  m_val(other->m_val), m_default(other->m_default) { }
+  m_val(other->m_val), m_default(other->m_default), m_max(other->m_max), m_min(other->m_min) { }
 
 LumiverseFloat::LumiverseFloat(LumiverseType* other) {
   if (other->getTypeName() != "float") {
@@ -57,7 +57,13 @@ float LumiverseFloat::asPercent() {
 
 // Override for =
 void LumiverseFloat::operator=(float val) { m_val = val; clamp(); }
-void LumiverseFloat::operator=(LumiverseFloat val) { m_val = val.m_val; }
+void LumiverseFloat::operator=(LumiverseFloat val)
+{
+  m_val = val.m_val;
+  m_max = val.m_max;
+  m_min = val.m_min;
+  m_default = val.m_default;
+}
 
 // Arithmetic overrides
 LumiverseFloat& LumiverseFloat::operator+=(float val) { m_val += val; clamp(); return *this; }

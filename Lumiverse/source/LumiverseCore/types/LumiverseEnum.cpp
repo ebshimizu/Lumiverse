@@ -8,7 +8,7 @@ LumiverseEnum::LumiverseEnum(Mode mode, int rangeMax) :
 }
 
 LumiverseEnum::LumiverseEnum(map<string, int> keys, Mode mode, int rangeMax, string def) :
-m_mode(mode), m_rangeMax(rangeMax)
+  m_mode(mode), m_rangeMax(rangeMax)
 {
   m_nameToStart = keys;
 
@@ -43,6 +43,31 @@ LumiverseEnum::LumiverseEnum(map<string, int> keys, string mode, int rangeMax, s
   else m_default = def;
 }
 
+LumiverseEnum::LumiverseEnum(LumiverseEnum* other) :
+  m_active(other->m_active), m_default(other->m_default), m_mode(other->m_mode),
+  m_rangeMax(other->m_rangeMax), m_tweak(other->m_tweak)
+{
+  m_nameToStart = map<string, int>(other->m_nameToStart);
+  m_startToName = map<int, string>(other->m_startToName);
+}
+
+LumiverseEnum::LumiverseEnum(LumiverseType* other) {
+  if (other->getTypeName() != "enum") {
+    // Initialize with defaults, which here means practically nothing
+    m_active = "";
+  }
+  else {
+    LumiverseEnum* otherEnum = (LumiverseEnum*)other;
+    m_active = otherEnum->m_active;
+    m_default = otherEnum->m_default;
+    m_mode = otherEnum->m_mode;
+    m_rangeMax = otherEnum->m_rangeMax;
+    m_tweak = otherEnum->m_tweak;
+
+    m_nameToStart = map<string, int>(otherEnum->m_nameToStart);
+    m_startToName = map<int, string>(otherEnum->m_startToName);
+  }
+}
 
 LumiverseEnum::~LumiverseEnum()
 {
@@ -102,6 +127,7 @@ bool LumiverseEnum::setVal(string name) {
 
   m_active = name;
   setTweakWithMode();
+  return true;
 }
 
 bool LumiverseEnum::setVal(string name, float tweak) {
@@ -138,7 +164,14 @@ void LumiverseEnum::operator=(string name) {
 }
 
 void LumiverseEnum::operator=(LumiverseEnum val) {
-  setVal(val.getVal(), val.getTweak());
+  m_active = val.m_active;
+  m_default = val.m_default;
+  m_mode = val.m_mode;
+  m_rangeMax = val.m_rangeMax;
+  m_tweak = val.m_tweak;
+
+  m_nameToStart = map<string, int>(val.m_nameToStart);
+  m_startToName = map<int, string>(val.m_startToName);
 }
 
 void LumiverseEnum::setTweakWithMode() {

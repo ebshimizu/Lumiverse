@@ -36,6 +36,12 @@ public:
   // Same as normal contsructor except mode is passed as a string.
   LumiverseEnum(map<string, int> keys, string mode, int rangeMax = 255, string def = "");
 
+  // Copies an enumeration.
+  LumiverseEnum(LumiverseEnum* other);
+
+  // Copies a generic type
+  LumiverseEnum(LumiverseType* other);
+
   // Destructor fun times.
   ~LumiverseEnum();
 
@@ -121,5 +127,40 @@ private:
   // someone comes out with a different protocol not limited by DMX this will change.
   int m_rangeMax;
 };
+
+// Ops time
+inline bool operator==(LumiverseEnum& a, LumiverseEnum& b) {
+  if (a.getTypeName() != "enum" || b.getTypeName() != "enum")
+    return false;
+
+  return (a.getVal() == b.getVal() && a.getTweak() == b.getTweak());
+}
+
+inline bool operator!=(LumiverseEnum& a, LumiverseEnum& b) {
+  return !(a == b);
+}
+
+// While it doesn't make too much sense to compare enums, you can compare
+// where they are in their numeric range. That's what that </> ops will compare
+inline bool operator<(LumiverseEnum& a, LumiverseEnum& b) {
+  if (a.getTypeName() != "enum" || b.getTypeName() != "enum")
+    return false;
+
+  return a.getRangeVal() < b.getRangeVal();
+}
+
+inline bool operator>(LumiverseEnum& a, LumiverseEnum& b) {
+  return b < a;
+}
+
+inline bool operator<=(LumiverseEnum& a, LumiverseEnum& b) {
+  return !(a > b);
+}
+
+inline bool operator>=(LumiverseEnum& a, LumiverseEnum& b) {
+  return !(a < b);
+}
+
+// Arithmetic overrides will be a little complicated as an enum.
 
 #endif

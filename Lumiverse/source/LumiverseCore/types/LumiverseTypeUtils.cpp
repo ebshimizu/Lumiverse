@@ -6,6 +6,8 @@ LumiverseType* LumiverseTypeUtils::copy(LumiverseType* data) {
 
   if (data->getTypeName() == "float")
     return (LumiverseType*)(new LumiverseFloat(data));
+  else if (data->getTypeName() == "enum")
+    return (LumiverseType*)(new LumiverseEnum(data));
   else
     return nullptr;
 }
@@ -16,6 +18,9 @@ void LumiverseTypeUtils::copyByVal(LumiverseType* source, LumiverseType* target)
 
   if (source->getTypeName() == "float") {
     *((LumiverseFloat*)target) = *((LumiverseFloat*)source);
+  }
+  else if (source->getTypeName() == "enum") {
+    *((LumiverseEnum*)target) = *((LumiverseEnum*)source);
   }
   else {
     return;
@@ -29,6 +34,8 @@ bool LumiverseTypeUtils::equals(LumiverseType* lhs, LumiverseType* rhs) {
   // At this point we can use just the lhs to determine type
   if (lhs->getTypeName() == "float")
     return (*((LumiverseFloat*)lhs) == *((LumiverseFloat*)rhs));
+  else if (lhs->getTypeName() == "enum")
+    return (*((LumiverseEnum*)lhs) == *((LumiverseEnum*)rhs));
   else
     return false;
 }
@@ -43,6 +50,14 @@ int LumiverseTypeUtils::cmp(LumiverseType* lhs, LumiverseType* rhs) {
     if (*((LumiverseFloat*)lhs) == *((LumiverseFloat*)rhs))
       return 0;
     else if (*((LumiverseFloat*)lhs) < *((LumiverseFloat*)rhs))
+      return -1;
+    else
+      return 1;
+  }
+  if (lhs->getTypeName() == "enum") {
+    if (*((LumiverseEnum*)lhs) == *((LumiverseEnum*)rhs))
+      return 0;
+    else if (*((LumiverseEnum*)lhs) < *((LumiverseEnum*)rhs))
       return -1;
     else
       return 1;
