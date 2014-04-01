@@ -5,6 +5,7 @@
 
 #include "../LumiverseType.h"
 #include <map>
+#include <memory>
 
 // Defines an enumeration in Lumiverse.
 // Moving lights often have various parameters that are enumerated
@@ -85,6 +86,11 @@ public:
   // Returns true on success, false on failure.
   bool setVal(string name, float tweak);
 
+  // Sets the value of the enumeration numerically.
+  // This will take a value and convert it to the proper enumeration
+  // and tweak for the particular enum. If out of range, it will clamp.
+  bool setVal(float val);
+
   // Tweaks the value of the enum
   void setTweak(float tweak);
 
@@ -99,6 +105,23 @@ public:
 
   // Gets the default value
   string getDefault() { return m_default; }
+
+  // Sets the mode
+  void setMode(Mode mode) { m_mode = mode; }
+
+  // Returns the mode
+  Mode getMode() { return m_mode; }
+
+  // Sets the interpolation mode
+  void setInterpMode(InterpolationMode mode) { m_interpMode = mode; }
+
+  // Returns the interpolation mode
+  InterpolationMode getInterpMode() { return m_interpMode; }
+
+  // Does a linear interpolation based on the interpolation mode
+  // The object this function is called on is treated as the left hand side
+  // The interp mode for the left hand side takes precedence
+  shared_ptr<LumiverseType> lerp(LumiverseEnum* rhs, float t);
 
   // Returns the exact value in the range given the active parameter and
   // the tweak value

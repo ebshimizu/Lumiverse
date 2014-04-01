@@ -21,7 +21,6 @@ int main(int argc, char**argv) {
   // -Cues / timeline
 
   // Init rig
-
   rig.init();
   rig.run();
 

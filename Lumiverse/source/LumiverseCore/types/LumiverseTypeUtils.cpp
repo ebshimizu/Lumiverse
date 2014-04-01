@@ -77,6 +77,10 @@ shared_ptr<LumiverseType> LumiverseTypeUtils::lerp(LumiverseType* lhs, Lumiverse
     *ret = ((*(LumiverseFloat*)lhs) * (1 - t)) + ((*(LumiverseFloat*)rhs) * t);
     return shared_ptr<LumiverseType>((LumiverseType *)ret);
   }
+  if (lhs->getTypeName() == "enum") {
+    // Redirect to lerp function within LumiverseEnum
+    return ((LumiverseEnum*)lhs)->lerp((LumiverseEnum*)rhs, t);
+  }
   else
     return nullptr;
 }

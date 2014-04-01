@@ -135,6 +135,35 @@ bool LumiverseEnum::setVal(string name, float tweak) {
   return false;
 }
 
+bool LumiverseEnum::setVal(float val) {
+  // Clamp cases are trivial.
+  if (val < m_startToName.begin()->first) {
+    return setVal(m_startToName.begin()->second, 0.0f);
+  }
+  else if (val > m_rangeMax) {
+    return setVal(m_startToName.end()->second, 1.0f);
+  }
+
+  // Otherwise we need to figure out what the value should be
+  int start;
+  for (auto kvp : m_startToName) {
+    // So yeah this is pretty slow. It's a search for a point in a range
+    // but in the interest of getting things running first we'll do the slow thing.
+    if (val < kvp.first)
+      break;
+    start = kvp.first;
+  }
+
+  string name = m_startToName[start];
+  auto it = m_startToName.find(start);
+  it++;
+
+  int end = (it == m_startToName.end()) ? m_rangeMax : it->first - 1;
+
+  float tweak = ((float)(val - start) / (float)(end - start));
+  return setVal(name, tweak);
+}
+
 void LumiverseEnum::setTweak(float tweak) {
   if (tweak < 0) tweak = 0;
   if (tweak > 1) tweak = 1;
@@ -152,6 +181,26 @@ float LumiverseEnum::getRangeVal() {
   end = (it == m_startToName.end()) ? m_rangeMax : it->first - 1;
 
   return start + (end - start) * m_tweak;
+}
+
+shared_ptr<LumiverseType> LumiverseEnum::lerp(LumiverseEnum* rhs, float t) {
+  LumiverseEnum* newEnum = new LumiverseEnum(*rhs);
+  
+  if (m_interpMode == SNAP) {
+    // Default initialization of newEnum is to rhs already.
+  }
+  else if (m_interpMode == SMOOTH_WITHIN_OPTION) {
+    if (rhs->getVal() == m_active) {
+      // If we're in the same value, then the lerp is just a lerp between the tweak values.
+      newEnum->setTweak(getTweak() * (1 - t) + rhs->getTweak() * t);
+    }
+  }
+  else if (m_interpMode == SMOOTH) {
+    // Lerp between the range values and let the enum figure things out.
+    newEnum->setVal(getRangeVal() * (1 - t) + rhs->getRangeVal() * t);
+  }
+
+  return shared_ptr<LumiverseType>((LumiverseType*)newEnum);
 }
 
 void LumiverseEnum::operator=(string name) {
