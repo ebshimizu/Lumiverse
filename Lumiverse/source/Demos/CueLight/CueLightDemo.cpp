@@ -7,18 +7,23 @@
 using namespace std;
 
 int main(int argc, char**argv) {
-  Rig rig("/Users/Evan/Documents/Programming/Lumiverse/lumiverse/Lumiverse/data/testRig.json");
+  Rig rig("E:/Users/falindrith/Dropbox/College_Senior/52401/code/OpenLL/Lumiverse/data/movingLights.json");
   CueList list1;
   Playback pb(&rig, 60);
 
   rig.init();
   rig.run();
 
-  rig.query("#1-10").setParam("intensity", 0.0f);
+  DeviceSet vizi = rig.query("vizi");
+  vizi.setParam("intensity", 0.0f);
+  vizi.setParam("shutter", "ON");
+  vizi.setParam("tilt", 0.5f);
+
   Cue cue1(&rig, 5.0f, 1.0f, 3.0f);
   list1.storeCue(1, cue1);
 
-  rig.query("#1-10").setParam("intensity", 1.0f);
+  vizi.setParam("intensity", 1.0f);
+  vizi.setParam("gobo", "GOBO 7");
   Cue cue2(&rig);
   list1.storeCue(2, cue2);
 
@@ -42,8 +47,8 @@ int main(int argc, char**argv) {
 
   while (1) {
     float val;
-    rig["s41"]->getParam("intensity", val);
-    cout << "s41 Intensity: " << val << "\n";
+    rig["vizi"]->getParam("intensity", val);
+    cout << "vizi Intensity: " << val << "\n";
     this_thread::sleep_for(chrono::milliseconds(100));
   }
 }

@@ -214,8 +214,14 @@ void LumiverseEnum::operator=(LumiverseEnum val) {
   m_rangeMax = val.m_rangeMax;
   m_tweak = val.m_tweak;
 
-  m_nameToStart = map<string, int>(val.m_nameToStart);
-  m_startToName = map<int, string>(val.m_startToName);
+  // The following code is not thread safe, as the accessors for the
+  // value of the enum need to traverse this structure to get the right value.
+  // Possible solutions include:
+  // -Forcing the thing being assigned to have the same list of potential values
+  // -Giving this class its own mutex to control access
+  // -Writing different assignment operators based on use case
+  // m_nameToStart = val.m_nameToStart;
+  // m_startToName = val.m_startToName;
 }
 
 void LumiverseEnum::setTweakWithMode() {

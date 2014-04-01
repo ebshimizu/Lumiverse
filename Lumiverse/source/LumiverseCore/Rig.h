@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <set>
+#include <functional>
 
 #include "LumiverseCoreConfig.h"
 #include "Patch.h"
@@ -152,6 +153,9 @@ private:
 
   // Devices mapped by channel number.
   multimap<unsigned int, Device *> m_devicesByChannel;
+
+  // Allows a user to run an additional function during the update loop.
+  vector<function<void()>> m_updateFunctions;
 
   // May have more indicies in the future, like mapping by channel number.
 };
