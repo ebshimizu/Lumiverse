@@ -45,7 +45,7 @@ void DMXPro2Interface::init() {
   
   res = sendData(SET_API_KEY_LABEL, const_cast<unsigned char *>(APIKey), 4);
   this_thread::sleep_for(chrono::milliseconds(200));
-  printf("\nPRO Mk2 ... Activated ... ");
+  Logger::log(INFO, "PRO Mk2 ... Activated ... ");
 
   // Activate ports 1 and 2 in DMX mode.
   setPorts(1, 1);
@@ -68,7 +68,7 @@ void DMXPro2Interface::sendDMX(unsigned char* data, unsigned int universe) {
     else if (universe == m_out2Universe)
       label = SEND_DMX_PORT2;
     else {
-      printf("\nAttempting to send to universe not assigned to this interface.");
+      Logger::log(WARN, "Attempting to send to universe not assigned to this interface.");
       return;
     }
     
@@ -87,15 +87,15 @@ void DMXPro2Interface::reset() {
   WORD wPID = 0x6001;
   FT_STATUS ftStatus;
 
-  printf("\nReloading devices for use with drivers ");
+  Logger::log(INFO, "Reloading devices for use with drivers ");
   ftStatus = FT_Reload(wVID, wPID);
 
   // Must wait a while for devices to be re-enumerated
   this_thread::sleep_for(chrono::milliseconds(3500));
   if (ftStatus != FT_OK)
-    printf("\nReloading Driver FAILED");
+    Logger::log(ERR, "Reloading Driver FAILED");
   else
-    printf("\nReloading Driver D2XX PASSED");
+    Logger::log(INFO,"Reloading Driver D2XX PASSED");
 #else
   // TODO
   // Can't use FT_Reload to reload entire driver, need other approach
@@ -211,7 +211,9 @@ bool DMXPro2Interface::openDevice(int device_num)
 
   // Try at least 3 times 
   do  {
-    printf("\n------ D2XX ------- Opening [Device %d] ------ Try %d", device_num, tries);
+    stringstream ss;
+    ss << "------ D2XX ------- Opening [Device " << device_num << "] ------ Try " << tries;
+    Logger::log(INFO, ss.str());
     ftStatus = FT_Open(device_num, &m_deviceHandle);
     this_thread::sleep_for(chrono::milliseconds(500));
     tries++;
@@ -229,17 +231,22 @@ bool DMXPro2Interface::openDevice(int device_num)
       minor_ver = (uint8_t)version >> 8;
 #pragma warning(pop)
       build_ver = (uint8_t)version & 0xFF;
-      printf("\nD2XX Driver Version:: %02X.%02X.%02X ", major_ver, minor_ver, build_ver);
+      stringstream ss;
+      ss << "D2XX Driver Version:: " << major_ver << "." << minor_ver << "." << build_ver;
+      Logger::log(INFO, ss.str());
     }
     else
-      printf("Unable to Get D2XX Driver Version");
+      Logger::log(WARN, "Unable to Get D2XX Driver Version");
 
     // Latency Timer
     ftStatus = FT_GetLatencyTimer(m_deviceHandle, (PUCHAR)&latencyTimer);
-    if (ftStatus == FT_OK)
-      printf("\nLatency Timer:: %d ", latencyTimer);
+    if (ftStatus == FT_OK) {
+      stringstream ss;
+      ss << "Latency Timer:: " << latencyTimer;
+      Logger::log(INFO, ss.str());
+    }
     else
-      printf("\nUnable to Get Latency Timer");
+      Logger::log(WARN, "Unable to Get Latency Timer");
 
     // These are important values that can be altered to suit your needs
     // Timeout in microseconds: Too high or too low value should not be used 
@@ -250,7 +257,7 @@ bool DMXPro2Interface::openDevice(int device_num)
     FT_Purge(m_deviceHandle, FT_PURGE_RX);
 
     // Send Get Widget Params to get Device Info
-    printf("Sending GET_WIDGET_PARAMS packet... ");
+    Logger::log(INFO, "Sending GET_WIDGET_PARAMS packet... ");
     res = sendData(GET_WIDGET_PARAMS, (unsigned char *)&size, 2);
     if (res == NO_RESPONSE)
     {
@@ -263,9 +270,9 @@ bool DMXPro2Interface::openDevice(int device_num)
       }
     }
     else
-      printf("\n PRO Connected Succesfully");
+      Logger::log(INFO, "PRO Connected Succesfully");
     // Receive Widget Response
-    printf("\nWaiting for GET_WIDGET_PARAMS_REPLY packet... ");
+    Logger::log(INFO, "Waiting for GET_WIDGET_PARAMS_REPLY packet... ");
     res = receiveData(GET_WIDGET_PARAMS_REPLY, (unsigned char *)&m_PROParams, sizeof(DMXUSBPROParamsType));
     if (res == NO_RESPONSE)
     {
@@ -277,7 +284,7 @@ bool DMXPro2Interface::openDevice(int device_num)
       }
     }
     else
-      printf("\n GET WIDGET REPLY Received ... ");
+      Logger::log(INFO, "GET WIDGET REPLY Received ... ");
     // Firmware  Version
     m_versionMSB = m_PROParams.FirmwareMSB;
     m_versionLSB = m_PROParams.FirmwareLSB;
@@ -285,14 +292,16 @@ bool DMXPro2Interface::openDevice(int device_num)
     // Display All Info avialable
     res = sendData(GET_WIDGET_SN, (unsigned char *)&size, 2);
     res = receiveData(GET_WIDGET_SN, (unsigned char *)&temp, 4);
-    printf("\n\n-----------::USB PRO Connected [Information Follows]::------------");
-    printf("\n\t  FIRMWARE VERSION: %d.%d", m_versionMSB, m_versionLSB);
+    stringstream ss;
+    ss << "\n-----------::USB PRO Connected [Information Follows]::------------";
+    ss << "\n\t  FIRMWARE VERSION: " << m_versionMSB << "." << m_versionMSB;
     BreakTime = (int)(m_PROParams.BreakTime * 10.67) + 100;
-    printf("\n\t  BREAK TIME: %d micro sec ", BreakTime);
+    ss << "\n\t  BREAK TIME: " << BreakTime << " micro sec";
     MABTime = (int)(m_PROParams.MaBTime * 10.67);
-    printf("\n\t  MAB TIME: %d micro sec", MABTime);
-    printf("\n\t  SEND REFRESH RATE: %d packets/sec", m_PROParams.RefreshRate);
-    printf("\n----------------------------------------------------------------\n\n");
+    ss << "\n\t  MAB TIME: " << MABTime << " micro sec";
+    ss << "\n\t  SEND REFRESH RATE: " << m_PROParams.RefreshRate << " packets/sec";
+    ss << "\n----------------------------------------------------------------\n";
+    Logger::log(INFO, ss.str());
     return true;
   }
   else // Can't open Device 
@@ -314,7 +323,7 @@ void DMXPro2Interface::setPorts(uint8_t port1, uint8_t port2) {
   // Enable Ports to DMX on both 
   res = sendData(SET_PORT_ASSIGNMENT_LABEL, portSet, 2);
   this_thread::sleep_for(chrono::milliseconds(200));
-  printf("\nPRO Mk2 ... Ready for DMX on both ports ... ");
+  Logger::log(INFO, "PRO Mk2 ... Ready for DMX on both ports ... ");
 }
 
 #endif
