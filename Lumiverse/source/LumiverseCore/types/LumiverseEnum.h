@@ -6,6 +6,7 @@
 #include "../LumiverseType.h"
 #include <map>
 #include <memory>
+#include <mutex>
 
 // Defines an enumeration in Lumiverse.
 // Moving lights often have various parameters that are enumerated
@@ -55,6 +56,9 @@ public:
 
   // Copies an enumeration.
   LumiverseEnum(LumiverseEnum* other);
+
+  // Copies an enumeration
+  LumiverseEnum(const LumiverseEnum& other);
 
   // Copies a generic type
   LumiverseEnum(LumiverseType* other);
@@ -129,12 +133,16 @@ public:
 
   // Operator overrides woo
   void operator=(string name);
-  void operator=(LumiverseEnum val);
+  void operator=(const LumiverseEnum& val);
 
 private:
   // Initializes the enumeration. Called from constructors.
   void init(map<string, int> keys, string active, Mode mode, string default,
     float tweak, int rangeMax, InterpolationMode interpMode);
+
+  // Intializes the enumeration. Copies over the values too if they already exist.
+  void init(map<string, int> keys, string active, Mode mode, string default,
+    float tweak, int rangeMax, InterpolationMode interpMode, map<int, string> vals);
 
   // Sets the tweak value based on the mode.
   void setTweakWithMode();
@@ -178,6 +186,10 @@ private:
   // Maximum value for the enumeration range. Typically this will be 255, but if
   // someone comes out with a different protocol not limited by DMX this will change.
   int m_rangeMax;
+
+  // Protects the access of the m_nameToStart and m_startToName maps during assignment
+  // and read (can't modify the map during a read)
+  mutex m_enumMapMutex;
 };
 
 // Ops time

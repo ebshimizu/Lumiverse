@@ -31,7 +31,12 @@ LumiverseEnum::LumiverseEnum(map<string, int> keys, string mode, string interpMo
 
 LumiverseEnum::LumiverseEnum(LumiverseEnum* other) {
   init(other->m_nameToStart, other->m_active, other->m_mode, other->m_default,
-    other->m_tweak, other->m_rangeMax, other->m_interpMode);
+    other->m_tweak, other->m_rangeMax, other->m_interpMode, other->m_startToName);
+}
+
+LumiverseEnum::LumiverseEnum(const LumiverseEnum& other) {
+  init(other.m_nameToStart, other.m_active, other.m_mode, other.m_default,
+    other.m_tweak, other.m_rangeMax, other.m_interpMode, other.m_startToName);
 }
 
 LumiverseEnum::LumiverseEnum(LumiverseType* other) {
@@ -43,7 +48,7 @@ LumiverseEnum::LumiverseEnum(LumiverseType* other) {
     LumiverseEnum* otherEnum = (LumiverseEnum*)other;
 
     init(otherEnum->m_nameToStart, otherEnum->m_active, otherEnum->m_mode, otherEnum->m_default,
-      otherEnum->m_tweak, otherEnum->m_rangeMax, otherEnum->m_interpMode);
+      otherEnum->m_tweak, otherEnum->m_rangeMax, otherEnum->m_interpMode, otherEnum->m_startToName);
   }
 }
 
@@ -61,6 +66,19 @@ void LumiverseEnum::init(map<string, int> keys, string active, Mode mode, string
   for (auto kvp : keys) {
     m_startToName[kvp.second] = kvp.first;
   }
+}
+
+void LumiverseEnum::init(map<string, int> keys, string active, Mode mode, string default,
+  float tweak, int rangeMax, InterpolationMode interpMode, map<int, string> vals) {
+  m_active = active;
+  m_mode = mode;
+  m_default = default;
+  m_tweak = tweak;
+  m_rangeMax = rangeMax;
+  m_interpMode = interpMode;
+
+  m_nameToStart = keys;
+  m_startToName = vals;
 }
 
 LumiverseEnum::~LumiverseEnum()
@@ -136,6 +154,9 @@ bool LumiverseEnum::setVal(string name, float tweak) {
 }
 
 bool LumiverseEnum::setVal(float val) {
+  // Need to protect this section from someone writing stuff during the process
+  lock_guard<mutex> lock(m_enumMapMutex);
+
   // Clamp cases are trivial.
   if (val < m_startToName.begin()->first) {
     return setVal(m_startToName.begin()->second, 0.0f);
@@ -171,6 +192,9 @@ void LumiverseEnum::setTweak(float tweak) {
 }
 
 float LumiverseEnum::getRangeVal() {
+  // Protect access to m_nameToStart and other maps
+  lock_guard<mutex> lock(m_enumMapMutex);
+
   int start = m_nameToStart[m_active];
 
   // Get the next value in the range. If at end use rangeMax.
@@ -184,7 +208,10 @@ float LumiverseEnum::getRangeVal() {
 }
 
 shared_ptr<LumiverseType> LumiverseEnum::lerp(LumiverseEnum* rhs, float t) {
-  LumiverseEnum* newEnum = new LumiverseEnum(*rhs);
+  // Protect access to maps during this process
+  m_enumMapMutex.lock();
+
+  LumiverseEnum* newEnum = new LumiverseEnum(rhs);
   
   if (m_interpMode == SNAP) {
     // Default initialization of newEnum is to rhs already.
@@ -200,6 +227,7 @@ shared_ptr<LumiverseType> LumiverseEnum::lerp(LumiverseEnum* rhs, float t) {
     newEnum->setVal(getRangeVal() * (1 - t) + rhs->getRangeVal() * t);
   }
 
+  m_enumMapMutex.unlock();
   return shared_ptr<LumiverseType>((LumiverseType*)newEnum);
 }
 
@@ -207,21 +235,29 @@ void LumiverseEnum::operator=(string name) {
   setVal(name);
 }
 
-void LumiverseEnum::operator=(LumiverseEnum val) {
+void LumiverseEnum::operator=(const LumiverseEnum& val) {
   m_active = val.m_active;
   m_default = val.m_default;
   m_mode = val.m_mode;
   m_rangeMax = val.m_rangeMax;
   m_tweak = val.m_tweak;
 
-  // The following code is not thread safe, as the accessors for the
-  // value of the enum need to traverse this structure to get the right value.
-  // Possible solutions include:
-  // -Forcing the thing being assigned to have the same list of potential values
-  // -Giving this class its own mutex to control access
-  // -Writing different assignment operators based on use case
-  // m_nameToStart = val.m_nameToStart;
-  // m_startToName = val.m_startToName;
+  // Before we do a copy of the maps, check to see if they aren't already the same.
+  if (val.m_nameToStart.size() == m_nameToStart.size()) {
+    for (auto& kvp : m_nameToStart) {
+      if (kvp.second != val.m_nameToStart.find(kvp.first)->second) {
+        break;
+      }
+    }
+    return;
+  }
+
+  // If they aren't the same, do the copy.
+  lock_guard<mutex> lock(m_enumMapMutex);
+  m_nameToStart = val.m_nameToStart;
+  m_startToName = val.m_startToName;
+
+  // Lock guard goes out of scope and releases mutex.
 }
 
 void LumiverseEnum::setTweakWithMode() {
