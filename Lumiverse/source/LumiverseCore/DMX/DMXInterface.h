@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "../lib/libjson/libjson.h"
 #include <string>
 using namespace std;
 
@@ -31,6 +32,12 @@ public:
   // Resets the interface. Is essentially a disconnect then reconnect and
   // any other refresher code needed.
   virtual void reset() = 0;
+
+  // Returns the JSON representation of the interface
+  virtual JSONNode toJSON() = 0;
+
+  // Returns the name of the interface's type
+  virtual string getInterfaceType() = 0;
 
   // Returns the name of this DMX interface.
   string getInterfaceName() { return m_ifaceName; }

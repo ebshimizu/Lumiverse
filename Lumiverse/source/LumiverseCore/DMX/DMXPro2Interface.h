@@ -9,6 +9,7 @@
 #include "DMXInterface.h"
 #include "pro_driver.h"
 #include "../Logger.h"
+#include "../lib/libjson/libjson.h"
 #include <chrono>
 #include <thread>
 #include <cstring>
@@ -42,6 +43,11 @@ public:
   // I think this function will actually kick out D2XX devices...
   // Might want to only use this in emergencies right now.
   virtual void reset();
+
+  // Gets the JSON version of this object
+  virtual JSONNode toJSON();
+
+  virtual string getInterfaceType() { return "DMXPro2Interface"; }
 
   // Functions from the FTDI interface will be public in the event that someone needs
   // to access a certain property specific to this device.

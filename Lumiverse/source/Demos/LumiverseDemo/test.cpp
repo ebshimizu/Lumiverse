@@ -7,7 +7,7 @@ using namespace std;
 int main(int argc, char**argv) {
   // Logger::setLogFile("OLLlog.txt");
   
-  Rig rig("E:/Users/falindrith/Dropbox/College_Senior/52401/code/OpenLL/Lumiverse/data/movingLights.json");
+  Rig rig("E:/Users/falindrith/Dropbox/College_Senior/52401/code/OpenLL/Lumiverse/data/testRig.json");
 
   // TODO: (roughly in order of importance)
   // -Sample command line control

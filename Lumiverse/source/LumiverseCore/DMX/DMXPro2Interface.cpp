@@ -107,6 +107,18 @@ void DMXPro2Interface::close() {
     FT_Close(m_deviceHandle);
 }
 
+JSONNode DMXPro2Interface::toJSON() {
+  JSONNode root;
+
+  root.set_name(getInterfaceId());
+  root.push_back(JSONNode("type", getInterfaceType()));
+  root.push_back(JSONNode("proNum", m_proNum));
+  root.push_back(JSONNode("out1", m_out1Universe));
+  root.push_back(JSONNode("out2", m_out2Universe));
+
+  return root;
+}
+
 int DMXPro2Interface::listDevices() {
   FT_STATUS ftStatus;
   DWORD numDevs = 0;

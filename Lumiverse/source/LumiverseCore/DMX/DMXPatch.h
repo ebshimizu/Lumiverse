@@ -52,6 +52,12 @@ public:
   // Closes connections to the interfaces.
   virtual void close();
 
+  // Exports a JSONNode with the data in this patch
+  virtual JSONNode toJSON();
+
+  // Gets the type of this object (hard coded since the type of this object won't randomly change)
+  virtual string getType() { return "DMXPatch"; }
+
   // Gets a mapping of device parameters to addresses for the patch type.
   // This is the full patch map.
   // Entries should look something like "deviceId.paramName -> 1 / 25" (DMX example)
@@ -119,6 +125,11 @@ private:
 
   // Loads the device maps from a JSON node
   void loadDeviceMaps(const JSONNode data);
+
+  // Converts a device map in the m_deviceMaps object into a JSON object.
+  JSONNode deviceMapToJSON(string id, map<string, patchData> data);
+
+  string conversionTypeToString(conversionType t);
 
   // Stores the state of the DMX universes.
   // Note that DMX Universe 1 is index 0 here due to one-indexing.

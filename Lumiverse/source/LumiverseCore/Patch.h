@@ -31,6 +31,12 @@ public:
   // It's like an "uninit." Prepares for patch shutdown.
   virtual void close() = 0;
 
+  // Returns a JSON node representing the patch
+  virtual JSONNode toJSON() = 0;
+  
+  // Gets the type of the patch as a string
+  virtual string getType() = 0;
+
   // Gets a mapping of device parameters to addresses for the patch type.
   // This is the full patch map.
   // Entries should look something like "deviceId.paramName -> 1 / 25" (DMX example)

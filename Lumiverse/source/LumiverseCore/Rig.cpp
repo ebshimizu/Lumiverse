@@ -281,3 +281,46 @@ DeviceSet Rig::getDevices(string key, string val, bool isEqual) {
   DeviceSet working(this);
   return working.add(key, val, isEqual);
 }
+
+bool Rig::save(string filename, bool overwrite) {
+  // Test if the file already exists.
+  ifstream ifile(filename);
+  if (ifile.is_open() && !overwrite) {
+    return false;
+  }
+  ifile.close();
+  
+  ofstream rigFile;
+  rigFile.open(filename, ios::out | ios::trunc);
+  rigFile << toJSON().write_formatted();
+
+  return true;
+}
+
+JSONNode Rig::toJSON() {
+  JSONNode root;
+
+  stringstream ss;
+  ss << LumiverseCore_VERSION_MAJOR << "." << LumiverseCore_VERSION_MINOR;
+
+  root.push_back(JSONNode("version", ss.str()));
+  root.push_back(JSONNode("refreshRate", m_refreshRate));
+
+  JSONNode devices;
+  devices.set_name("devices");
+  for (auto d : m_devices) {
+    devices.push_back(d->toJSON());
+  }
+  root.push_back(devices);
+
+  JSONNode patches;
+  patches.set_name("patches");
+  for (auto p : m_patches) {
+    JSONNode patch = p.second->toJSON();
+    patch.set_name(p.first);
+    patches.push_back(patch);
+  }
+  root.push_back(patches);
+
+  return root;
+}

@@ -117,6 +117,14 @@ public:
   // Users are not allowed to modify devices through this direct method,
   // but may read the data.
   const set<Device *>* getDeviceRaw() { return &m_devices; }
+
+  // Writes the rig out to a JSON file
+  // Be default will not overwrite the file if it exists.
+  // Returns true on success.
+  bool save(string filename, bool overwrite = false);
+
+  // Gets the JSON data for the rig as a string.
+  JSONNode toJSON();
 private:
   // Loads the rig info from the parsed JSON data.
   void loadJSON(JSONNode root);

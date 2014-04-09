@@ -63,14 +63,11 @@ DeviceSet DeviceSet::select(string selector) {
       // Time to handle |
       end = s.find(',', start);
 
-      // This is only relevant in a filter
-      if (filter) {
         size_t bar = s.find('|', start);
         if (bar < end) {
           end = bar;
           consolidate = false;
         }
-      }
 
       string sel = s.substr(start, end - start);
       DeviceSet temp = parseSelector(sel, filter);

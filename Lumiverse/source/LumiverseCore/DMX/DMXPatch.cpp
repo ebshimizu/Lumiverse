@@ -189,6 +189,62 @@ void DMXPatch::close() {
   }
 }
 
+JSONNode DMXPatch::toJSON() {
+  JSONNode root;
+
+  root.push_back(JSONNode("type", getType()));
+  JSONNode interfaces;
+  interfaces.set_name("interfaces");
+  for (auto i : m_interfaces) {
+    JSONNode iface = i.second->toJSON();
+    interfaces.push_back(iface);
+  }
+  root.push_back(interfaces);
+
+  JSONNode universes;
+  universes.set_name("universes");
+  for (auto u : m_ifacePatch) {
+    universes.push_back(JSONNode(u.first, u.second));
+  }
+  root.push_back(universes);
+
+  JSONNode deviceMaps;
+  deviceMaps.set_name("deviceMaps");
+  for (auto dm : m_deviceMaps) {
+    deviceMaps.push_back(deviceMapToJSON(dm.first, dm.second));
+  }
+  root.push_back(deviceMaps);
+
+  JSONNode devicePatch;
+  devicePatch.set_name("devicePatch");
+  for (auto p : m_patch) {
+    JSONNode dPatch;
+    dPatch.set_name(p.first);
+    dPatch.push_back(JSONNode("mapType", p.second->getDMXMapKey()));
+    dPatch.push_back(JSONNode("addr", p.second->getBaseAddress()));
+    dPatch.push_back(JSONNode("universe", p.second->getUniverse()));
+    devicePatch.push_back(dPatch);
+  }
+  root.push_back(devicePatch);
+
+  return root;
+}
+
+JSONNode DMXPatch::deviceMapToJSON(string id, map<string, patchData> data) {
+  JSONNode root;
+  root.set_name(id);
+
+  for (auto d : data) {
+    JSONNode mapping;
+    mapping.set_name(d.first);
+    mapping.push_back(JSONNode("start", d.second.startAddress));
+    mapping.push_back(JSONNode("ctype", conversionTypeToString(d.second.type)));
+    root.push_back(mapping.as_array());
+  }
+
+  return root;
+}
+
 void DMXPatch::assignInterface(DMXInterface* iface, unsigned int universe) {
   string id = iface->getInterfaceId();
 
@@ -286,4 +342,14 @@ bool DMXPatch::setRawData(unsigned int universe, vector<unsigned char> univData)
   }
 
   return true;
+}
+
+string DMXPatch::conversionTypeToString(conversionType t) {
+  if (t == FLOAT_TO_SINGLE) return "FLOAT_TO_SINGLE";
+  else if (t == FLOAT_TO_FINE) return "FLOAT_TO_FINE";
+  else if (t == ENUM) return "ENUM";
+  else {
+    Logger::log(WARN, "Unknown converstion type. Defaulting to float to single.");
+    return "FLOAT_TO_SINGLE";
+  }
 }
