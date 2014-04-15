@@ -37,7 +37,8 @@ public:
   void stop();
 
   // Sets the current state of the rig to the specified cue.
-  void goToCue(Cue& cue);
+  // Asserts itself over all other cues
+  void goToCue(Cue& cue, float time = 3);
 
   // Goes from the specified cue into the next specified cue.
   // Set assert to true to make the cue overwrite anything else running on
@@ -53,8 +54,11 @@ public:
   // Set assert to true to make all cue values animate.
   void goToNextCue(CueList& list, float num, bool assert = false);
 
+  // Goes to the next cue in order in a given list.
+  void goToNextCue(CueList& list, bool assert = false);
+
   // Goes to the first cue in a list.
-  void goToList(CueList& list);
+  void goToList(CueList& list, bool assert = false);
 
   // Sets the playback update rate
   void setRefreshRate(unsigned int rate);
@@ -65,7 +69,7 @@ private:
 
   // Returns the set of parameters to animate along with their keyframes
   // in going from cue A to cue B
-  map<string, map<string, set<Keyframe> > > diff(Cue& a, Cue& b);
+  map<string, map<string, set<Keyframe> > > diff(Cue& a, Cue& b, bool assert = false);
 
   // Stores the data used during playback.
   vector<PlaybackData> m_playbackData;

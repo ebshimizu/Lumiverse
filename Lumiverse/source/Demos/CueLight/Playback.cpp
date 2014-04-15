@@ -23,20 +23,19 @@ void Playback::stop() {
   }
 }
 
+void Playback::goToCue(Cue& cue, float time) {
+  Cue tempCue(m_rig, time);
+
+  goToCue(tempCue, cue, true);
+}
+
 void Playback::goToCue(Cue& first, Cue& next, bool assert) {
   PlaybackData pbData;
 
-  // Process for getting everything setup has a few stages.
-  // If we're not asserting the cue, figure out what changed from first to next
-  if (assert) {
-    // Force cue next to take precedence
-  }
   // Running a cue is as simple as running the keyframes in it
   // Of course, simple is relative as we have to populate the list of active
   // keyframes with keyframes that actually do a change to the device during the cue.
-  else {
-    pbData.activeKeyframes = diff(first, next);
-  }
+  pbData.activeKeyframes = diff(first, next, assert);
 
   pbData.start = chrono::high_resolution_clock::now();
 
@@ -47,6 +46,43 @@ void Playback::goToCue(Cue& first, Cue& next, bool assert) {
   m_playbackData.push_back(pbData);
 }
 
+void Playback::goToCue(CueList& list, float first, float next, bool assert) {
+  Cue* firstCue = list.getCue(first);
+  Cue* nextCue = list.getCue(next);
+
+  if (firstCue != nullptr && nextCue != nullptr) {
+    list.setCurrentCue(next);
+    goToCue(*firstCue, *nextCue, assert);
+  }
+  else {
+    stringstream ss;
+    ss << "Cannot go from cue " << first << " to cue " << next;
+    Logger::log(ERR, ss.str());
+  }
+}
+
+void Playback::goToNextCue(CueList& list, float num, bool assert) {
+  Cue* firstCue = list.getCue(num);
+  Cue* nextCue = list.getNextCue(num);
+
+  if (firstCue != nullptr && nextCue != nullptr) {
+    list.setCurrentCue(list.getNextCueNum(num));
+    goToCue(*firstCue, *nextCue, assert);
+  }
+  else {
+    stringstream ss;
+    ss << "Cannot to next cue from cue " << num;
+    Logger::log(ERR, ss.str());
+  }
+}
+
+void Playback::goToNextCue(CueList& list, bool assert) {
+  goToNextCue(list, list.getCurrentCue(), assert);
+}
+
+void Playback::goToList(CueList& list, bool assert) {
+  goToNextCue(list, list.getFirstCueNum(), assert);
+}
 
 void Playback::setRefreshRate(unsigned int rate) {
   m_refreshRate = rate;
@@ -145,7 +181,7 @@ void Playback::update() {
   }
 }
 
-map<string, map<string, set<Keyframe> > > Playback::diff(Cue& a, Cue& b) {
+map<string, map<string, set<Keyframe> > > Playback::diff(Cue& a, Cue& b, bool assert) {
   map<string, map<string, set<Keyframe> > > data;
 
   // The entire rig is stored, so comparison from a to be should be sufficient.
@@ -157,8 +193,8 @@ map<string, map<string, set<Keyframe> > > Playback::diff(Cue& a, Cue& b) {
     // For all parameters in a device
     for (auto param : it.second) {
       // The conditions for not animating a parameter are that it has two keyframes, and the
-      // values in the keyframes are identical.
-      if (param.second.size() == 2 &&
+      // values in the keyframes are identical and we're not asserting this cue
+      if (!assert && param.second.size() == 2 &&
         LumiverseTypeUtils::equals(param.second.begin()->val.get(), (*cueBData)[it.first][param.first].begin()->val.get())) {
         continue;
       }

@@ -59,3 +59,23 @@ void CueList::update(float num, Rig* rig, bool track) {
     m_cues[num].update(rig);
   }
 }
+
+Cue* CueList::getNextCue(float num) {
+  auto current = m_cues.find(num);
+  if (current == m_cues.end()) {
+    return nullptr;
+  }
+
+  current++;
+  return &current->second;
+}
+
+float CueList::getNextCueNum(float num) {
+  auto current = m_cues.find(num);
+  if (current == m_cues.end()) {
+    return -1;
+  }
+
+  current++;
+  return current->first;
+}
