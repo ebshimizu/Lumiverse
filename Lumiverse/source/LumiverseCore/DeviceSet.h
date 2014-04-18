@@ -78,7 +78,6 @@ private:
 public:
   // Adds a device to the set. Overloads for other common additions.
   DeviceSet add(Device* device);
-  DeviceSet add(string id);
   DeviceSet add(unsigned int channel);
 
   // Adds a group of devices based on inclusive channel range
@@ -94,10 +93,12 @@ public:
 
   // Adds devices based on a parameter comparison function provided by the caller.
   DeviceSet add(string key, LumiverseType* val, function<bool(LumiverseType* a, LumiverseType* b)> cmp, bool isEqual);
+  
+  // Adds devices based on a query string
+  DeviceSet add(string query);
 
   // Removes a device from the set. Overloads for other common removals.
   DeviceSet remove(Device* device);
-  DeviceSet remove(string id);
   DeviceSet remove(unsigned int channel);
 
   // Removes a group of devices based on inclusive channel range
@@ -111,6 +112,9 @@ public:
 
   // Removes a device based on a parameter comparison function provided by the caller
   DeviceSet remove(string key, LumiverseType* val, function<bool(LumiverseType* a, LumiverseType* b)> cmp, bool isEqual);
+  
+  // Removes all devices from the set that match the given query.
+  DeviceSet remove(string query);
 
   // Inverts the selection.
   //DeviceSet invert();
@@ -149,6 +153,9 @@ private:
   // Internal set oprations
   // Equivalent of a union.
   void addSet(DeviceSet otherSet);
+  
+  // Equivalent of a set difference.
+  void removeSet(DeviceSet otherSet);
 
   // Set of devices we're currently working with.
   set<Device *> m_workingSet;

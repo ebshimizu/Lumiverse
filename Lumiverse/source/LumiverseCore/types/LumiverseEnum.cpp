@@ -52,11 +52,11 @@ LumiverseEnum::LumiverseEnum(LumiverseType* other) {
   }
 }
 
-void LumiverseEnum::init(map<string, int> keys, string active, Mode mode, string default,
+void LumiverseEnum::init(map<string, int> keys, string active, Mode mode, string def,
   float tweak, int rangeMax, InterpolationMode interpMode) {
   m_active = active;
   m_mode = mode;
-  m_default = default;
+  m_default = def;
   m_tweak = tweak;
   m_rangeMax = rangeMax;
   m_interpMode = interpMode;
@@ -68,11 +68,11 @@ void LumiverseEnum::init(map<string, int> keys, string active, Mode mode, string
   }
 }
 
-void LumiverseEnum::init(map<string, int> keys, string active, Mode mode, string default,
+void LumiverseEnum::init(map<string, int> keys, string active, Mode mode, string def,
   float tweak, int rangeMax, InterpolationMode interpMode, map<int, string> vals) {
   m_active = active;
   m_mode = mode;
-  m_default = default;
+  m_default = def;
   m_tweak = tweak;
   m_rangeMax = rangeMax;
   m_interpMode = interpMode;

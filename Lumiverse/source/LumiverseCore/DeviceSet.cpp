@@ -302,8 +302,11 @@ DeviceSet DeviceSet::add(Device* device) {
   return newSet;
 }
 
-DeviceSet DeviceSet::add(string id) {
-  return add(m_rig->m_devicesById[id]);
+DeviceSet DeviceSet::add(string query) {
+  DeviceSet newSet(*this);
+  newSet.addSet(m_rig->query(query));
+  
+  return newSet;
 }
 
 DeviceSet DeviceSet::add(unsigned int channel) {
@@ -370,8 +373,11 @@ DeviceSet DeviceSet::remove(Device* device) {
   return newSet;
 }
 
-DeviceSet DeviceSet::remove(string id) {
-  return remove(m_rig->m_devicesById[id]);
+DeviceSet DeviceSet::remove(string query) {
+  DeviceSet newSet(*this);
+  newSet.removeSet(m_rig->query(query));
+  
+  return newSet;
 }
 
 DeviceSet DeviceSet::remove(unsigned int channel) {
@@ -456,6 +462,12 @@ void DeviceSet::removeDevice(Device* device) {
 
 void DeviceSet::addSet(DeviceSet otherSet) {
   m_workingSet.insert(otherSet.m_workingSet.begin(), otherSet.m_workingSet.end());
+}
+
+void DeviceSet::removeSet(DeviceSet otherSet) {
+  for (auto d : otherSet.m_workingSet) {
+    removeDevice(d);
+  }
 }
 
 void DeviceSet::setParam(string param, float val) {

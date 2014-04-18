@@ -137,11 +137,11 @@ public:
 
 private:
   // Initializes the enumeration. Called from constructors.
-  void init(map<string, int> keys, string active, Mode mode, string default,
+  void init(map<string, int> keys, string active, Mode mode, string def,
     float tweak, int rangeMax, InterpolationMode interpMode);
 
   // Intializes the enumeration. Copies over the values too if they already exist.
-  void init(map<string, int> keys, string active, Mode mode, string default,
+  void init(map<string, int> keys, string active, Mode mode, string def,
     float tweak, int rangeMax, InterpolationMode interpMode, map<int, string> vals);
 
   // Sets the tweak value based on the mode.
