@@ -453,7 +453,9 @@ void DeviceSet::reset() {
 }
 
 void DeviceSet::addDevice(Device* device) {
-  m_workingSet.insert(device);
+  if (device != nullptr) {
+    m_workingSet.insert(device);
+  }
 }
 
 void DeviceSet::removeDevice(Device* device) {
