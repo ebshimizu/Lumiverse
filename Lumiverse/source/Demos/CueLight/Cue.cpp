@@ -146,6 +146,30 @@ void Cue::insertKeyframe(float time, DeviceSet devices, bool uct) {
   }
 }
 
+void Cue::deleteKeyframe(string id, string param, float time) {
+  // don't try to erase something that's not there
+  if (m_cueData.count(id) == 0 || m_cueData[id].count(param) == 0)
+    return;
+  
+  // Find the cue data entry at the given time.
+  for (auto it = m_cueData[id][param].begin(); it != m_cueData[id][param].end(); it++) {
+    if (it->t == time) {
+      m_cueData[id][param].erase(it);
+      return;
+    }
+  }
+}
+
+void Cue::deleteKeyframe(float time, DeviceSet devices) {
+  // For each device
+  for (auto d : *devices.getDevices()) {
+    // For each parameter
+    for (auto p : *d->getRawParameters()) {
+      deleteKeyframe(d->getId(), p.first, time);
+    }
+  }
+}
+
 map<string, set<Keyframe> > Cue::getParams(Device* d) {
   map<string, set<Keyframe> > paramKeyframes;
 

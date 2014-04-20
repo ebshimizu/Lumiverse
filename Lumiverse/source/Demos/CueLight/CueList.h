@@ -46,7 +46,14 @@ public:
   void setCurrentCue(float val) { m_currentCue = val; }
 
   // Gets a cue and allows user to modify it.
-  Cue* getCue(float num) { return &(m_cues[num]); }
+  Cue* getCue(float num) {
+    if (m_cues.count(num) > 0) {
+      return &(m_cues[num]);
+    }
+    else {
+      return nullptr;
+    }
+  }
 
   // Gets the next cue in the list
   // If the given cue number isn't in the list, returns nullptr

@@ -109,6 +109,12 @@ public:
   // Set uct to false if you don't want to use cue timing if the inserted point is at the end of a cue
   // Overwrites old keyframes if they exist.
   void insertKeyframe(float time, DeviceSet devices, bool uct = true);
+  
+  // Raw delete of keyframe given device id, parameter name, and time
+  void deleteKeyframe(string id, string param, float time);
+  
+  // Deletes a keyframe at the given time for the given devices.
+  void deleteKeyframe(float time, DeviceSet devices);
 
   // Not implemented yet but planned
   // If ripple = true, will move the next cue to the location of the deleted cue
