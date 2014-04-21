@@ -67,6 +67,10 @@ Cue* CueList::getNextCue(float num) {
   }
 
   current++;
+  if (current == m_cues.end()) {
+    return nullptr;
+  }
+  
   return &current->second;
 }
 
@@ -78,4 +82,15 @@ float CueList::getNextCueNum(float num) {
 
   current++;
   return current->first;
+}
+
+float CueList::getCueNumAtIndex(int index) {
+  auto it = m_cues.begin();
+  
+  // There's gotta be a faster way of finding this with the std lib
+  for (int i = 0; i < index; i++) {
+    it++;
+  }
+  
+  return it->first;
 }

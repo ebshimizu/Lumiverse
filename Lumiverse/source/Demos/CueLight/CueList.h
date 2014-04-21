@@ -62,6 +62,10 @@ public:
   // Same as getNextCue but returns the cue number.
   // If the given cue number isn't in the list, returns -1
   float getNextCueNum(float num);
+  
+  // For those who need to access a cue by indexing into an array
+  // we've got you covered.
+  float getCueNumAtIndex(int index);
 private:
   // List of cues. Cue numbers can be floats.
   map<float, Cue> m_cues;

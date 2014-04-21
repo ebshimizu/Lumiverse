@@ -29,7 +29,7 @@ int main(int argc, char**argv) {
 
   // Test keyframe insertion
   DeviceSet chan1 = rig.query("#1");
-  chan1.setParam("intensity", 0.5f);
+  chan1.setParam("intensity", 0.0f);
   list1.getCue(1)->insertKeyframe(4, chan1);
   list1.getCue(1)->insertKeyframe(5, chan1);
 
