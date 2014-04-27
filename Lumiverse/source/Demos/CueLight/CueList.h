@@ -6,6 +6,8 @@
 #include <LumiverseCore.h>
 #include "Cue.h"
 
+using namespace Lumiverse;
+
 // A cue list is a list of cues. This class maintains the relationships
 // between cues and performs update operations.
 // This system will optionally track through changes to the cue, meaning

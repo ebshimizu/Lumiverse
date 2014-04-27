@@ -1,5 +1,5 @@
 #include "LumiverseFloat.h"
-
+namespace Lumiverse {
 // This is really not interesting huh.
 
 LumiverseFloat::LumiverseFloat(float val, float def, float max, float min) :
@@ -77,3 +77,4 @@ LumiverseFloat& LumiverseFloat::operator*=(LumiverseFloat& val) { m_val *= val.m
 
 LumiverseFloat& LumiverseFloat::operator/=(float val) { m_val /= val; clamp(); return *this; }
 LumiverseFloat& LumiverseFloat::operator/=(LumiverseFloat& val) { m_val /= val.m_val; return *this; }
+}

@@ -1,5 +1,5 @@
 #include "Device.h"
-
+namespace Lumiverse {
 
 Device::Device(string id, unsigned int channel, string type) {
   this->m_id = id;
@@ -105,7 +105,7 @@ bool Device::getMetadata(string key, string& val) {
     val = m_metadata[key];
     return true;
   }
-  
+
   return false;
 }
 
@@ -281,11 +281,11 @@ void Device::loadParams(const JSONNode data) {
 
         // If any of the above are missing we should abort
         if (modeNode != paramData.end() && defaultNode != paramData.end() &&
-            rangeNode != paramData.end() && keysNode != paramData.end() && interpModeNode != paramData.end()) {
+          rangeNode != paramData.end() && keysNode != paramData.end() && interpModeNode != paramData.end()) {
           // Get the keys into a map.
           map<string, int> enumKeys;
           JSONNode::const_iterator k = keysNode->begin();
-          
+
           while (k != keysNode->end()) {
             JSONNode keyData = *k;
 
@@ -296,7 +296,7 @@ void Device::loadParams(const JSONNode data) {
           // Make the enum
           LumiverseEnum* param = new LumiverseEnum(enumKeys, modeNode->as_string(), interpModeNode->as_string(),
             rangeNode->as_int(), defaultNode->as_string());
-          
+
           if (activeNode != paramData.end())
             param->setVal(activeNode->as_string());
           if (tweakNode != paramData.end())
@@ -328,4 +328,5 @@ void Device::loadParams(const JSONNode data) {
     //increment the iterator
     ++i;
   }
+}
 }

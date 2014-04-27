@@ -1,5 +1,7 @@
 #include "Rig.h"
 
+namespace Lumiverse {
+
 Rig::Rig() {
   m_running = false;
   setRefreshRate(40);
@@ -323,4 +325,5 @@ JSONNode Rig::toJSON() {
   root.push_back(patches);
 
   return root;
+}
 }

@@ -1,6 +1,6 @@
 #include "DMXDevicePatch.h"
 #include "DMXDevicePatch.h"
-
+namespace Lumiverse {
 
 DMXDevicePatch::DMXDevicePatch(string mapKey, unsigned int baseAddress, unsigned int universe)
   : m_baseAddress(baseAddress), m_universe(universe), m_dmxMapKey(mapKey) {
@@ -78,4 +78,5 @@ void DMXDevicePatch::setDMXVal(unsigned char* data, unsigned int address, unsign
     throw logic_error("Attempting to set data outside of DMX address range (0-511).");
   }
   data[m_baseAddress + address] = val;
+}
 }

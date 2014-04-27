@@ -10,6 +10,8 @@
 #include "Cue.h"
 #include "CueList.h"
 
+using namespace Lumiverse;
+
 // Data that tracks the progress of a cue and stores the data used in the cue transition.
 struct PlaybackData {
   chrono::time_point<chrono::high_resolution_clock> start;    // Cue start time. More accurate to take difference between now and start instead of summing.

@@ -1,5 +1,5 @@
 #include "LumiverseEnum.h"
-
+namespace Lumiverse {
 
 LumiverseEnum::LumiverseEnum(Mode mode, int rangeMax, InterpolationMode interpMode) {
   init(map<string, int>(), "", mode, "", 0.5f, rangeMax, interpMode);
@@ -328,4 +328,5 @@ LumiverseEnum::InterpolationMode LumiverseEnum::stringToInterpMode(string input)
   ss << "Invalid mode string provided: " << input << ". Options are FIRST, CENTER, LAST";
   Logger::log(ERR, ss.str());
   return SMOOTH_WITHIN_OPTION;
+}
 }

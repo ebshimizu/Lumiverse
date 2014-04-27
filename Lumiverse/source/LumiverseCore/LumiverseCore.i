@@ -1,6 +1,8 @@
-%module lumiversepython
+%module Lumiverse
 
 %include "typemaps.i"
+%include "windows.i"
+
 %include "stl.i"
 %include "std_string.i"
 %include "std_vector.i"
@@ -8,6 +10,7 @@ using namespace std;
 
 %{
 #include "LumiverseCore.h"
+using namespace Lumiverse;
 %}
 
 %template(UCharVector) vector<unsigned char>;
@@ -68,14 +71,14 @@ public:
   DeviceSet add(unsigned int lower, unsigned int upper);
   DeviceSet add(string key, string val, bool isEqual);
   DeviceSet add(string key, regex val, bool isEqual);
-  DeviceSet add(string key, LumiverseType* val, function<bool(LumiverseType* a, LumiverseType* b)> cmp, bool isEqual);
+  DeviceSet add(string key, Lumiverse::LumiverseType* val, function<bool(Lumiverse::LumiverseType* a, Lumiverse::LumiverseType* b)> cmp, bool isEqual);
   DeviceSet remove(Device* device);
   DeviceSet remove(string id);
   DeviceSet remove(unsigned int channel);
   DeviceSet remove(unsigned int lower, unsigned int upper);
   DeviceSet remove(string key, string val, bool isEqual);
   DeviceSet remove(string key, regex val, bool isEqual);
-  DeviceSet remove(string key, LumiverseType* val, function<bool(LumiverseType* a, LumiverseType* b)> cmp, bool isEqual);
+  DeviceSet remove(string key, Lumiverse::LumiverseType* val, function<bool(Lumiverse::LumiverseType* a, Lumiverse::LumiverseType* b)> cmp, bool isEqual);
   void setParam(string param, float val);
   inline const set<Device *>* getDevices() { return &m_workingSet; }
   string info();
@@ -100,8 +103,8 @@ public:
   inline string getType() { return m_type; }
   inline void setType(string newType) { m_type = newType; }
   bool getParam(string param, float& val);
-  LumiverseType* getParam(string param);
-  bool setParam(string param, LumiverseType* val);
+  Lumiverse::LumiverseType* getParam(string param);
+  bool setParam(string param, Lumiverse::LumiverseType* val);
   bool setParam(string param, float val);
   bool paramExists(string param);
   void clearParamValues();
@@ -115,7 +118,7 @@ public:
   vector<string> getMetadataKeyNames();
   string toString();
   JSONNode toJSON();
-  const map<string, LumiverseType*>* getRawParameters() { return &m_parameters; }
+  const map<string, Lumiverse::LumiverseType*>* getRawParameters() { return &m_parameters; }
 };
 
 class Patch

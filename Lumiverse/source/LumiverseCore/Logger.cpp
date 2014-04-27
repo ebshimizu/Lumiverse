@@ -1,5 +1,6 @@
 #include "Logger.h"
 
+namespace Lumiverse {
 namespace Logger {
   void setLogFile(string name) {
     logFile.open(name, ios::out | ios::app);
@@ -41,4 +42,5 @@ namespace Logger {
       }
     }
   }
-};
+}
+}

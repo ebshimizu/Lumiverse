@@ -3,6 +3,7 @@
 #include "LumiverseCore.h"
 
 using namespace std;
+using namespace Lumiverse;
 
 int main(int argc, char**argv) {
   // Logger::setLogFile("OLLlog.txt");

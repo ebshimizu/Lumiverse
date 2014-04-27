@@ -138,7 +138,7 @@ void Playback::update() {
               // Otherwise, do a lerp between keyframes.
               // First need to convert the cueTime to a position from 0-1
               float t = (cueTime - first.t) / (next.t - first.t);
-              shared_ptr<LumiverseType> lerped = LumiverseTypeUtils::lerp(first.val.get(), next.val.get(), t);
+              shared_ptr<Lumiverse::LumiverseType> lerped = LumiverseTypeUtils::lerp(first.val.get(), next.val.get(), t);
               LumiverseTypeUtils::copyByVal(lerped.get(), m_rig->getDevice(devices->first)->getParam(parameters->first));
               ++parameters;
             }
@@ -208,8 +208,8 @@ map<string, map<string, set<Keyframe> > > Playback::diff(Cue& a, Cue& b, bool as
             k.val = (*cueBData)[it.first][param.first].begin()->val;
 
             if (k.useCueTiming) {
-              LumiverseType* nextVal = (*cueBData)[it.first][param.first].begin()->val.get();
-              LumiverseType* thisVal = prev(keyframe)->val.get();
+              Lumiverse::LumiverseType* nextVal = (*cueBData)[it.first][param.first].begin()->val.get();
+              Lumiverse::LumiverseType* thisVal = prev(keyframe)->val.get();
               int result = LumiverseTypeUtils::cmp(thisVal, nextVal);
               
               if (result == -1) {

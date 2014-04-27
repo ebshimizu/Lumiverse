@@ -1,5 +1,7 @@
 #include "LumiverseTypeUtils.h"
 
+namespace Lumiverse {
+ 
 LumiverseType* LumiverseTypeUtils::copy(LumiverseType* data) {
   if (data == nullptr)
     return nullptr;
@@ -92,4 +94,5 @@ inline bool LumiverseTypeUtils::areSameType(LumiverseType* lhs, LumiverseType* r
     return false;
 
   return true;
+}
 }

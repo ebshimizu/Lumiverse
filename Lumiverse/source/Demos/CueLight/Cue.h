@@ -6,6 +6,8 @@
 #include <LumiverseCore.h>
 #include <memory>
 
+using namespace Lumiverse;
+
 struct Keyframe {
   // Time at which this keyframe is located. t=0 is start of timeline.
   float t;
@@ -13,7 +15,7 @@ struct Keyframe {
   // Value of the keyframe at time t
   // If this is nullptr, the keyframe is at the end of a cue and should take its value
   // from the next cue in the sequence.
-  shared_ptr<LumiverseType> val;
+  shared_ptr<Lumiverse::LumiverseType> val;
 
   // If true, t will be set to [previous keyframe time] + up/down fade time at runtime.
   // If set to false, it will use the time specified in t.
@@ -32,7 +34,7 @@ struct Keyframe {
   Keyframe() { }
 
   // Constructor with all values filled in.
-  Keyframe(float time, shared_ptr<LumiverseType> v, bool uct) :
+  Keyframe(float time, shared_ptr<Lumiverse::LumiverseType> v, bool uct) :
     t(time), val(v), useCueTiming(uct) { }
 };
 
@@ -42,7 +44,7 @@ struct Keyframe {
 // and downfade time.
 class Cue {
 public:
-  typedef map<string, map<string, shared_ptr<LumiverseType> > > changedParams;
+  typedef map<string, map<string, shared_ptr<Lumiverse::LumiverseType> > > changedParams;
 
   // Makes a blank cue.
   Cue() : m_upfade(3.0f), m_downfade(3.0f) { }
@@ -102,7 +104,7 @@ public:
 
   // Keyframe modifiers
   // Does a raw insert of a single parameter's data into a keyframe
-  inline void insertKeyframe(string id, string param, LumiverseType* data, float time, bool uct = true);
+  inline void insertKeyframe(string id, string param, Lumiverse::LumiverseType* data, float time, bool uct = true);
 
   // Inserts a new keyframe for all selected devices and all parameters taken from the
   // current state of the rig.
@@ -154,7 +156,7 @@ private:
   // Updates the parameters for a device in the cue.
   // If a parameter changes, returns the name of the param and the
   // old value of the param.
-  void updateParams(Device* d, map<string, shared_ptr<LumiverseType> >& changed);
+  void updateParams(Device* d, map<string, shared_ptr<Lumiverse::LumiverseType> >& changed);
   
   // Reserved for future use.
   // m_follow - cue follow time (time to wait before automatically taking the next cue)

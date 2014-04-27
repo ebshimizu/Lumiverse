@@ -1,4 +1,5 @@
 #include "DeviceSet.h"
+namespace Lumiverse {
 
 DeviceSet::DeviceSet(Rig* rig) : m_rig(rig) {
   // look it's empty
@@ -501,4 +502,5 @@ string DeviceSet::info() {
   }
 
   return ss.str();
+}
 }

@@ -59,7 +59,7 @@ Cue::changedParams Cue::update(Rig* rig) {
       m_cueData[d->getId()] = getParams(d);
     }
     else {
-      map<string, shared_ptr<LumiverseType> > changed;
+      map<string, shared_ptr<Lumiverse::LumiverseType> > changed;
       updateParams(d, changed);
 
       if (changed.size() > 0) {
@@ -118,10 +118,10 @@ void Cue::setTime(float up, float down) {
   m_downfade = down;
 }
 
-void Cue::insertKeyframe(string id, string param, LumiverseType* data, float time, bool uct) {
+void Cue::insertKeyframe(string id, string param, Lumiverse::LumiverseType* data, float time, bool uct) {
   Keyframe end = *prev(m_cueData[id][param].end());
 
-  Keyframe k(time, shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(data)), false);
+  Keyframe k(time, shared_ptr<Lumiverse::LumiverseType>(LumiverseTypeUtils::copy(data)), false);
 
   // If we're inserting past or at the end, use cue timing as directed.
   if (time >= end.t)
@@ -176,11 +176,11 @@ map<string, set<Keyframe> > Cue::getParams(Device* d) {
   // Copy all parameters to cue data list
   for (auto a : *(d->getRawParameters())) {
     // Insert the starting point as a keyframe.
-    paramKeyframes[a.first].insert(Keyframe(0, shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
+    paramKeyframes[a.first].insert(Keyframe(0, shared_ptr<Lumiverse::LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
     
     // Add extra keyframe if default cue delay is present.
     if (m_delay > 0) {
-      paramKeyframes[a.first].insert(Keyframe(m_delay, shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
+      paramKeyframes[a.first].insert(Keyframe(m_delay, shared_ptr<Lumiverse::LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
     }
 
     // The ending keyframe is a bit of an odd case. Since we don't know if it's an upfade or downfade
@@ -193,7 +193,7 @@ map<string, set<Keyframe> > Cue::getParams(Device* d) {
   return paramKeyframes;
 }
 
-void Cue::updateParams(Device* d, map<string, shared_ptr<LumiverseType> >& changed) {
+void Cue::updateParams(Device* d, map<string, shared_ptr<Lumiverse::LumiverseType> >& changed) {
   for (auto p : m_cueData[d->getId()]) {
     for (auto k : p.second) {
       // If this keyframe isn't the first, then do something a bit different.
@@ -218,7 +218,7 @@ void Cue::updateParams(Device* d, map<string, shared_ptr<LumiverseType> >& chang
       // If parameter data is new, replace this cue's data with the new data.
       if (!LumiverseTypeUtils::equals(d->getParam(p.first), k.val.get())) {
         // Make a full copy of the old data before overwriting old data.
-        changed[p.first] = shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(k.val.get()));
+        changed[p.first] = shared_ptr<Lumiverse::LumiverseType>(LumiverseTypeUtils::copy(k.val.get()));
 
         LumiverseTypeUtils::copyByVal(d->getParam(p.first), k.val.get());
       }

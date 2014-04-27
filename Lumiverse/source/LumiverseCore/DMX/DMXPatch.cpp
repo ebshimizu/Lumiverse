@@ -1,6 +1,6 @@
 #include "DMXPatch.h"
 #include "DMXPatch.h"
-
+namespace Lumiverse {
 
 DMXPatch::DMXPatch() {
   // Empty for now
@@ -352,4 +352,5 @@ string DMXPatch::conversionTypeToString(conversionType t) {
     Logger::log(WARN, "Unknown converstion type. Defaulting to float to single.");
     return "FLOAT_TO_SINGLE";
   }
+}
 }

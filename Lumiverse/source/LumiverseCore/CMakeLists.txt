@@ -8,7 +8,9 @@ set (LumiverseCore_VERSION_MAJOR 1)
 set (LumiverseCore_VERSION_MINOR 0)
 set (LumiverseCore_INCLUDE_DMXPRO2INTERFACE ON CACHE BOOL "Build LumiverseCore with Enttec USB DMX Pro Mk II Driver")
 set (LumiverseCore_PYTHON_BINDINGS ON CACHE BOOL "Build LumiverseCore bindings for Python")
+set (LumiverseCore_CSHARP_BINDINGS OFF CACHE BOOL "Build LumiverseCore bindings for C#")
 
+# Config interface options
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
     SET (LumiverseCore_USE_DMXPRO2 "#define USE_DMXPRO2")
 ENDIF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
@@ -18,6 +20,7 @@ configure_file (
   "${CMAKE_CURRENT_LIST_DIR}/LumiverseCoreConfig.h"
 )
 
+# Compiler options
 IF(APPLE)
     SET(CLANG_FLAGS "-std=c++11 -stdlib=libc++")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_FLAGS}")
@@ -29,10 +32,8 @@ IF(UNIX)
     MESSAGE("Adding -std=c++11 to g++ flags")
 ENDIF(UNIX)
 
-add_subdirectory(lib)
-
-add_library(LumiverseCore
-    LumiverseCoreConfig.h
+# Set source files
+set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
     LumiverseCore.h
     Logger.h
     Logger.cpp
@@ -54,17 +55,22 @@ add_library(LumiverseCore
     DMX/DMXPatch.cpp
     DMX/DMXDevicePatch.h
     DMX/DMXDevicePatch.cpp
-    DMX/DMXInterface.h
-    DMX/DMXPro2Interface.h
-    DMX/pro_driver.h
-    DMX/DMXPro2Interface.cpp)
-
-target_link_libraries(LumiverseCore libjson)
+    DMX/DMXInterface.h)
 
 # CMake is a bit weird and wants this defined here instead of inside the ftd2xx folder
+# Add relevant files to build if using DMXPRO2
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
     SET (LumiverseCore_USE_DMXPRO2 "#define USE_DMXPRO2" STRING)
+	SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE} DMX/DMXPro2Interface.h DMX/pro_driver.h DMX/DMXPro2Interface.cpp)
+ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 
+# Build the libraries
+add_library(LumiverseCore ${LUMIVERSE_CORE_SOURCE})
+target_link_libraries(LumiverseCore libjson)
+add_subdirectory(lib)
+
+# DMXPRO2 Interface build settings
+IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
     IF(WIN32)
         add_library(ftd2xx STATIC IMPORTED)
         set_property(TARGET ftd2xx PROPERTY IMPORTED_LOCATION
@@ -87,12 +93,9 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 
 # Time for fun other library binding generation time
-IF (LumiverseCore_PYTHON_BINDINGS)
+IF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
 	FIND_PACKAGE(SWIG REQUIRED)
 	INCLUDE(${SWIG_USE_FILE})
-
-	FIND_PACKAGE(PythonLibs)
-	INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 
 	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -101,32 +104,20 @@ IF (LumiverseCore_PYTHON_BINDINGS)
 	SET_SOURCE_FILES_PROPERTIES(LumiverseCore.i PROPERTIES CPLUSPLUS ON)
 	SET_SOURCE_FILES_PROPERTIES(LumiverseCore.i PROPERTIES SWIG_FLAGS "-includeall")
 	
-	SWIG_ADD_MODULE(lumiversepython python LumiverseCore.i LumiverseCoreConfig.h
-    LumiverseCore.h
-    Logger.h
-    Logger.cpp
-    Device.h
-    Device.cpp
-    Rig.h
-    Rig.cpp
-    DeviceSet.h
-    DeviceSet.cpp
-    LumiverseType.h
-    Patch.h
-    types/LumiverseFloat.h
-    types/LumiverseFloat.cpp
-	types/LumiverseEnum.h
-	types/LumiverseEnum.cpp
-	types/LumiverseTypeUtils.h
-	types/LumiverseTypeUtils.cpp
-    DMX/DMXPatch.h
-    DMX/DMXPatch.cpp
-    DMX/DMXDevicePatch.h
-    DMX/DMXDevicePatch.cpp
-    DMX/DMXInterface.h
-    DMX/DMXPro2Interface.h
-    DMX/pro_driver.h
-    DMX/DMXPro2Interface.cpp)
+	IF (LumiverseCore_PYTHON_BINDINGS)
+		MESSAGE("Including python bindings...")
+		FIND_PACKAGE(PythonLibs)
+		INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 
-	SWIG_LINK_LIBRARIES(lumiversepython ${PYTHON_LIBRARY} ftd2xx libjson)
-ENDIF (LumiverseCore_PYTHON_BINDINGS)
+		SWIG_ADD_MODULE(lumiversepython python ${LUMIVERSE_CORE_SOURCE} LumiverseCore.i)
+
+		SWIG_LINK_LIBRARIES(lumiversepython ${PYTHON_LIBRARY} ftd2xx libjson)
+	ENDIF (LumiverseCore_PYTHON_BINDINGS)
+
+	IF (LumiverseCore_CSHARP_BINDINGS)
+		MESSAGE("Including C# bindings...")
+		SWIG_ADD_MODULE(lumiversecsharp csharp ${LUMIVERSE_CORE_SOURCE} LumiverseCore.i)
+
+		SWIG_LINK_LIBRARIES(lumiversecsharp ftd2xx libjson)
+	ENDIF (LumiverseCore_CSHARP_BINDINGS)
+ENDIF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
