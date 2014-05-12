@@ -106,6 +106,7 @@ public:
   Lumiverse::LumiverseType* getParam(string param);
   bool setParam(string param, Lumiverse::LumiverseType* val);
   bool setParam(string param, float val);
+  bool setParam(string param, string val, float val2 = -1.0f);
   bool paramExists(string param);
   void clearParamValues();
   unsigned int numParams();
