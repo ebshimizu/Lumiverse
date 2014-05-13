@@ -37,3 +37,6 @@ a Socket.IO interface just fine.
 	* Generic FTDI device
 	* Philips Hue
 	* ACN
+
+This project was supported in part by funding from the [Carnegie Mellon
+University Frank-Ratchye Fund for Art @ the Frontier](http://studioforcreativeinquiry.org/)
