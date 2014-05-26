@@ -14,6 +14,13 @@ multiple interfaces at the same time.
 * Inside of the folder you made, run `cmake ../source`
 * Build
 
+## Documentation
+Documentation for the project is generated from source with [Doxygen](http://www.stack.nl/~dimitri/doxygen/)
+You may choose to not build documentation by setting the `LUMIVERSE_DOCS`
+cmake variable accordingly during project generation.
+Documentation will be output to  `Lumiverse/docs` if generated. 
+
+
 ## Platform and Interface Support
 Lumiverse supports Windows, OS X, and iOS. Linux has some small issues at the
 moment preventing the project from compiling. I had some issues with the
