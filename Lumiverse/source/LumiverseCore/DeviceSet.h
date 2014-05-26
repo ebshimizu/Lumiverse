@@ -16,153 +16,416 @@ namespace Lumiverse {
   class Rig;
   class LumiverseType;
 
-  // A DeviceSet is a set of devices. More specifically, the set resulting
-  // from a particular query or series of filtering operations.
-  // These devices can be manupulated by setting properties as a group,
-  // further filtering them, adding devices, etc.
-  // DeviceSets are returned by the Rig when asking for more than one device.
-  // Device sets can be filtered in chains, as each filtering operation
-  // will return a new DeviceSet:
-  // rig.getDevices("angle", "back", true).remove("area", "3", true) ... etc.
-  // Returning a new set after each operation may use more memory, but
-  // it does allow for the construction of a query history and saving of
-  // that query during any point of its construction. This history is currently
-  // not saved, but may in the future be part of this class.
-  // Alternately, DeviceSets can be constructed from concise queries: 
-  // https://bitbucket.org/falindrith/OpenLL/wiki/Query%20Syntax%20Notes
+  /*!
+  * \brief A DeviceSet is a set of devices.
+  *
+  * More specifically, a DeviceSet is the set resulting
+  * from a particular query or series of filtering operations.
+  * These devices can be manupulated by setting properties as a group,
+  * further filtering them, adding devices, etc.
+  * DeviceSets are returned by the Rig when asking for more than one device.
+  * Device sets can be filtered in chains, as each filtering operation
+  * will return a new DeviceSet:
+  * `rig.getDevices("angle", "back", true).remove("area", "3", true) ...` etc.
+  * Returning a new set after each operation may use more memory, but
+  * it does allow for the construction of a query history and saving of
+  * that query during any point of its construction. This history is currently
+  * not saved, but may in the future be part of this class.
+  * Alternately, DeviceSets can be constructed from concise queries: 
+  * https://github.com/ebshimizu/Lumiverse/wiki/Query-Syntax-Notes
+  * \sa Device
+  */
   class DeviceSet
   {
   public:
-    // Constructs a DeviceSet unassociated with a particular Rig
+    /*!
+    * \brief Constructs a DeviceSet unassociated with a Rig
+    *
+    * It should be noted that this constructor actually isn't particularly useful.
+    * Without a Rig*, the DeviceSet can't realyl do any sort of queries, though
+    * it can store an arbitrary list of deivces.
+    * \sa DeviceSet(Rig*), DeviceSet(const DeviceSet&)
+    */
     DeviceSet() { };
 
-    // Constructs an empty set
+    /*!
+    * \brief Constructs an empty set
+    *
+    * \param rig Pointer to a Rig to get devices from.
+    * \sa DeviceSet(Rig*, set<Device *>), select(string), Rig
+    */
     DeviceSet(Rig* rig);
 
-    // Initializes the set with the given devices.
+    /*!
+    * \brief Constructs a set with the given devices.
+    *
+    * Similar to a copy constructor.
+    * \param rig Pointer to a Rig to get devices from.
+    * \param devices List of Device pointers to initialize the set with.
+    * \sa DeviceSet(Rig*), Device, Rig, select(string)
+    */
     DeviceSet(Rig* rig, set<Device *> devices);
 
-    // Copy Constructor
+    /*!
+    * \brief Copy a DeviceSet
+    * 
+    * \param dc DeviceSet to copy data from
+    */
     DeviceSet(const DeviceSet& dc);
 
-    // Destructor woo
+    /*!
+    * \brief Destructor for the DeviceSet
+    */
     ~DeviceSet();
 
-    // string override
+    /*!
+    * \brief Override for steam output
+    *
+    * Converts DeviceSet to a string representation and outputs it to a stream.
+    * \return ostream object containing the DeviceSet string appended to it.
+    * \sa info()
+    */
     std::ostream & operator<< (std::ostream &str) {
       str << info();
       return str;
     };
 
-    // Main function to select devices from a rig. Follows specific syntax rules. See
-    // the implementation for syntax details.
+    /*!
+    * \brief Get devices matching a query from the Rig
+    * 
+    * This is the primary function to select Devices from the Rig.
+    * Syntax details can be found here: https://github.com/ebshimizu/Lumiverse/wiki/Query-Syntax-Notes
+    * \param selector Query string.
+    * \return DeviceSet containing all Device objects matching the selector
+    */
     DeviceSet select(string selector);
 
   private:
     // Grouped here for convenience
-    // Parses a single selector. Redirects to appropriate functions.
-    // Boolean flag determines if selected fixtures are added or subtracted from
-    // the current DeviceSet
+    
+    /*!
+    * \brief Parses a single selector.
+    *
+    * Redirects to appropriate functions. See implementation for details.
+    * Boolean flag determines if selected Devices are added or subtracted from
+    * the current DeviceSet.
+    * \param selector Query string
+    * \param filter If true, indicates that devices will be filtered out of the current device set
+    * based on the result of the selector. If false, devices will be added based on the selector result.
+    * \return DeviceSet containing the result of applying the selector to the current set.
+    * \sa parseMetadataSelector(string, bool), parseChannelSelector(string, bool), parseParameterSelector(string, bool),
+    * parseFloatParameter(string, string, float, bool, bool)
+    */
     DeviceSet parseSelector(string selector, bool filter);
 
-    // Processes a metadata selector-
+    /*!
+    * \brief Processes a metadata selector
+    * 
+    * Helper for parseSelector.
+    * \param selector Query string
+    * \param filter If true, indicates that devices will be filtered out of the current device set
+    * based on the result of the selector. If false, devices will be added based on the selector result.
+    * \return DeviceSet containing the result of applying the metadata selector to the current set.
+    * \sa parseSelector(string, bool)
+    */
     DeviceSet parseMetadataSelector(string selector, bool filter);
 
-    // Processes a channel selector
+    /*!
+    * \brief Processes a channel selector
+    *
+    * Helper for parseSelector.
+    * \param selector Query string
+    * \param filter If true, indicates that devices will be filtered out of the current device set
+    * based on the result of the selector. If false, devices will be added based on the selector result.
+    * \return DeviceSet containing the result of applying the channel selector to the current set.
+    * \sa parseSelector(string, bool)
+    */
     DeviceSet parseChannelSelector(string selector, bool filter);
 
-    // Processes a parameter selector
+    /*!
+    * \brief Processes a parameter selector
+    *
+    * Helper for parseSelector. This part of the query is a bit difficult to parse
+    * due to LumiverseType objects actually being different types (enum, float, etc.).
+    * \param selector Query string
+    * \param filter If true, indicates that devices will be filtered out of the current device set
+    * based on the result of the selector. If false, devices will be added based on the selector result.
+    * \return DeviceSet containing the result of applying the parameter selector to the current set.
+    * \sa parseSelector(string, bool), parseFloatParameter(string, string, float, bool, bool)
+    */
     DeviceSet parseParameterSelector(string selector, bool filter);
 
-    // Processes a float parameter selector
+    /*!
+    * \brief Processes a float parameter selector
+    *
+    * Helper for parseParameterSelector.
+    * \param param Parameter name
+    * \param op Equality operation. One of "<", "<=", ">", ">=, "!=". Defaults to "==" if nothing specified
+    * or if invalid option is specified.
+    * \param val The value we're testing against
+    * \param filter If true, indicates that devices will be filtered out of the current device set
+    * based on the result of the selector. If false, devices will be added based on the selector result.
+    * \param eq If set to false, this function will add everything that does not satisfy the selector.
+    * It essentially inverts the query. For example, if you have `@intensity < .50` as the query with `eq = false`,
+    * the returned set will contain `@intensity >= .5`. This parameter is intended for internal use only.
+    * \return DeviceSet containing the result of applying the channel selector to the current set.
+    * \sa parseParameterSelector(string, bool)
+    */
     DeviceSet parseFloatParameter(string param, string op, float val, bool filter, bool eq);
 
   public:
-    // Adds a device to the set. Overloads for other common additions.
+    /*!
+    * \brief Adds a Device to the set.
+    * \param device Pointer to the Device to add.
+    * \return DeviceSet containing its current contents plus the added Device.
+    */
     DeviceSet add(Device* device);
+
+    /*!
+    * \brief Adds Devices in the specified channel to the set.
+    * \param channel The channel to add to the DeviceSet
+    * \return DeviceSet containing its current contents plus the added Devices.
+    */
     DeviceSet add(unsigned int channel);
 
-    // Adds a group of devices based on inclusive channel range
+    /*!
+    * \brief Adds Devices in the specified inclusive channel range to the set.
+    * \param lower First channel in the range (inclusive)
+    * \param upper Last channel in the range (inclusive)
+    * \return DeviceSet containing its current contents plus the added Devices.
+    */
     DeviceSet add(unsigned int lower, unsigned int upper);
 
-    // Adds devices based on metadata. isEqual determines if a device should be
-    // added if the values are equal/not equal
+
+    /*!
+    * \brief Adds Devices matching the specified metadata value to the set.
+    *
+    * If a Device does not have a value for the key specified, it will not
+    * be included in the set even if isEqual is set to false.
+    * \param key Metadata field to look at
+    * \param val Target value of the metadata field
+    * \param isEqual If true, the Devices matching the metadata value will be added. If false,
+    * devices that don't match the metadata value will be added.
+    * \return DeviceSet containing its current contents plus the added Devices.
+    * \sa add(string, regex, bool)
+    */
     DeviceSet add(string key, string val, bool isEqual);
 
-    // And the regex version of add by popular demand (meaning that I wanted it)
-    // Like the other add, isEqual determines if a device is added on a match or a non-match
+    /*!
+    * \brief Adds Devices matching the specified metadata value to the set.
+    *
+    * Regex version of the normal metadata add.
+    * If a Device does not have a value for the key specified, it will not
+    * be included in the set even if isEqual is set to false.
+    * \param key Metadata field to look at
+    * \param val Target value of the metadata field. Since this is a `std::regex`, it is possible
+    * to search for metadata using all of the nice regex features you're used to.
+    * \param isEqual If true, the Devices matching the metadata value will be added. If false,
+    * devices that don't match the metadata value will be added.
+    * \return DeviceSet containing its current contents plus the added Devices.
+    * \sa add(string, string, bool)
+    */
     DeviceSet add(string key, regex val, bool isEqual);
 
-    // Adds devices based on a parameter comparison function provided by the caller.
+    /*!
+    * \brief Adds devices based on a parameter comparison function provided by the caller.
+    * 
+    * One of the more complicated add functions, this one adds devices based on a
+    * user-specified comparison function between two LumiverseType pointers. It is up to
+    * the user to make sure these types are the same to ensure a good comparison is made.
+    * \param key Parameter to look at
+    * \param val Target parameter value
+    * \param cmp Comparison function
+    * \param isEqual If true, the Devices matching the metadata value will be added. If false,
+    * devices that don't match the metadata value will be added.
+    * \return DeviceSet containing its current contents plus the added Devices.
+    * \sa LumiverseType, LumiverseTypeUtils
+    */
     DeviceSet add(string key, LumiverseType* val, function<bool(LumiverseType* a, LumiverseType* b)> cmp, bool isEqual);
 
-    // Adds devices based on a query string
+    /*!
+    * \brief Adds devices based on a query string
+    *
+    * Typically you'd just use the select() function for this.
+    * \param query Query string
+    * \return DeviceSet containing its current contents plus the added Devices.
+    */
     DeviceSet add(string query);
 
-    // Removes a device from the set. Overloads for other common removals.
+    /*!
+    * \brief Removes a device from the set.
+    * \param device Device to remove
+    * \return DeviceSet containing its current contents without the specified Device.
+    */
     DeviceSet remove(Device* device);
+
+    /*!
+    * \brief Removes Devices in the specified channel from the set.
+    * \param channel The channel to remove from the DeviceSet
+    * \return DeviceSet containing its current contents without the specified Devices.
+    */
     DeviceSet remove(unsigned int channel);
 
-    // Removes a group of devices based on inclusive channel range
+    /*!
+    * \brief Removes Devices in the specified inclusive channel range from the set.
+    * \param lower First channel in the range (inclusive)
+    * \param upper Last channel in the range (inclusive)
+    * \return DeviceSet containing its current contents without the specified Devices..
+    */
     DeviceSet remove(unsigned int lower, unsigned int upper);
 
-    // Filters out devices matching/not matching a particular metadata value.
+    /*!
+    * \brief Removes Devices matching the specified metadata value to the set.
+    *
+    * If a Device does not have a value for the key specified, it will not
+    * be removed from the set even if isEqual is set to false.
+    * \param key Metadata field to look at
+    * \param val Target value of the metadata field
+    * \param isEqual If true, the Devices matching the metadata value will be removed. If false,
+    * devices that don't match the metadata value will be removed.
+    * \return DeviceSet containing its current contents without the specified Devices.
+    * \sa remove(string, regex, bool)
+    */
     DeviceSet remove(string key, string val, bool isEqual);
 
-    // Filters out devices matching/not matching a particular metadata value specified by a regex.
+
+    /*!
+    * \brief Removes Devices matching the specified metadata value from the set.
+    *
+    * Regex version of the normal metadata remove.
+    * If a Device does not have a value for the key specified, it will not
+    * be removed from the set even if isEqual is set to false.
+    * \param key Metadata field to look at
+    * \param val Target value of the metadata field. Since this is a `std::regex`, it is possible
+    * to search for metadata using all of the nice regex features you're used to.
+    * \param isEqual If true, the Devices matching the metadata value will be removed. If false,
+    * devices that don't match the metadata value will be removed.
+    * \return DeviceSet containing its current contents without the specified Devices.
+    * \sa remove(string, string, bool)
+    */
     DeviceSet remove(string key, regex val, bool isEqual);
 
-    // Removes a device based on a parameter comparison function provided by the caller
+    /*!
+    * \brief Removes devices based on a parameter comparison function provided by the caller.
+    *
+    * One of the more complicated remove functions, this one removes devices based on a
+    * user-specified comparison function between two LumiverseType pointers. It is up to
+    * the user to make sure these types are the same to ensure a good comparison is made.
+    * \param key Parameter to look at
+    * \param val Target parameter value
+    * \param cmp Comparison function
+    * \param isEqual If true, the Devices matching the metadata value will be removed. If false,
+    * devices that don't match the metadata value will be removed.
+    * \return DeviceSet containing its current contents without the specified Devices.
+    * \sa LumiverseType, LumiverseTypeUtils
+    */
     DeviceSet remove(string key, LumiverseType* val, function<bool(LumiverseType* a, LumiverseType* b)> cmp, bool isEqual);
 
-    // Removes all devices from the set that match the given query.
+    /*!
+    * \brief Removes devices based on a query string
+    * 
+    * All Devices matching the query string and are in the DeviceSet, will be removed.
+    * \param query Query string
+    * \return DeviceSet containing its current contents wihtout the specified Devices.
+    */
     DeviceSet remove(string query);
 
     // Inverts the selection.
     //DeviceSet invert();
 
-    // Resets all the parameters in each device in the device set
+    /*!
+    * \brief Resets all the parameters in each Device in the device set
+    * \sa Device::reset()
+    */
     void reset();
 
     // These must mirror the device setparam functions.
-    // This sets the value of a parameter on every device in the group
-    // if the parameter already exists in the device (will not add params,
-    // just modify).
+    
+    /*!
+    * \brief Sets the value of a LumiverseFloat parameter on every device in the group
+    * 
+    * This function will only set the value of an existing parameter. If the
+    * parameter doesn't exist, it will not be created by this function.
+    * \param param Parameter to modify
+    * \param val Value of the parameter
+    * \sa Device::setParam(string, float)
+    */
     void setParam(string param, float val);
 
-    // Sets an enumeration. See Device.h for more detailed info.
+    /*!
+    * \brief Sets the value of a LumiverseEnum parameter on every device in the group
+    *
+    * This function will only set the value of an existing parameter. If the
+    * parameter doesn't exist, it will not be created by this function.
+    * \param param Parameter to modify
+    * \param val Value of the enumeration
+    * \param val2 The tweak value of the LumiverseEnum
+    * \sa Device::setParam(string, string, float)
+    */
     void setParam(string param, string val, float val2 = -1.0f);
 
-    // Gets the devices managed by this set.
+    /*!
+    * \brief Gets the devices managed by this set.
+    * 
+    * \return Set of Device* contained by the DeviceSet
+    */
     inline const set<Device *>* getDevices() { return &m_workingSet; }
 
-    // Returns a string containing info about the DeviceSet.
-    // the heavy lifter of the toString override
+    /*!
+    * \brief Returns a string containing info about the DeviceSet.
+    *
+    * \return DeviceSet as a string. String contains the number of devices contained
+    * by the set and the IDs of each device in the set.
+    */
     string info();
 
-    // Returns the number of devices in the selected set.
+    /*!
+    * \brief Returns the number of devices in the DeviceSet.
+    * \return Number of devices in the set.
+    */
     inline size_t size() { return m_workingSet.size(); }
 
   private:
-    // Adds to the set without returning a new copy.
-    // Internal use only.
+    /*!
+    * \brief Adds to the set without returning a new copy.
+    *
+    * Internal use only.
+    * \param device Device to add to the set
+    */
     void addDevice(Device* device);
 
-    // Removes from the set without returning a new copy.
-    // Internal use only.
+    /*!
+    * \brief Removes from the set without returning a new copy.
+    *
+    * Internal use only.
+    * \param device Device to remove from the set.
+    */
     void removeDevice(Device* device);
 
-    // Internal set oprations
-    // Equivalent of a union.
+    /*!
+    * \brief Adds a set to the current set
+    * 
+    * Internal set opration. Equivalent to a union.
+    * \param otherSet The set to add to the DeviceSet.
+    */
     void addSet(DeviceSet otherSet);
 
-    // Equivalent of a set difference.
+    /*!
+    * \brief Removes a set from the current set
+    *
+    * Internal set opration. Equivalent to a set difference.
+    * \param otherSet The set to remove fromthe DeviceSet.
+    */
     void removeSet(DeviceSet otherSet);
 
-    // Set of devices we're currently working with.
+    /*!
+    * \brief Set of devices currently contained in the Deviceset
+    */
     set<Device *> m_workingSet;
 
-    // Reference to the rig for accessing indexes and devices
+    /*!
+    * \brief Pointer to the rig for accessing indexes and devices
+    */
     Rig* m_rig;
   };
 }

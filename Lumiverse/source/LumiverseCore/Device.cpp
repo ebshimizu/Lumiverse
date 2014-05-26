@@ -81,12 +81,6 @@ bool Device::paramExists(string param) {
   return (m_parameters.count(param) > 0);
 }
 
-void Device::clearParamValues() {
-  for (auto& kv : m_parameters) {
-    kv.second->reset();
-  }
-}
-
 unsigned int Device::numParams() {
   return m_parameters.size();
 }

@@ -6,7 +6,15 @@
 #include "LumiverseCore.h"
 
 namespace Lumiverse {
-  // Functions to make life with these generic types easier.
+  /*! 
+  * \namespace Lumiverse::LumiverseTypeUtils
+  * \brief Functions to make life with Lumiverse generic types easier
+  *
+  * This namespace contains utility functions for manipulating and comparing
+  * LumiverseType objects. As new types are added, these functions
+  * will be updated as needed to handle the new types.
+  * \sa LumiverseType, LumiverseFloat, LumiverseEnum
+  */
   namespace LumiverseTypeUtils {
     // Copies a LumiverseType and returns an abstracted pointer to the new value.
     // Returns nullptr if type is unknown to the Lumiverse system

@@ -136,7 +136,7 @@ namespace Lumiverse {
     * 
     * Can set arbitrary data with this version of the function.
     * \param param Parameter name
-    * \param LumiverseType object to assign to the parameter
+    * \param val object to assign to the parameter
     * \return False if the parameter does not exist prior to set. True otherwise.
     * \sa LumiverseType
     */
