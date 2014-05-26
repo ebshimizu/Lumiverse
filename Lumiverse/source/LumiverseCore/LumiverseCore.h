@@ -1,4 +1,44 @@
-// Include file for all of LumiverseCore in one conveninent location
+/*! \mainpage Main Page
+*
+* \section intro_sec Introduction
+*
+* Lumiverse is a framework for creating lighting control applications.
+*
+* \section install_sec Installation
+*
+* * Install CMake (> 2.8 suggested)
+* * Install build dependencies for specific modules:
+*      * DMX USB PRO MK2 driver: ftd2xx
+*      * Bindings for other languages: SWIG (>= 3.0.0)
+*    	     * Python: Python
+*    	     * C#: .NET (any version that works with SWIG)
+* * Make a folder to contain all of your build files
+* * Inside of the folder you made, run `cmake ../source`
+* * Build
+*
+* \section platforms Supported Platforms and Interfaces
+* Lumiverse supports Windows, OS X, and iOS. Linux has some small issues at the
+* moment preventing the project from compiling. I had some issues with the
+* FTD2XX driver on OS X, so your mileage with OS X may vary.
+*
+* At the moment, Lumiverse only has drivers for ENTTEC's DMX PRO MkII devices,
+* and has only been tested using one connected DMX PRO device at a time. iOS
+* supports none of the USB interfaces. It should support Art-Net and other
+* DMX over IP protocols at some point in the future, but I've run it with
+* a Socket.IO interface just fine.
+*/
+
+/*! \namespace Lumiverse
+* \brief Contains all core Lumiverse functions and variables.
+*/
+
+/*! \file LumiverseCore.h
+* \brief Include file for all of LumiverseCore in one conveninent location.
+* 
+* This file gets configured according to the interfaces you selected in the cmake
+* build settings. Only includes the headers in LumiverseCore. You must include
+* other headers separately
+*/
 #include "LumiverseCoreConfig.h"
 #include "Logger.h"
 #include "Device.h"

@@ -217,3 +217,5 @@ pip-log.txt
 #Lumiverse Specifics
 LumiverseCoreConfig.h
 node_modules/
+LumiverseColorGame/
+docs/
