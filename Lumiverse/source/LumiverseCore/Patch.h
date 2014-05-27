@@ -1,3 +1,6 @@
+/*! \file Patch
+* \brief The Patch translates Lumiverse Data to Network Data
+*/
 #ifndef _PATCH_H_
 #define _PATCH_H_
 
@@ -9,33 +12,64 @@
 using namespace std;
 
 namespace Lumiverse {
-  // An Lumiverse Patch is a class that maps devices to output channels and
-  // handles the outputting of data to the network.
-  // This Patch class is an abstract base class that defines the actions any
-  // implementation of a patch must have.
+  /*!
+  * \brief A Patch maps devices to output channels and handles the output of data to the network.
+  *
+  * Patches do not expose the internal workings of their network transport to the Rig.
+  * The user may choose to configure a Patch in a particular way, but the Rig doesn't
+  * care as long as it can pass Device objects to a Patch.
+  * The root Patch class is an abstract base class that defines the actions all
+  * implementations of a Patch must have.
+  */
   class Patch
   {
   public:
+    /*! \brief Virtual destructor */
     virtual ~Patch() { };
 
-    // Grabs values from list of Devices, translates them to proper format for the
-    // given network, and outputs the values to the network if the device is patched.
-    // This function should be able to do incremental updates, so if just one
-    // device had parameters change, you should be able to maintain the previous state
-    // of the patch and just update that one device's value.
+    /*!
+    * \brief Grabs values from list of Devices, translates them to proper format for the
+    * given network, and outputs the values to the network if the device is patched.
+    *
+    * Each Patch will get the full list of Devices from the Rig. The Patch implementation
+    * is responsible for finding the Devices that it needs, and then transmitting
+    * the apropriate data over the network. Each Patch may do this differently
+    * depending on the needs of the network.
+    */
     virtual void update(set<Device *> devices) = 0;
 
-    // Initializes settings for the patch. This can be starting up serial interfaces,
-    // network configuration, etc.
+    /*!
+    * \brief Initializes settings for the patch.
+    *
+    * This can be starting up serial interfaces, network configuration, etc.
+    * \sa Rig::init()
+    */
     virtual void init() = 0;
 
-    // It's like an "uninit." Prepares for patch shutdown.
+    /*!
+    * \brief Prepares for patch shutdown.
+    */
     virtual void close() = 0;
 
-    // Returns a JSON node representing the patch
+    /*!
+    * \brief Returns a JSON node representing the patch
+    *
+    * This is necessary for proper serialization of the Patch when the Rig
+    * is serialied. If you don't want your Patch to be serializable for some reason,
+    * you can return an empty JSONNode
+    * \return JSONNode containing the data for the Patch
+    * \sa Rig::loadPatches(), Rig::save()
+    */
     virtual JSONNode toJSON() = 0;
 
-    // Gets the type of the patch as a string
+    /*!
+    * \brief Gets the type of the patch as a string.
+    *
+    * This function should be hardcoded to return a string.
+    * This allows each object to be uniquely identified by a single string
+    * and allows the user to then do more detailed manipulation of the Patch.
+    * \return String representing the type of the Patch
+    */
     virtual string getType() = 0;
 
     // Gets a mapping of device parameters to addresses for the patch type.

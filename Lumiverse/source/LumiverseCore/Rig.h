@@ -1,3 +1,6 @@
+/*! \file Rig.h
+* \brief The Rig contains information about the state of the lighting system.
+*/
 #ifndef _RIG_H_
 #define _RIG_H_
 
@@ -23,147 +26,340 @@
 namespace Lumiverse {
   class DeviceSet;
 
-  // The Rig contains information about the state of the lighting system.
-  // It will manage devices and patches added to it by the user and
-  // provides functions for manipulating those devices.
+  /*! 
+  * \brief The Rig contains information about the state of the lighting system.
+  *
+  * A Rig is responsible for maintaining a list of all devices in the system,
+  * and for relaying changes to Lumiverse Device objects to the corresponding
+  * network interface. Rigs send Devices to a Patch, which then converts the
+  * Lumiverse data to a format that can be understood by the lights on the network.
+  */
   // TODO: Right now if you change a device channel or id the rig doesn't
   // know about it. Need to add functions in the Rig that allow
   // this sort of change.
   class Rig
   {
+    /*! \sa DeviceSet */
     friend class DeviceSet;
 
   public:
-    // Makes an empty rig
+    /*!
+    * \brief Makes an empty rig
+    *
+    * \sa Rig(string), init()
+    */
     Rig();
 
-    // Initialize Rig from JSON file
+    /*!
+    * \brief Initialize Rig from JSON file
+    *
+    * This function will initialize Devices and Patches by calling functions in
+    * the appropriate class.
+    * \param Path to file
+    * \sa Rig(), loadJSON(), loadDevices(), loadPatches(), init()
+    */
     Rig(string filename);
 
-    // Destroys and frees all objects in the rig. Once this is called
-    // all resources used by this class are free.
+    /*!
+    * \brief Destroys and frees all objects in the rig.
+    *
+    * Once this is called all resources used by this class are free.
+    * Do not attempt to access a Device from a destroyed Rig as the
+    * Rig will destroy all objects that it manages.
+    */
     ~Rig();
 
-    // Initializes the rig. Called after all patching has been done
-    // and configuration settings have been selected.
+    /*!
+    * \brief Initializes the rig.
+    *
+    * Called after all patching has been done and configuration settings
+    * have been selected.
+    * \sa Rig(), Rig(string)
+    */
     void init();
 
-    // Runs the update loop that sends updates to the network.
+    /*!
+    * \brief Runs the update loop that sends updates to the network.
+    *
+    * Spawns a child thread managed by this class.
+    * \sa m_updateLoop
+    */
     void run();
 
-    // Stops the update loop in preparation for shutting down the network
-    // or potential reconfiguration.
+    /*!
+    * \brief Stops the update loop.
+    * 
+    * Do this before shutting down the network or potential reconfiguring.
+    * \sa m_updateLoop
+    */
     void stop();
 
-    // Adds a device to the rig.
+    /*!
+    * \brief Adds a device to the Rig.
+    *
+    * Device memory is managed by the Rig. User should allocate memory,
+    * and the Rig is responsible for freeing it at the end.
+    * \param device Device to add to the Rig.
+    */
     void addDevice(Device * device);
 
-    // Gets a device from the rig. Return value can be modified to change
-    // the state of the device in the rig.
-    // If the device doesn't exist in the rig, a nullptr will be returned.
+    /*!
+    * \brief Gets a device from the rig.
+    *
+    * Return value can be modified to change
+    * the state of the device in the rig.
+    * \param id Device id.
+    * \return Pointer to the requested Device. If the device doesn't exist in the rig,
+    * a nullptr will be returned.
+    */
     Device* getDevice(string id);
 
-    // Removes the device with specified id from the rig. Also deletes it.
+    /*!
+    * \brief Removes the device with specified id from the rig. Also deletes it.
+    *
+    * This operation calls the device destructor too, so just be sure you actually
+    * want to completely get rid of a device before calling this.
+    * If you need to save the Device for some reason, get it with getDevice() first.
+    * \sa getDevice()
+    */
     void deleteDevice(string id);
 
-    // Adds a patch to the rig. Expects the patch to be configured before
-    // sending it to the rig. Not that it can't be edited later, but
-    // the rig only knows what you tell it.
+    /*!
+    * \brief Adds a Patch to the rig.
+    * 
+    * User is responsible for allocating memory for the patch,
+    * Rig is responsible for freeing an allocated patch.
+    * Expects the patch to be configured before sending it to the rig.
+    * Not that it can't be edited later, but the rig only knows what you tell it.
+    * \param id Identifier for the Patch. Used to retrieve patches from the Rig.
+    * \param patch Pointer to the patch.
+    * \sa Patch
+    */
     void addPatch(string id, Patch* patch);
 
-    // Gets a patch from the rig. Can be modified.
-    // Returns a nullptr if patch with specified ID doesn't exist.
+    /*!
+    * \brief Gets a patch from the rig.
+    * 
+    * \return Pointer to the requested patch. Returns a nullptr if patch with specified ID doesn't exist.
+    * \sa Patch
+    */
     Patch* getPatch(string id);
 
-    // Gets a patch from a rig and treats it as a DMXPatch.
-    // Use carefully.
+    /*!
+    * \brief Gets a patch from a rig and treats it as a DMXPatch.
+    *
+    * Use carefully. The rig does not guarantee that the requested patch is actually
+    * a DMXPatch.
+    * \return Pointer to the requested patch casted to a DMXPatch.\
+    * \sa DMXPatch, Patch
+    */
     DMXPatch* getPatchAsDMXPatch(string id) { return (DMXPatch*)getPatch(id); }
 
-    // Deletes an entire patch from the rig.
+    /*!
+    * \brief Deletes an entire patch from the rig.
+    * 
+    * Memory is freed after delete. If you need to save it for some reason, get it with
+    * getPatch() first.
+    * \param Patch id
+    * \sa getPatch()
+    */
     void deletePatch(string id);
 
-    // Sets the refresh rate for the update loop in cycles / second
+    /*!
+    * \brief Sets the refresh rate for the update loop in cycles / second
+    * 
+    * The DMX protocol is limited to 44Hz max, but you could run the loop faster.
+    * \param rate Number of times the update loop should run per second.
+    */
     void setRefreshRate(unsigned int rate);
 
-    // Gets the refresh rate for the update loop.
+    /*!
+    * \brief Gets the refresh rate for the update loop.
+    *
+    * \return Refresh rate in cycles/second
+    */
     unsigned int getRefreshRate() { return m_refreshRate; }
 
-    // Shorthand for getDevice(string)
+    /*!
+    * \brief Shorthand for getDevice(string)
+    *
+    * \return Pointer to requested Device.
+    * \sa getDevice()
+    */
     Device* operator[](string id);
 
-    // This will actually probably replace operator[] at some point, but that point is not now.
+    /*!
+    * \brief Gets a DeviceSet based on a query string
+    * 
+    * This will probably replace operator[](string) at some point, but that point is not now.
+    * \param q Query string
+    * \return DeviceSet containing all devices matching the query string.
+    * \sa DeviceSet, DeviceSet::select()
+    */
     DeviceSet query(string q);
 
-    // shorthand for getChannel(unsigned int channel);
+    /*!
+    * \brief Shorthand for getChannel(unsigned int)
+    * 
+    * \return DeviceSet containing all devices in the specified channel
+    * \sa getChannel(unsigned int)
+    */
     DeviceSet operator[](unsigned int channel);
 
     // Queries. Most everything starts with the creation of a DeviceSet.
     // Detailed filtering happens there, the Rig provides a few convenience functions
     // to get things started.
 
-    // Returns a set consisting of all devices in the rig
+    /*!
+    * \brief Returns a set consisting of all devices in the rig
+    *
+    * \return DeviceSet with all the Devices in it.
+    */
     DeviceSet getAllDevices();
 
-    // Gets all the devices in a channel
+    /*!
+    * \brief Gets all the devices in a channel
+    * \param channel Channel to retrieve
+    * \return DeviceSet containing the specified devices
+    * \sa DeviceSet::add(unsigned int)
+    */
     DeviceSet getChannel(unsigned int channel);
 
-    // Gets a range of channels
+    /*!
+    * \brief Gets a range of channels
+    * \param lower First channel to get (inclusive)
+    * \param upper Last channel to get (inclusive)
+    * \return DeviceSet containing the specified devices
+    * \sa DeviceSet::add(unsigned int, unsigned int)
+    */
     DeviceSet getChannel(unsigned int lower, unsigned int upper);
 
-    // Gets devices by metadata info. isEqual determines if the set consists
-    // of all devices that have the same value as val or not.
+    /*!
+    * \brief Gets devices by metadata info.
+    * \param key Metadata key
+    * \param val Value to check
+    * \param isEqual If true, returns all devices that have data equal to val.
+    * If false, returns all devices that have data not equal to val.
+    * \return DeviceSet containing the specified devices.
+    * \sa DeviceSet::add(string, string, bool)
+    */
     DeviceSet getDevices(string key, string val, bool isEqual);
 
-    // Gets the raw list of devices.
-    // Users are not allowed to modify devices through this direct method,
-    // but may read the data.
+    /*!
+    * \brief Gets the raw list of devices.
+    * 
+    * Users are not allowed to modify the set of devices through this method,
+    * but may read the data and modify device parameters.
+    * \return Set of Devices maintained by this Rig
+    */
     const set<Device *>* getDeviceRaw() { return &m_devices; }
 
-    // Writes the rig out to a JSON file
-    // Be default will not overwrite the file if it exists.
-    // Returns true on success.
+    /*!
+    * \brief Writes the rig out to a JSON file
+    *
+    * \param filename Path to file
+    * \param overwrite If the file specified by filename exists, the file will be
+    * overwritten if this variable is set to `true`
+    * \return True on success, false on failure.
+    * \sa toJSON()
+    */
     bool save(string filename, bool overwrite = false);
 
-    // Gets the JSON data for the rig as a string.
+    /*!
+    * \brief Gets the JSON data for the rig.
+    * 
+    * \return JSONNode containing all Rig information
+    */
     JSONNode toJSON();
   private:
-    // Loads the rig info from the parsed JSON data.
+    /*!
+    * \brief Loads the rig info from the parsed JSON data.
+    * \param root JSONNode containing all Rig data.
+    * \sa toJSON(), save(), loadDevices(), loadPatches()
+    */
     void loadJSON(JSONNode root);
 
-    // Loads the devices in the JSON file.
+    /*!
+    * \brief Loads the devices in the JSON file.
+    * \param root JSONNode containing the Devices in the Rig.
+    * \sa loadJSON()
+    */
     void loadDevices(JSONNode root);
 
-    // Load patches in the JSON file.
+    /*!
+    * \brief Load patches in the JSON file.
+    * \param root JSONNode containing the Patches in the Rig.
+    * \sa loadJSON()
+    */
     void loadPatches(JSONNode root);
 
-    // Actually updates the network and stuff.
+    /*!
+    * \brief Pushes data over the network
+    * 
+    * Actual transport is handled by the Patch objects in the Rig
+    * \sa Patch
+    */
     void update();
 
-    // Thread that runs the update loop.
+    /*!
+    * \brief Thread that runs the update loop.
+    */
     thread* m_updateLoop;
 
-    // Indicates the status of the update loop. True if running.
+    /*! \brief Indicates the status of the update loop.
+    * 
+    * True if running.
+    */
     bool m_running;
 
-    // Sets the speed of the run loop. Default is 40 (DMX standard).
+    /*!
+    * \brief Sets the speed of the run loop in cycles/second. Default is 40.
+    * \sa m_loopTime
+    */
     unsigned int m_refreshRate;
 
-    // Amount of time an update loop can take in s.
+    /*!
+    * \brief Amount of time an update loop can take in s.
+    *
+    * Automatically calculated by the rig based on m_refreshRate.
+    * \sa m_refreshRate
+    */
     float m_loopTime;
 
-    // Raw list of devices for sending to the Patch->update function.
+    /*!
+    * \brief Raw list of devices for sending to the Patch->update function.
+    *
+    * This is the core list of Device objects that the Rig maintains.
+    * Indices are built off of this set as needed.
+    * \sa Device
+    */
     set<Device *> m_devices;
 
-    // Patches mapped by an identifier chosen by the user.
+    /*!
+    * \brief Maps Patch id to at Patch object
+    *
+    * The Patch id only matters to the Rig. The Patch doesn't really care what you call it.
+    * \sa Patch
+    */
     map<string, Patch *> m_patches;
 
-    // Devices mapped by their device ID.
+    /*!
+    * \brief Devices mapped by their device ID.
+    */
     map<string, Device *> m_devicesById;
 
-    // Devices mapped by channel number.
+    /*! \brief Devices mapped by channel number. */
     multimap<unsigned int, Device *> m_devicesByChannel;
 
-    // Allows a user to run an additional function during the update loop.
+    /*!
+    * \brief List of functions to run at the end of the update loop
+    *
+    * Allows a user to run an additional function during the update loop.
+    * These functions must have a void() signature. I'm not entirely sure
+    * if you can write one to access internal Rig variables, but if you
+    * have other sorts of things that need to run in a regularly timed loop,
+    * you have the option to attach it to the Rig update loop.
+    */
     vector<function<void()>> m_updateFunctions;
 
     // May have more indicies in the future, like mapping by channel number.

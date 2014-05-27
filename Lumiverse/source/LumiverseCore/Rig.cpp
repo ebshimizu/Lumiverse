@@ -238,6 +238,11 @@ void Rig::update() {
       p.second->update(m_devices);
     }
 
+    // Run additional functions
+    for (auto f : m_updateFunctions) {
+      f();
+    }
+
     // Sleep a bit depending on how long the update took.
     auto end = chrono::high_resolution_clock::now();
     float elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count() / 1000.0f;

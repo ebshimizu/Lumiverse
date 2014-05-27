@@ -108,7 +108,6 @@ public:
   bool setParam(string param, float val);
   bool setParam(string param, string val, float val2 = -1.0f);
   bool paramExists(string param);
-  void clearParamValues();
   unsigned int numParams();
   vector<string> getParamNames();
   bool getMetadata(string key, string& val);

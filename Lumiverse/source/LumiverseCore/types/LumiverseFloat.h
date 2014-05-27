@@ -1,3 +1,6 @@
+/*! \file LumiverseFloat.h
+* \brief Stores a floating point value in Lumiverse
+*/
 #ifndef _LumiverseFLOAT_H_
 #define _LumiverseFLOAT_H_
 #pragma once
@@ -8,25 +11,49 @@
 class LumiverseType;
 
 namespace Lumiverse {
-  // Defines a float in Lumiverse
-  // Typically this will range from 0 to 1 inclusive, but it doesn't
-  // have to really.
+  /*!
+  * \brief Defines a float in Lumiverse
+  *
+  * This class allows limits to be set on the minimum and maximum values for
+  * the variable in question.
+  */
   class LumiverseFloat : LumiverseType
   {
   public:
-    // Constructs a float, default value is 0.
+    /*!
+    * \brief Constructs a float, default value is 0.
+    * 
+    * \param val Initial value
+    * \param def Default value. When reset() is called, `val` will be set to `def`.
+    * \param max Maximum allowed value
+    * \param min Minimum allowed value
+    * \sa reset()
+    */
     LumiverseFloat(float val = 0.0f, float def = 0.0f, float max = 1.0f, float min = 0.0f);
 
-    // Copies a float
+    /*!
+    * \brief Constructs a float with the contents of a different float
+    * \param other The other object to copy from
+    */
     LumiverseFloat(LumiverseFloat* other);
 
-    // Copies a generic Lumiverse Type
+    /*!
+    * \brief Constructs a float by copying from a generic LumiverseType
+    *
+    * If the other object isn't actually a float, this function will initialize with default values.
+    * \param other The other object to copy from.
+    */
     LumiverseFloat(LumiverseType* other);
 
-    // Destroys the float.
+    /*!
+    * \brief Destroys the float.
+    */
     ~LumiverseFloat();
 
-    // Says that this object is a float.
+    /*!
+    * \brief Says that this object is a float.
+    * \return String with contents: `"float"`
+    */
     virtual string getTypeName() { return "float"; }
 
     // Override for =
