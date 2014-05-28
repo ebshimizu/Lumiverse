@@ -16,6 +16,8 @@ namespace Lumiverse {
   *
   * This class allows limits to be set on the minimum and maximum values for
   * the variable in question.
+  * Overloads for comparison ops and arithmetic ops are located in Lumiverse namespace.
+  * \sa Lumiverse
   */
   class LumiverseFloat : LumiverseType
   {
@@ -73,47 +75,85 @@ namespace Lumiverse {
     LumiverseFloat& operator/=(float val);
     LumiverseFloat& operator/=(LumiverseFloat& val);
 
-    // Gets the value
+    /*! \brief Gets the value of the float 
+    * \return Value of the object
+    */
     float getVal() { return m_val; }
 
-    // Sets the value
+    /*!
+    * \brief Sets the value of the float
+    * \param val New value
+    */
     void setVal(float val) { m_val = val; }
 
-    // Set maximum value
+    /*!
+    * \brief Set maximum value
+    * \param val New maximum value
+    */
     void setMax(float val) { m_max = val; }
+    
+    /*!
+    * \brief Get the maximum value
+    * \return Maximum value for the float
+    */
     float getMax() { return m_max; }
 
-    // Set miniumum value
+    /*!
+    * \brief Set miniumum value
+    * \param val New minimum value
+    */
     void setMin(float val) { m_min = val; }
+    
+    /*!
+    * \brief Get the minimum value
+    * \return Minimum value for the float
+    */
     float getMin() { return m_min; }
 
-    // Set the default value
+    /*!
+    * \brief Set the default value for the float
+    * \param val New default value
+    */
     void setDefault(float val) { m_default = val; }
+    
+    /*!
+    * \brief Gets the default value for the float
+    * \return Default value
+    */
     float getDefault() { return m_default; }
 
-    // Resets the value to default
+    /*!
+    * \brief Resets the value to the default value
+    */
     virtual void reset() { m_val = m_default; }
 
-    // Returns the value of this float as a percentage in the range [min, max]
+    /*!
+    * \brief Returns the value of this float as a percentage
+    * \return Returns the value: `m_val / (m_max - m_min)`
+    */
     float asPercent();
 
     // Converts a float to a JSON object with specified name.
     virtual JSONNode toJSON(string name);
 
   private:
-    // Ensures that the value of this float is between min and max.
+    /*!
+    * \brief Ensures that the value of this float is between min and max.
+    */
     inline void clamp();
 
-    // Um, it's a float.
+    /*!
+    * \brief the value of this object
+    */
     float m_val;
 
-    // Default value for this float.
+    /*! \brief Default value for this float. */
     float m_default;
 
-    // Maximum value for the float (default 1.0)
+    /*! \brief Maximum value for the float (default 1.0) */
     float m_max;
 
-    // Minimum value for the float (default 0.0)
+    /*! Minimum value for the float (default 0.0) */
     float m_min;
   };
 

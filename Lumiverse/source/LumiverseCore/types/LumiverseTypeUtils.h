@@ -1,3 +1,6 @@
+/*! \file LumiverseTypeUtils.h
+* \brief Utility functions for manipulating LumiverseTypes
+*/
 #ifndef _LUMIVERSETYPEUTILS_H_
 #define _LUMIVERSETYPEUTILS_H_
 
@@ -16,28 +19,54 @@ namespace Lumiverse {
   * \sa LumiverseType, LumiverseFloat, LumiverseEnum
   */
   namespace LumiverseTypeUtils {
-    // Copies a LumiverseType and returns an abstracted pointer to the new value.
-    // Returns nullptr if type is unknown to the Lumiverse system
+    /*!
+    * \brief Copies a LumiverseType and returns an abstracted pointer to the new value.
+    *
+    * \return Pointer to a copy of the type or nullptr if type is unknown to the Lumiverse system.
+    * Memory is allocated for a copy, caller must free.
+    */
     LumiverseType* copy(LumiverseType* data);
 
-    // Copies the data from source into target.
-    // Essentially just invokes operator= based on the type of the data.
+    /*!
+    * \brief Copies the data from source into target.
+    *
+    * \param source Pointer to the data source
+    * \param target Pointer to the copy location
+    */
     void copyByVal(LumiverseType* source, LumiverseType* target);
 
-    // Compares two generic LumiverseType pointers for equality
+    /*!
+    * \brief Compares two generic LumiverseType pointers for equality
+    *
+    * Identifies the type of the objects and then invokes the proper comparison.
+    * \param lhs Object on the left hand side
+    * \param rhs Object on the right hand side
+    */
     bool equals(LumiverseType* lhs, LumiverseType* rhs);
 
-    // Returns the following:
-    // 0 if lhs and rhs are equal
-    // 1 if lhs > rhs
-    // -1 if lhs < rhs
-    // -2 if lhs and rhs are not the same type, are null, or are of unknown type
+    /*!
+    * \brief Compares two LumiverseType objects.
+    *
+    * \return 0 if lhs and rhs are equal,
+    * 1 if lhs > rhs,
+    * -1 if lhs < rhs,
+    * -2 if lhs and rhs are not the same type, are null, or are of unknown type
+    */
     int cmp(LumiverseType* lhs, LumiverseType* rhs);
 
-    // Lerps the values of a LumiverseType and returns the value
+    /*!
+    * \brief Lerps the values of a LumiverseType and returns the value
+    *
+    * \returns Value of the lerp in a new LumiverseType object.
+    * Value is equal to `lhs * (1 - t) + rhs * t`.
+    */
     shared_ptr<LumiverseType> lerp(LumiverseType* lhs, LumiverseType* rhs, float t);
 
-    // Returns true if lhs and rhs are not null and both the same type
+    /*!
+    * \brief Checks the types of two LumiverseType objects
+    * 
+    * \return True if lhs and rhs are not null and both the same type
+    */
     inline bool areSameType(LumiverseType* lhs, LumiverseType* rhs);
   }
 }

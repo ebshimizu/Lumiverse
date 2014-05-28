@@ -1,3 +1,6 @@
+/*! \file DeviceSet.h
+* \brief A Set of Devices.
+*/
 #ifndef _DEVICESET_H_
 #define _DEVICESET_H_
 

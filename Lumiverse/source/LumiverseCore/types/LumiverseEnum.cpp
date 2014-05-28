@@ -273,7 +273,7 @@ void LumiverseEnum::setTweakWithMode() {
     m_tweak = 1.0f;
     break;
   default:
-    Logger::log(ERR, "Invalud LumiverseEnum mode.");
+    Logger::log(ERR, "Invalid LumiverseEnum mode.");
     break;
   }
 }
@@ -314,7 +314,7 @@ string LumiverseEnum::interpModeAsString() {
   case SMOOTH:
     return "SMOOTH";
   default:
-    Logger::log(ERR, "Invalud LumiverseEnum interpolation mode.");
+    Logger::log(ERR, "Invalid LumiverseEnum interpolation mode.");
     return "";
   }
 }
