@@ -1,4 +1,4 @@
-/*! \file Patch
+/*! \file Patch.h
 * \brief The Patch translates Lumiverse Data to Network Data
 */
 #ifndef _PATCH_H_

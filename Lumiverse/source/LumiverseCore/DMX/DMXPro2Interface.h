@@ -1,8 +1,15 @@
+/*! \file DMXPro2Interface.h
+* \brief Class for using an ENTTEC DMX USB Pro Mk 2 device
+*/
 #ifndef _DMXPRO2INTERFACE_H_
 #define _DMXPRO2INTERFACE_H_
 
 #pragma once
 #include "LumiverseCoreConfig.h"
+
+// Note: If you want Doxygen to generate documentation for this class, 
+// you must have the following line uncommented.
+// #define USE_DMXPRO2
 
 #ifdef USE_DMXPRO2
 
@@ -16,7 +23,10 @@
 #include <sstream>
 
 namespace Lumiverse {
-  // Class for using an ENTTEC DMX USB Pro Mk 2 Interface.
+  /*!
+  * \class Lumiverse::DMXPro2Interface
+  * \brief Class for using an ENTTEC DMX USB Pro Mk 2 Interface.
+  */
   class DMXPro2Interface : public DMXInterface
   {
   public:
