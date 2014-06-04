@@ -40,6 +40,15 @@
 * other headers separately
 */
 #include "LumiverseCoreConfig.h"
+
+#ifdef USE_KINET
+#ifdef _WIN32
+// I don't really know why I need this, but apparently the windows socket
+// includes get really weird.
+#define WIN32_LEAN_AND_MEAN
+#endif
+#endif
+
 #include "Logger.h"
 #include "Device.h"
 #include "Rig.h"
@@ -55,5 +64,9 @@
 #include "lib/libjson/libjson.h"
 
 #ifdef USE_DMXPRO2
-  #include "DMX/DMXPro2Interface.h"
+#include "DMX/DMXPro2Interface.h"
+#endif
+
+#ifdef USE_KINET
+#include "DMX/KiNetInterface.h"
 #endif

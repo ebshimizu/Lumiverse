@@ -7,6 +7,7 @@ include_directories("${CMAKE_CURRENT_LIST_DIR}/types"
 set (LumiverseCore_VERSION_MAJOR 1)
 set (LumiverseCore_VERSION_MINOR 0)
 set (LumiverseCore_INCLUDE_DMXPRO2INTERFACE ON CACHE BOOL "Build LumiverseCore with Enttec USB DMX Pro Mk II Driver")
+set (LumiverseCore_INCLUDE_KINET ON CACHE BOOL "Build LumiverseCore with KiNet Driver")
 set (LumiverseCore_PYTHON_BINDINGS ON CACHE BOOL "Build LumiverseCore bindings for Python")
 set (LumiverseCore_CSHARP_BINDINGS OFF CACHE BOOL "Build LumiverseCore bindings for C#")
 
@@ -14,6 +15,10 @@ set (LumiverseCore_CSHARP_BINDINGS OFF CACHE BOOL "Build LumiverseCore bindings 
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
     SET (LumiverseCore_USE_DMXPRO2 "#define USE_DMXPRO2")
 ENDIF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+
+IF (LumiverseCore_INCLUDE_KINET)
+    SET (LumiverseCore_USE_KINET "#define USE_KINET")
+ENDIF (LumiverseCore_INCLUDE_KINET)
 
 configure_file (
   "${CMAKE_CURRENT_LIST_DIR}/LumiverseCoreConfig.h.in"
@@ -55,7 +60,9 @@ set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
     DMX/DMXPatch.cpp
     DMX/DMXDevicePatch.h
     DMX/DMXDevicePatch.cpp
-    DMX/DMXInterface.h)
+    DMX/DMXInterface.h
+	DMX/KiNetInterface.h
+	DMX/KiNetInterface.cpp)
 
 # CMake is a bit weird and wants this defined here instead of inside the ftd2xx folder
 # Add relevant files to build if using DMXPRO2

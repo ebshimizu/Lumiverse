@@ -24,7 +24,7 @@ namespace Lumiverse {
   class DMXInterface
   {
   public:
-    /*! \brief  Virtual destructor yay */
+    /*! \brief Virtual destructor yay */
     virtual ~DMXInterface() { };
 
     /*!

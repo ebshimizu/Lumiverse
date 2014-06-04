@@ -45,6 +45,20 @@ void DMXPatch::loadJSON(const JSONNode data) {
             Logger::log(WARN, "LumverseCore built without DMX Pro Mk II Interface, cannot add interface in Rig");
 #endif
           }
+          if (type->as_string() == "KiNetInterface") {
+#ifdef USE_KINET
+            auto host = iface->find("host");
+            auto port = iface->find("port");
+            auto protocolType = iface->find("protocolType");
+
+            if (host != iface->end() && port != iface->end() && protocolType != iface->end()) {
+              KiNetInterface* intface = new KiNetInterface(iface->name(), host->as_string(), port->as_int(), (KinetProtocolType)protocolType->as_int());
+              ifaceMap[iface->name()] = (DMXInterface*)intface;
+            }
+#else
+            Logger::log(WARN, "LumverseCore built without KiNet Interface, cannot add interface in Rig");
+#endif
+          }
           else {
             stringstream ss;
             ss << "Unsupported Interface Type " << type->name() << " in " << patchName;
