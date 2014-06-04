@@ -103,7 +103,7 @@ void DMXPro2Interface::reset() {
 #endif
 }
 
-void DMXPro2Interface::close() {
+void DMXPro2Interface::closeInt() {
   if (m_deviceHandle != NULL)
     FT_Close(m_deviceHandle);
 }
@@ -278,7 +278,7 @@ bool DMXPro2Interface::openDevice(int device_num)
       res = sendData(GET_WIDGET_PARAMS, (unsigned char *)&size, 2);
       if (res == NO_RESPONSE)
       {
-        close();
+        closeInt();
         return  NO_RESPONSE;
       }
     }
@@ -292,7 +292,7 @@ bool DMXPro2Interface::openDevice(int device_num)
       res = receiveData(GET_WIDGET_PARAMS_REPLY, (unsigned char *)&m_PROParams, sizeof(DMXUSBPROParamsType));
       if (res == NO_RESPONSE)
       {
-        close();
+        closeInt();
         return  NO_RESPONSE;
       }
     }

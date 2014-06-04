@@ -48,7 +48,7 @@ namespace Lumiverse {
     virtual void sendDMX(unsigned char* data, unsigned int universe);
 
     // Closes the connection to the DMX device
-    virtual void close();
+    virtual void closeInt();
 
     // Resets the connected interface.
     // I think this function will actually kick out D2XX devices...

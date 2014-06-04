@@ -8,7 +8,7 @@ using namespace Lumiverse;
 int main(int argc, char**argv) {
   // Logger::setLogFile("OLLlog.txt");
   
-  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/KiNetTest.json");
+  Rig rig("/home/falindrith/Documents/Lumiverse/Lumiverse/data/testRig.json");
 
   // TODO: (roughly in order of importance)
   // -Sample command line control
@@ -23,7 +23,7 @@ int main(int argc, char**argv) {
   
   KiNetInterface* testInterface = new KiNetInterface("Gates End Top", "10.1.0.1");
   rig.getPatchAsDMXPatch("DMX1")->assignInterface((DMXInterface *)testInterface, 3);
-  rig.save("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/KiNetTest.json");
+  rig.save("/home/falindrith/Documents/Lumiverse/Lumiverse/data/KiNetTest2.json");
 
   // Init rig
   rig.init();

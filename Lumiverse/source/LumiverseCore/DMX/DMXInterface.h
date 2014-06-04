@@ -49,7 +49,7 @@ namespace Lumiverse {
     /*!
     * \brief Closes the connection to the DMX device
     */
-    virtual void close() = 0;
+    virtual void closeInt() = 0;
 
     /*!
     * \brief Resets the interface.

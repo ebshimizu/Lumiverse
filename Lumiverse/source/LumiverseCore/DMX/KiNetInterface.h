@@ -16,6 +16,7 @@
 #else
 #include <sys/socket.h>
 #include <netdb.h>
+#include <unistd.h>
 #endif
 
 #include "DMXInterface.h"
@@ -62,7 +63,7 @@ namespace Lumiverse {
 
     virtual void sendDMX(unsigned char* data, unsigned int universe);
 
-    virtual void close();
+    virtual void closeInt();
 
     virtual void reset();
 

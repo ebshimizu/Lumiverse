@@ -81,7 +81,8 @@ void KiNetInterface::init() {
   hints.ai_canonname = NULL;
   hints.ai_addr = NULL;
   hints.ai_next = NULL;
-  stringstream port(m_port);
+  stringstream port;
+  port << m_port;
 
 #ifdef _WIN32
   WSADATA wsaData;
@@ -152,7 +153,7 @@ void KiNetInterface::sendDMX(unsigned char* data, unsigned int universe) {
   }
 }
 
-void KiNetInterface::close() {
+void KiNetInterface::closeInt() {
   if (m_connected) {
 #ifdef _WIN32
     closesocket(m_socket);
@@ -164,7 +165,7 @@ void KiNetInterface::close() {
 }
 
 void KiNetInterface::reset() {
-  close();
+  closeInt();
   init();
 }
 

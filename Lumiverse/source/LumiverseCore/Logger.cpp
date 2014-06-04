@@ -11,10 +11,17 @@ namespace Logger {
     // C++11 chrono used for timestamp
     time_t now = chrono::system_clock::to_time_t(chrono::system_clock::now());
     stringstream buf;
+    
+#ifndef __linux__
     buf << put_time(localtime(&now), "%Y-%m-%d %H:%M:%S");
+#else
+    char buffer[80];
+    strftime(buffer,80,"%d-%m-%Y %I:%M:%S",localtime(&now));
+    std::string timebuf(buffer);
+    buf << timebuf;
+#endif
 
-    //return buf.str();
-    return "";
+    return buf.str();
   }
 
   // Translates the log level to a string.

@@ -153,7 +153,7 @@ void DMXPatch::loadDeviceMaps(const JSONNode data) {
 DMXPatch::~DMXPatch() {
   // Deallocate all interfaces after closing them.
   for (auto& interfaces : m_interfaces) {
-    interfaces.second->close();
+    interfaces.second->closeInt();
     delete interfaces.second;
   }
 
@@ -199,7 +199,7 @@ void DMXPatch::init() {
 
 void DMXPatch::close() {
   for (auto& interfaces : m_interfaces) {
-    interfaces.second->close();
+    interfaces.second->closeInt();
   }
 }
 
@@ -287,7 +287,7 @@ void DMXPatch::assignInterface(DMXInterface* iface, unsigned int universe) {
 
 void DMXPatch::deleteInterface(string id) {
   // Close and delete the interface
-  m_interfaces[id]->close();
+  m_interfaces[id]->closeInt();
   delete m_interfaces[id];
 
   // Remove from the patch maps
