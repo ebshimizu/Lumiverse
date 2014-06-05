@@ -32,7 +32,7 @@ IF(APPLE)
 ENDIF(APPLE)
 
 IF(UNIX)
-    SET(GCC_FLAGS "-std=c++11 -pthread")
+    SET(GCC_FLAGS "-std=c++11 -pthread -fPIC")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_FLAGS}")
     MESSAGE("Adding -std=c++11 to g++ flags")
 ENDIF(UNIX)
@@ -118,7 +118,7 @@ IF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
 
 		SWIG_ADD_MODULE(lumiversepython python ${LUMIVERSE_CORE_SOURCE} LumiverseCore.i)
 
-		SWIG_LINK_LIBRARIES(lumiversepython ${PYTHON_LIBRARY} ftd2xx libjson)
+		SWIG_LINK_LIBRARIES(lumiversepython ${PYTHON_LIBRARY} libjson)
 	ENDIF (LumiverseCore_PYTHON_BINDINGS)
 
 	IF (LumiverseCore_CSHARP_BINDINGS)

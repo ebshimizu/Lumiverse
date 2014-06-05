@@ -55,6 +55,10 @@ void DMXPatch::loadJSON(const JSONNode data) {
               KiNetInterface* intface = new KiNetInterface(iface->name(), host->as_string(), port->as_int(), (KinetProtocolType)protocolType->as_int());
               ifaceMap[iface->name()] = (DMXInterface*)intface;
             }
+
+            stringstream ss;
+            ss << "Added KiNet Interface \"" << iface->name() << "\" with host " << host->as_string();
+            Logger::log(INFO, ss.str());
 #else
             Logger::log(WARN, "LumverseCore built without KiNet Interface, cannot add interface in Rig");
 #endif

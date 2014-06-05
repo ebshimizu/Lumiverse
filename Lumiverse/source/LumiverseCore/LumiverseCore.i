@@ -1,4 +1,4 @@
-%module Lumiverse
+%module lumiversepython
 
 %include "typemaps.i"
 %include "windows.i"
@@ -150,4 +150,30 @@ public:
   void dumpUniverses();
   void dumpUniverse(unsigned int universe);
   bool setRawData(unsigned int universe, vector<unsigned char> univData);
+};
+
+
+enum KinetProtocolType {
+  OLD,
+  NEW
+};
+
+class KiNetInterface : public DMXInterface
+{
+public:
+  KiNetInterface(string id, string host, int port = 6038, enum KinetProtocolType protocolType = KinetProtocolType::OLD);
+  ~KiNetInterface();
+  virtual void init();
+  virtual void sendDMX(unsigned char* data, unsigned int universe);
+  virtual void closeInt();
+  virtual void reset();
+  virtual JSONNode toJSON();
+  virtual string getInterfaceType() { return "KiNetInterface"; }
+
+  size_t getHeaderSize() const { return m_headerSize; }
+  size_t getDataSize() const { return m_dataSize; }
+  size_t getNumChannels() const { return m_numChannels; }
+  size_t getPacketSize() const { return m_headerSize + m_dataSize; }
+  size_t getBufferSize() const { return getPacketSize() * m_numChannels; }
+  const unsigned char* getHeaderBytes() const { return m_headerBytes; }
 };
