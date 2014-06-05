@@ -366,6 +366,9 @@ string DMXPatch::conversionTypeToString(conversionType t) {
   if (t == FLOAT_TO_SINGLE) return "FLOAT_TO_SINGLE";
   else if (t == FLOAT_TO_FINE) return "FLOAT_TO_FINE";
   else if (t == ENUM) return "ENUM";
+  else if (t == RGB_REPEAT2) return "RGB_REPEAT2";
+  else if (t == RGB_REPEAT3) return "RGB_REPEAT3";
+  else if (t == RGB_REPEAT4) return "RGB_REPEAT4";
   else {
     Logger::log(WARN, "Unknown converstion type. Defaulting to float to single.");
     return "FLOAT_TO_SINGLE";

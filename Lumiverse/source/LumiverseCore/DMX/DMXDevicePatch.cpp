@@ -44,6 +44,24 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
         toEnum(data, instr.second.startAddress, val);
         break;
       }
+      case (RGB_REPEAT2) :
+      {
+        LumiverseFloat* val = (LumiverseFloat*)device->getParam(instr.first);
+        RGBRepeat(data, instr.second.startAddress, val, 2);
+        break;
+      }
+      case (RGB_REPEAT3) :
+      {
+        LumiverseFloat* val = (LumiverseFloat*)device->getParam(instr.first);
+        RGBRepeat(data, instr.second.startAddress, val, 3);
+        break;
+      }
+      case (RGB_REPEAT4) :
+      {
+        LumiverseFloat* val = (LumiverseFloat*)device->getParam(instr.first);
+        RGBRepeat(data, instr.second.startAddress, val, 4);
+        break;
+      }
       default:
       {
         // Unsupported conversion.
@@ -71,6 +89,13 @@ void DMXDevicePatch::toEnum(unsigned char* data, unsigned int address, Lumiverse
   // is within the DMX value.
   unsigned short cvt = (unsigned char)val->getRangeVal();
   setDMXVal(data, address, cvt);
+}
+
+void DMXDevicePatch::RGBRepeat(unsigned char* data, unsigned int address, LumiverseFloat* val, int repeats) {
+  unsigned char cvt = (unsigned char)(255 * val->asPercent());
+  for (int i = 0; i < repeats; i++) {
+    setDMXVal(data, address + (i * 3), cvt);
+  }
 }
 
 void DMXDevicePatch::setDMXVal(unsigned char* data, unsigned int address, unsigned char val) {

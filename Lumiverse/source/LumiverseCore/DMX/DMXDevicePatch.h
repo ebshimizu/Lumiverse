@@ -16,7 +16,10 @@ namespace Lumiverse {
   enum conversionType {
     FLOAT_TO_SINGLE,  /*!< Converts a floating point to a single-byte DMX value (0-255) */
     FLOAT_TO_FINE,    /*!< Converts a floating point to a double-byte DMX value (0-65535) */
-    ENUM              /*!< Converts a LumiverseEnum to a single-byte DMX value (0-255) */
+    ENUM,             /*!< Converts a LumiverseEnum to a single-byte DMX value (0-255) */
+    RGB_REPEAT2,      /*!< Converts a floating point value to a single-byte DMX value and outputs it twice offset by 3. */
+    RGB_REPEAT3,      /*!< Converts a floating point value to a single-byte DMX value and outputs it three times offset by 3. */
+    RGB_REPEAT4       /*!< Converts a floating point value to a single-byte DMX value and outputs it four times offset by 3. */
   };
 
   /*!
@@ -62,6 +65,9 @@ namespace Lumiverse {
       if (t == "FLOAT_TO_SINGLE") { type = FLOAT_TO_SINGLE; }
       else if (t == "FLOAT_TO_FINE") { type = FLOAT_TO_FINE; }
       else if (t == "ENUM") { type = ENUM; }
+      else if (t == "RGB_REPEAT2") { type = RGB_REPEAT2; }
+      else if (t == "RGB_REPEAT3") { type = RGB_REPEAT3; }
+      else if (t == "RGB_REPEAT4") { type = RGB_REPEAT4; }
       else {
         Logger::log(WARN, "Unknown conversion type. Defaulting to float to single.");
         type = FLOAT_TO_SINGLE;
@@ -189,6 +195,19 @@ namespace Lumiverse {
     * \param val the LumiverseEnum value to convert.
     */
     void toEnum(unsigned char* data, unsigned int address, LumiverseEnum* val);
+    
+    /*!
+    * \brief Converts a float value to a single DMX channel of data. min-max -> 0-255 and repeats it
+    * a number of times, offset by 3 each time
+    *
+    * This function is meant to assist the programming of fixtures where
+    * less precision is required, but still have a large number of channels to deal with.
+    * \param data DMX Universe buffer
+    * \param address Address to write the value to
+    * \param LumiverseFloat value to convert
+    * \param repeats Number of times to repeat the writing of the data.    
+    */
+    void RGBRepeat(unsigned char* data, unsigned int address, LumiverseFloat* val, int repeats);
 
     /*!
     * \brief Helper for setting DMX values.
