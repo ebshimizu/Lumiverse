@@ -5,11 +5,13 @@ namespace Lumiverse {
 Rig::Rig() {
   m_running = false;
   setRefreshRate(40);
+  m_updateLoop = nullptr;
 }
 
 Rig::Rig(string filename) {
   m_running = false;
   setRefreshRate(40);
+  m_updateLoop = nullptr;
 
   if (!load(filename)) {
     Logger::log(WARN, "Proceeding with default rig initialization");
@@ -101,7 +103,9 @@ void Rig::loadPatches(JSONNode root) {
 Rig::~Rig() {
   // Stop the update thread.
   stop();
-  delete m_updateLoop;
+
+  if (m_updateLoop != nullptr)
+    delete m_updateLoop;
   
   // Delete Devices
   for (auto& d : m_devices) {
