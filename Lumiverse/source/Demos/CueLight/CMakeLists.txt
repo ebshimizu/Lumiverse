@@ -24,3 +24,7 @@ add_executable (CueLightDemo
 
 target_link_libraries(CueLightDemo LumiverseCore)
 target_link_libraries(CueLightDemo CueLight)
+
+FILE(GLOB cuefiles ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+INSTALL(FILES ${cuefiles} DESTINATION include/CueLight)
+INSTALL(TARGETS CueLight ARCHIVE DESTINATION lib)

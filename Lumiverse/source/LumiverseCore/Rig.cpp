@@ -8,36 +8,11 @@ Rig::Rig() {
 }
 
 Rig::Rig(string filename) {
-  ifstream data;
-  data.open(filename, ios::in|ios::binary|ios::ate);
+  m_running = false;
+  setRefreshRate(40);
 
-  if (data.is_open()) {
-    streamoff size = data.tellg();
-    char* memblock = new char[(unsigned int)size];
-
-    data.seekg(0, ios::beg);
-
-    stringstream ss;
-    ss << "Loading " << size << " bytes from " << filename;
-    Logger::log(INFO, ss.str());
-
-    data.read(memblock, size);
-    data.close();
-
-    JSONNode n = libjson::parse(memblock);
-
-    // This could get to be a large function, so let's break off into a helper.
-    loadJSON(n);
-  }
-  else {
-    stringstream ss;
-    ss << "Error opening " << filename;
-    Logger::log(ERR, ss.str());
-
+  if (!load(filename)) {
     Logger::log(WARN, "Proceeding with default rig initialization");
-
-    m_running = false;
-    setRefreshRate(40);
   }
 }
 
@@ -154,6 +129,52 @@ void Rig::stop() {
   if (m_running) {
     m_running = false;
     m_updateLoop->join();
+  }
+}
+
+bool Rig::load(string filename) {
+  stop();
+
+  // Check to see if we can load the file.
+  ifstream data;
+  data.open(filename, ios::in | ios::binary | ios::ate);
+
+  if (data.is_open()) {
+    // Delete Devices
+    for (auto& d : m_devices) {
+      delete d;
+    }
+
+    // Delete Patches
+    for (auto& p : m_patches) {
+      delete p.second;
+    }
+
+    streamoff size = data.tellg();
+    char* memblock = new char[(unsigned int)size];
+
+    data.seekg(0, ios::beg);
+
+    stringstream ss;
+    ss << "Loading " << size << " bytes from " << filename;
+    Logger::log(INFO, ss.str());
+
+    data.read(memblock, size);
+    data.close();
+
+    JSONNode n = libjson::parse(memblock);
+
+    // This could get to be a large function, so let's break off into a helper.
+    loadJSON(n);
+
+    return true;
+  }
+  else {
+    stringstream ss;
+    ss << "Error opening " << filename;
+    Logger::log(ERR, ss.str());
+
+    return false;
   }
 }
 

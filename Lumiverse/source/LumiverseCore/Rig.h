@@ -95,6 +95,15 @@ namespace Lumiverse {
     void stop();
 
     /*!
+    * \brief Loads a file into an existing rig
+    *
+    * All existing devices and patches will be deleted and replaced by
+    * the contents of the specified file.
+    * \return false if an error occurs, true if loaded successfully
+    */
+    bool load(string filename);
+
+    /*!
     * \brief Adds a device to the Rig.
     *
     * Device memory is managed by the Rig. User should allocate memory,

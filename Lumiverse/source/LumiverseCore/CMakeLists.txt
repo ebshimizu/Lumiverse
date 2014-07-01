@@ -128,3 +128,36 @@ IF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
 		SWIG_LINK_LIBRARIES(lumiversecsharp ftd2xx libjson)
 	ENDIF (LumiverseCore_CSHARP_BINDINGS)
 ENDIF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
+
+# Installation time
+FILE(GLOB corefiles ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+INSTALL(FILES ${corefiles} DESTINATION include)
+
+FILE(GLOB typefiles ${CMAKE_CURRENT_SOURCE_DIR}/types/*.h)
+INSTALL(FILES ${typefiles} DESTINATION include/types)
+
+FILE(GLOB dmxfiles ${CMAKE_CURRENT_SOURCE_DIR}/DMX/*.h)
+INSTALL(FILES ${dmxfiles} DESTINATION include/DMX)
+
+FILE(GLOB jsonfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/*.h)
+INSTALL(FILES ${jsonfiles} DESTINATION include/lib/libjson)
+
+FILE(GLOB jsoninternal ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Source/*.h)
+INSTALL(FILES ${jsoninternal} DESTINATION include/lib/libjson/_internal/Source)
+
+FILE(GLOB jsoninternal2 ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Source/JSONDefs/*.h)
+INSTALL(FILES ${jsoninternal2} DESTINATION include/lib/libjson/_internal/Source/JSONDefs)
+
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Dependencies/libbase64++/libbase64++.h
+	DESTINATION include/lib/libjson/_internal/Dependencies/libbase64++)
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Dependencies/mempool++/mempool.h
+	DESTINATION include/lib/libjson/_internal/Dependencies/mempool)
+
+INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
+
+IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+    FILE(GLOB pro2files ${CMAKE_CURRENT_SOURCE_DIR}/lib/ftd2xx/*.H)
+    INSTALL(FILES ${pro2files} DESTINATION include/lib/ftd2xx)
+    # You'll have to copy over the right file for ftd2xx to use it properly until I
+    # can get this library replaced.
+ENDIF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)

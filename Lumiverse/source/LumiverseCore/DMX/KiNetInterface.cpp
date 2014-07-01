@@ -128,10 +128,11 @@ void KiNetInterface::init() {
 #ifdef _WIN32
   u_long mode = 0;
 
-  res = ioctlsocket(m_socket, FIONBIO, &mode);
+  res = ioctlsocket(sock, FIONBIO, &mode);
   if (res != NO_ERROR) {
     stringstream ss;
-    ss << "ioctlsocket failed with error: " << res;
+    int errCode = WSAGetLastError();
+    ss << "ioctlsocket failed with error: " << errCode;
     Logger::log(ERR, ss.str());
   }
 #else

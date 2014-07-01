@@ -16,3 +16,5 @@ add_library(libjson
   _internal/Source/JSONWriter.cpp
   _internal/Source/libjson.cpp
 )
+
+INSTALL(TARGETS libjson ARCHIVE DESTINATION lib)
