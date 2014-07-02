@@ -255,6 +255,16 @@ namespace Lumiverse {
     DeviceSet getDevices(string key, string val, bool isEqual);
 
     /*!
+    * \brief Gets a set of all the parameters used by the devices.
+    *
+    * Returned parameter names are not guaranteed to be in any particular order.
+    * Caller may choose to sort or arrange the parameter names as needed.
+    * \return Set of strings. If a device uses a parameter in the rig, the name
+    * of that parameter will be returned in this set.
+    */
+    set<string> getAllUsedParams();
+
+    /*!
     * \brief Gets the raw list of devices.
     * 
     * Users are not allowed to modify the set of devices through this method,

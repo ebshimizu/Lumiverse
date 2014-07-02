@@ -314,6 +314,18 @@ DeviceSet Rig::getDevices(string key, string val, bool isEqual) {
   return working.add(key, val, isEqual);
 }
 
+set<string> Rig::getAllUsedParams() {
+  set<string> params;
+  
+  for (auto d : m_devices) {
+    for (auto s : d->getParamNames()) {
+      params.insert(s);
+    }
+  }
+
+  return params;
+}
+
 bool Rig::save(string filename, bool overwrite) {
   // Test if the file already exists.
   ifstream ifile(filename);
