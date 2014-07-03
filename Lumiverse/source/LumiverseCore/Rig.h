@@ -290,6 +290,29 @@ namespace Lumiverse {
     * \return JSONNode containing all Rig information
     */
     JSONNode toJSON();
+
+    /*!
+     * \brief Adds a function to the additional functions list.
+     *
+     * The added function will be updated before the patch is updated
+     * as part of Rig::update(). The update loop will be stopped during
+     * the modification of the function list.
+     * \sa m_updateFunctions
+     * \returns Location of the function in the array of functions. Use
+     * to later delete if needed.
+     */
+    int addFunction(function<void()> func);
+
+    /*!
+    * \brief Removes a function from the additional functions list.
+    * 
+    * This function will stop the update loop while it modifies the function
+    * list, and will automatically restart it.
+    * \param pid The function number to remove.
+    * \returns True if function removed, false otherwise.
+    */
+    bool removeFunction(int pid);
+
   private:
     /*!
     * \brief Loads the rig info from the parsed JSON data.
@@ -374,10 +397,16 @@ namespace Lumiverse {
     * \brief List of functions to run at the end of the update loop
     *
     * Allows a user to run an additional function during the update loop.
+    * This allows for a pretty easy update loop if you're updating things
+    * on a regular interval. Essentially the Rig's output loop becomes your
+    * graphics draw loop.
+    *
     * These functions must have a void() signature. I'm not entirely sure
-    * if you can write one to access internal Rig variables, but if you
+    * if you can have one access internal Rig variables, but if you
     * have other sorts of things that need to run in a regularly timed loop,
     * you have the option to attach it to the Rig update loop.
+    * These functions run before the patches are updated and could potentially
+    * be used to inject values into the rig before the patch happens.
     */
     vector<function<void()>> m_updateFunctions;
 

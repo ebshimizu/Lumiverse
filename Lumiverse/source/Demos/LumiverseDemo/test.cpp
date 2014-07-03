@@ -25,6 +25,10 @@ int main(int argc, char**argv) {
 
   // Init rig
   rig.init();
+
+  // Test extra funcs
+  // rig.addFunction([]() { cout << "Testing additional functions\n"; });
+
   rig.run();
 
   // Loop for stuff

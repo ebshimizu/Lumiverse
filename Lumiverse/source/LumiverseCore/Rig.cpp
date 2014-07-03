@@ -257,15 +257,17 @@ void Rig::update() {
   while (m_running) {
     // Get start time
     auto start = chrono::high_resolution_clock::now();
-    
+
+    // Run additional functions before sending to patches
+    // These functions can be update functions you run in your own code
+    // or other things that need to be in sync with stuff going over the network.
+    for (auto f : m_updateFunctions) {
+      f();
+    }
+
     // Run the whole update thing for all patches
     for (auto& p : m_patches) {
       p.second->update(m_devices);
-    }
-
-    // Run additional functions
-    for (auto f : m_updateFunctions) {
-      f();
     }
 
     // Sleep a bit depending on how long the update took.
@@ -368,4 +370,56 @@ JSONNode Rig::toJSON() {
 
   return root;
 }
+
+int Rig::addFunction(function<void()> func) {
+  // If the rig wasn't running, leave it that way.
+  bool restart = false;
+
+  if (m_running) {
+    stop();
+    restart = true;
+  }
+
+  m_updateFunctions.push_back(func);
+  
+  if (restart)
+    run();
+
+  stringstream ss;
+  ss << "Adding additional function to update loop with pid " << m_updateFunctions.size() - 1;
+  Logger::log(INFO, ss.str());
+
+  return m_updateFunctions.size() - 1;
+}
+
+bool Rig::removeFunction(int pid) {
+  bool restart = false;
+  bool ret = false;
+
+  if (m_running) {
+    stop();
+    restart = true;
+  }
+
+  if (pid >= 0 && pid < m_updateFunctions.size()) {
+    m_updateFunctions.erase(m_updateFunctions.begin() + pid);
+
+    stringstream ss;
+    ss << "Removed additional function from update loop with pid " << pid;
+    Logger::log(INFO, ss.str());
+
+    ret = true;
+  }
+  else {
+    stringstream ss;
+    ss << "Failed to remove additional function from update loop with pid " << pid << " (function does not exist)";
+    Logger::log(WARN, ss.str());
+  }
+  
+  if (restart)
+    run();
+
+  return ret;
+}
+
 }

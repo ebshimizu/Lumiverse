@@ -489,6 +489,16 @@ void DeviceSet::setParam(string param, string val, float val2) {
   }
 }
 
+vector<string> DeviceSet::getIds() {
+  vector<string> ids;
+  
+  for (auto d : m_workingSet) {
+    ids.push_back(d->getId());
+  }
+
+  return ids;
+}
+
 string DeviceSet::info() {
   stringstream ss;
 
