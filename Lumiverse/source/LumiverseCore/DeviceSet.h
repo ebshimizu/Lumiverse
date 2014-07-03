@@ -380,6 +380,18 @@ namespace Lumiverse {
     vector<string> getIds();
 
     /*!
+    * \brief Gets a set of all the parameters used by devices in this set.
+    *
+    * Set means no duplicates
+    */
+    set<string> getAllParams();
+
+    /*!
+    * \brief Gets a set of all the metadata keys used by devices in this set.
+    */
+    set<string> getAllMetadata();
+
+    /*!
     * \brief Returns a string containing info about the DeviceSet.
     *
     * \return DeviceSet as a string. String contains the number of devices contained

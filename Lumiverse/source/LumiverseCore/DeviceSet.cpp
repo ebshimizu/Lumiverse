@@ -499,6 +499,30 @@ vector<string> DeviceSet::getIds() {
   return ids;
 }
 
+set<string> DeviceSet::getAllParams() {
+  set<string> params;
+
+  for (auto d : m_workingSet) {
+    for (auto s : d->getParamNames()) {
+      params.insert(s);
+    }
+  }
+
+  return params;
+}
+
+set<string> DeviceSet::getAllMetadata() {
+  set<string> params;
+
+  for (auto d : m_workingSet) {
+    for (auto s : d->getMetadataKeyNames()) {
+      params.insert(s);
+    }
+  }
+
+  return params;
+}
+
 string DeviceSet::info() {
   stringstream ss;
 
