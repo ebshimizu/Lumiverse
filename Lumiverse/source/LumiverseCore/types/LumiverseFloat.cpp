@@ -40,6 +40,12 @@ JSONNode LumiverseFloat::toJSON(string name) {
   return node;
 }
 
+string LumiverseFloat::asString() {
+  char buf[32];
+  _snprintf_s(buf, 31, "%f.2");
+  return string(buf);
+}
+
 void LumiverseFloat::clamp() {
   if (m_val < m_min) {
     m_val = m_min;

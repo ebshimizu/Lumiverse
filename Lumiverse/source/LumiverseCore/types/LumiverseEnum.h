@@ -159,6 +159,13 @@ namespace Lumiverse {
     virtual JSONNode toJSON(string name);
 
     /*!
+    * \brief Returns the current enumeration value as a string.
+    *
+    * Returns in the format: Enumeration (tweak_val)
+    */
+    virtual string asString();
+
+    /*!
     * \brief Adds an option to the enumeration
     *
     * Will overwrite an existing set of values if it already exists.

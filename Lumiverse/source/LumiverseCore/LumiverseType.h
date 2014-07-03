@@ -46,6 +46,13 @@ namespace Lumiverse {
     */
     virtual JSONNode toJSON(string name) = 0;
 
+    /*!
+    * \brief Returns the value of the LumiverseType as a string.
+    *
+    * For easy debugging and printing of various values.
+    */
+    virtual string asString() = 0;
+
     // Yeah actually there's not much here because types are
     // all different.
   };

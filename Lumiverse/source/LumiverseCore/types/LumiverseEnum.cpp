@@ -112,6 +112,12 @@ JSONNode LumiverseEnum::toJSON(string name) {
   return node;
 }
 
+string LumiverseEnum::asString() {
+  stringstream ss;
+  ss << m_active << " (" << m_tweak << ")";
+  return ss.str();
+}
+
 void LumiverseEnum::addVal(string name, int start) {
   if (m_nameToStart.count(name) > 0) {
     // Need to remove this value from the other map if we're overwriting

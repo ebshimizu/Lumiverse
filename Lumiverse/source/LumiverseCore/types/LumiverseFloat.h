@@ -136,6 +136,13 @@ namespace Lumiverse {
     // Converts a float to a JSON object with specified name.
     virtual JSONNode toJSON(string name);
 
+    /*!
+    * \brief Returns the value of the LumiverseFloat as a string
+    *
+    * Precision goes up to 4 decimal places.
+    */
+    virtual string asString();
+
   private:
     /*!
     * \brief Ensures that the value of this float is between min and max.
