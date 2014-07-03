@@ -344,6 +344,11 @@ namespace Lumiverse {
     void loadPatches(JSONNode root);
 
     /*!
+    * \brief Empties all the data from the rig.
+    */
+    void reset();
+
+    /*!
     * \brief Thread that runs the update loop.
     */
     thread* m_updateLoop;

@@ -100,6 +100,24 @@ void Rig::loadPatches(JSONNode root) {
   }
 }
 
+void Rig::reset() {
+  // Delete Devices
+  for (auto& d : m_devices) {
+    delete d;
+  }
+
+  // Delete Patches
+  for (auto& p : m_patches) {
+    delete p.second;
+  }
+
+  m_devices.clear();
+  m_patches.clear();
+  m_devicesById.clear();
+  m_devicesByChannel.clear();
+  m_updateFunctions.clear();
+}
+
 Rig::~Rig() {
   // Stop the update thread.
   stop();
@@ -144,15 +162,7 @@ bool Rig::load(string filename) {
   data.open(filename, ios::in | ios::binary | ios::ate);
 
   if (data.is_open()) {
-    // Delete Devices
-    for (auto& d : m_devices) {
-      delete d;
-    }
-
-    // Delete Patches
-    for (auto& p : m_patches) {
-      delete p.second;
-    }
+    reset();
 
     streamoff size = data.tellg();
     char* memblock = new char[(unsigned int)size];

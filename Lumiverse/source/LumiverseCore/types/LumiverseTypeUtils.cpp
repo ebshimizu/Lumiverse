@@ -95,4 +95,13 @@ inline bool LumiverseTypeUtils::areSameType(LumiverseType* lhs, LumiverseType* r
 
   return true;
 }
+
+bool LumiverseTypeUtils::lessThan(LumiverseType* lhs, LumiverseType* rhs) {
+  // Nullptr is automatically less than anything (except nullptr)
+  if (lhs == nullptr && rhs != nullptr)
+    return true;
+
+  return (cmp(lhs, rhs) == -1);
+}
+
 }

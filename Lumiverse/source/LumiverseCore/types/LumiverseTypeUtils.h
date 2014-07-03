@@ -68,6 +68,14 @@ namespace Lumiverse {
     * \return True if lhs and rhs are not null and both the same type
     */
     inline bool areSameType(LumiverseType* lhs, LumiverseType* rhs);
+
+    /*!
+    * \brief Compares two LumiverseTypes with <
+    *
+    * Uses cmp to determin this inequality.
+    * \return true if lhs < rhs
+    */
+    bool lessThan(LumiverseType* lhs, LumiverseType* rhs);
   }
 }
 #endif
