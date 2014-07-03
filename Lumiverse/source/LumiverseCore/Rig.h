@@ -313,6 +313,14 @@ namespace Lumiverse {
     */
     bool removeFunction(int pid);
 
+    /*!
+    * \brief Pushes data over the network
+    *
+    * Actual transport is handled by the Patch objects in the Rig
+    * \sa Patch
+    */
+    void update();
+
   private:
     /*!
     * \brief Loads the rig info from the parsed JSON data.
@@ -334,14 +342,6 @@ namespace Lumiverse {
     * \sa loadJSON()
     */
     void loadPatches(JSONNode root);
-
-    /*!
-    * \brief Pushes data over the network
-    * 
-    * Actual transport is handled by the Patch objects in the Rig
-    * \sa Patch
-    */
-    void update();
 
     /*!
     * \brief Thread that runs the update loop.
