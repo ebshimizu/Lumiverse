@@ -1,7 +1,8 @@
 include_directories("${CMAKE_CURRENT_LIST_DIR}/types"
   "${CMAKE_CURRENT_LIST_DIR}/DMX"
   "${CMAKE_CURRENT_LIST_DIR}/lib/libjson"
-  "${CMAKE_CURRENT_LIST_DIR}/lib/ftd2xx")
+  "${CMAKE_CURRENT_LIST_DIR}/lib/ftd2xx"
+  "${CMAKE_CURRENT_LIST_DIR}/lib/Eigen")
 
 # Lumiverse Core Version Number, in case its needed
 set (LumiverseCore_VERSION_MAJOR 1)
@@ -54,6 +55,8 @@ set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
     types/LumiverseFloat.cpp
 	types/LumiverseEnum.h
 	types/LumiverseEnum.cpp
+	types/LumiverseColor.h
+	types/LumiverseColor.cpp
 	types/LumiverseTypeUtils.h
 	types/LumiverseTypeUtils.cpp
     DMX/DMXPatch.h

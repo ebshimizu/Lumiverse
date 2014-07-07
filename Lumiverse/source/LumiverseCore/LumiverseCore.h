@@ -57,11 +57,13 @@
 #include "LumiverseType.h"
 #include "types/LumiverseFloat.h"
 #include "types/LumiverseEnum.h"
+#include "types/LumiverseColor.h"
 #include "types/LumiverseTypeUtils.h"
 #include "DMX/DMXPatch.h"
 #include "DMX/DMXDevicePatch.h"
 #include "DMX/DMXInterface.h"
 #include "lib/libjson/libjson.h"
+#include "lib/Eigen/Dense"
 
 #ifdef USE_DMXPRO2
 #include "DMX/DMXPro2Interface.h"
