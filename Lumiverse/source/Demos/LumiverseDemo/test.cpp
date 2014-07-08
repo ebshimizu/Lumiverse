@@ -6,10 +6,24 @@ using namespace std;
 using namespace Lumiverse;
 
 int main(int argc, char**argv) {
+<<<<<<< HEAD
   
   // Logger::setLogFile("OLLlog.txt");
   
   Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold.json");
+=======
+  // Testing colors.
+
+  LumiverseColor c1;
+  c1.setRGB(1, 0, 0);
+  c1.getRGB();
+  
+  _getch();
+
+  // Logger::setLogFile("OLLlog.txt");
+  
+  // Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/PauschBridge.json");
+>>>>>>> upstream/master
 
   // TODO: (roughly in order of importance)
   // -Sample command line control
@@ -24,99 +38,83 @@ int main(int argc, char**argv) {
 
   //rig.save("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/PauschBridge2.json");
 
+<<<<<<< HEAD
   // Init rig/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold.json
   rig.init();
+=======
+  // Init rig
+  //rig.init();
+>>>>>>> upstream/master
 
   // Test extra funcs
   // rig.addFunction([]() { cout << "Testing additional functions\n"; });
 
-  rig.run();
+  //rig.run();
 
   // Loop for stuff
-  cout << "Lumiverse Test Command Line\n";
-  cout << "Available commands: select [query], set [parameter]=[value], reset, info [device id], info selected\n";
-  cout << "Only floating point parameters are currently supported.\n";
-  DeviceSet current;
-  
-  while (1) {
-    cout << ">> ";
+  //cout << "Lumiverse Test Command Line\n";
+  //cout << "Available commands: select [query], set [parameter]=[value], reset, info [device id], info selected\n";
+  //cout << "Only floating point parameters are currently supported.\n";
+  //DeviceSet current;
+  //
+  //while (1) {
+  //  cout << ">> ";
 
-    string input;
-    getline(cin, input);
+  //  string input;
+  //  getline(cin, input);
 
-    if (input.substr(0, 7) == "select ") {
-      current = rig.query(input.substr(7));
+  //  if (input.substr(0, 7) == "select ") {
+  //    current = rig.query(input.substr(7));
 
-      cout << "Query returned " << current.size() << " devices.\n";
-    }
-    else if (input.substr(0, 5) == "reset") {
-      current.reset();
-    }
-    else if (input.substr(0, 13) == "info selected") {
-      cout << current.info() << "\n";
-    }
-    else if (input.substr(0, 5) == "info ") {
-      string id = input.substr(5);
+  //    cout << "Query returned " << current.size() << " devices.\n";
+  //  }
+  //  else if (input.substr(0, 5) == "reset") {
+  //    current.reset();
+  //  }
+  //  else if (input.substr(0, 13) == "info selected") {
+  //    cout << current.info() << "\n";
+  //  }
+  //  else if (input.substr(0, 5) == "info ") {
+  //    string id = input.substr(5);
 
-      cout << rig.getDevice(id)->toString() << "\n";
-    }
-    else if (input.substr(0, 4) == "set ") {
-      // Set float
-      regex paramRegex("(\\w+)=(\\d*\\.\?\\d*)([f])");
-      string param = input.substr(4);
-      smatch matches;
+  //    cout << rig.getDevice(id)->toString() << "\n";
+  //  }
+  //  else if (input.substr(0, 4) == "set ") {
+  //    // Set float
+  //    regex paramRegex("(\\w+)=(\\d*\\.\?\\d*)([f])");
+  //    string param = input.substr(4);
+  //    smatch matches;
 
-      regex_match(param, matches, paramRegex);
+  //    regex_match(param, matches, paramRegex);
 
-      if (matches.size() != 4) {
-        // Try to set an enumeration
-        regex paramRegex("(\\w+)=([\\w_\\s\\b]+),\?(\\d*\\.\?\\d*)");
-        string param = input.substr(4);
-        smatch matches;
+  //    if (matches.size() != 4) {
+  //      // Try to set an enumeration
+  //      regex paramRegex("(\\w+)=([\\w_\\s\\b]+),\?(\\d*\\.\?\\d*)");
+  //      string param = input.substr(4);
+  //      smatch matches;
 
-        regex_match(param, matches, paramRegex);
+  //      regex_match(param, matches, paramRegex);
 
-        if (matches.size() != 4) {
-          cout << "Invalid set command\n";
-        }
+  //      if (matches.size() != 4) {
+  //        cout << "Invalid set command\n";
+  //      }
 
-        string key = matches[1];
-        string val = matches[2].str();
+  //      string key = matches[1];
+  //      string val = matches[2].str();
 
-        float val2 = -1.0f;
-        if (matches[3].length() > 0) {
-          stringstream(matches[3]) >> val2;
-        }
+  //      float val2 = -1.0f;
+  //      if (matches[3].length() > 0) {
+  //        stringstream(matches[3]) >> val2;
+  //      }
 
-        current.setParam(key, val, val2);
-      }
+  //      current.setParam(key, val, val2);
+  //    }
 
-      string key = matches[1];
-      float val;
-      stringstream(matches[2]) >> val;
+  //    string key = matches[1];
+  //    float val;
+  //    stringstream(matches[2]) >> val;
 
-      current.setParam(key, val);
-    }
-  }
-
-
-  //DeviceSet channelRange = rig.getChannel(1, 10);
-  //channelRange = channelRange.remove(5, 7);
-  //channelRange.setParam("intensity", 1.0f);
-
-  //DeviceSet query = rig.query("!$color=R80");
-
-  //_getch();
-
-  //// get all devices that aren't in a back angle
-  //DeviceSet myDevices = rig.getAllDevices().remove("angle", "back", false);
-
-  //// Do things. Remember that the update loops is only 40Hz and changes aren't instant
-  //// in computer time
-  //Sleep(100);
-  //_getch();
-
-  //rig.getDevices("angle", "front", true).add("angle", "front left", true).add("angle", "front right", true).setParam("intensity", 0.75f);
-
-  //_getch();
+  //    current.setParam(key, val);
+  //  }
+  //}
 }
