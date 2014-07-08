@@ -6,9 +6,10 @@ using namespace std;
 using namespace Lumiverse;
 
 int main(int argc, char**argv) {
+  
   // Logger::setLogFile("OLLlog.txt");
   
-  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/PauschBridge.json");
+  Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold.json");
 
   // TODO: (roughly in order of importance)
   // -Sample command line control
@@ -21,9 +22,9 @@ int main(int argc, char**argv) {
   // -Named Groups
   // -Cues / timeline
 
-  rig.save("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/PauschBridge2.json");
+  //rig.save("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/PauschBridge2.json");
 
-  // Init rig
+  // Init rig/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold.json
   rig.init();
 
   // Test extra funcs

@@ -1,7 +1,9 @@
 include_directories("${CMAKE_CURRENT_LIST_DIR}/types"
   "${CMAKE_CURRENT_LIST_DIR}/DMX"
   "${CMAKE_CURRENT_LIST_DIR}/lib/libjson"
-  "${CMAKE_CURRENT_LIST_DIR}/lib/ftd2xx")
+  "${CMAKE_CURRENT_LIST_DIR}/lib/ftd2xx"
+  "${CMAKE_CURRENT_LIST_DIR}/Simulation"
+  "${CMAKE_CURRENT_LIST_DIR}/lib/arnold")
 
 # Lumiverse Core Version Number, in case its needed
 set (LumiverseCore_VERSION_MAJOR 1)
@@ -50,6 +52,7 @@ set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
     DeviceSet.cpp
     LumiverseType.h
     Patch.h
+    types/LumiverseVector.h
     types/LumiverseFloat.h
     types/LumiverseFloat.cpp
 	types/LumiverseEnum.h
@@ -62,7 +65,9 @@ set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
     DMX/DMXDevicePatch.cpp
     DMX/DMXInterface.h
 	DMX/KiNetInterface.h
-	DMX/KiNetInterface.cpp)
+	DMX/KiNetInterface.cpp
+    Simulation/ArnoldPatch.h
+    Simulation/ArnoldPatch.cpp)
 
 # CMake is a bit weird and wants this defined here instead of inside the ftd2xx folder
 # Add relevant files to build if using DMXPRO2

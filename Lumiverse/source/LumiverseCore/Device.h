@@ -17,6 +17,7 @@
 #include "LumiverseType.h"
 #include "types/LumiverseFloat.h"
 #include "types/LumiverseEnum.h"
+#include "types/LumiverseVector.h"
 #include "lib/libjson/libjson.h"
 using namespace std;
 
@@ -262,6 +263,9 @@ namespace Lumiverse {
     * \return Pointer to the map of parameter names to parameter data.
     */
     const map<string, LumiverseType*>* getRawParameters() { return &m_parameters; }
+      
+    bool needsUpdate() const { return m_rerender_req; }
+      
   private:
     /*! \brief Sets the id for the device
     *
@@ -344,6 +348,9 @@ namespace Lumiverse {
     * assuming it can be serialized to a string.
     */
     map<string, string> m_metadata;
+      
+    // TODO: temperate solution for update flag.
+    bool m_rerender_req;
   };
 }
 
