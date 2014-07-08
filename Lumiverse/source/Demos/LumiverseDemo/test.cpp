@@ -6,24 +6,10 @@ using namespace std;
 using namespace Lumiverse;
 
 int main(int argc, char**argv) {
-<<<<<<< HEAD
   
   // Logger::setLogFile("OLLlog.txt");
   
   Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold.json");
-=======
-  // Testing colors.
-
-  LumiverseColor c1;
-  c1.setRGB(1, 0, 0);
-  c1.getRGB();
-  
-  _getch();
-
-  // Logger::setLogFile("OLLlog.txt");
-  
-  // Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/PauschBridge.json");
->>>>>>> upstream/master
 
   // TODO: (roughly in order of importance)
   // -Sample command line control
@@ -38,18 +24,13 @@ int main(int argc, char**argv) {
 
   //rig.save("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/PauschBridge2.json");
 
-<<<<<<< HEAD
   // Init rig/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold.json
   rig.init();
-=======
-  // Init rig
-  //rig.init();
->>>>>>> upstream/master
 
   // Test extra funcs
   // rig.addFunction([]() { cout << "Testing additional functions\n"; });
 
-  //rig.run();
+  rig.run();
 
   // Loop for stuff
   //cout << "Lumiverse Test Command Line\n";

@@ -2,18 +2,16 @@ include_directories("${CMAKE_CURRENT_LIST_DIR}/types"
   "${CMAKE_CURRENT_LIST_DIR}/DMX"
   "${CMAKE_CURRENT_LIST_DIR}/lib/libjson"
   "${CMAKE_CURRENT_LIST_DIR}/lib/ftd2xx"
-<<<<<<< HEAD
   "${CMAKE_CURRENT_LIST_DIR}/Simulation"
-  "${CMAKE_CURRENT_LIST_DIR}/lib/arnold")
-=======
+  "${CMAKE_CURRENT_LIST_DIR}/lib/arnold/include"
   "${CMAKE_CURRENT_LIST_DIR}/lib/Eigen")
->>>>>>> upstream/master
 
 # Lumiverse Core Version Number, in case its needed
 set (LumiverseCore_VERSION_MAJOR 1)
 set (LumiverseCore_VERSION_MINOR 0)
 set (LumiverseCore_INCLUDE_DMXPRO2INTERFACE ON CACHE BOOL "Build LumiverseCore with Enttec USB DMX Pro Mk II Driver")
 set (LumiverseCore_INCLUDE_KINET ON CACHE BOOL "Build LumiverseCore with KiNet Driver")
+set (LumiverseCore_INCLUDE_ARNOLD ON CACHE BOOL "Build LumiverseCore with Arnold Simulator")
 set (LumiverseCore_PYTHON_BINDINGS ON CACHE BOOL "Build LumiverseCore bindings for Python")
 set (LumiverseCore_CSHARP_BINDINGS OFF CACHE BOOL "Build LumiverseCore bindings for C#")
 
@@ -71,9 +69,7 @@ set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
     DMX/DMXDevicePatch.cpp
     DMX/DMXInterface.h
 	DMX/KiNetInterface.h
-	DMX/KiNetInterface.cpp
-    Simulation/ArnoldPatch.h
-    Simulation/ArnoldPatch.cpp)
+	DMX/KiNetInterface.cpp)
 
 # CMake is a bit weird and wants this defined here instead of inside the ftd2xx folder
 # Add relevant files to build if using DMXPRO2
@@ -81,6 +77,18 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
     SET (LumiverseCore_USE_DMXPRO2 "#define USE_DMXPRO2" STRING)
 	SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE} DMX/DMXPro2Interface.h DMX/pro_driver.h DMX/DMXPro2Interface.cpp)
 ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+
+# Add Arnold simulation code
+IF (LumiverseCore_INCLUDE_ARNOLD)
+    # SDL lib
+    find_package(SDL REQUIRED)
+    include_directories(
+        ${SDL_INCLUDE_DIR}
+    )
+    SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE} 
+    Simulation/ArnoldPatch.h Simulation/ArnoldPatch.cpp
+    Simulation/ArnoldWindowDriver.h Simulation/ArnoldWindowDriver.cpp)
+ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
 # Build the libraries
 add_library(LumiverseCore ${LUMIVERSE_CORE_SOURCE})
@@ -109,6 +117,21 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
             /usr/local/lib/libftd2xx.1.2.2.dylib)
     ENDIF(APPLE)
 ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+
+# Build with Arnold SDK (ai)
+IF (LumiverseCore_INCLUDE_ARNOLD)
+    # For SDL lib
+    target_link_libraries(LumiverseCore ${SDL_LIBRARY})
+    IF(APPLE)
+        add_subdirectory("Simulation/SDLmain")
+        target_link_libraries(LumiverseCore SDLmain)
+
+        add_library(ai SHARED IMPORTED)
+        set_property(TARGET ai PROPERTY IMPORTED_LOCATION
+            ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/arnold/bin/libai.dylib)
+        target_link_libraries(LumiverseCore ai)
+    ENDIF(APPLE)
+ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
 # Time for fun other library binding generation time
 IF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)

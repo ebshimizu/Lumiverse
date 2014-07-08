@@ -262,7 +262,7 @@ class LumiverseType;
   }
 
   template<size_t D>
-LumiverseVector<D>::LumiverseVector(float *val, float *def, float *max, float *min) { 
+  LumiverseVector<D>::LumiverseVector(float *val, float *def, float *max, float *min) {
 	m_floats.clear();
 	m_floats.reserve(D);
 

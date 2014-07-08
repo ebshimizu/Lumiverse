@@ -18,7 +18,6 @@
 #include "LumiverseCoreConfig.h"
 #include "Patch.h"
 #include "DMX/DMXPatch.h"
-#include "Simulation/ArnoldPatch.h"
 #include "Device.h"
 #include "Logger.h"
 #include "DeviceSet.h"

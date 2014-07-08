@@ -1,4 +1,6 @@
 #include "Rig.h"
+// TODO : config
+#include "Simulation/ArnoldPatch.h"
 
 namespace Lumiverse {
 

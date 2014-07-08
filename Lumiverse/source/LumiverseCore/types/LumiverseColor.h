@@ -27,7 +27,7 @@ namespace Lumiverse {
   };
 
   /*! \brief RGB to XYZ matrices for color calculations */
-  static unordered_map<RGBColorSpace, Eigen::Matrix3d> RGBToXYZ = 
+  static unordered_map<RGBColorSpace, Eigen::Matrix3d, std::hash<int>> RGBToXYZ =
   {
     { sRGB, (Eigen::Matrix3d() << 0.4124564, 0.3575761, 0.1804375,
                                   0.2126729, 0.7151522, 0.0721750,
@@ -149,6 +149,17 @@ namespace Lumiverse {
     /*! \brief sRGB value companding cuntion for XYZ to RGB */
     double XYZtosRGBCompand(double val);
   };
+
+/*!
+* \brief Converts RGB (0.0 - 1.0) to a byte (0 - 255).
+*
+* \param val A component of RGB (0.0 - 1.0)
+* \param byte A byte on the display.
+*/
+inline void sRGBValueToByte(double val, unsigned char &byte) {
+    byte = static_cast<unsigned char>( val * 0xff );
+}
+    
 }
 
 #endif
