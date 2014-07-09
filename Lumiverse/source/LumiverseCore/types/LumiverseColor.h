@@ -6,9 +6,12 @@
 #define _LUMIVERSECOLOR_H_
 #pragma once
 
+#include <map>
 #include <unordered_map>
 #include <cmath>
 #include "lib/Eigen/Dense"
+#include "lib/clp/ClpSimplex.hpp"
+#include "lib/clp/CoinError.hpp"
 #include "../LumiverseType.h"
 
 // D50 96.4212, 100.0, 82.5188
@@ -50,6 +53,15 @@ namespace Lumiverse {
   public:
     /*! \brief Constructs a color. Default color is Black. */
     LumiverseColor(ColorMode mode = ADDITIVE);
+
+    /*! \brief Constructs a color using the provided basis colors. 
+    *
+    * \param basis Map of axis name to basis vector. These vectors are
+    * the colors produced by each individual LED color in the light.
+    * If you don't have this information available, the color class will
+    * still work but functionality will be limited.
+    */
+    LumiverseColor(map<string, Eigen::Vector3d> basis, ColorMode mode = ADDITIVE);
 
     /*! \brief Destroys a color */
     virtual ~LumiverseColor();
@@ -132,10 +144,10 @@ namespace Lumiverse {
     * from XYZ. Any time you change a value, this map gets recalculated.
     * The map is automatically populated based on the specified basis vectors.
     */
-    unordered_map<string, double> m_deviceChannels;
+    map<string, double> m_deviceChannels;
 
-    // Currently in progress. Not sure how I'll represent the vectors
-    // unordered_map<string, vector3> basisVectors;
+    /*! \brief Basis vectors for each LED source in the light. Represented in XYZ. */
+    map<string, Eigen::Vector3d> m_basisVectors;
 
     /*! \brief Updates the deviceChannels after a color change. */
     void updateDeviceColor();
@@ -148,6 +160,20 @@ namespace Lumiverse {
 
     /*! \brief sRGB value companding cuntion for XYZ to RGB */
     double XYZtosRGBCompand(double val);
+
+    /*! \brief Runs a linear optimization to find a combination of the basis vectors
+    *   that will match the target chroma value.
+    *
+    * This function prioritizes maintaining the target chromaticity when selecting
+    * weights for the basis vectors. It runs a linear solver (CLP Simplex) over a
+    * relatively small space. The weights are constrained between 0 and 1,
+    * the x and y coordinates calculated from the weights must be equal
+    * to the target x and y, and the solver attempts to maximize the sum of the weights.
+    *
+    * \param x Target x coordinate to match (xyY color space)
+    * \param y Target y coordinate to match (xyY color space)
+    */
+    void matchChroma(double x, double y);
   };
 }
 

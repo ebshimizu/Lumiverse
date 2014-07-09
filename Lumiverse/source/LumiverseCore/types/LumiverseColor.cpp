@@ -7,6 +7,11 @@ namespace Lumiverse {
     reset();
   }
 
+  LumiverseColor::LumiverseColor(map<string, Eigen::Vector3d> basis, ColorMode mode) : m_mode(mode) {
+    reset();
+    m_basisVectors = basis;
+  }
+
   LumiverseColor::~LumiverseColor() {
     // Nothing at the moment
   }
@@ -67,9 +72,14 @@ namespace Lumiverse {
 
     Eigen::Vector3d XYZ = M * rgb;
     
-    m_X = XYZ[0];
-    m_Y = XYZ[1];
-    m_Z = XYZ[2];
+    // We have now generated the target XYZ coordinate. If basis vectors were provided,
+    // we'll try to match the xyY coordinate found from this converted XYZ vector.
+
+    matchChroma(XYZ[0] / (XYZ[0] + XYZ[1] + XYZ[2]), XYZ[1] / (XYZ[0] + XYZ[1] + XYZ[2]));
+
+//    m_X = XYZ[0];
+//   m_Y = XYZ[1];
+//    m_Z = XYZ[2];
   
     stringstream ss;
     ss << "Converted RGB (" << r << ", " << g << ", " << b << ") to XYZ (" << m_X << ", " << m_Y << ", " << m_Z << ")";
@@ -107,5 +117,67 @@ namespace Lumiverse {
 
   double LumiverseColor::XYZtosRGBCompand(double val) {
     return (val > 0.0031308) ? (1.055 * pow(val, 1 / 2.4) - 0.055) : val * 12.92;
+  }
+
+  void LumiverseColor::matchChroma(double x, double y) {
+    if (m_basisVectors.size() == 0) {
+      // No basis vectors, can't do this calculation
+      Logger::log(ERR, "matchChroma did not run since this Color does not have any basis vectors defined.");
+      return;
+    }
+
+    try {
+      // Set up the CLP model.
+      ClpSimplex model;
+      vector<int> indices;
+
+      // Number of variables equal to number of basis vectors.
+      int numCols = m_basisVectors.size();
+      model.resize(0, numCols);
+
+      // Maximize c1 + c2 + c3... equivalent to minimize -(c1 + c2 + c3...)
+      for (int i = 0; i < numCols; i++) {
+        model.setObjectiveCoefficient(i, -1);
+
+        // Set objective function variable constraints. In range [0,1].
+        model.setColBounds(i, 0, 1);
+
+        indices.push_back(i);
+      }
+
+      vector<double> xCoef;
+      vector<double> yCoef;
+
+      for (auto it = m_basisVectors.begin(); it != m_basisVectors.end(); it++) {
+        Eigen::Vector3d bv;
+
+        // Calculate X coefficients. Equal to (X1 - x(X1+Y1+Z1))
+        xCoef.push_back(bv[0] - x * (bv[0] + bv[1] + bv[2]));
+        
+        // Calculate Y coefficients. Equal to (Y1 - y(X1+Y1+Z1))
+        yCoef.push_back(bv[1] - y * (bv[0] + bv[1] + bv[2]));
+      }
+
+      model.addRow(numCols, &indices[0], &xCoef[0], x, x);
+      model.addRow(numCols, &indices[0], &yCoef[0], y, y);
+      
+      model.primal();
+
+      const double* res = model.getColSolution();
+
+      // Debugging only for now. Doesn't set things properly just logs.
+      stringstream ss;
+      ss << "Optimization ended with ";
+      for (int i = 0; i < numCols; i++) {
+        ss << i << ": " << res[i] << " ";
+      }
+
+      Logger::log(LDEBUG, ss.str());
+    }
+    catch (CoinError e) {
+      e.print();
+      if (e.lineNumber() >= 0)
+        std::cout << "This was from a CoinAssert" << std::endl;
+    }
   }
 }
