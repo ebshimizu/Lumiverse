@@ -102,6 +102,20 @@ namespace Lumiverse {
     return rgb;
   }
 
+  void LumiverseColor::updateColor() {
+    // Reset colors
+    m_X = m_Y = m_Z = 0;
+
+    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+      double weight = it->second;
+      Eigen::Vector3d weightedBasis = m_basisVectors[it->first] * weight;
+
+      m_X += weightedBasis[0];
+      m_Y += weightedBasis[1];
+      m_Z += weightedBasis[2];
+    }
+  }
+
   double LumiverseColor::clamp(double val, double min, double max) {
     double ret = val;
     ret = (ret < min) ? min : ret;
@@ -149,7 +163,7 @@ namespace Lumiverse {
       vector<double> yCoef;
 
       for (auto it = m_basisVectors.begin(); it != m_basisVectors.end(); it++) {
-        Eigen::Vector3d bv;
+        Eigen::Vector3d bv = it->second;
 
         // Calculate X coefficients. Equal to (X1 - x(X1+Y1+Z1))
         xCoef.push_back(bv[0] - x * (bv[0] + bv[1] + bv[2]));
@@ -158,21 +172,28 @@ namespace Lumiverse {
         yCoef.push_back(bv[1] - y * (bv[0] + bv[1] + bv[2]));
       }
 
-      model.addRow(numCols, &indices[0], &xCoef[0], x, x);
-      model.addRow(numCols, &indices[0], &yCoef[0], y, y);
+      model.addRow(numCols, &indices[0], &xCoef[0], 0, 0);
+      model.addRow(numCols, &indices[0], &yCoef[0], 0, 0);
       
-      model.primal();
+      model.dual();
 
       const double* res = model.getColSolution();
 
-      // Debugging only for now. Doesn't set things properly just logs.
-      stringstream ss;
-      ss << "Optimization ended with ";
-      for (int i = 0; i < numCols; i++) {
-        ss << i << ": " << res[i] << " ";
+      // Set value for device channels if model is optimal
+      if (model.isProvenOptimal()) {
+        int index = 0;
+        for (auto it = m_basisVectors.begin(); it != m_basisVectors.end(); it++) {
+          m_deviceChannels[it->first] = res[index];
+          index++;
+        }
+        Logger::log(LDEBUG, "Color match found");
+      }
+      else {
+        Logger::log(LDEBUG, "No color match found");
+        return;
       }
 
-      Logger::log(LDEBUG, ss.str());
+      updateColor();
     }
     catch (CoinError e) {
       e.print();

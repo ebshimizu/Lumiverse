@@ -149,8 +149,12 @@ namespace Lumiverse {
     /*! \brief Basis vectors for each LED source in the light. Represented in XYZ. */
     map<string, Eigen::Vector3d> m_basisVectors;
 
-    /*! \brief Updates the deviceChannels after a color change. */
-    void updateDeviceColor();
+    /*! \brief Syncs other values in this color object after a color change.
+    *
+    * Updates the color based on the deviceChannels map. Essentially recalculates the
+    * current XYZ value based on the basis vectors and weights.
+    */
+    void updateColor();
 
     /*! \brief Clamps a value between min and max. Returns the clamped value. */
     double clamp(double val, double min, double max);

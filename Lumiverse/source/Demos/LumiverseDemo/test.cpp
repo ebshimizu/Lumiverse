@@ -8,8 +8,14 @@ using namespace Lumiverse;
 int main(int argc, char**argv) {
   // Testing colors.
 
-  LumiverseColor c1;
-  c1.setRGB(1, 0, 0);
+  map<string, Eigen::Vector3d> InnoColorBasis;
+  InnoColorBasis["1"] = Eigen::Vector3d(13.16544, 5.868346, 2.5e-05);
+  InnoColorBasis["2"] = Eigen::Vector3d(5.59857, 25.901501, 4.084567);
+  InnoColorBasis["3"] = Eigen::Vector3d(4.30497, 3.859103, 29.365243);
+  InnoColorBasis["4"] = Eigen::Vector3d(81.33195, 79.590576, 47.302138);
+
+  LumiverseColor c1(InnoColorBasis);
+  c1.setRGB(0, 0.5, 0.5);
   c1.getRGB();
   
   _getch();
