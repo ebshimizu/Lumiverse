@@ -17,7 +17,9 @@
 #include "LumiverseType.h"
 #include "types/LumiverseFloat.h"
 #include "types/LumiverseEnum.h"
+#include "types/LumiverseColor.h"
 #include "lib/libjson/libjson.h"
+#include "lib/Eigen/Dense"
 using namespace std;
 
 namespace Lumiverse {

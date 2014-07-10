@@ -85,6 +85,9 @@ namespace Lumiverse {
     */
     LumiverseColor(map<string, Eigen::Vector3d> basis, ColorMode mode = ADDITIVE);
 
+    /*! \brief Constructor for loading from JSON data */
+    LumiverseColor(map<string, double> params, map<string, Eigen::Vector3d> basis, ColorMode mode, double weight);
+
     /*! \brief Destroys a color */
     virtual ~LumiverseColor();
 

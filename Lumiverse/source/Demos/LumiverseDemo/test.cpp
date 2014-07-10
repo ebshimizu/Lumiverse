@@ -15,10 +15,10 @@ int main(int argc, char**argv) {
   InnoColorBasis["White"] = Eigen::Vector3d(81.33195, 79.590576, 47.302138);
 
   LumiverseColor c1(InnoColorBasis);
-  c1.setRGB(0, 0.5, 0.5);
+  c1.setRGB(1, 0, 0);
   c1["Red"] = 1.0;
   c1["Green"] = 0;
-  std::cout << c1.getRGB();
+  std::cout << c1.asString();
   
   _getch();
 

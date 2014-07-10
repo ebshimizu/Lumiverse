@@ -19,7 +19,9 @@ namespace Lumiverse {
     ENUM,             /*!< Converts a LumiverseEnum to a single-byte DMX value (0-255) */
     RGB_REPEAT2,      /*!< Converts a floating point value to a single-byte DMX value and outputs it twice offset by 3. */
     RGB_REPEAT3,      /*!< Converts a floating point value to a single-byte DMX value and outputs it three times offset by 3. */
-    RGB_REPEAT4       /*!< Converts a floating point value to a single-byte DMX value and outputs it four times offset by 3. */
+    RGB_REPEAT4,      /*!< Converts a floating point value to a single-byte DMX value and outputs it four times offset by 3. */
+    COLOR_RGB,        /*!< Converts a color with RGB parameters to single-byte (0-255) DMX parameters. */
+    COLOR_RGBW        /*!< Converts a color with RGBW parameters to singly-byte (0-255) DMX parameters. */
   };
 
   /*!
@@ -62,12 +64,15 @@ namespace Lumiverse {
     * \param t Conversion method as a string.
     */
     patchData(unsigned int addr, string t) : startAddress(addr) {
+      // Note to self: make a static dictionary with this instead.
       if (t == "FLOAT_TO_SINGLE") { type = FLOAT_TO_SINGLE; }
       else if (t == "FLOAT_TO_FINE") { type = FLOAT_TO_FINE; }
       else if (t == "ENUM") { type = ENUM; }
       else if (t == "RGB_REPEAT2") { type = RGB_REPEAT2; }
       else if (t == "RGB_REPEAT3") { type = RGB_REPEAT3; }
       else if (t == "RGB_REPEAT4") { type = RGB_REPEAT4; }
+      else if (t == "COLOR_RGB") { type = COLOR_RGB; }
+      else if (t == "COLOR_RGBW") { type = COLOR_RGBW; }
       else {
         Logger::log(WARN, "Unknown conversion type. Defaulting to float to single.");
         type = FLOAT_TO_SINGLE;

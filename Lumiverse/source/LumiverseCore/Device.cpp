@@ -301,7 +301,47 @@ void Device::loadParams(const JSONNode data) {
         else {
           err = true;
         }
+      }
+      else if (type->as_string() == "color") {
+        auto channelsNode = paramData.find("channels");
+        auto basisNode = paramData.find("basisNode");
+        auto weightNode = paramData.find("weight");
+        auto modeNode = paramData.find("mode");
+        
+        if (channelsNode != paramData.end() && basisNode != paramData.end() &&
+            weightNode != paramData.end() && modeNode != paramData.end())
+        {
+          // Get the channel data into a map
+          map<string, double> channels;
+          JSONNode::const_iterator c = channelsNode->begin();
 
+          while (c != channelsNode->end()) {
+            JSONNode channelData = *c;
+
+            channels[channelData.name()] = channelData.as_float();
+            c++;
+          }
+
+          // Get the vector data into a map
+          map<string, Eigen::Vector3d> basis;
+          JSONNode::const_iterator b = basisNode->begin();
+
+          while (b != basisNode->end()) {
+            JSONNode basisData = *b;
+
+            // This is an array of three values
+            Eigen::Vector3d basisVector(basisData[0].as_float(), basisData[1].as_float(), basisData[2].as_float());
+            basis[basisData.name()] = basisVector;
+            b++;
+          }
+
+          LumiverseColor* color = new LumiverseColor(channels, basis, (ColorMode)modeNode->as_int(), weightNode->as_float());
+
+          setParam(paramName, (LumiverseType*)color);
+        }
+        else {
+          err = true;
+        }
       }
       else {
         stringstream ss;

@@ -12,6 +12,14 @@ namespace Lumiverse {
     m_basisVectors = basis;
   }
 
+  LumiverseColor::LumiverseColor(map<string, double> params, map<string, Eigen::Vector3d> basis, ColorMode mode, double weight) {
+    m_weight = weight;
+    m_mode = mode;
+
+    m_deviceChannels = map<string, double>(params);
+    m_basisVectors = map<string, Eigen::Vector3d>(basis);
+  }
+
   LumiverseColor::~LumiverseColor() {
     // Nothing at the moment
   }
@@ -26,14 +34,53 @@ namespace Lumiverse {
   }
 
   JSONNode LumiverseColor::toJSON(string name) {
+    JSONNode channels;
+    channels.set_name("channels");
+
+    for (auto kvp : m_deviceChannels) {
+      channels.push_back(JSONNode(kvp.first, kvp.second));
+    }
+
+    JSONNode basis;
+    basis.set_name("basis");
+
+    for (auto kvp : m_basisVectors) {
+      JSONNode vec;
+      vec.set_name(kvp.first);
+      vec.push_back(JSONNode(kvp.second[0]));
+      vec.push_back(JSONNode(kvp.second[1]));
+      vec.push_back(JSONNode(kvp.second[2]));
+
+      basis.push_back(vec.as_array());
+    }
+    
     JSONNode node;
     node.set_name(name);
+
+    node.push_back(JSONNode("type", getTypeName()));
+    node.push_back(channels);
+    node.push_back(basis);
+    node.push_back(JSONNode("weight", m_weight));
+    node.push_back(JSONNode("mode", m_mode)); // Temporary. Will be string soon.
 
     return node;
   }
 
   string LumiverseColor::asString() {
-    return ""; // Temporary
+    stringstream ss;
+    ss << "(";
+    bool first = true;
+
+    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+      if (!first)
+        ss << ", ";
+      if (first)
+        first = false;
+
+      ss << it->first << " : " << it->second;
+    }
+    ss << ")";
+    return ss.str();
   }
 
   double LumiverseColor::getX() {

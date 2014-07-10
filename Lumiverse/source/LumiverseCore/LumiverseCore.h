@@ -49,6 +49,7 @@
 #endif
 #endif
 
+#include "lib/Eigen/Dense"
 #include "Logger.h"
 #include "Device.h"
 #include "Rig.h"
@@ -63,7 +64,6 @@
 #include "DMX/DMXDevicePatch.h"
 #include "DMX/DMXInterface.h"
 #include "lib/libjson/libjson.h"
-#include "lib/Eigen/Dense"
 
 #ifdef USE_DMXPRO2
 #include "DMX/DMXPro2Interface.h"
