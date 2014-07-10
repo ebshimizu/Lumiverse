@@ -179,10 +179,23 @@
         "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
         "pan" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
         "tilt" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
-        "red" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
-        "green" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
-        "blue" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
-        "white" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
+        "color" : {
+        	"type" : "color",
+        	"weight" : 1.0,
+        	"mode" : 0,
+        	"channels" : {
+        		"Red" : 0.0,
+        		"Green" : 0.0,
+        		"Blue" : 0.0,
+        		"White" : 0.0
+        	},
+        	"basis" : {
+        		"Red" : [13.16544, 5.868346, 2.5e-05],
+        		"Green" : [5.59857, 25.901501, 4.084567],
+        		"Blue" : [4.30497, 3.859103, 29.365243],
+        		"White" : [81.33195, 79.590576, 47.302138]
+        	}
+        },
         "shutter" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
         "rainbow" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
         "moveSpeed" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
@@ -239,10 +252,7 @@
           "intensity" : [ 9, "FLOAT_TO_SINGLE" ],
           "pan" : [ 0, "FLOAT_TO_FINE" ],
           "tilt" : [ 2, "FLOAT_TO_FINE" ],
-          "red" : [ 4, "FLOAT_TO_SINGLE" ],
-          "green" : [ 5, "FLOAT_TO_SINGLE" ],
-          "blue" : [ 6, "FLOAT_TO_SINGLE" ],
-          "white" : [ 7, "FLOAT_TO_SINGLE" ],
+          "color" : [ 4, "COLOR_RGBW" ],
           "shutter" : [ 8, "FLOAT_TO_SINGLE" ],
           "rainbow" : [ 10, "FLOAT_TO_SINGLE" ],
           "moveSpeed" : [ 11, "FLOAT_TO_SINGLE" ],

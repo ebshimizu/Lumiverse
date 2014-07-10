@@ -236,6 +236,9 @@ namespace Lumiverse {
     */
     map<string, double> getColorParams() { return m_deviceChannels; }
 
+    /*! \brief Gets the weight. */
+    double getWeight() { return m_weight; }
+
   private:
     /*! \brief Parameter that controls the overall values of the device channels.
     *

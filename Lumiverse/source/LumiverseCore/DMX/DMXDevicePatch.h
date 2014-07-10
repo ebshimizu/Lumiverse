@@ -209,10 +209,20 @@ namespace Lumiverse {
     * less precision is required, but still have a large number of channels to deal with.
     * \param data DMX Universe buffer
     * \param address Address to write the value to
-    * \param LumiverseFloat value to convert
+    * \param val LumiverseFloat value to convert
     * \param repeats Number of times to repeat the writing of the data.    
     */
     void RGBRepeat(unsigned char* data, unsigned int address, LumiverseFloat* val, int repeats);
+
+    /*!
+    * \brief Converts a LumiverseColor to 4 channels of DMX data.
+    *
+    * Conversion assumes that colors are laid out in standard RGBW order.
+    * \param data DMX Universe buffer
+    * \param address Address to write the value to
+    * \param val LumiverseColor value to convert
+    */
+    void ColorToRGBW(unsigned char* data, unsigned int address, LumiverseColor* val);
 
     /*!
     * \brief Helper for setting DMX values.

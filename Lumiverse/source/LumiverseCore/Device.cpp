@@ -304,7 +304,7 @@ void Device::loadParams(const JSONNode data) {
       }
       else if (type->as_string() == "color") {
         auto channelsNode = paramData.find("channels");
-        auto basisNode = paramData.find("basisNode");
+        auto basisNode = paramData.find("basis");
         auto weightNode = paramData.find("weight");
         auto modeNode = paramData.find("mode");
         

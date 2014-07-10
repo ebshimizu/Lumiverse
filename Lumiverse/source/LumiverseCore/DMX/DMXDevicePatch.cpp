@@ -62,6 +62,12 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
         RGBRepeat(data, instr.second.startAddress, val, 4);
         break;
       }
+      case (COLOR_RGBW) :
+      {
+        LumiverseColor* val = (LumiverseColor*)device->getParam(instr.first);
+        ColorToRGBW(data, instr.second.startAddress, val);
+        break;
+      }
       default:
       {
         // Unsupported conversion.
@@ -96,6 +102,22 @@ void DMXDevicePatch::RGBRepeat(unsigned char* data, unsigned int address, Lumive
   for (int i = 0; i < repeats; i++) {
     setDMXVal(data, address + (i * 3), cvt);
   }
+}
+
+void DMXDevicePatch::ColorToRGBW(unsigned char* data, unsigned int address, LumiverseColor* val) {
+  auto colorChannels = val->getColorParams();
+  double weight = val->getWeight();
+
+  // Missing parameters will just kinda end up undefined.
+  unsigned char r = (unsigned char)(255 * (colorChannels["Red"] * weight));
+  unsigned char g = (unsigned char)(255 * (colorChannels["Green"] * weight));
+  unsigned char b = (unsigned char)(255 * (colorChannels["Blue"] * weight));
+  unsigned char w = (unsigned char)(255 * (colorChannels["White"] * weight));
+
+  setDMXVal(data, address, r);
+  setDMXVal(data, address + 1, g);
+  setDMXVal(data, address + 2, b);
+  setDMXVal(data, address + 3, w);
 }
 
 void DMXDevicePatch::setDMXVal(unsigned char* data, unsigned int address, unsigned char val) {

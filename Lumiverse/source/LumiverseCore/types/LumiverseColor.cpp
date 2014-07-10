@@ -47,9 +47,9 @@ namespace Lumiverse {
     for (auto kvp : m_basisVectors) {
       JSONNode vec;
       vec.set_name(kvp.first);
-      vec.push_back(JSONNode(kvp.second[0]));
-      vec.push_back(JSONNode(kvp.second[1]));
-      vec.push_back(JSONNode(kvp.second[2]));
+      vec.push_back(JSONNode("X", kvp.second[0]));
+      vec.push_back(JSONNode("Y", kvp.second[1]));
+      vec.push_back(JSONNode("Z", kvp.second[2]));
 
       basis.push_back(vec.as_array());
     }
@@ -308,6 +308,7 @@ namespace Lumiverse {
         m_deviceChannels[it->first] = res[index];
         index++;
       }
+      m_weight = weight;
 
       // Just warn if it doesn't work quite right. User can always change.
       if (model.isProvenOptimal())
