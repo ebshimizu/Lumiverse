@@ -9,18 +9,6 @@ int main(int argc, char**argv) {
   // Logger::setLogFile("OLLlog.txt");
   
   Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.json");
-
-  // TODO: (roughly in order of importance)
-  // -Sample command line control
-  // -Color Mixing and other types
-  // -Saving rigs
-  // -Robust file reads
-
-  // In OpenLL FX
-  // -Presets
-  // -Named Groups
-  // -Cues / timeline
-
   rig.save("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights_c.json");
 
   // Init rig
@@ -37,7 +25,7 @@ int main(int argc, char**argv) {
   rig.getDevice("inno")->setParam("tilt", 0.25);
 
   LumiverseColor* color = (LumiverseColor*)rig.getDevice("inno")->getParam("color");
-  color->setxy(0.213, 0.499, 0.14);
+  color->setColorParam("Green", 1.0);
   std::cout << color->getxyY() << "\n";
   std::cout << color->asString() << "\n";
 
