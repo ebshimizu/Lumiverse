@@ -17,11 +17,12 @@ namespace Lumiverse {
   }
 
   void LumiverseColor::reset() {
-    m_X = 0;
-    m_Y = 0;
-    m_Z = 0;
+    // Resets the color channels to 0.
+    m_weight = 1;
 
-    // Subtractive mode probably changes other things.
+    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+      it->second = 0;
+    }
   }
 
   JSONNode LumiverseColor::toJSON(string name) {
@@ -35,28 +36,55 @@ namespace Lumiverse {
     return ""; // Temporary
   }
 
+  double LumiverseColor::getX() {
+    if (m_deviceChannels.size() == 0) {
+      Logger::log(ERR, "Cannot retrieve X value. No color basis defined.");
+      return -1;
+    }
+
+    return sumComponent(0);
+  }
+
+  double LumiverseColor::getY() {
+    if (m_deviceChannels.size() == 0) {
+      Logger::log(ERR, "Cannot retrieve Y value. No color basis defined.");
+      return -1;
+    }
+
+    return sumComponent(1);
+  }
+
+  double LumiverseColor::getZ() {
+    if (m_deviceChannels.size() == 0) {
+      Logger::log(ERR, "Cannot retrieve Z value. No color basis defined.");
+      return -1;
+    }
+
+    return sumComponent(2);
+  }
+
   double LumiverseColor::getx() {
-    if (m_X == 0 && m_Y == 0 && m_Z == 0)
+    if (getX() == 0 && getY() == 0 && getZ() == 0)
       return 0; // Not sure if actually correct, but should be fine.
 
-    return (m_X / (m_X + m_Y + m_Z));
+    return (getX() / (getX() + getY() + getZ()));
   }
 
   double LumiverseColor::gety() {
-    if (m_X == 0 && m_Y == 0 && m_Z == 0)
+    if (getX() == 0 && getY() == 0 && getZ() == 0)
       return 0; // Not sure if actually correct, but should be fine.
 
-    return (m_Y / (m_X + m_Y + m_Z));
+    return (getY() / (getX() + getY() + getZ()));
   }
 
   double LumiverseColor::getz() {
-    if (m_X == 0 && m_Y == 0 && m_Z == 0)
+    if (getX() == 0 && getY() == 0 && getZ() == 0)
       return 0; // Not sure if actually correct, but should be fine.
 
-    return (m_Z / (m_X + m_Y + m_Z));
+    return (getZ() / (getX() + getY() + getZ()));
   }
 
-  void LumiverseColor::setRGB(double r, double g, double b, RGBColorSpace cs) {
+  void LumiverseColor::setRGB(double r, double g, double b, double weight, RGBColorSpace cs) {
     r = clamp(r, 0, 1);
     g = clamp(g, 0, 1);
     b = clamp(b, 0, 1);
@@ -69,51 +97,88 @@ namespace Lumiverse {
 
     Eigen::Matrix3d M = RGBToXYZ[cs];
     Eigen::Vector3d rgb(r, g, b);
-
     Eigen::Vector3d XYZ = M * rgb;
     
     // We have now generated the target XYZ coordinate. If basis vectors were provided,
     // we'll try to match the xyY coordinate found from this converted XYZ vector.
-
-    matchChroma(XYZ[0] / (XYZ[0] + XYZ[1] + XYZ[2]), XYZ[1] / (XYZ[0] + XYZ[1] + XYZ[2]));
-
-//    m_X = XYZ[0];
-//   m_Y = XYZ[1];
-//    m_Z = XYZ[2];
-  
-    stringstream ss;
-    ss << "Converted RGB (" << r << ", " << g << ", " << b << ") to XYZ (" << m_X << ", " << m_Y << ", " << m_Z << ")";
-    Logger::log(LDEBUG, ss.str());
+    matchChroma(XYZ[0] / (XYZ[0] + XYZ[1] + XYZ[2]), XYZ[1] / (XYZ[0] + XYZ[1] + XYZ[2]), weight);
   }
 
   Eigen::Vector3d LumiverseColor::getRGB(RGBColorSpace cs) {
-    Eigen::Vector3d rgb = RGBToXYZ[cs].inverse() * Eigen::Vector3d(m_X, m_Y, m_Z);
+    // Vector is scaled by 1/100 bringing it inline withthe [0,1] range typically used by RGB.
+    Eigen::Vector3d XYZvec = (Eigen::Vector3d(getX(), getY(), getZ()) * m_weight) / 100;
+    Eigen::Vector3d rgb = RGBToXYZ[cs].inverse() * XYZvec;
 
     if (cs == sRGB) {
-      rgb[0] = XYZtosRGBCompand(rgb[0]);
-      rgb[1] = XYZtosRGBCompand(rgb[1]);
-      rgb[2] = XYZtosRGBCompand(rgb[2]);
+      rgb[0] = clamp(XYZtosRGBCompand(rgb[0]), 0, 1);
+      rgb[1] = clamp(XYZtosRGBCompand(rgb[1]), 0, 1);
+      rgb[2] = clamp(XYZtosRGBCompand(rgb[2]), 0, 1);
     }
-
-    stringstream ss;
-    ss << "Converted XYZ (" << m_X << ", " << m_Y << ", " << m_Z << ") to RGB (" << rgb[0] << ", " << rgb[1] << ", " << rgb[2] << ")";
-    Logger::log(LDEBUG, ss.str());
 
     return rgb;
   }
 
-  void LumiverseColor::updateColor() {
-    // Reset colors
-    m_X = m_Y = m_Z = 0;
+  void LumiverseColor::setxy(double x, double y, double weight) {
+    matchChroma(x, y, weight);
+  }
 
-    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
-      double weight = it->second;
-      Eigen::Vector3d weightedBasis = m_basisVectors[it->first] * weight;
+  Eigen::Vector3d LumiverseColor::getxyY() {
+    return Eigen::Vector3d(getx(), gety(), getY());
+  }
 
-      m_X += weightedBasis[0];
-      m_Y += weightedBasis[1];
-      m_Z += weightedBasis[2];
+  Eigen::Vector3d LumiverseColor::getLab(Eigen::Vector3d refWhite) {
+
+  }
+
+  bool LumiverseColor::setColorParam(string name, double val) {
+    if (m_deviceChannels.count(name) > 0) {
+      m_deviceChannels[name] = val;
+      return true;
     }
+    else {
+      stringstream ss;
+      ss << "Color has no mapped channel named " << name;
+      Logger::log(WARN, ss.str());
+      return false;
+    }
+  }
+
+  double& LumiverseColor::operator[](string name) {
+    return m_deviceChannels[name];
+  }
+
+  void LumiverseColor::setWeight(double weight) {
+    m_weight = weight;
+  }
+
+  bool LumiverseColor::setRGBRaw(double r, double g, double b, double weight) {
+    if (m_deviceChannels.count("Red") == 0 ||
+      m_deviceChannels.count("Green") == 0 ||
+      m_deviceChannels.count("Blue") == 0) {
+      Logger::log(ERR, "Color does not have required color parameters. Needs Red, Green, Blue. (in setRGBRaw)");
+      return false;
+    }
+
+    m_deviceChannels["Red"] = r;
+    m_deviceChannels["Green"] = g;
+    m_deviceChannels["Blue"] = b;
+    m_weight = weight;
+
+    return true;
+  }
+
+  double LumiverseColor::sumComponent(int i) {
+    double ret = 0;
+    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+      if (m_basisVectors.count(it->first) == 0) {
+        stringstream ss;
+        ss << "No basis component named " << it->first << " contained in color basis. Ignoring...";
+        Logger::log(WARN, ss.str());
+        continue;
+      }
+      ret += it->second * m_basisVectors[it->first][i];
+    }
+    return ret;
   }
 
   double LumiverseColor::clamp(double val, double min, double max) {
@@ -133,7 +198,11 @@ namespace Lumiverse {
     return (val > 0.0031308) ? (1.055 * pow(val, 1 / 2.4) - 0.055) : val * 12.92;
   }
 
-  void LumiverseColor::matchChroma(double x, double y) {
+  double LumiverseColor::labf(double val) {
+    return (val > pow(6 / 29, 3)) ? pow(val, 1 / 3) : (1 / 3) * pow(29 / 6, 2) * val + (4 / 29);
+  }
+
+  void LumiverseColor::matchChroma(double x, double y, double weight) {
     if (m_basisVectors.size() == 0) {
       // No basis vectors, can't do this calculation
       Logger::log(ERR, "matchChroma did not run since this Color does not have any basis vectors defined.");
@@ -180,20 +249,17 @@ namespace Lumiverse {
       const double* res = model.getColSolution();
 
       // Set value for device channels if model is optimal
-      if (model.isProvenOptimal()) {
-        int index = 0;
-        for (auto it = m_basisVectors.begin(); it != m_basisVectors.end(); it++) {
-          m_deviceChannels[it->first] = res[index];
-          index++;
-        }
-        Logger::log(LDEBUG, "Color match found");
-      }
-      else {
-        Logger::log(LDEBUG, "No color match found");
-        return;
+      int index = 0;
+      for (auto it = m_basisVectors.begin(); it != m_basisVectors.end(); it++) {
+        m_deviceChannels[it->first] = res[index];
+        index++;
       }
 
-      updateColor();
+      // Just warn if it doesn't work quite right. User can always change.
+      if (model.isProvenOptimal())
+        Logger::log(LDEBUG, "Optimal color match found");
+      else
+        Logger::log(WARN, "Non-optimal color solution. Color may be out of gamut.");
     }
     catch (CoinError e) {
       e.print();

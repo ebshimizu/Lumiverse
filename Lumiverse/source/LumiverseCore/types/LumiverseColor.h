@@ -14,19 +14,25 @@
 #include "lib/clp/CoinError.hpp"
 #include "../LumiverseType.h"
 
-// D50 96.4212, 100.0, 82.5188
 using namespace std;
 
 namespace Lumiverse {
   /*! \brief Selects the color mode for a LumiverseColor */
   enum ColorMode {
-    ADDITIVE,   /*!< Color represents a LED source light. */
-    SUBTRACTIVE /*!< Color represents a filter system. */
+    ADDITIVE,    /*!< Color represents a LED source light. */
+    SUBTRACTIVE, /*!< Color represents a filter system. */
+    BASIC_RGB,   /*!< Color has no basis vectors and assumes a default RGB valued color. */
+    BASIC_CMY    /*!< Color has no basis vectors and assumes a default CMY subtractive system. */
   };
 
   /*! \brief Selects a RGB color space to use in color conversion functions. */
   enum RGBColorSpace {
-    sRGB        /*!< sRGB color space. See http://en.wikipedia.org/wiki/SRGB */
+    sRGB        /*!< sRGB color space. D65 reference white. See http://en.wikipedia.org/wiki/SRGB */
+  };
+
+  enum ReferenceWhite {
+    D65,        /*< D65 illuminant. */
+    D50,        /*< D50 illuminant. */
   };
 
   /*! \brief RGB to XYZ matrices for color calculations */
@@ -37,17 +43,33 @@ namespace Lumiverse {
                                   0.0193339, 0.1191920, 0.9503041).finished() }
   };
 
+  /*! \brief Maps Color space to the Reference White it uses */
+  static unordered_map<RGBColorSpace, ReferenceWhite> ColorSpaceRefWhite =
+  {
+    { sRGB, D65 }
+  };
+
+  /*! \brief Reference White XYZ coordinates for standard illuminants */
+  static unordered_map<ReferenceWhite, Eigen::Vector3d> refWhites =
+  {
+    { D65, Eigen::Vector3d(95.047, 100.00, 108.883) },
+    { D50, Eigen::Vector3d(96.4212, 100.0, 82.5188) }
+  };
+
   /*!
   * \brief This class describes a color.
   *
-  * Lumiverse represents its colors internally as CIE XYZ tristimulus values.
-  * These values are converted to other color spaces as needed.
+  * LumiverseColor objects are based off of the available color channels that
+  * are controllable on the device. If you know the XYZ tristimulus values
+  * for each channel, this class will offer a number of functions for
+  * converting between XYZ, xyY, RGB, and other color spaces.
+  *
+  * Not knowing the XYZ values for a fixture won't prevent you from using the device,
+  * but some of the color picking functions won't be available.
   *
   * Color mixing for LED devices is done by providing the coordinates of the
   * LEDs used in the lights and then taking a linear combination of those
-  * basis vectors to match a user-specified target color. In the event of a
-  * device using more than 3 LEDs, the user will be able to specify a
-  * metamer in the event of multiple possibilities for a single target color.
+  * basis vectors to match a user-specified target color.
   */
   class LumiverseColor : LumiverseType {
   public:
@@ -86,9 +108,16 @@ namespace Lumiverse {
     */
     virtual string asString();
 
-    double getX() { return m_X; } /*!< Gets the X value. */
-    double getY() { return m_Y; } /*!< Gets the Y value. */
-    double getZ() { return m_Z; } /*!< Gets the Z value. */
+    double getX(); /*!< Gets the X value. */
+    double getY(); /*!< Gets the Y value. */
+    double getZ(); /*!< Gets the Z value. */
+
+    /*!
+    * \brief Returns a vector representing the color in XYZ coordinates.
+    * 
+    * If there is no color basis defined, the returned vector will be (0, 0, 0).
+    */
+    Eigen::Vector3d getXYZ() { return Eigen::Vector3d(getX(), getY(), getZ()); }
 
     /*! \brief Gets the x value.
     *
@@ -117,7 +146,7 @@ namespace Lumiverse {
     * \param b Blue (0.0 - 1.0)
     * \param cs Color Space to use for converting RGB to XYZ.
     */
-    void setRGB(double r, double g, double b, RGBColorSpace cs = sRGB);
+    void setRGB(double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
 
     /*! \brief Gets the RGB color as a vector.
     *
@@ -127,13 +156,90 @@ namespace Lumiverse {
     */
     Eigen::Vector3d getRGB(RGBColorSpace cs = sRGB);
 
+    /*!
+    * \brief Sets the color to match the specified xy coordinate (xyY color space)
+    *
+    * Y is excluded since most lights won't be able to match an arbitrary Y coordinate
+    * and it's rather dificult to guess at the correct value. We don't like guessing,
+    * so use the weight parameter to tune the brightness of a color.
+    */
+    void setxy(double x, double y, double weight = 1.0);
+
+    /*!
+    * \brief Retrieves the xyY coordinate of the current color.
+    * 
+    * \return Vector containing (x, y, Y) for the color.
+    */
+    Eigen::Vector3d getxyY();
+
+    /*!
+    * \brief Retrieves the Lab coordinates for this color
+    * 
+    * See http://en.wikipedia.org/wiki/Lab_color_space.
+    */
+    Eigen::Vector3d getLab(ReferenceWhite refWhite);
+
+    /*!
+    * \brief Retrieves the Lab coordinates for this color with an arbitrary
+    * reference white.
+    *
+    * See http://en.wikipedia.org/wiki/Lab_color_space
+    * \sa getLab(ReferenceWhite)
+    */
+    Eigen::Vector3d getLab(Eigen::Vector3d refWhite);
+
+    /*!
+    * \brief Directly sets the value of a light parameter.
+    *
+    * Available parameters are defined by the user, though common ones will
+    * include "Red", "Green", "Blue", "Cyan", etc. This function updates m_deviceChannels
+    * and the value will be directly sent to the device.
+    * \param name Parameter name (typically the name of a color axis, "Red", "Blue", etc.)
+    * \param val Value to set the parameter to. Clamped between 0 and 1.
+    * \return True on success. False when the specified axis does not exist.
+    */
+    bool setColorParam(string name, double val);
+
+    /*!
+    * \brief Subscript overload for accessing light color parameters.
+    *
+    * This will end up creating new parameters if you access something that
+    * doesn't exist, so be careful. setColorParam is safer if you're worried about
+    * that.
+    */
+    double& operator[](string name);
+
+    /*!
+    * \brief Sets the color weight, or overall brightness.
+    *
+    * Can be thought of as the "intensity" of the color. Used to make quick
+    * color adjustments without modifying the chroma too much.
+    */
+    void setWeight(double weight);
+
+    /*!
+    * \brief Sets the device color parameters to the specified RGB value.
+    * This will only work correctly if your device is specified to have RGB
+    * parameters.
+    *
+    * For this to work, you must define m_deviceChannels to include only "Red", "Green"
+    * and "Blue". If you construct a color in the SIMPLE_RGB mode, this will be handled
+    * for you. Works like a more conventional RGB set method.
+    */
+    bool setRGBRaw(double r, double g, double b, double weight = 1.0);
+
+    /*! \brief Gets the current values for the color parameters.
+    * \return m_deviceChannels map
+    */
+    map<string, double> getColorParams() { return m_deviceChannels; }
+
   private:
-    /*! \brief CIE X tristimulus value */
-    double m_X;
-    /*! \brief CIE Y tristimulus value */
-    double m_Y;
-    /*! \brief CIE Z tristimulus value */
-    double m_Z;
+    /*! \brief Parameter that controls the overall values of the device channels.
+    *
+    * Used to make dimmer versions of the same color. Only modifies the deviceChannels
+    * map, not the XYZ values directly.
+    */
+    double m_weight;
 
     /*! \brief Color mode for this color. */
     ColorMode m_mode;
@@ -149,12 +255,8 @@ namespace Lumiverse {
     /*! \brief Basis vectors for each LED source in the light. Represented in XYZ. */
     map<string, Eigen::Vector3d> m_basisVectors;
 
-    /*! \brief Syncs other values in this color object after a color change.
-    *
-    * Updates the color based on the deviceChannels map. Essentially recalculates the
-    * current XYZ value based on the basis vectors and weights.
-    */
-    void updateColor();
+    /*! \brief Calculates the value of the specified component at current device channel levels. */
+    double sumComponent(int i);
 
     /*! \brief Clamps a value between min and max. Returns the clamped value. */
     double clamp(double val, double min, double max);
@@ -164,6 +266,12 @@ namespace Lumiverse {
 
     /*! \brief sRGB value companding cuntion for XYZ to RGB */
     double XYZtosRGBCompand(double val);
+
+    /*! \brief Lab f() function.
+    * 
+    * Function used in the Lab color conversion.
+    */
+    double labf(double val);
 
     /*! \brief Runs a linear optimization to find a combination of the basis vectors
     *   that will match the target chroma value.
@@ -176,8 +284,9 @@ namespace Lumiverse {
     *
     * \param x Target x coordinate to match (xyY color space)
     * \param y Target y coordinate to match (xyY color space)
+    * \param weight Controls the overall brightness of the resulting color.
     */
-    void matchChroma(double x, double y);
+    void matchChroma(double x, double y, double weight = 1.0);
   };
 }
 

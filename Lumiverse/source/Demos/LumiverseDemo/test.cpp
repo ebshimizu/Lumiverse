@@ -9,14 +9,16 @@ int main(int argc, char**argv) {
   // Testing colors.
 
   map<string, Eigen::Vector3d> InnoColorBasis;
-  InnoColorBasis["1"] = Eigen::Vector3d(13.16544, 5.868346, 2.5e-05);
-  InnoColorBasis["2"] = Eigen::Vector3d(5.59857, 25.901501, 4.084567);
-  InnoColorBasis["3"] = Eigen::Vector3d(4.30497, 3.859103, 29.365243);
-  InnoColorBasis["4"] = Eigen::Vector3d(81.33195, 79.590576, 47.302138);
+  InnoColorBasis["Red"] = Eigen::Vector3d(13.16544, 5.868346, 2.5e-05);
+  InnoColorBasis["Green"] = Eigen::Vector3d(5.59857, 25.901501, 4.084567);
+  InnoColorBasis["Blue"] = Eigen::Vector3d(4.30497, 3.859103, 29.365243);
+  InnoColorBasis["White"] = Eigen::Vector3d(81.33195, 79.590576, 47.302138);
 
   LumiverseColor c1(InnoColorBasis);
   c1.setRGB(0, 0.5, 0.5);
-  c1.getRGB();
+  c1["Red"] = 1.0;
+  c1["Green"] = 0;
+  std::cout << c1.getRGB();
   
   _getch();
 
