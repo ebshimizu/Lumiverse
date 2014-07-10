@@ -126,8 +126,15 @@ namespace Lumiverse {
     return Eigen::Vector3d(getx(), gety(), getY());
   }
 
-  Eigen::Vector3d LumiverseColor::getLab(Eigen::Vector3d refWhite) {
+  Eigen::Vector3d LumiverseColor::getLab(ReferenceWhite refWhite) {
+    return getLab(refWhites[refWhite]);
+  }
 
+  Eigen::Vector3d LumiverseColor::getLab(Eigen::Vector3d refWhite) {
+    double L = 116 * labf(getY() / refWhite[1]) - 16;
+    double a = 500 * (labf(getX() / refWhite[0]) - labf(getY() / refWhite[1]));
+    double b = 200 * (labf(getY() / refWhite[1]) - labf(getZ() / refWhite[2]));
+    return Eigen::Vector3d(L, a, b);
   }
 
   bool LumiverseColor::setColorParam(string name, double val) {
