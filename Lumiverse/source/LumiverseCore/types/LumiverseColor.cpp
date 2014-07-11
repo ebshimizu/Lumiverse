@@ -18,10 +18,40 @@ namespace Lumiverse {
     m_weight = weight;
     m_mode = mode;
 
-    m_deviceChannels = map<string, double>(params);
-    m_basisVectors = map<string, Eigen::Vector3d>(basis);
+    m_deviceChannels = params;
+    m_basisVectors = basis;
+  }
+
+  LumiverseColor::LumiverseColor(LumiverseType* other) {
+    if (other->getTypeName() != "color") {
+      // Initialize to basic rgb in absence of any info.
+      m_mode = BASIC_RGB;
+      reset();
+      initMode();
+    }
+    else {
+      LumiverseColor* otherColor = (LumiverseColor*)other;
+      m_weight = otherColor->m_weight;
+      m_mode = otherColor->m_mode;
+      m_deviceChannels = otherColor->m_deviceChannels;
+      m_basisVectors = otherColor->m_basisVectors;
+    }
   }
   
+  LumiverseColor::LumiverseColor(LumiverseColor* other) {
+    m_weight = other->m_weight;
+    m_mode = other->m_mode;
+    m_deviceChannels = other->m_deviceChannels;
+    m_basisVectors = other->m_basisVectors;
+  }
+
+  LumiverseColor::LumiverseColor(const LumiverseColor& other) {
+    m_weight = other.m_weight;
+    m_mode = other.m_mode;
+    m_deviceChannels = other.m_deviceChannels;
+    m_basisVectors = other.m_basisVectors;
+  }
+
   void LumiverseColor::initMode() {
     // Create default channels for basic RGB mode
     if (m_mode == BASIC_RGB) {
@@ -224,9 +254,24 @@ namespace Lumiverse {
     return Eigen::Vector3d(L, a, b);
   }
 
+  Eigen::Vector3d LumiverseColor::getLCHab(ReferenceWhite refWhite) {
+    return getLCHab(refWhites[refWhite]);
+  }
+
+  Eigen::Vector3d LumiverseColor::getLCHab(Eigen::Vector3d refWhite) {
+    Eigen::Vector3d lab = getLab(refWhite);
+    double C = sqrt(lab[1] * lab[1] + lab[2] * lab[2]);
+    double H = atan2(lab[2], lab[1]) * (180 / M_PI);
+
+    if (H < 0) H += 360;
+    if (H >= 360) H -= 360;
+
+    return Eigen::Vector3d(lab[0], C, H);
+  }
+
   bool LumiverseColor::setColorChannel(string name, double val) {
     if (m_deviceChannels.count(name) > 0) {
-      m_deviceChannels[name] = val;
+      m_deviceChannels[name] = clamp(val, 0, 1);
       return true;
     }
     else {
@@ -261,8 +306,80 @@ namespace Lumiverse {
     return true;
   }
 
+  void LumiverseColor::operator=(LumiverseColor& other) {
+    lock_guard<mutex> lock(m_mapMutex);
+
+    m_weight = other.m_weight;
+    m_mode = other.m_mode;
+    m_deviceChannels = other.m_deviceChannels;
+    m_basisVectors = other.m_basisVectors;
+  }
+
+  LumiverseColor& LumiverseColor::operator+=(double val) {
+    lock_guard<mutex> lock(m_mapMutex);
+    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+      m_deviceChannels[it->first] = clamp(it->second + val, 0, 1);
+    }
+
+    return *this;
+  }
+
+  LumiverseColor& LumiverseColor::operator-=(double val) {
+    return (*this += -val);
+  }
+
+  LumiverseColor& LumiverseColor::operator*=(double val) {
+    lock_guard<mutex> lock(m_mapMutex);
+    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+      m_deviceChannels[it->first] = clamp(it->second * val, 0, 1);
+    }
+
+    return *this;
+  }
+
+  LumiverseColor& LumiverseColor::operator/=(double val) {
+    return (*this *= (1 / val));
+  }
+
+  shared_ptr<LumiverseType> LumiverseColor::lerp(LumiverseColor* rhs, float t) {
+    lock_guard<mutex> lock(m_mapMutex);
+
+    // We lerp the weights, and then we lerp the color params of the lhs.
+    LumiverseColor* newColor = new LumiverseColor(this);
+
+    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+      // Standard lerp for each color channel: (1 - t) * lhs + t * rhs
+      newColor->setColorChannel(it->first, (1 - t) * it->second + rhs->getColorChannel(it->first) * t);
+    }
+
+    // Lerp weights
+    newColor->setWeight((1 - t) * m_weight + rhs->getWeight() * t);
+    return shared_ptr<LumiverseType>((LumiverseType*)newColor);
+  }
+
+  bool LumiverseColor::isEqual(LumiverseColor& other) {
+    lock_guard<mutex> lock(m_mapMutex);
+
+    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+      if (!doubleEq(it->second, other.getColorChannel(it->first)))
+        return false;
+    }
+
+    return true;
+  }
+
+  int LumiverseColor::cmpHue(LumiverseColor& other, ReferenceWhite refWhite) {
+    double thisH = getLCHab(refWhite)[2];
+    double thatH = other.getLCHab(refWhite)[2];
+
+    if (doubleEq(thisH, thatH)) return 0;
+    return (thisH < thatH) ? -1 : 1;
+  }
+
   double LumiverseColor::sumComponent(int i) {
     double ret = 0;
+
+    lock_guard<mutex> lock(m_mapMutex);
     for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
       if (m_basisVectors.count(it->first) == 0) {
         stringstream ss;

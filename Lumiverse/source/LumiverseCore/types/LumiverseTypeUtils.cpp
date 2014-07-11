@@ -10,6 +10,8 @@ LumiverseType* LumiverseTypeUtils::copy(LumiverseType* data) {
     return (LumiverseType*)(new LumiverseFloat(data));
   else if (data->getTypeName() == "enum")
     return (LumiverseType*)(new LumiverseEnum(data));
+  else if (data->getTypeName() == "color")
+    return (LumiverseType*)(new LumiverseColor(data));
   else
     return nullptr;
 }
@@ -23,6 +25,9 @@ void LumiverseTypeUtils::copyByVal(LumiverseType* source, LumiverseType* target)
   }
   else if (source->getTypeName() == "enum") {
     *((LumiverseEnum*)target) = *((LumiverseEnum*)source);
+  }
+  else if (source->getTypeName() == "color") {
+    *((LumiverseColor*)target) = *((LumiverseColor*)source);
   }
   else {
     return;
@@ -38,6 +43,8 @@ bool LumiverseTypeUtils::equals(LumiverseType* lhs, LumiverseType* rhs) {
     return (*((LumiverseFloat*)lhs) == *((LumiverseFloat*)rhs));
   else if (lhs->getTypeName() == "enum")
     return (*((LumiverseEnum*)lhs) == *((LumiverseEnum*)rhs));
+  else if (lhs->getTypeName() == "color")
+    return (*((LumiverseColor*)lhs) == *((LumiverseColor*)rhs));
   else
     return false;
 }
@@ -56,13 +63,16 @@ int LumiverseTypeUtils::cmp(LumiverseType* lhs, LumiverseType* rhs) {
     else
       return 1;
   }
-  if (lhs->getTypeName() == "enum") {
+  else if (lhs->getTypeName() == "enum") {
     if (*((LumiverseEnum*)lhs) == *((LumiverseEnum*)rhs))
       return 0;
     else if (*((LumiverseEnum*)lhs) < *((LumiverseEnum*)rhs))
       return -1;
     else
       return 1;
+  }
+  else if (lhs->getTypeName() == "color") {
+    return (*((LumiverseColor*)lhs)).cmpHue(*((LumiverseColor*)rhs));
   }
   else
     return -2;
@@ -79,9 +89,13 @@ shared_ptr<LumiverseType> LumiverseTypeUtils::lerp(LumiverseType* lhs, Lumiverse
     *ret = ((*(LumiverseFloat*)lhs) * (1 - t)) + ((*(LumiverseFloat*)rhs) * t);
     return shared_ptr<LumiverseType>((LumiverseType *)ret);
   }
-  if (lhs->getTypeName() == "enum") {
+  else if (lhs->getTypeName() == "enum") {
     // Redirect to lerp function within LumiverseEnum
     return ((LumiverseEnum*)lhs)->lerp((LumiverseEnum*)rhs, t);
+  }
+  else if (lhs->getTypeName() == "color") {
+    // Redirect to lerp function within LumiverseColor
+    return ((LumiverseColor*)lhs)->lerp((LumiverseColor*)rhs, t);
   }
   else
     return nullptr;

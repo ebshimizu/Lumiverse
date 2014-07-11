@@ -9,6 +9,8 @@
 #include <map>
 #include <unordered_map>
 #include <cmath>
+#include <mutex>
+#include <memory>
 #include "lib/Eigen/Dense"
 #include "lib/clp/ClpSimplex.hpp"
 #include "lib/clp/CoinError.hpp"
@@ -109,6 +111,15 @@ namespace Lumiverse {
 
     /*! \brief Constructor for loading from JSON data */
     LumiverseColor(map<string, double> params, map<string, Eigen::Vector3d> basis, ColorMode mode, double weight);
+
+    /*! \brief Copy constructor (from generic LumiverseType) */
+    LumiverseColor(LumiverseType* other);
+
+    /*! \brief Copy constructor (from pointer) */
+    LumiverseColor(LumiverseColor* other);
+
+    /*! \brief Copy constructor */
+    LumiverseColor(const LumiverseColor& other);
 
     /*! \brief Destroys a color */
     virtual ~LumiverseColor();
@@ -235,6 +246,20 @@ namespace Lumiverse {
     Eigen::Vector3d getLab(Eigen::Vector3d refWhite);
 
     /*!
+    * \brief Retrieves the LCH(ab) coordintes for this color.
+    *
+    * See http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+    */
+    Eigen::Vector3d getLCHab(ReferenceWhite refWhite);
+
+    /*!
+    * \brief Retrives the LCH(ab) coordinates with an arbitrary reference white.
+    *
+    * See http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+    */
+    Eigen::Vector3d getLCHab(Eigen::Vector3d refWhite);
+
+    /*!
     * \brief Directly sets the value of a light parameter.
     *
     * Available parameters are defined by the user, though common ones will
@@ -290,6 +315,52 @@ namespace Lumiverse {
     /*! \brief Gets the weight. */
     double getWeight() { return m_weight; }
 
+    // Arithmetic overrides
+    void operator=(LumiverseColor& other);
+
+    /*! \brief Adds a constant to the color. */
+    LumiverseColor& operator+=(double val);            
+
+    /*! \brief Subtract a constant from the color. */
+    LumiverseColor& operator-=(double val);
+
+    /*! \brief Multiplay a constant to the color. */
+    LumiverseColor& operator*=(double val);
+    
+    /*! \brief Divide the color by a constant. */
+    LumiverseColor& operator/=(double val);
+
+    /*!
+    * \brief Does a linear interpolation of the two colors.
+    *
+    * The object this function is called on is treated as the left hand side.
+    * If the colors don't have the same channels (I don't know what you're doing then...)
+    * the channels for the left hand side (object this is called on) will be used.
+    * \param rhs Initial value
+    * \param t Value between 0 and 1. When `t = 0`, this function returns the value of this object. When
+    * `t = 1`, this function returns the value of rhs.
+    * \return New LumiverseColor containing the result of the interpolation.
+    */
+    shared_ptr<LumiverseType> lerp(LumiverseColor* rhs, float t);
+
+    /*!
+    * \brief Compares two colors using the color channel values (device levels)
+    *
+    * Note that this definitely doesn't guarantee that the chroma values are the same,
+    * just that the devices have the same value. You will need to use a different
+    * equality function for chroma equality.
+    */
+    bool isEqual(LumiverseColor& other);
+
+    /*! 
+    * \brief Compares two colors based on the LCHab hue value.
+    *
+    * Uses H(ab) to compare colors. H(ab) ranges from 0-360, and
+    * arranges colors in chromatic order (red -> violet)
+    * \param refWhite Reference white. Defaults to D65.
+    */
+    int cmpHue(LumiverseColor& other, ReferenceWhite refWhite = D65);
+
   private:
     /*! \brief Parameter that controls the overall values of the device channels.
     *
@@ -300,6 +371,9 @@ namespace Lumiverse {
 
     /*! \brief Color mode for this color. */
     ColorMode m_mode;
+
+    /*! \brief Protects access to the deviceChannels map */
+    mutex m_mapMutex;
 
     /*! \brief Contains a map from device channel to current value.
     *
@@ -350,7 +424,19 @@ namespace Lumiverse {
     * \param weight Controls the overall brightness of the resulting color.
     */
     void matchChroma(double x, double y, double weight = 1.0);
+
+    inline bool doubleEq(double a, double b) {
+      return (abs(a - b) < DBL_EPSILON);
+    }
   };
+
+  // Operators time!
+  inline bool operator==(LumiverseColor& a, LumiverseColor& b) {
+    if (a.getTypeName() != "color" || b.getTypeName() != "color")
+      return false;
+
+    return a.isEqual(b);
+  }
 }
 
 #endif
