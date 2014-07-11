@@ -134,6 +134,19 @@ namespace Lumiverse {
     LumiverseType* getParam(string param);
 
     /*!
+    * \brief Gets a pointer to a LumiverseColor parameter.
+    *
+    * Gives direct access to a color parameter. Probably the easiest way to
+    * modify a color for a device.
+    * \param param Parameter name. Defaults to "color" assuming that most people
+    * will call the color parameter "color" in their devices.
+    * \return Pointer to LumiverseColor object associated with parameter. `nullptr`
+    * is returned if the parameter does not exist.
+    * \sa LumiverseColor, LumiverseType
+    */
+    LumiverseColor* getColor(string param = "color");
+
+    /*!
     * \brief Sets the value of a parameter.
     * 
     * Can set arbitrary data with this version of the function.
@@ -169,6 +182,46 @@ namespace Lumiverse {
     * \sa LumiverseType, LumiverseEnum
     */
     bool setParam(string param, string val, float val2 = -1.0f);
+
+    /*! \brief Sets the value of a LumiverseColor parameter
+    *
+    * \param param Parameter name
+    * \param channel Color channel name
+    * \param val Value of the color channel
+    * \return False if parameter changed does not exist prior to set.
+    * Like setParam(string, string, float) we don't create the value if it doesn't exist.
+    * Color has a bunch of specific settings that aren't really useful if we don't know
+    * anything about the device.
+    * \sa LumiverseColor, LumiverseType
+    */
+    bool setParam(string param, string channel, double val);
+
+    /*! \brief Sets the value of a LumiverseColor parameter using LumiverseColor::setxy() 
+    *
+    * x and y are chromaticity coordinates in the xyY color space.
+    * \param param Parameter name.
+    * \param x x coordinate
+    * \param y y coordinate
+    * \return False if parameter changed does not exist prior to set.
+    * \sa LumiverseColor, LumiverseType, setParam(string, string, double)
+    */
+    bool setParam(string param, double x, double y, double weight = 1.0);
+
+    /*! \brief Sets the value of a LumiverseColor parameter
+    *
+    * Proxy for LumiverseColor::setRGBRaw().
+    * \return False if parameter changed does not exist prior to set.
+    * \sa LumiverseColor::setRGBRaw(), LumiverseColor, LumiverseType
+    */
+    bool setParam(string param, double r, double g, double b, double weight = 1.0);
+
+    /*! \brief Sets the value of a LumiverseColor parameter
+    *
+    * Proxy for LumiverseColor::setRGB().
+    * \return False if parameter changed does not exist prior to set.
+    * \sa LumiverseColor::setRGB(), LumiverseColor, LumiverseType
+    */
+    bool setParam(string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
 
     // Will need additional overloads for each new type. Which kinda sucks.
 

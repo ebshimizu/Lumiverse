@@ -38,6 +38,14 @@ LumiverseType* Device::getParam(string param) {
   return nullptr;
 }
 
+LumiverseColor* Device::getColor(string param) {
+  if (m_parameters.count(param) > 0) {
+    return dynamic_cast<LumiverseColor*>(m_parameters[param]);
+  }
+
+  return nullptr;
+}
+
 bool Device::setParam(string param, LumiverseType* val) {
   bool ret = true;
 
@@ -73,6 +81,50 @@ bool Device::setParam(string param, string val, float val2) {
   if (val2 >= 0) {
     data->setTweak(val2);
   }
+
+  return true;
+}
+
+bool Device::setParam(string param, string channel, double val) {
+  if (m_parameters.count(param) == 0) {
+    return false;
+  }
+
+  LumiverseColor* data = (LumiverseColor*)m_parameters[param];
+  data->setColorChannel(channel, val);
+
+  return true;
+}
+
+bool Device::setParam(string param, double x, double y, double weight) {
+  if (m_parameters.count(param) == 0) {
+    return false;
+  }
+
+  LumiverseColor* data = (LumiverseColor*)m_parameters[param];
+  data->setxy(x, y, weight);
+
+  return true;
+}
+
+bool Device::setParam(string param, double r, double g, double b, double weight) {
+  if (m_parameters.count(param) == 0) {
+    return false;
+  }
+
+  LumiverseColor* data = (LumiverseColor*)m_parameters[param];
+  data->setRGBRaw(r, g, b, weight);
+
+  return true;
+}
+
+bool Device::setParam(string param, double r, double g, double b, double weight, RGBColorSpace cs) {
+  if (m_parameters.count(param) == 0) {
+    return false;
+  }
+
+  LumiverseColor* data = (LumiverseColor*)m_parameters[param];
+  data->setRGB(r, g, b, weight, cs);
 
   return true;
 }
