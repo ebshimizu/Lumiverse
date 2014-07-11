@@ -62,6 +62,12 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
         RGBRepeat(data, instr.second.startAddress, val, 4);
         break;
       }
+      case(COLOR_RGB) :
+      {
+        LumiverseColor* val = (LumiverseColor*)device->getParam(instr.first);
+        ColorToRGB(data, instr.second.startAddress, val);
+        break;
+      }
       case (COLOR_RGBW) :
       {
         LumiverseColor* val = (LumiverseColor*)device->getParam(instr.first);
@@ -70,7 +76,13 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
       }
       default:
       {
-        // Unsupported conversion.
+        // Unsupported conversion. We're going to demand that the user fix this before
+        // proceeding, otherwise you'll just end up with 10000000 log entries
+        // for something that's easily fixed in the Rig file.
+        stringstream ss;
+        ss << "Device \"" << device->getId() << "\" has invalid conversion type specified (" << (int)instr.second.type << ")";
+        Logger::log(FATAL, ss.str());
+
         throw logic_error("Device has an invalid conversion type specified.");
       }
     }
@@ -104,15 +116,22 @@ void DMXDevicePatch::RGBRepeat(unsigned char* data, unsigned int address, Lumive
   }
 }
 
-void DMXDevicePatch::ColorToRGBW(unsigned char* data, unsigned int address, LumiverseColor* val) {
-  auto colorChannels = val->getColorParams();
-  double weight = val->getWeight();
-
+void DMXDevicePatch::ColorToRGB(unsigned char* data, unsigned int address, LumiverseColor* val) {
   // Missing parameters will just kinda end up undefined.
-  unsigned char r = (unsigned char)(255 * (colorChannels["Red"] * weight));
-  unsigned char g = (unsigned char)(255 * (colorChannels["Green"] * weight));
-  unsigned char b = (unsigned char)(255 * (colorChannels["Blue"] * weight));
-  unsigned char w = (unsigned char)(255 * (colorChannels["White"] * weight));
+  unsigned char r = (unsigned char)(255 * val->getColorChannel("Red"));
+  unsigned char g = (unsigned char)(255 * val->getColorChannel("Green"));
+  unsigned char b = (unsigned char)(255 * val->getColorChannel("Blue"));
+
+  setDMXVal(data, address, r);
+  setDMXVal(data, address + 1, g);
+  setDMXVal(data, address + 2, b);
+}
+
+void DMXDevicePatch::ColorToRGBW(unsigned char* data, unsigned int address, LumiverseColor* val) {
+  unsigned char r = (unsigned char)(255 * val->getColorChannel("Red"));
+  unsigned char g = (unsigned char)(255 * val->getColorChannel("Green"));
+  unsigned char b = (unsigned char)(255 * val->getColorChannel("Blue"));;
+  unsigned char w = (unsigned char)(255 * val->getColorChannel("White"));;
 
   setDMXVal(data, address, r);
   setDMXVal(data, address + 1, g);

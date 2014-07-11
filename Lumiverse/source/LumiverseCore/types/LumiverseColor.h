@@ -21,8 +21,22 @@ namespace Lumiverse {
   enum ColorMode {
     ADDITIVE,    /*!< Color represents a LED source light. */
     SUBTRACTIVE, /*!< Color represents a filter system. */
-    BASIC_RGB,   /*!< Color has no basis vectors and assumes a default RGB valued color. */
+    BASIC_RGB,   /*!< Color has no basis vectors and assumes a default RGB valued color. Uses the sRGB color space. */
     BASIC_CMY    /*!< Color has no basis vectors and assumes a default CMY subtractive system. */
+  };
+
+  /*! \brief Converts ColorMode to a string */
+  static unordered_map<ColorMode, string> ColorModeToString =
+  {
+    { ADDITIVE, "ADDITIVE" }, { SUBTRACTIVE, "SUBTRACTIVE" },
+    { BASIC_RGB, "BASIC_RGB" }, { BASIC_CMY, "BASIC_CMY" }
+  };
+
+  /*! \brief Converts a string to ColorMode. */
+  static unordered_map<string, ColorMode> StringToColorMode = 
+  {
+    { "ADDITIVE", ADDITIVE }, { "SUBTRACTIVE", SUBTRACTIVE },
+    { "BASIC_RGB", BASIC_RGB }, { "BASIC_CMY", BASIC_CMY }
   };
 
   /*! \brief Selects a RGB color space to use in color conversion functions. */
@@ -70,10 +84,18 @@ namespace Lumiverse {
   * Color mixing for LED devices is done by providing the coordinates of the
   * LEDs used in the lights and then taking a linear combination of those
   * basis vectors to match a user-specified target color.
+  *
+  * When intializing BASIC* type Colors, you'll find that it's easier to create
+  * them programmatically instead of defining them in a Rig file.
   */
   class LumiverseColor : LumiverseType {
   public:
-    /*! \brief Constructs a color. Default color is Black. */
+    /*! \brief Constructs a color. Default color is Black.
+    *
+    * Passing in different modes will initialize the light with different settings.
+    * BASIC_RGB will base the color around RGB instead of XYZ, while BASIC_CMY
+    * will base the color around a CMY color system. SUBTRACTIVE mode is not fully supported yet.
+    */
     LumiverseColor(ColorMode mode = ADDITIVE);
 
     /*! \brief Constructs a color using the provided basis colors. 
@@ -111,14 +133,34 @@ namespace Lumiverse {
     */
     virtual string asString();
 
-    double getX(); /*!< Gets the X value. */
-    double getY(); /*!< Gets the Y value. */
-    double getZ(); /*!< Gets the Z value. */
+    /*! \brief Gets the X tristimulus value for the color
+    *
+    * If this color is in BASIC_RGB mode, this value will be calculated
+    * from the current RGB channel values using the sRGB color space.
+    * If you have no basis vectors defined in ADDITIVE mode, -1 will be returned.
+    */
+    double getX();
+
+    /*! \brief Gets the Y tristimulus value for the color
+    *
+    * If this color is in BASIC_RGB mode, this value will be calculated
+    * from the current RGB channel values using the sRGB color space.
+    * If you have no basis vectors defined in ADDITIVE mode, -1 will be returned.
+    */
+    double getY();
+
+    /*! \brief Gets the Z tristimulus value for the color
+    *
+    * If this color is in BASIC_RGB mode, this value will be calculated
+    * from the current RGB channel values using the sRGB color space.
+    * If you have no basis vectors defined in ADDITIVE mode, -1 will be returned.
+    */
+    double getZ();
 
     /*!
     * \brief Returns a vector representing the color in XYZ coordinates.
     * 
-    * If there is no color basis defined, the returned vector will be (0, 0, 0).
+    * If there is no color basis defined, the returned vector will be (-1, -1, -1).
     */
     Eigen::Vector3d getXYZ() { return Eigen::Vector3d(getX(), getY(), getZ()); }
 
@@ -144,6 +186,7 @@ namespace Lumiverse {
     * \brief Sets the color using RGB values.
     *
     * Sets the color using normal RGB values like we're all familiar with.
+    * If using BASIC_RGB, this function will act exactly like setRGBRaw.
     * \param r Red (0.0 - 1.0)
     * \param g Green (0.0 - 1.0)
     * \param b Blue (0.0 - 1.0)
@@ -201,14 +244,20 @@ namespace Lumiverse {
     * \param val Value to set the parameter to. Clamped between 0 and 1.
     * \return True on success. False when the specified axis does not exist.
     */
-    bool setColorParam(string name, double val);
+    bool setColorChannel(string name, double val);
+
+    /*!
+    * \brief Gets the weighted value for the color channel.
+    *
+    * You should use this function when retrieving data to send over the network. 
+    */
+    double getColorChannel(string name) { return m_deviceChannels[name] * m_weight; }
 
     /*!
     * \brief Subscript overload for accessing light color parameters.
     *
-    * This will end up creating new parameters if you access something that
-    * doesn't exist, so be careful. setColorParam is safer if you're worried about
-    * that.
+    * Note that this function returns the unweighted value for a channel.
+    * Be careful when using it to send data over the network.
     */
     double& operator[](string name);
 
@@ -217,6 +266,8 @@ namespace Lumiverse {
     *
     * Can be thought of as the "intensity" of the color. Used to make quick
     * color adjustments without modifying the chroma too much.
+    * \param weight Weight between 0 and 1 for the color. Values outside the
+    * valid range will be clamped to that range.
     */
     void setWeight(double weight);
 
@@ -261,11 +312,17 @@ namespace Lumiverse {
     /*! \brief Basis vectors for each LED source in the light. Represented in XYZ. */
     map<string, Eigen::Vector3d> m_basisVectors;
 
+    /*! \brief Intialization steps for each particular mode. */
+    void initMode();
+
     /*! \brief Calculates the value of the specified component at current device channel levels. */
     double sumComponent(int i);
 
     /*! \brief Clamps a value between min and max. Returns the clamped value. */
     double clamp(double val, double min, double max);
+
+    /*! \brief Helper for converting RGB to XYZ */
+    Eigen::Vector3d RGBtoXYZ(double r, double g, double b, RGBColorSpace cs);
 
     /*! \brief sRGB value companding function for RGB to XYZ */
     double sRGBtoXYZCompand(double val);

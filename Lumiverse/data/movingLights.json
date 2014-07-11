@@ -182,7 +182,7 @@
         "color" : {
         	"type" : "color",
         	"weight" : 1.0,
-        	"mode" : 0,
+        	"mode" : "ADDITIVE",
         	"channels" : {
         		"Red" : 0.0,
         		"Green" : 0.0,

@@ -215,6 +215,16 @@ namespace Lumiverse {
     void RGBRepeat(unsigned char* data, unsigned int address, LumiverseFloat* val, int repeats);
 
     /*!
+    * \brief Converts a LumiverseColor to 3 channels of DMX data.
+    *
+    * This function assumes colors are laid out in standard RGB order.
+    * \param data DMX universe buffer
+    * \param address Address to write the value to.
+    * \param val LumiverseColor value to convert.
+    */
+    void ColorToRGB(unsigned char* data, unsigned int address, LumiverseColor* val);
+
+    /*!
     * \brief Converts a LumiverseColor to 4 channels of DMX data.
     *
     * Conversion assumes that colors are laid out in standard RGBW order.

@@ -5,10 +5,12 @@ namespace Lumiverse {
   LumiverseColor::LumiverseColor(ColorMode mode) : m_mode(mode) {
     // Initialize color   
     reset();
+    initMode();
   }
 
   LumiverseColor::LumiverseColor(map<string, Eigen::Vector3d> basis, ColorMode mode) : m_mode(mode) {
     reset();
+    initMode();
     m_basisVectors = basis;
   }
 
@@ -18,6 +20,20 @@ namespace Lumiverse {
 
     m_deviceChannels = map<string, double>(params);
     m_basisVectors = map<string, Eigen::Vector3d>(basis);
+  }
+  
+  void LumiverseColor::initMode() {
+    // Create default channels for basic RGB mode
+    if (m_mode == BASIC_RGB) {
+      m_deviceChannels["Red"] = 0;
+      m_deviceChannels["Green"] = 0;
+      m_deviceChannels["Blue"] = 0;
+    }
+    if (m_mode == BASIC_CMY) {
+      m_deviceChannels["Cyan"] = 0;
+      m_deviceChannels["Magenta"] = 0;
+      m_deviceChannels["Yellow"] = 0;
+    }
   }
 
   LumiverseColor::~LumiverseColor() {
@@ -61,7 +77,7 @@ namespace Lumiverse {
     node.push_back(channels);
     node.push_back(basis);
     node.push_back(JSONNode("weight", m_weight));
-    node.push_back(JSONNode("mode", m_mode)); // Temporary. Will be string soon.
+    node.push_back(JSONNode("mode", ColorModeToString[m_mode]));
 
     return node;
   }
@@ -84,30 +100,45 @@ namespace Lumiverse {
   }
 
   double LumiverseColor::getX() {
-    if (m_deviceChannels.size() == 0) {
-      Logger::log(ERR, "Cannot retrieve X value. No color basis defined.");
-      return -1;
+    if (m_mode == BASIC_RGB) {
+      return RGBtoXYZ(m_deviceChannels["Red"] * m_weight, m_deviceChannels["Green"] * m_weight, m_deviceChannels["Blue"] * m_weight, sRGB)[0];
     }
+    else {
+      if (m_basisVectors.size() == 0) {
+        Logger::log(ERR, "Cannot retrieve X value. No color basis defined.");
+        return -1;
+      }
 
-    return sumComponent(0);
+      return sumComponent(0);
+    }
   }
 
   double LumiverseColor::getY() {
-    if (m_deviceChannels.size() == 0) {
-      Logger::log(ERR, "Cannot retrieve Y value. No color basis defined.");
-      return -1;
+    if (m_mode == BASIC_RGB) {
+      return RGBtoXYZ(m_deviceChannels["Red"] * m_weight, m_deviceChannels["Green"] * m_weight, m_deviceChannels["Blue"] * m_weight, sRGB)[1];
     }
+    else {
+      if (m_basisVectors.size() == 0) {
+        Logger::log(ERR, "Cannot retrieve Y value. No color basis defined.");
+        return -1;
+      }
 
-    return sumComponent(1);
+      return sumComponent(1);
+    }
   }
 
   double LumiverseColor::getZ() {
-    if (m_deviceChannels.size() == 0) {
-      Logger::log(ERR, "Cannot retrieve Z value. No color basis defined.");
-      return -1;
+    if (m_mode == BASIC_RGB) {
+      return RGBtoXYZ(m_deviceChannels["Red"] * m_weight, m_deviceChannels["Green"] * m_weight, m_deviceChannels["Blue"] * m_weight, sRGB)[2];
     }
+    else {
+      if (m_basisVectors.size() == 0) {
+        Logger::log(ERR, "Cannot retrieve Z value. No color basis defined.");
+        return -1;
+      }
 
-    return sumComponent(2);
+      return sumComponent(2);
+    }
   }
 
   double LumiverseColor::getx() {
@@ -132,28 +163,27 @@ namespace Lumiverse {
   }
 
   void LumiverseColor::setRGB(double r, double g, double b, double weight, RGBColorSpace cs) {
-    r = clamp(r, 0, 1);
-    g = clamp(g, 0, 1);
-    b = clamp(b, 0, 1);
-
-    if (cs == sRGB) {
-      r = sRGBtoXYZCompand(r);
-      g = sRGBtoXYZCompand(g);
-      b = sRGBtoXYZCompand(b);
+    if (m_mode == BASIC_RGB) {
+      // Basic RGB doesn't care about color space. It's a simple mode.
+      setRGBRaw(r, g, b, weight);
     }
+    else {
+      Eigen::Vector3d XYZ = RGBtoXYZ(r, g, b, cs);
 
-    Eigen::Matrix3d M = RGBToXYZ[cs];
-    Eigen::Vector3d rgb(r, g, b);
-    Eigen::Vector3d XYZ = M * rgb;
-    
-    // We have now generated the target XYZ coordinate. If basis vectors were provided,
-    // we'll try to match the xyY coordinate found from this converted XYZ vector.
-    matchChroma(XYZ[0] / (XYZ[0] + XYZ[1] + XYZ[2]), XYZ[1] / (XYZ[0] + XYZ[1] + XYZ[2]), weight);
+      // We have now generated the target XYZ coordinate. If basis vectors were provided,
+      // we'll try to match the xyY coordinate found from this converted XYZ vector.
+      matchChroma(XYZ[0] / (XYZ[0] + XYZ[1] + XYZ[2]), XYZ[1] / (XYZ[0] + XYZ[1] + XYZ[2]), weight);
+    }
   }
 
   Eigen::Vector3d LumiverseColor::getRGB(RGBColorSpace cs) {
+    if (m_mode == BASIC_RGB) {
+      // BASIC_RGB is based off of the RGB channels and only the RGB channels
+      return Eigen::Vector3d(m_deviceChannels["Red"], m_deviceChannels["Green"], m_deviceChannels["Blue"]);
+    }
+
     // Vector is scaled by 1/100 bringing it inline withthe [0,1] range typically used by RGB.
-    Eigen::Vector3d XYZvec = (Eigen::Vector3d(getX(), getY(), getZ()) * m_weight) / 100;
+    Eigen::Vector3d XYZvec = Eigen::Vector3d(getX(), getY(), getZ()) / 100;
     Eigen::Vector3d rgb = RGBToXYZ[cs].inverse() * XYZvec;
 
     if (cs == sRGB) {
@@ -166,10 +196,20 @@ namespace Lumiverse {
   }
 
   void LumiverseColor::setxy(double x, double y, double weight) {
+    if (m_mode == BASIC_RGB) {
+      Logger::log(ERR, "Function setxy() not supported in BASIC_RGB mode. Use setRGB().");
+      return;
+    }
+
     matchChroma(x, y, weight);
   }
 
   Eigen::Vector3d LumiverseColor::getxyY() {
+    if (m_mode == ADDITIVE && m_basisVectors.size() == 0) {
+      Logger::log(ERR, "Cannot calculate xxY coordinates. No basis vectors defined.");
+      return Eigen::Vector3d(0, 0, 0);
+    }
+
     return Eigen::Vector3d(getx(), gety(), getY());
   }
 
@@ -184,7 +224,7 @@ namespace Lumiverse {
     return Eigen::Vector3d(L, a, b);
   }
 
-  bool LumiverseColor::setColorParam(string name, double val) {
+  bool LumiverseColor::setColorChannel(string name, double val) {
     if (m_deviceChannels.count(name) > 0) {
       m_deviceChannels[name] = val;
       return true;
@@ -202,7 +242,7 @@ namespace Lumiverse {
   }
 
   void LumiverseColor::setWeight(double weight) {
-    m_weight = weight;
+    m_weight = clamp(weight, 0, 1);
   }
 
   bool LumiverseColor::setRGBRaw(double r, double g, double b, double weight) {
@@ -230,7 +270,7 @@ namespace Lumiverse {
         Logger::log(WARN, ss.str());
         continue;
       }
-      ret += it->second * m_basisVectors[it->first][i];
+      ret += it->second * m_basisVectors[it->first][i] * m_weight;
     }
     return ret;
   }
@@ -241,6 +281,24 @@ namespace Lumiverse {
     ret = (ret > max) ? max : ret;
 
     return ret;
+  }
+
+  Eigen::Vector3d LumiverseColor::RGBtoXYZ(double r, double g, double b, RGBColorSpace cs) {
+    r = clamp(r, 0, 1);
+    g = clamp(g, 0, 1);
+    b = clamp(b, 0, 1);
+
+    if (cs == sRGB) {
+      r = sRGBtoXYZCompand(r);
+      g = sRGBtoXYZCompand(g);
+      b = sRGBtoXYZCompand(b);
+    }
+
+    Eigen::Matrix3d M = RGBToXYZ[cs];
+    Eigen::Vector3d rgb(r, g, b);
+    Eigen::Vector3d XYZ = M * rgb;
+
+    return XYZ;
   }
 
   double LumiverseColor::sRGBtoXYZCompand(double val) {

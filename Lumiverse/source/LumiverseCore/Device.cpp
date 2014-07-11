@@ -335,7 +335,7 @@ void Device::loadParams(const JSONNode data) {
             b++;
           }
 
-          LumiverseColor* color = new LumiverseColor(channels, basis, (ColorMode)modeNode->as_int(), weightNode->as_float());
+          LumiverseColor* color = new LumiverseColor(channels, basis, StringToColorMode[modeNode->as_string()], weightNode->as_float());
 
           setParam(paramName, (LumiverseType*)color);
         }
