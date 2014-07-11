@@ -367,6 +367,48 @@ namespace Lumiverse {
     */
     void setParam(string param, string val, float val2 = -1.0f);
 
+    /*! \brief Sets the value of a LumiverseColor parameter
+    *
+    * LumiverseColors present a bit of a challenge for group selections.
+    * Every light has differen color representations, so not every function
+    * will work for every group. This function will call the corresponding
+    * set param function for each device, but not every device may react to it.
+    * \param param Parameter name
+    * \param channel Color channel name
+    * \param val Value of the color channel
+    * \sa LumiverseColor, LumiverseType
+    */
+    void setParam(string param, string channel, double val);
+
+    /*! \brief Sets the value of a LumiverseColor parameter using LumiverseColor::setxy()
+    *
+    * x and y are chromaticity coordinates in the xyY color space.
+    * Ideally this function would be the unifying function for all devices in a Rig.
+    * However, it only works if you know the XYZ values for each color of LED in a light,
+    * and it doesn't work with CMY fixtures at the moment.
+    * \param param Parameter name.
+    * \param x x coordinate
+    * \param y y coordinate
+    * \sa LumiverseColor, LumiverseType, setParam(string, string, double)
+    */
+    void setParam(string param, double x, double y, double weight = 1.0);
+
+    /*! \brief Sets the value of a LumiverseColor parameter
+    *
+    * Not gonna work terribly well if you're mixing fixtures that don't have RGB for
+    * some reason in your selection.
+    * Proxy for LumiverseColor::setRGBRaw().
+    * \sa LumiverseColor::setRGBRaw(), LumiverseColor, LumiverseType
+    */
+    void setColorRGBRaw(string param, double r, double g, double b, double weight = 1.0);
+
+    /*! \brief Sets the value of a LumiverseColor parameter
+    *
+    * Proxy for LumiverseColor::setRGB().
+    * \sa LumiverseColor::setRGB(), LumiverseColor, LumiverseType
+    */
+    void setColorRGB(string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
+
     /*!
     * \brief Gets the devices managed by this set.
     * 

@@ -213,7 +213,7 @@ namespace Lumiverse {
     * \return False if parameter changed does not exist prior to set.
     * \sa LumiverseColor::setRGBRaw(), LumiverseColor, LumiverseType
     */
-    bool setParam(string param, double r, double g, double b, double weight = 1.0);
+    bool setColorRGBRaw(string param, double r, double g, double b, double weight = 1.0);
 
     /*! \brief Sets the value of a LumiverseColor parameter
     *
@@ -221,7 +221,7 @@ namespace Lumiverse {
     * \return False if parameter changed does not exist prior to set.
     * \sa LumiverseColor::setRGB(), LumiverseColor, LumiverseType
     */
-    bool setParam(string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
+    bool setColorRGB(string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
 
     // Will need additional overloads for each new type. Which kinda sucks.
 

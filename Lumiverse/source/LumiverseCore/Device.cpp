@@ -107,7 +107,7 @@ bool Device::setParam(string param, double x, double y, double weight) {
   return true;
 }
 
-bool Device::setParam(string param, double r, double g, double b, double weight) {
+bool Device::setColorRGBRaw(string param, double r, double g, double b, double weight) {
   if (m_parameters.count(param) == 0) {
     return false;
   }
@@ -118,7 +118,7 @@ bool Device::setParam(string param, double r, double g, double b, double weight)
   return true;
 }
 
-bool Device::setParam(string param, double r, double g, double b, double weight, RGBColorSpace cs) {
+bool Device::setColorRGB(string param, double r, double g, double b, double weight, RGBColorSpace cs) {
   if (m_parameters.count(param) == 0) {
     return false;
   }

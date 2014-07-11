@@ -489,6 +489,38 @@ void DeviceSet::setParam(string param, string val, float val2) {
   }
 }
 
+void DeviceSet::setParam(string param, string channel, double val) {
+  for (auto d : m_workingSet) {
+    if (d->paramExists(param)) {
+      d->setParam(param, channel, val);
+    }
+  }
+}
+
+void DeviceSet::setParam(string param, double x, double y, double weight) {
+  for (auto d : m_workingSet) {
+    if (d->paramExists(param)) {
+      d->setParam(param, x, y, weight);
+    }
+  }
+}
+
+void DeviceSet::setColorRGBRaw(string param, double r, double g, double b, double weight) {
+  for (auto d : m_workingSet) {
+    if (d->paramExists(param)) {
+      d->setColorRGBRaw(param, r, g, b, weight);
+    }
+  }
+}
+
+void DeviceSet::setColorRGB(string param, double r, double g, double b, double weight, RGBColorSpace cs) {
+  for (auto d : m_workingSet) {
+    if (d->paramExists(param)) {
+      d->setColorRGB(param, r, g, b, weight, cs);
+    }
+  }
+}
+
 vector<string> DeviceSet::getIds() {
   vector<string> ids;
   
