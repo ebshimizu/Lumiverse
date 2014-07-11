@@ -25,8 +25,8 @@ int main(int argc, char**argv) {
   rig.getDevice("inno")->setParam("tilt", 0.25);
 
   LumiverseColor* color = (LumiverseColor*)rig.getDevice("inno")->getParam("color");
-  color->setColorChannel("Blue", 1.0);
-  std::cout << color->getxyY() << "\n";
+  color->setColorChannel("Red", 1.0);
+  std::cout << color->getLCHab(D65) << "\n";
   std::cout << color->asString() << "\n";
 
   // Loop for stuff

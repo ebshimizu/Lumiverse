@@ -428,7 +428,7 @@ namespace Lumiverse {
   }
 
   double LumiverseColor::labf(double val) {
-    return (val > pow(6 / 29, 3)) ? pow(val, 1 / 3) : (1 / 3) * pow(29 / 6, 2) * val + (4 / 29);
+    return (val > pow(6.0 / 29.0, 3)) ? pow(val, 1.0 / 3.0) : (1.0 / 3.0) * pow(29.0 / 6.0, 2) * val + (4.0 / 29.0);
   }
 
   void LumiverseColor::matchChroma(double x, double y, double weight) {
