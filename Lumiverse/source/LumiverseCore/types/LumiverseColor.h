@@ -27,7 +27,7 @@ namespace Lumiverse {
   };
 
   /*! \brief RGB to XYZ matrices for color calculations */
-  static unordered_map<RGBColorSpace, Eigen::Matrix3d> RGBToXYZ = 
+  static unordered_map<int, Eigen::Matrix3d> RGBToXYZ =
   {
     { sRGB, (Eigen::Matrix3d() << 0.4124564, 0.3575761, 0.1804375,
                                   0.2126729, 0.7151522, 0.0721750,

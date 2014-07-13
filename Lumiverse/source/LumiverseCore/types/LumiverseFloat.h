@@ -7,6 +7,7 @@
 
 #include "../LumiverseType.h"
 #include <string>
+#include <stdio.h>
 
 class LumiverseType;
 
