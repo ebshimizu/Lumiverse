@@ -42,7 +42,11 @@ JSONNode LumiverseFloat::toJSON(string name) {
 
 string LumiverseFloat::asString() {
   char buf[32];
+#ifndef _MSC_VER
   snprintf(buf, 31, "%.2f", m_val);
+#else
+  _snprintf_s(buf, 31, "%.2f", m_val);
+#endif
   return string(buf);
 }
 
