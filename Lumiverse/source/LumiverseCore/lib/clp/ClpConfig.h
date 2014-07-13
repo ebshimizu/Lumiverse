@@ -22,6 +22,8 @@
 
 #define CLP_BUILD
 
+#define HAVE_CONFIG_H
+
 #ifndef __CLPCONFIG_H__
 #define __CLPCONFIG_H__
 

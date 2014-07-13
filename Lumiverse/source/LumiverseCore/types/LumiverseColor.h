@@ -28,14 +28,14 @@ namespace Lumiverse {
   };
 
   /*! \brief Converts ColorMode to a string */
-  static unordered_map<ColorMode, string> ColorModeToString =
+  static unordered_map<int, string> ColorModeToString =
   {
     { ADDITIVE, "ADDITIVE" }, { SUBTRACTIVE, "SUBTRACTIVE" },
     { BASIC_RGB, "BASIC_RGB" }, { BASIC_CMY, "BASIC_CMY" }
   };
 
   /*! \brief Converts a string to ColorMode. */
-  static unordered_map<string, ColorMode> StringToColorMode = 
+  static unordered_map<string, ColorMode> StringToColorMode =
   {
     { "ADDITIVE", ADDITIVE }, { "SUBTRACTIVE", SUBTRACTIVE },
     { "BASIC_RGB", BASIC_RGB }, { "BASIC_CMY", BASIC_CMY }
@@ -60,13 +60,13 @@ namespace Lumiverse {
   };
 
   /*! \brief Maps Color space to the Reference White it uses */
-  static unordered_map<RGBColorSpace, ReferenceWhite> ColorSpaceRefWhite =
+  static unordered_map<int, ReferenceWhite> ColorSpaceRefWhite =
   {
     { sRGB, D65 }
   };
 
   /*! \brief Reference White XYZ coordinates for standard illuminants */
-  static unordered_map<ReferenceWhite, Eigen::Vector3d> refWhites =
+  static unordered_map<int, Eigen::Vector3d> refWhites =
   {
     { D65, Eigen::Vector3d(95.047, 100.00, 108.883) },
     { D50, Eigen::Vector3d(96.4212, 100.0, 82.5188) }

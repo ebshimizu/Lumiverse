@@ -15,8 +15,10 @@
 
 // Problems with includes for windows stuff here
 
+#if defined(_MSC_VER)
 #undef min
 #undef max
+#endif
 
 #if 1
 const double COIN_DBL_MIN = std::numeric_limits<double>::min();
@@ -30,12 +32,14 @@ const double COIN_INT_MAX_AS_DOUBLE = std::numeric_limits<int>::max();
 #define COIN_INT_MAX_AS_DOUBLE (std::numeric_limits<int>::max())
 #endif
 
+#if defined(_MSC_VER)
 #ifndef max
 #define max(a,b)            (((a) > (b)) ? (a) : (b))
 #endif
 
 #ifndef min
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
 #endif
 
 /** checks if a double value is finite (not infinity and not NaN) */

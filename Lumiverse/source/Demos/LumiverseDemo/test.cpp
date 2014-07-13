@@ -8,8 +8,8 @@ using namespace Lumiverse;
 int main(int argc, char**argv) {
   // Logger::setLogFile("OLLlog.txt");
   
-  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.json");
-  rig.save("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights_c.json");
+  Rig rig("/Users/Evan/Documents/Programming/Lumiverse/Lumiverse/Lumiverse/data/movingLights.json");
+  rig.save("/Users/Evan/Documents/Programming/Lumiverse/Lumiverse/Lumiverse/data/movingLights_c.json");
 
   // Init rig
   rig.init();
@@ -25,7 +25,7 @@ int main(int argc, char**argv) {
   rig.getDevice("inno")->setParam("tilt", 0.25);
 
   LumiverseColor* color = (LumiverseColor*)rig.getDevice("inno")->getParam("color");
-  color->setColorChannel("Red", 1.0);
+  color->setxy(0.4, 0.4);
   std::cout << color->getLCHab(D65) << "\n";
   std::cout << color->asString() << "\n";
 

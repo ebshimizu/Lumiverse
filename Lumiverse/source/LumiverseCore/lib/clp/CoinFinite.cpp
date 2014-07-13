@@ -30,6 +30,8 @@
 # endif
 #endif
 
+#include <float.h>
+
 bool CoinFinite(double val)
 {
 #ifdef COIN_C_FINITE
