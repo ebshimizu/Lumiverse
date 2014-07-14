@@ -158,7 +158,9 @@ INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Dependencies/lib
 INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Dependencies/mempool++/mempool.h
 	DESTINATION include/lib/libjson/_internal/Dependencies/mempool)
 
-# Install options for clp when needed.
+FILE(GLOB clpfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.h)
+INSTALL(FILES ${clpfiles} DESTINATION include/lib/clp)
+
 INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
 
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)

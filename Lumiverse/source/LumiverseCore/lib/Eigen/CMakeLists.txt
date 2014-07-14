@@ -1,5 +1,6 @@
-include(RegexUtils)
+include(../cmake/RegexUtils.cmake)
 test_escape_string_as_regex()
+SET(INCLUDE_INSTALL_DIR "include/lib")
 
 file(GLOB Eigen_directory_files "*")
 
