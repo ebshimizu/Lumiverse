@@ -8,8 +8,7 @@ using namespace Lumiverse;
 int main(int argc, char**argv) {
   // Logger::setLogFile("OLLlog.txt");
   
-  Rig rig("/Users/Evan/Documents/Programming/Lumiverse/Lumiverse/Lumiverse/data/movingLights.json");
-  rig.save("/Users/Evan/Documents/Programming/Lumiverse/Lumiverse/Lumiverse/data/movingLights_c.json");
+  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.json");
 
   // Init rig
   rig.init();

@@ -21,6 +21,33 @@ Rig::Rig(string filename) {
 void Rig::loadJSON(JSONNode root) {
   JSONNode::const_iterator i = root.begin();
 
+  auto version = root.find("version");
+  if (version == root.end()) {
+    Logger::log(ERR, "No version specified for input file. Aborting load.");
+    return;
+  }
+  else {
+    stringstream ss;
+    stringstream ss2(version->as_string());
+
+    ss << LumiverseCore_VERSION_MAJOR << "." << LumiverseCore_VERSION_MINOR;
+    
+    float libVer;
+    float fileVer;
+
+    ss >> libVer;
+    ss2 >> fileVer;
+
+    if (fileVer < libVer) {
+      // Friendly warning if you're loading an old file.
+      Logger::log(WARN, "File created against earlier version of Lumiverse. Check logs for any load problems.");
+    }
+    else if (fileVer > libVer) {
+      // Loading newer file with older library.
+      Logger::log(WARN, "File created against newer version of Lumiverse. Check logs for any load problems.");
+    }
+  }
+
   while (i != root.end()){
     // get the node name and value as a string
     std::string nodeName = i->name();
