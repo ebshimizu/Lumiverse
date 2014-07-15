@@ -15,6 +15,32 @@ Device::Device(string id, const JSONNode data) {
   loadJSON(data);
 }
 
+Device::Device(const Device& other) {
+  m_id = other.m_id;
+  m_channel = other.m_channel;
+  m_type = other.m_type;
+
+  // Need to do a deep copy of the parameters
+  for (auto kvp : other.m_parameters) {
+    m_parameters[kvp.first] = LumiverseTypeUtils::copy(kvp.second);
+  }
+
+  m_metadata = other.m_metadata;
+}
+
+Device::Device(Device* other) {
+  m_id = other->m_id;
+  m_channel = other->m_channel;
+  m_type = other->m_type;
+
+  // Need to do a deep copy of the parameters
+  for (auto kvp : other->m_parameters) {
+    m_parameters[kvp.first] = LumiverseTypeUtils::copy(kvp.second);
+  }
+
+  m_metadata = other->m_metadata;
+}
+
 Device::~Device() {
   for (auto& kv : m_parameters) {
     delete kv.second;

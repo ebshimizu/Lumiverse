@@ -6,7 +6,9 @@
 
 #pragma once
 
-#include "LumiverseCore.h"
+#include "LumiverseFloat.h"
+#include "LumiverseEnum.h"
+#include "LumiverseColor.h"
 
 namespace Lumiverse {
   /*! 
