@@ -219,3 +219,8 @@ LumiverseCoreConfig.h
 node_modules/
 LumiverseColorGame/
 docs/
+
+driver/*
+**/._*
+Lumiverse/source/Demos/JuceWindowApplication/JuceLibraryCode/*
+Arnold-4.1.3.3-darwin/*

@@ -8,8 +8,7 @@
 
 #include "LumiverseCoreConfig.h"
 
-#include <ai.h>
-#include <SDL.h>
+//#include <ai.h>
 #include "../Patch.h"
 #include "../lib/libjson/libjson.h"
 
@@ -36,12 +35,13 @@ namespace Lumiverse {
     */
     virtual ~ArnoldWindowDriver();
 
-    static void drawToSurface(SDL_Surface *surface, const size_t x, const size_t y, const AtRGBA &rgba);
+    
 
   private:
     
       
   };
+    
 }
 
 #endif

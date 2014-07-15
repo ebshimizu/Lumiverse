@@ -8,18 +8,21 @@
 
 #include "LumiverseCoreConfig.h"
 
+#include <algorithm>
+#include <cstdio>
 #include <ai.h>
 #include "../Patch.h"
 #include "../lib/libjson/libjson.h"
+#include "ArnoldParameterVector.h"
 
 #include <iostream>
 
 namespace Lumiverse {
 
-  struct LightParam {
-	  LightParam()
+  struct ArnoldParam {
+	  ArnoldParam()
 		  : rerender_req(false), reblend_req(false), position(AI_V3_ZERO), color(AI_RGB_BLACK) { }
-	  LightParam(AtVector position, AtColor color)
+	  ArnoldParam(AtVector position, AtColor color)
 		  : rerender_req(true), reblend_req(true), position(position), color(color) { }
     
 	  // TODO: re-render the scene if position changed.
@@ -28,8 +31,28 @@ namespace Lumiverse {
 	  AtVector position;
 
 	  AtColor color;
+      
+      size_t dimension;
+      std::string arnoldTypeName;
   };
 
+  template<typename T>
+  union AiNodeSet {
+    void (*AiNodeSet1D)(AtNode *, const char *, T);
+    void (*AiNodeSet2D)(AtNode *, const char *, T, T);
+    void (*AiNodeSet3D)(AtNode *, const char *, T, T, T);
+    void (*AiNodeSet4D)(AtNode *, const char *, T, T, T, T);
+  };
+    
+  template<typename T>
+    union AiArraySet {
+        bool (*AiArraySet1D) (AtArray*, AtUInt32, T, const char*, int);
+        void (*AiNodeSet1D)(AtNode *, const char *, T);
+        void (*AiNodeSet2D)(AtNode *, const char *, T, T);
+        void (*AiNodeSet3D)(AtNode *, const char *, T, T, T);
+        void (*AiNodeSet4D)(AtNode *, const char *, T, T, T, T);
+    };
+    
   /*!
   * \brief  
   *
@@ -90,25 +113,45 @@ namespace Lumiverse {
     * \return String containing "DMXPatch"
     */
     virtual string getType() { return "ArnoldPatch"; }
+      
+    int getWidth() { return m_width; }
+    int getHeight() { return m_height; }
+      
+    float *getBufferPointer() { return m_buffer; }
 
   private:
+    
+    void setArrayParameter(AtNode *light_ptr, const std::string &paramName, const std::string &value);
       
-    void setParameter(AtNode *light_ptr, const std::string &paramName, LumiverseType *val_ptr);
+    void setParameter(AtNode *light_ptr, const std::string &paramName, const std::string &value);
+    
+    template<size_t D, typename T>
+    void setSingleParameter(AtNode *node, const std::string &paramName, const std::string &value,
+                            union AiNodeSet<T> aiNodeSet) const;
+      
+    template<size_t D, typename T, class C>
+    void setArrayParameter(AtNode *node, const std::string &paramName, const std::string &value,
+                              bool (*AiArraySet) (AtArray*, AtUInt32, C, const char*, int), const int AiType) const;
 
 	bool updateLight(set<Device *> devices);
 
 	void loadJSON(const JSONNode data);
 
-	void loadLight(const JSONNode data);
+    template<size_t D, typename T>
+    void parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) const;
+      
+    void loadArnoldParam(const JSONNode data, ArnoldParam &param);
 
 	void loadLight(Device *d_ptr);
 
 	map<string, AtNode*> m_lights;
 
-	map<string, LightParam> m_light_params;
+	map<string, ArnoldParam> m_arnold_params;
     
     std::string m_ass_file;
 
+    float *m_buffer;
+    int m_width, m_height;
   };
 }
 
