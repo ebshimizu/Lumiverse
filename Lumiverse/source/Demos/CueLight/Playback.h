@@ -9,6 +9,7 @@
 #include <LumiverseCore.h>
 #include "Cue.h"
 #include "CueList.h"
+#include "Layer.h"
 
 namespace Lumiverse {
   // Data that tracks the progress of a cue and stores the data used in the cue transition.
@@ -17,16 +18,20 @@ namespace Lumiverse {
     map<string, map<string, set<Keyframe> > > activeKeyframes;
   };
 
-  // A playback takes a cue (or cues) and manages the live transion between them
-  // Eventually a playback may be able to run multiple cues at once
-  // and effects on top of those cues. Right now, it does a single stack.
-  // It's important to note that this playback will only animate the
-  // active lights in a cue unless otherwise noted.
+  // A playback object manages layers and coordinates their actions and updates.
+  // A playback doesn't actually do the playback, as all of that logic
+  // is now in Layers.
   class Playback
   {
   public:
     // Initializes a playback object with desired refresh rate in Hz
     Playback(Rig* rig, unsigned int refreshRate);
+
+    // Changes to make to playback: Playback must now maintain a list of layers
+    // Layers are update in the playback update loop with layer->update()
+    // Each layer now takes over the cue playback controls
+    // Playback also maintains the master list of CueLists for reference by the layers.
+
 
     // Deletes a playback object.
     ~Playback();
