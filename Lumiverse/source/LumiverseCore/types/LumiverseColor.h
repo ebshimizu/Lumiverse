@@ -149,16 +149,6 @@ namespace Lumiverse {
     /*! \brief sRGB value companding cuntion for XYZ to RGB */
     double XYZtosRGBCompand(double val);
   };
-
-/*!
-* \brief Converts RGB (0.0 - 1.0) to a byte (0 - 255).
-*
-* \param val A component of RGB (0.0 - 1.0)
-* \param byte A byte on the display.
-*/
-inline void sRGBValueToByte(double val, unsigned char &byte) {
-    byte = static_cast<unsigned char>( val * 0xff );
-}
     
 }
 

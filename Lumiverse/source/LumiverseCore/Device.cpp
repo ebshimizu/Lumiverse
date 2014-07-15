@@ -265,58 +265,6 @@ void Device::loadParams(const JSONNode data) {
           err = true;
         }
       }
-      else if (type->as_string().length() > 6 &&
-               type->as_string().substr(0, 6) == "vector") {
-          std::string number = type->as_string().substr(6, type->as_string().length() - 6);
-          size_t dimension;
-          sscanf(number.c_str(), "%zd", &dimension);
-          
-          auto valNode = paramData.find("val");
-          auto defNode = paramData.find("default");
-          auto maxNode = paramData.find("max");
-          auto minNode = paramData.find("min");
-          
-          if (valNode != paramData.end() && defNode != paramData.end() &&
-              (dimension == 3 || dimension == 4)) {
-              float *vals = new float[dimension];
-              float *defs = new float[dimension];
-              
-              float *maxes = (maxNode != paramData.end()) ? new float[dimension] : NULL;
-              float *mins = (minNode != paramData.end()) ? new float[dimension] : NULL;
-              
-              for (size_t i = 0; i < dimension; i++) {
-                  vals[i] = valNode->at(i).as_float();
-                  defs[i] = defNode->at(i).as_float();
-                  
-                  if (maxNode != paramData.end())
-                      maxes[i] = maxNode->at(i).as_float();
-                  if (minNode != paramData.end())
-                      mins[i] = minNode->at(i).as_float();
-              }
-              
-              switch (dimension)
-              {
-                  case 3: {
-                      LumiverseVector<3>* param = new LumiverseVector<3>(vals, defs, maxes, mins);
-                      setParam(paramName, (LumiverseType*)param);
-                      break;
-                  }
-                  case 4: {
-                      LumiverseVector<4>* param = new LumiverseVector<4>(vals, defs, maxes, mins);
-                      setParam(paramName, (LumiverseType*)param);
-                      break;
-                  } 
-                  default: 
-                      break; 
-              } 
-              
-              delete [] vals; 
-              delete [] defs; 
-          } 
-          else { 
-              err = true; 
-          } 
-      }
       else if (type->as_string() == "enum") {
         auto activeNode = paramData.find("active");
         auto tweakNode = paramData.find("tweak");

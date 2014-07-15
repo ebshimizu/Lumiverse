@@ -72,3 +72,7 @@
 #ifdef USE_KINET
 #include "DMX/KiNetInterface.h"
 #endif
+
+//#ifdef USE_ARNOLD
+#include "Simulation/ArnoldPatch.h"
+//#endif

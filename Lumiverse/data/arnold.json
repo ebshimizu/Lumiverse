@@ -1,0 +1,41 @@
+{
+  "version" : "0.1",
+  "refreshRate" : 40,
+    "devices" : {
+        "mylight" : {
+            "channel" : 1,
+            "type" : "point_light",
+            "parameters" : {
+                "intensity" : { "type" : "float", "val" : 1.0, "default" : 0.0 },
+                "position" : {"type" : "vector3", "val" : [0.0, 1.9, 0.0], "default" : [0.0, 1.9, 0.0]},
+                "color" : { "type" : "vector3", "val" : [0.9, 0.9, 1.0], "default" : [0.9, 0.9, 1.0],
+                    "max" : [1.0, 1.0, 1.0], "min" : [0.0, 0.0, 0.0] },
+                "exposure" : { "type" : "float", "val" : 6.0, "default" : 0.0, "max" : 100 },
+                "samples" : { "type" : "float", "val" : 1.0, "default" : 1.0 }
+            },
+            "metadata" : {
+                "intensity" : "1.0",
+                "position" : "0.0, 1.9, 0.0",
+                "color" : "0.9, 0.9, 1.0",
+                "exposure" : "6.0",
+                "samples" : "1"
+            }
+        }
+    },
+  "patches" : {
+    "arnold" : {
+      "type" : "ArnoldPatch",
+        "sceneFile" : "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/cornell.ass",
+        "lights" : {
+            "mylight" : { "type" : "point_light" }
+        },
+        "arnoldParamMaps" : {
+            "intensity" : { "dimension" : 1, "arnoldType" : "float" },
+            "position" : { "dimension" : 3, "arnoldType" : "point" },
+            "color" : { "dimension" : 3, "arnoldType" : "rgb" },
+            "exposure" : { "dimension" : 1, "arnoldType" : "float" },
+            "samples" : { "dimension" : 1, "arnoldType" : "int" }
+        }
+    }
+  }
+}
