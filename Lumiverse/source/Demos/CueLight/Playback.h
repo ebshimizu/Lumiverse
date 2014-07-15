@@ -12,11 +12,6 @@
 #include "Layer.h"
 
 namespace Lumiverse {
-  // Data that tracks the progress of a cue and stores the data used in the cue transition.
-  struct PlaybackData {
-    chrono::time_point<chrono::high_resolution_clock> start;    // Cue start time. More accurate to take difference between now and start instead of summing.
-    map<string, map<string, set<Keyframe> > > activeKeyframes;
-  };
 
   // A playback object manages layers and coordinates their actions and updates.
   // A playback doesn't actually do the playback, as all of that logic

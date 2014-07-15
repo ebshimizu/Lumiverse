@@ -6,9 +6,20 @@
 #include "LumiverseCore.h"
 #include "CueList.h"
 #include "Cue.h"
+
 #include <memory>
+#include <chrono>
 
 namespace Lumiverse {
+  // Data that tracks the progress of a cue and stores the data used in the cue transition.
+  struct PlaybackData {
+    chrono::time_point<chrono::high_resolution_clock> start;    // Cue start time. More accurate to take difference between now and start instead of summing.
+    map<string, map<string, set<Keyframe> > > activeKeyframes;
+  };
+
+  // TODO: Get cue updating into the Layer update function
+  // Update Playback class to handle layer blending.
+
   // A Layer stores a state of the Rig.
   // Layers can contain a CueList, a static state, or an Effect (effects to
   // be added later). Layers maintain their current state, blend mode, and
@@ -33,14 +44,14 @@ namespace Lumiverse {
     By default the Layer will be set to NULL_DEFAULT, essentially ignoring all
     parameters in the layer when it's constructed. A layer is set to inactive on construction.
     */
-    Layer(Rig* rig, BlendMode mode = NULL_DEFAULT);
+    Layer(Rig* rig, string name, int priority, BlendMode mode = NULL_DEFAULT);
 
     /*!
     \brief Constructs a Layer using the BLEND_OPAQUE mode with specified opacity.
 
     Creates an empty layer using the selected opacity.
     */
-    Layer(Rig* rig, float opacity);
+    Layer(Rig* rig, string name, int priority, float opacity);
 
     /*!
     \brief Constructs a Layer using the SELECTED_ONLY mode with specified devices.
@@ -49,7 +60,7 @@ namespace Lumiverse {
     contain all other devices in the rig, but will only look at the selected set
     when flattening.
     */
-    Layer(Rig* rig, DeviceSet set);
+    Layer(Rig* rig, string name, int priority, DeviceSet set);
 
     /*! \brief Destroys a layer */
     ~Layer();
@@ -64,11 +75,14 @@ namespace Lumiverse {
     /*! \brief Removes the active cue list from the layer. Layer will reset to defaults. */
     void removeCueList();
 
+    /*! \brief Checks if the current Layer has a cue list attached. */
+    bool hasCueList() { return m_cueList == nullptr; }
+
     /*! \brief Gets the layer's blend mode */
     BlendMode getMode() { return m_mode; }
 
     /*! \brief Sets the Layer's blend mode. */
-    void setMode(BlendMode mode);
+    void setMode(BlendMode mode) { m_mode = mode; }
 
     /*! \brief Get the layer's opacity. */
     float getOpacity() { return m_opacity; }
@@ -80,13 +94,13 @@ namespace Lumiverse {
     bool isActive() { return m_active; }
 
     /*! \brief Set m_active to true. */
-    void activate();
+    void activate() { m_active = true; }
     
     /*! \brief Set m_active to false. */
-    void deactivate();
+    void deactivate() { m_active = false; }
 
     /*! \brief Sets the parameter filter using a fully specified set. */
-    void setParamFilter(set<string> filter);
+    void setParamFilter(set<string> filter) { m_parameterFilter = filter; }
 
     /*! \brief Adds a single parameter to the filter. */
     void addParamFilter(string param);
@@ -118,6 +132,18 @@ namespace Lumiverse {
     /*! \brief Gets the selected devices for this layer. */
     DeviceSet getSelectedDevices() { return m_selectedDevices; }
 
+    /*! \brief Set the layer name */
+    void setName(string name) { m_name = name; }
+    
+    /*! \brief Get the layer name */
+    string getName() { return m_name; }
+
+    /*! \brief Sets the priority */
+    void setPriority(int priority) { m_priority = priority; }
+
+    /*! \brief Gets the priority. */
+    int getPriority() { return m_priority; }
+
     /*!
     \brief Gets the layer state.
 
@@ -139,11 +165,19 @@ namespace Lumiverse {
     */
     void back();
 
+    // The cue adding process has changed a bit in this version of the Playback system.
+    // Cues now must be added to a CueList which must then be added to an active Layer
+    // for them to have any effect on the actual rig. It might seem like a bunch of
+    // extra unnecessary steps, but it should make running muiltiple simultaneous
+    // cue stacks easier.
+
     /*!
-    \brief Goes to the specified cue in the cue list if a cue list exists in the layer.
-    \return False if no cue list is in the layer or cue number doesn't exist.
+    \brief Goes to the specified cue in a cue list.
+
+    \param num The cue number to go to. If the cue doesn't exist, the layer will not change.
+    \param time Fade time. Default is 3s.
     */
-    bool goToCue(float cueNum);
+    void goToCue(float num, float time = 3);
 
     /*!
     \brief Updates the Layer. If cues a running, the cues get updated.
@@ -168,6 +202,12 @@ namespace Lumiverse {
     */
     set<string> m_parameterFilter;
 
+    /*! \brief Layer Name */
+    string m_name;
+
+    /*! \brief Layer priority. High priority layers are on top of low priority ones. */
+    int m_priority;
+
     /*! \brief If true, filter will be for all parameters except the specified params. */
     bool m_invertFilter;
 
@@ -185,6 +225,31 @@ namespace Lumiverse {
 
     /*! \brief Selected CueList if the layer is using one. */
     shared_ptr<CueList> m_cueList;
+
+    /*! \brief Copies the devices and does other Layer initialization */
+    void init(Rig* rig);
+
+    /*!
+    \brief Goes to an arbitrary cue from an arbitrary cue.
+
+    \param first Starting cue.
+    \param next Cue to end up in at the end.
+    \param assert Asserts that at the end of the transition, the Rig state is exactly Next
+    */
+    void goToCue(Cue& first, Cue& next, bool assert);
+
+    /*!
+    \brief Returns the set of parameters to animate along with their keyframes
+    in going from cue A to cue B
+
+    \param a Starting Cue.
+    \param b Ending Cue.
+    \param assert Make sure that the Rig state at cue B is exactly cue B
+    */
+    map<string, map<string, set<Keyframe> > > diff(Cue& a, Cue& b, bool assert = false);
+
+    /*! \brief Stores the data used during playback. */
+    vector<PlaybackData> m_playbackData;
   };
 }
 #endif

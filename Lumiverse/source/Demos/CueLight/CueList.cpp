@@ -84,6 +84,30 @@ float CueList::getNextCueNum(float num) {
   return current->first;
 }
 
+Cue* CueList::getPrevCue(float num) {
+  auto current = m_cues.find(num);
+  if (current == m_cues.begin()) {
+    return nullptr;
+  }
+
+  current--;
+  if (current == m_cues.begin()) {
+    return nullptr;
+  }
+
+  return &current->second;
+}
+
+float CueList::getPrevCueNum(float num) {
+  auto current = m_cues.find(num);
+  if (current == m_cues.begin()) {
+    return -1;
+  }
+
+  current--;
+  return current->first;
+}
+
 float CueList::getCueNumAtIndex(int index) {
   auto it = m_cues.begin();
   

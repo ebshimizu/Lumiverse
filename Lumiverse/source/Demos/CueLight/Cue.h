@@ -56,6 +56,9 @@ public:
   // Set fade time manually
   Cue(Rig* rig, float time);
 
+  // Creates a cue from a set of devices. Generally this gets called by Layers
+  Cue(map<string, Device*> devices, float time);
+
   // Creates a cue with different up and down fades.
   Cue(Rig* rig, float up, float down);
 
@@ -78,6 +81,9 @@ public:
   // Returns a mapping of device id -> changed parameter and old value.
   // Note that if you have internal cues, this will try to track changes through to those keyframes.
   changedParams update(Rig* rig);
+
+  // Slightly different arguments, acts the same as update(Rig*)
+  changedParams update(map<string, Device*> devices);
 
   // Only updates the devices with IDs in the changedParams.
   // Will remove IDs in oldVals if parameters don't match the older values, which

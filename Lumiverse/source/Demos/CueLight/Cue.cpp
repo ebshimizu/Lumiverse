@@ -8,6 +8,10 @@ Cue::Cue(Rig* rig, float time) : m_upfade(time), m_downfade(time), m_delay(0) {
   update(rig);
 }
 
+Cue::Cue(map<string, Device*> devices, float time) : m_upfade(time), m_downfade(time), m_delay(0) {
+  update(devices);
+}
+
 Cue::Cue(Rig* rig, float up, float down) : m_upfade(up), m_downfade(down), m_delay(0) {
   update(rig);
 }
@@ -64,6 +68,30 @@ Cue::changedParams Cue::update(Rig* rig) {
 
       if (changed.size() > 0) {
         params[d->getId()] = changed;
+      }
+    }
+  }
+
+  return params;
+}
+
+Cue::changedParams Cue::update(map<string, Device*> devices) {
+  changedParams params;
+
+  for (auto kvp : devices) {
+    if (m_cueData.count(kvp.second->getId()) == 0) {
+      // New cues don't send back changed parameters since there weren't really
+      // things to change before they got added.
+      // In a timeline system, this first update sets the initial state and the ending keyframes
+      // based on the timing provided in the beginning.
+      m_cueData[kvp.second->getId()] = getParams(kvp.second);
+    }
+    else {
+      map<string, shared_ptr<Lumiverse::LumiverseType> > changed;
+      updateParams(kvp.second, changed);
+
+      if (changed.size() > 0) {
+        params[kvp.second->getId()] = changed;
       }
     }
   }

@@ -64,6 +64,20 @@ public:
   // Same as getNextCue but returns the cue number.
   // If the given cue number isn't in the list, returns -1
   float getNextCueNum(float num);
+
+  /*!
+  \brief Gets the previous cue in the list.
+  \param num Cue to start search at.
+  \return Pointer to previous cue in the list from cue num.
+  */
+  Cue* getPrevCue(float num);
+
+  /*!
+  \brief Gets the number of the previous cue in the list.
+  \param num Cue to start search at.
+  \return Number of previous cue in the list.
+  */
+  float getPrevCueNum(float num);
   
   // For those who need to access a cue by indexing into an array
   // we've got you covered.

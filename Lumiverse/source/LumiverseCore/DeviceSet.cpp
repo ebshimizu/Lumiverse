@@ -368,6 +368,14 @@ DeviceSet DeviceSet::add(string key, LumiverseType* val, function<bool(Lumiverse
   return newSet;
 }
 
+DeviceSet DeviceSet::add(DeviceSet set) {
+  DeviceSet newSet(*this);
+
+  newSet.addSet(set);
+
+  return newSet;
+}
+
 DeviceSet DeviceSet::remove(Device* device) {
   DeviceSet newSet(*this);
   newSet.removeDevice(device);
@@ -443,6 +451,14 @@ DeviceSet DeviceSet::remove(string key, LumiverseType* val, function<bool(Lumive
       newSet.removeDevice(d);
     }
   }
+
+  return newSet;
+}
+
+DeviceSet DeviceSet::remove(DeviceSet set) {
+  DeviceSet newSet(*this);
+  
+  newSet.removeSet(set);
 
   return newSet;
 }

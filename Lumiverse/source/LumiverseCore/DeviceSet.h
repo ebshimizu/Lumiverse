@@ -256,6 +256,13 @@ namespace Lumiverse {
     DeviceSet add(string query);
 
     /*!
+    * \brief Adds devices from another set.
+    *
+    * \param set The other set of devices
+    */
+    DeviceSet add(DeviceSet set);
+
+    /*!
     * \brief Removes a device from the set.
     * \param device Device to remove
     * \return DeviceSet containing its current contents without the specified Device.
@@ -332,6 +339,13 @@ namespace Lumiverse {
     * \return DeviceSet containing its current contents wihtout the specified Devices.
     */
     DeviceSet remove(string query);
+
+    /*!
+    * \brief Removes devices contained in another set from this set.
+    *
+    * \param set Set of devices to remove from this set.
+    */
+    DeviceSet remove(DeviceSet set);
 
     // Inverts the selection.
     //DeviceSet invert();
