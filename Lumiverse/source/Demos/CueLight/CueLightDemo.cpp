@@ -47,11 +47,6 @@ int main(int argc, char**argv) {
   // Add cue list to layer
   pb.addCueListToLayer("list1", "layer1");
 
-  // If this line isn't present, the update loop runs slowly.
-  // This only happens in the MSVC 13 Debug build with no profiling.
-  // If you profile it, it stops running slowly.
-  // layer1->goToCue(1);
-
   // Prepare playback
   pb.run();
   rig.run();
