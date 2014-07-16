@@ -4,6 +4,7 @@ namespace Lumiverse {
   Layer::Layer(Rig* rig, string name, int priority, BlendMode mode) : m_mode(mode),
     m_name(name), m_priority(priority)
   {
+    m_opacity = 1;
     init(rig);
   }
 
@@ -16,6 +17,7 @@ namespace Lumiverse {
   Layer::Layer(Rig* rig, string name, int priority, DeviceSet set) : m_mode(SELECTED_ONLY),
     m_selectedDevices(set), m_name(name), m_priority(priority)
   {
+    m_opacity = 1;
     init(rig);
   }
 
@@ -234,6 +236,71 @@ namespace Lumiverse {
         else {
           ++pb;
         }
+      }
+    }
+  }
+
+  void Layer::blend(map<string, Device*> currentState) {
+    // We assume here that what you're passing in contains all the devices in the rig
+    // and will not create new devices if they don't exist in the current state.
+
+    map<string, Device*> active = m_layerState;
+
+    if (m_mode == SELECTED_ONLY) {
+      map<string, Device*> selected;
+      // Run things on a different set for this mode
+      for (auto d : (*m_selectedDevices.getDevices())) {
+        selected[d->getId()] = d;
+      }
+      active = selected;
+    }
+
+    for (auto device : active) {
+      if (currentState.count(device.first) > 0) {
+        // Time to start dealin with layer specific blend modes.
+        if (m_mode == NULL_INTENSITY) {
+          // Skip devices with intensity 0
+          if (device.second->paramExists("intensity")) {
+            float val = -1;
+            device.second->getParam("intensity", val);
+            if (val == 0) continue;
+          }
+        }
+
+        // Go through each parameter in the device
+        for (auto param : *(device.second->getRawParameters())) {
+          string paramName = param.first;
+          LumiverseType* src = param.second;
+          LumiverseType* dest = currentState[device.first]->getParam(param.first);
+          
+          if (dest == nullptr) {
+            // Don't do anything if the destination doesn't have an existing value.
+            continue;
+          }
+
+          // Criteria for looking at a parameter.
+          // Filter is empty OR (paramName is in the filter AND filter not inverted)
+          // OR (paramName is not in filter AND filter is inverted)
+          if ((m_parameterFilter.size() != 0) ||
+              (m_parameterFilter.count(paramName) > 0 && !m_invertFilter) ||
+              (m_parameterFilter.count(paramName) == 0 && m_invertFilter))
+          {
+            // if we're using NULL_DEFAULT mode, we'll need to check params to see
+            // if they're equal to their default values
+            if (m_mode == NULL_DEFAULT && src->isDefault())
+              continue;
+
+            // Generic alpha blending formula is res = src * opacity + dest * (1 - opacity)
+            // Looks an awful lot like a lerp no?
+            shared_ptr<LumiverseType> res = LumiverseTypeUtils::lerp(dest, src, m_opacity);
+            LumiverseTypeUtils::copyByVal(res.get(), dest);
+          }
+        }
+      }
+      else {
+        stringstream ss;
+        ss << "State given to layer " << m_name << " does not contain a device with id " << device.first;
+        Logger::log(WARN, ss.str());
       }
     }
   }

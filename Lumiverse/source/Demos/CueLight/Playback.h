@@ -30,13 +30,30 @@ namespace Lumiverse {
     // Deletes a playback object.
     ~Playback();
 
-    // Starts the playback loop.
+    /*!
+    * \brief Starts the playback loop in a separate thread
+    */
     void start();
 
-    // Stops the playback loop.
+    /*!
+    * \brief Stops the playback loop in a separate thread.
+    */
     void stop();
 
-    // Sets the playback update rate
+    /*!
+    * \brief Sets m_running to true but does not launch a separate thread.
+    */
+    void run();
+
+    /*!
+    * \brief Sets m_running to false but does not stop a separate thread.
+    */
+    void halt();
+
+    /*!
+    * \brief Sets the playback update rate
+    * \param rate Update loop rate in cycles/second
+    */
     void setRefreshRate(unsigned int rate);
 
     /*!
@@ -47,6 +64,9 @@ namespace Lumiverse {
   private:
     /*! \brief Map of layer names to layers. */
     map<string, shared_ptr<Layer> > m_layers;
+
+    /*! \brief Map of cue lists. */
+    map<string, shared_ptr<CueList> > m_cueLists;
 
     /*! \brief Copy of all devices in the rig. Current state of the playback. */
     map<string, Device*> m_state;

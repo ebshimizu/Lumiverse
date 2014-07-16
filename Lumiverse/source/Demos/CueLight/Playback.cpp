@@ -30,6 +30,18 @@ namespace Lumiverse {
     }
   }
 
+  void Playback::run() {
+    m_running = true;
+    Logger::log(INFO, "Playback update loop ready.");
+  }
+
+  void Playback::halt() {
+    if (m_running) {
+      m_running = false;
+      Logger::log(INFO, "Playback update loop stopped.");
+    }
+  }
+
   void Playback::setRefreshRate(unsigned int rate) {
     m_refreshRate = rate;
     m_loopTime = 1.0f / (float)m_refreshRate;

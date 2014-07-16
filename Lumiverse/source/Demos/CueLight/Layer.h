@@ -31,10 +31,10 @@ namespace Lumiverse {
   {
   public:
     enum BlendMode {
-      BLEND_OPAQUE,   /*!< Normal blending. Uses the opacity value (0-1) */
+      BLEND_OPAQUE,   /*!< Blend all devices. */
       NULL_DEFAULT,   /*!< Ignores parameters that are left at the default values */
       NULL_INTENSITY, /*!< Ignores devices with intensity set to 0. If devices have no intensity, they will be active. */
-      SELECTED_ONLY   /*!< Uses a DeviceSet to determine which devices to affect. */
+      SELECTED_ONLY   /*!< Uses a DeviceSet to determine which devices to affect using normal blending. */
     };
 
     /*!
