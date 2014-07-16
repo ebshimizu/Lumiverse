@@ -144,6 +144,8 @@ namespace Lumiverse {
     */
     virtual string asString();
 
+    virtual bool isDefault();
+
   private:
     /*!
     * \brief Ensures that the value of this float is between min and max.

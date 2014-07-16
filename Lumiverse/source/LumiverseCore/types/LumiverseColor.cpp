@@ -368,6 +368,17 @@ namespace Lumiverse {
     return true;
   }
 
+  bool LumiverseColor::isDefault() {
+    // All channels must be 0 and weight must be 1 for default.
+    bool channelsNull = true;
+
+    for (auto c : m_deviceChannels) {
+      channelsNull &= (c.second == 0);
+    }
+
+    return (channelsNull && (m_weight == 1));
+  }
+
   int LumiverseColor::cmpHue(LumiverseColor& other, ReferenceWhite refWhite) {
     double thisH = getLCHab(refWhite)[2];
     double thatH = other.getLCHab(refWhite)[2];

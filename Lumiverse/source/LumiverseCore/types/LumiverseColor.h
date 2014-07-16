@@ -361,6 +361,8 @@ namespace Lumiverse {
     */
     int cmpHue(LumiverseColor& other, ReferenceWhite refWhite = D65);
 
+    virtual bool isDefault();
+
   private:
     /*! \brief Parameter that controls the overall values of the device channels.
     *

@@ -299,6 +299,11 @@ namespace Lumiverse {
     void operator=(string name);
     void operator=(const LumiverseEnum& val);
 
+    /*!
+    * \brief Returns true if the current value of the enumeration is equal to the default.
+    */
+    virtual bool isDefault();
+
   private:
     /*!
     * \brief Initializes the enumeration. Called from constructors.

@@ -266,6 +266,14 @@ void LumiverseEnum::operator=(const LumiverseEnum& val) {
   // Lock guard goes out of scope and releases mutex.
 }
 
+bool LumiverseEnum::isDefault() {
+  // Also the tweak needs to match the default for the mode.
+  // Default if not first or last is center.
+  float target = (m_mode == FIRST) ? 0.0f : (m_mode == LAST) ? 1 : 0.5f;
+
+  return (m_active == m_default) && (m_tweak == target);
+}
+
 void LumiverseEnum::setTweakWithMode() {
   switch (m_mode)
   {

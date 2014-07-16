@@ -50,6 +50,10 @@ string LumiverseFloat::asString() {
   return string(buf);
 }
 
+bool LumiverseFloat::isDefault() {
+  return m_val == m_default;
+}
+
 void LumiverseFloat::clamp() {
   if (m_val < m_min) {
     m_val = m_min;
