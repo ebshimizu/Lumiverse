@@ -22,8 +22,8 @@ namespace Lumiverse {
   }
 
   void Layer::init(Rig* rig) {
-    const set<Device*>* devices = rig->getAllDevices().getDevices();
-    for (auto d : *devices) {
+    const set<Device*> devices = rig->getAllDevices().getDevices();
+    for (auto d : devices) {
       // Copy and reset to defaults
       m_layerState[d->getId()] = new Device(*d);
       m_layerState[d->getId()]->reset();
@@ -163,10 +163,21 @@ namespace Lumiverse {
     ss << "Layer " << m_name << " began a cue playback at " << chrono::duration_cast<chrono::seconds>(pbData.start.time_since_epoch()).count() << "\n";
     Logger::log(LDEBUG, ss.str());
 
-    m_playbackData.push_back(pbData);
+    lock_guard<mutex> lock(m_queue);
+    m_queuedPlayback.push_back(pbData);
   }
 
   void Layer::update(chrono::time_point<chrono::high_resolution_clock> updateStart) {
+    // Grab waiting playback objects from the queue
+    m_queue.lock();
+    if (m_queuedPlayback.size() > 0) {
+      for (auto p : m_queuedPlayback) {
+        m_playbackData.push_back(p);
+      }
+      m_queuedPlayback.clear();
+    }
+    m_queue.unlock();
+
     // Update playback data and set layer state if there is anything currently active
     // Note that in the event of conflicts this would be a Latest Takes Precedence system
     if (m_playbackData.size() > 0) {
@@ -226,17 +237,12 @@ namespace Lumiverse {
           }
         }
 
-        // Delete the entire playback object if everything is done
-        if (pb->activeKeyframes.size() == 0) {
-          m_playbackData.erase(pb++);
-          // Apparently when m_playbackData is 0 at the end of this weird stuff happens.
-          if (m_playbackData.size() == 0)
-            break;
-        }
-        else {
-          ++pb;
-        }
+        ++pb;
       }
+
+      // Delete things that no longer have active keyframes.
+      m_playbackData.erase(std::remove_if(m_playbackData.begin(), m_playbackData.end(),
+        [](PlaybackData p) { return p.activeKeyframes.size() == 0; }), m_playbackData.end());
     }
   }
 
@@ -249,13 +255,13 @@ namespace Lumiverse {
     if (m_mode == SELECTED_ONLY) {
       map<string, Device*> selected;
       // Run things on a different set for this mode
-      for (auto d : (*m_selectedDevices.getDevices())) {
+      for (auto d : m_selectedDevices.getDevices()) {
         selected[d->getId()] = d;
       }
       active = selected;
     }
 
-    for (auto device : active) {
+    for (auto& device : active) {
       if (currentState.count(device.first) > 0) {
         // Time to start dealin with layer specific blend modes.
         if (m_mode == NULL_INTENSITY) {
@@ -281,14 +287,15 @@ namespace Lumiverse {
           // Criteria for looking at a parameter.
           // Filter is empty OR (paramName is in the filter AND filter not inverted)
           // OR (paramName is not in filter AND filter is inverted)
-          if ((m_parameterFilter.size() != 0) ||
+          if ((m_parameterFilter.size() == 0) ||
               (m_parameterFilter.count(paramName) > 0 && !m_invertFilter) ||
               (m_parameterFilter.count(paramName) == 0 && m_invertFilter))
           {
             // if we're using NULL_DEFAULT mode, we'll need to check params to see
             // if they're equal to their default values
-            if (m_mode == NULL_DEFAULT && src->isDefault())
+            if (m_mode == NULL_DEFAULT && src->isDefault()) {
               continue;
+            }
 
             // Generic alpha blending formula is res = src * opacity + dest * (1 - opacity)
             // Looks an awful lot like a lerp no?

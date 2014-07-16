@@ -300,7 +300,7 @@ void Rig::update() {
     // or other things that need to be in sync with stuff going over the network.
     for (auto f : m_updateFunctions) {
       f();
-    }
+    } 
 
     // Run the whole update thing for all patches
     for (auto& p : m_patches) {

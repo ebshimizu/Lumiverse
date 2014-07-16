@@ -14,6 +14,8 @@ using namespace Lumiverse;
 // that if you change a parameter value in a cue, it'll look forward
 // through the cue list and update the values of that parameter if
 // the parameter was the same in the previous cue.
+
+// these should probably have a name field at some point...
 class CueList
 {
 public:

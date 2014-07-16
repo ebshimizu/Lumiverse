@@ -428,7 +428,7 @@ namespace Lumiverse {
     * 
     * \return Set of Device* contained by the DeviceSet
     */
-    inline const set<Device *>* getDevices() { return &m_workingSet; }
+    inline const set<Device *> getDevices() { return m_workingSet; }
 
     /*!
     * \brief Gets a list of the IDs contained by this DeviceSet

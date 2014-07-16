@@ -61,6 +61,63 @@ namespace Lumiverse {
     */
     void update();
 
+    /*!
+    \brief Adds a layer to the playback
+
+    Name is extracted from the layer settings
+    \param layer The layer to add to the Playback object.
+    */
+    void addLayer(shared_ptr<Layer> layer);
+
+    /*!
+    \brief Retrieves a pointer to the layer with the specified name.
+    \param name Layer name
+    \return Pointer to layer specified. nullptr if layer does not exist.
+    */
+    shared_ptr<Layer> getLayer(string name);
+
+    /*!
+    \brief Deletes a layer from the playback.
+    */
+    void deleteLayer(string name);
+
+    /*!
+    \brief Adds a cue list to the Playback
+
+    \param id Cue list identifier. Should be unique to the Playback.
+    \param cueList Cue list to add.
+    */
+    void addCueList(string id, shared_ptr<CueList> cueList);
+
+    /*!
+    \brief Retrieves a cue list from the Playback
+    \param id Cue list id.
+    \return Pointer to specified cue list. nullptr if cue list doesn't exist. 
+    */
+    shared_ptr<CueList> getCueList(string id);
+
+    /*!
+    \brief Deletes a cue list from the Playback
+    */
+    void deleteCueList(string id);
+
+    /*!
+    \brief Assigns a cue list to a layer
+
+    If one of the specified items doesn't exist, nothing will happen and this
+    function will return false.
+    \param cueListId Cue list identifier
+    \param layerName Name of the layer to assign the cue list to.
+    */
+    bool addCueListToLayer(string cueListId, string layerName);
+
+    /*!
+    \brief Removes a cue list assigned to a particular layer.
+
+    \param layerName Name of the layer
+    */
+    void removeCueListFromLayer(string layerName);
+
   private:
     /*! \brief Map of layer names to layers. */
     map<string, shared_ptr<Layer> > m_layers;

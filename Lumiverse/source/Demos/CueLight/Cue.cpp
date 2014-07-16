@@ -166,7 +166,7 @@ void Cue::insertKeyframe(string id, string param, Lumiverse::LumiverseType* data
 
 void Cue::insertKeyframe(float time, DeviceSet devices, bool uct) {
   // For each device
-  for (auto d : *devices.getDevices()) {
+  for (auto d : devices.getDevices()) {
     // For each parameter
     for (auto p : *d->getRawParameters()) {
       insertKeyframe(d->getId(), p.first, d->getParam(p.first), time, uct);
@@ -190,7 +190,7 @@ void Cue::deleteKeyframe(string id, string param, float time) {
 
 void Cue::deleteKeyframe(float time, DeviceSet devices) {
   // For each device
-  for (auto d : *devices.getDevices()) {
+  for (auto d : devices.getDevices()) {
     // For each parameter
     for (auto p : *d->getRawParameters()) {
       deleteKeyframe(d->getId(), p.first, time);

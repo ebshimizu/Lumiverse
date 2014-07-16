@@ -5,7 +5,7 @@ namespace Lumiverse {
     setRefreshRate(refreshRate);
     m_running = false;
 
-    for (auto d : *(m_rig->getAllDevices().getDevices())) {
+    for (auto d : m_rig->getAllDevices().getDevices()) {
       // Copy and reset to defaults
       m_state[d->getId()] = new Device(*d);
       m_state[d->getId()]->reset();
@@ -48,7 +48,7 @@ namespace Lumiverse {
   }
 
   void Playback::update() {
-    while (m_running) {
+    if (m_running) {
       // Gets start time
       auto start = chrono::high_resolution_clock::now();
 
@@ -84,18 +84,73 @@ namespace Lumiverse {
       // Write state to rig.
       m_rig->setAllDevices(m_state);
 
-      // Sleep a bit depending on how long the update took.
-      auto end = chrono::high_resolution_clock::now();
-      auto elapsed = end - start;
-      float elapsedSec = chrono::duration_cast<chrono::milliseconds>(elapsed).count() / 1000.0f;
+      // For now I'm locking this to the update loop in rig
+      // We'll see how it goes
 
-      if (elapsedSec < m_loopTime) {
-        unsigned int ms = (unsigned int)(1000 * (m_loopTime - elapsedSec));
-        this_thread::sleep_for(chrono::milliseconds(ms));
-      }
-      else {
-        Logger::log(WARN, "Playback Update loop running slowly");
-      }
+      // Sleep a bit depending on how long the update took.
+      // auto end = chrono::high_resolution_clock::now();
+      //auto elapsed = end - start;
+      //float elapsedSec = chrono::duration_cast<chrono::milliseconds>(elapsed).count() / 1000.0f;
+
+      //if (elapsedSec < m_loopTime) {
+      //  unsigned int ms = (unsigned int)(1000 * (m_loopTime - elapsedSec));
+      //  this_thread::sleep_for(chrono::milliseconds(ms));
+      //}
+      //else {
+      //  Logger::log(WARN, "Playback Update loop running slowly");
+      //}
     }
   }
+
+  void Playback::addLayer(shared_ptr<Layer> layer) {
+    m_layers[layer->getName()] = layer;
+  }
+
+  shared_ptr<Layer> Playback::getLayer(string name) {
+    if (m_layers.count(name) > 0) {
+      return m_layers[name];
+    }
+
+    return nullptr;
+  }
+
+  void Playback::deleteLayer(string name) {
+    if (m_layers.count(name) > 0) {
+      m_layers.erase(name);
+    }
+  }
+
+  void Playback::addCueList(string id, shared_ptr<CueList> cueList) {
+    m_cueLists[id] = cueList;
+  }
+
+  shared_ptr<CueList> Playback::getCueList(string id) {
+    if (m_cueLists.count(id) > 0) {
+      return m_cueLists[id];
+    }
+
+    return nullptr;
+  }
+
+  void Playback::deleteCueList(string id) {
+    if (m_cueLists.count(id) > 0) {
+      m_cueLists.erase(id);
+    }
+  }
+
+  bool Playback::addCueListToLayer(string cueListId, string layerName) {
+    if (m_layers.count(layerName) > 0 && m_cueLists.count(cueListId) > 0) {
+      m_layers[layerName]->setCueList(m_cueLists[cueListId]);
+      return true;
+    }
+
+    return false;
+  }
+
+  void Playback::removeCueListFromLayer(string layerName) {
+    if (m_layers.count(layerName) > 0) {
+      m_layers[layerName]->removeCueList();
+    }
+  }
+
 }

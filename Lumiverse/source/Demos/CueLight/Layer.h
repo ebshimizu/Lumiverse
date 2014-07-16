@@ -76,7 +76,7 @@ namespace Lumiverse {
     void removeCueList();
 
     /*! \brief Checks if the current Layer has a cue list attached. */
-    bool hasCueList() { return m_cueList == nullptr; }
+    bool hasCueList() { return m_cueList != nullptr; }
 
     /*! \brief Gets the layer's blend mode */
     BlendMode getMode() { return m_mode; }
@@ -265,6 +265,10 @@ namespace Lumiverse {
 
     /*! \brief Stores the data used during playback. */
     vector<PlaybackData> m_playbackData;
+
+    vector<PlaybackData> m_queuedPlayback;
+
+    mutex m_queue;
   };
 
   // Comparison op overloads
