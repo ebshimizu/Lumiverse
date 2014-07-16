@@ -181,8 +181,23 @@ namespace Lumiverse {
 
     /*!
     \brief Updates the Layer. If cues a running, the cues get updated.
+    \param updateStart The time at which the update loop started. Used to make sure
+    each cue updates to the same point at this update.
     */
-    void update();
+    void update(chrono::time_point<chrono::high_resolution_clock> updateStart);
+
+    /*!
+    \brief Blends this layer with the given state.
+
+    Generally you'll let the Playback update call this function automatically.
+    Layers are blended from bottom to top according to the priorities (low -> high)
+    and adhere to their given BlendMode.
+
+    The return type is void since the memory pointed to by the Device* parameter
+    will be modified, and thus we don't have to write the results into a separate
+    return data structure.
+    */
+    void blend(map<string, Device*> currentState);
 
   private:
     /*!
@@ -251,5 +266,38 @@ namespace Lumiverse {
     /*! \brief Stores the data used during playback. */
     vector<PlaybackData> m_playbackData;
   };
+
+  // Comparison op overloads
+  /*!
+  \brief Compares two layer priorities for equality.
+  \return True if the priorities of the two layers are equal.
+  */
+  inline bool operator==(Layer& lhs, Layer& rhs) {
+    return (lhs.getPriority() == rhs.getPriority());
+  }
+
+  inline bool operator!=(Layer& lhs, Layer& rhs) {
+    return !(lhs == rhs);
+  }
+
+  /*!
+  \brief Compares two layer priorities for order.
+  \return True if the priority of lhs is lower than the priority for rhs.
+  */
+  inline bool operator<(Layer& lhs, Layer& rhs) {
+    return (lhs.getPriority() < rhs.getPriority());
+  }
+
+  inline bool operator>(Layer& lhs, Layer& rhs) {
+    return rhs < lhs;
+  }
+
+  inline bool operator<=(Layer& lhs, Layer& rhs) {
+    return !(lhs > rhs);
+  }
+
+  inline bool operator>=(Layer& lhs, Layer& rhs) {
+    return !(lhs < rhs);
+  }
 }
 #endif

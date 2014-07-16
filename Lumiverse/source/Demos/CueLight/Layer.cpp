@@ -164,6 +164,80 @@ namespace Lumiverse {
     m_playbackData.push_back(pbData);
   }
 
+  void Layer::update(chrono::time_point<chrono::high_resolution_clock> updateStart) {
+    // Update playback data and set layer state if there is anything currently active
+    // Note that in the event of conflicts this would be a Latest Takes Precedence system
+    if (m_playbackData.size() > 0) {
+      auto pb = m_playbackData.begin();
+
+      while (pb != m_playbackData.end()) {
+        float cueTime = chrono::duration_cast<chrono::milliseconds>(updateStart - pb->start).count() / 1000.0f;
+
+        auto devices = pb->activeKeyframes.begin();
+
+        // Plan is to go through each active parameter, find which keyframes we should interpolate,
+        // and do the interpolation. For keyframes at the end, we should clamp to the final value.
+        // Keyframes are organized by device->parameter->keyframes
+        while (devices != pb->activeKeyframes.end()) {
+          auto parameters = devices->second.begin();
+          while (parameters != devices->second.end()) {
+            Keyframe first;
+            Keyframe next;
+            bool nextFound = false;
+            // Find the keyframes that contain cueTime in their interval (first <= cueTime < next)
+            for (auto keyframe = parameters->second.begin(); keyframe != parameters->second.end();) {
+              // We know that keyframes are ordered in ascending order, so the first one that's greater
+              // than cueTime is the "next" keyframe.
+              if (keyframe->t > cueTime) {
+                next = *keyframe;
+                first = *prev(keyframe);
+                nextFound = true;
+                break;
+              }
+
+              ++keyframe;
+            }
+
+            // If we didn't find a next keyframe, we ended up at the end. Time to clamp
+            if (!nextFound) {
+              LumiverseTypeUtils::copyByVal(prev(parameters->second.end())->val.get(),
+                m_layerState[devices->first]->getParam(parameters->first));
+
+              pb->activeKeyframes[devices->first].erase(parameters++);
+            }
+            else {
+              // Otherwise, do a lerp between keyframes.
+              // First need to convert the cueTime to a position from 0-1
+              float t = (cueTime - first.t) / (next.t - first.t);
+              shared_ptr<Lumiverse::LumiverseType> lerped = LumiverseTypeUtils::lerp(first.val.get(), next.val.get(), t);
+              LumiverseTypeUtils::copyByVal(lerped.get(), m_layerState[devices->first]->getParam(parameters->first));
+              ++parameters;
+            }
+          }
+
+          if (pb->activeKeyframes[devices->first].size() == 0) {
+            // Delete the device entry if no more things are active
+            pb->activeKeyframes.erase(devices++);
+          }
+          else {
+            devices++;
+          }
+        }
+
+        // Delete the entire playback object if everything is done
+        if (pb->activeKeyframes.size() == 0) {
+          m_playbackData.erase(pb++);
+          // Apparently when m_playbackData is 0 at the end of this weird stuff happens.
+          if (m_playbackData.size() == 0)
+            break;
+        }
+        else {
+          ++pb;
+        }
+      }
+    }
+  }
+
   map<string, map<string, set<Keyframe> > > Layer::diff(Cue& a, Cue& b, bool assert) {
     map<string, map<string, set<Keyframe> > > data;
 

@@ -321,6 +321,15 @@ namespace Lumiverse {
     */
     void update();
 
+    /*!
+    * \brief Updates the parameters of the devices stored in the specified map.
+    *
+    * This function allows you to do mass updates of devices in a Rig.
+    * This function will only update parameters not metadata
+    * \param devices Map of device id -> Device* containing the data to update the rig with.
+    */
+    void setAllDevices(map<string, Device*> devices);
+
   private:
     /*!
     * \brief Loads the rig info from the parsed JSON data.

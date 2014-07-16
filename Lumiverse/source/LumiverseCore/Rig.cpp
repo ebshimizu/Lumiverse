@@ -321,6 +321,24 @@ void Rig::update() {
   }
 }
 
+void Rig::setAllDevices(map<string, Device*> devices) {
+  for (auto kvp : devices) {
+    if (m_devicesById.count(kvp.first) > 0) {
+      auto params = kvp.second->getRawParameters();
+      for (auto param : *params) {
+        // We want to copy instead of assign since we don't know where that LumiverseType data
+        // is going to end up. Maybe it'd be better if devices did a copy instead...
+        LumiverseTypeUtils::copyByVal(param.second, m_devicesById[kvp.first]->getParam(param.first));
+      }
+    }
+    else {
+      stringstream ss;
+      ss << "Rig does not contain a device with id: " << kvp.first;
+      Logger::log(WARN, ss.str());
+    }
+  }
+}
+
 Device* Rig::operator[](string id) {
   return getDevice(id);
 }

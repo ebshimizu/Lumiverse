@@ -27,7 +27,6 @@ namespace Lumiverse {
     // Each layer now takes over the cue playback controls
     // Playback also maintains the master list of CueLists for reference by the layers.
 
-
     // Deletes a playback object.
     ~Playback();
 
@@ -37,43 +36,20 @@ namespace Lumiverse {
     // Stops the playback loop.
     void stop();
 
-    // Sets the current state of the rig to the specified cue.
-    // Asserts itself over all other cues
-    void goToCue(Cue& cue, float time = 3);
-
-    // Goes from the specified cue into the next specified cue.
-    // Set assert to true to make the cue overwrite anything else running on
-    // top of it. Useful for resetting, since only fixtures that change are
-    // typically adjusted.
-    void goToCue(Cue& first, Cue& next, bool assert = false);
-
-    // Goes from one cue to another in a list.
-    // Set assert to true to make all cue values animate.
-    void goToCue(CueList& list, float first, float next, bool assert = false);
-
-    // Goes from the specified cue in the Cue List to the next one in the list.
-    // Set assert to true to make all cue values animate.
-    void goToNextCue(CueList& list, float num, bool assert = false);
-
-    // Goes to the next cue in order in a given list.
-    void goToNextCue(CueList& list, bool assert = false);
-
-    // Goes to the first cue in a list.
-    void goToList(CueList& list, bool assert = false);
-
     // Sets the playback update rate
     void setRefreshRate(unsigned int rate);
 
-  private:
-    // Runs the cue update loop.
+    /*!
+    \brief Updates the layers contained by the Playback object and updates the Rig.
+    */
     void update();
 
-    // Returns the set of parameters to animate along with their keyframes
-    // in going from cue A to cue B
-    map<string, map<string, set<Keyframe> > > diff(Cue& a, Cue& b, bool assert = false);
+  private:
+    /*! \brief Map of layer names to layers. */
+    map<string, shared_ptr<Layer> > m_layers;
 
-    // Stores the data used during playback.
-    vector<PlaybackData> m_playbackData;
+    /*! \brief Copy of all devices in the rig. Current state of the playback. */
+    map<string, Device*> m_state;
 
     // Does the updating of the rig while running.
     unique_ptr<thread> m_updateLoop;
