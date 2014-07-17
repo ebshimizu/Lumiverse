@@ -176,6 +176,65 @@ namespace Lumiverse {
     m_queuedPlayback.push_back(pbData);
   }
 
+  void Layer::goToCueAtTime(float num, float time) {
+    if (hasCueList()) {
+      Cue* currentCue = m_cueList->getCue(num);
+
+      if (currentCue != nullptr) {
+        Cue* nextCue = m_cueList->getNextCue(num);
+        if (nextCue == nullptr) {
+          // If there is no next cue, we stick to the one that does exist.
+          goToCue(num, 0);
+          return;
+        }
+
+        // Interpolation time. For the seek function, we just pull all the relevant values,
+        // and then interpolate between them.
+
+        map<string, map<string, set<Keyframe> > >& currentData = currentCue->getCueData();
+        map<string, map<string, set<Keyframe> > >& nextData = nextCue->getCueData();
+        float cueTime = time;
+
+        // For each device
+        for (auto& device : m_layerState) {
+          // For each parameter
+          for (auto& param : device.second->getRawParameters()) {
+            // Find the relevant keyframes.
+            Keyframe current;
+            Keyframe next;
+            bool nextFound = false;
+
+            for (auto keyframe = currentData[device.first][param.first].begin(); keyframe != currentData[device.first][param.first].end();) {
+              // We know that keyframes are ordered in ascending order, so the first one that's greater
+              // than cueTime is the "next" keyframe.
+              if (keyframe->t > cueTime) {
+                next = *keyframe;
+                current = *prev(keyframe);
+                nextFound = true;
+                break;
+              }
+
+              ++keyframe;
+            }
+
+            // If we didn't find a next keyframe, we ended up at the end. Time to clamp to nextCue values
+            if (!nextFound) {
+              Keyframe nextCue = *(nextData[device.first][param.first].begin());
+              LumiverseTypeUtils::copyByVal(nextCue.val.get(), param.second);
+            }
+            else {
+              // Otherwise, do a lerp between keyframes.
+              // First need to convert the cueTime to a position from 0-1
+              float t = (cueTime - current.t) / (next.t - current.t);
+              shared_ptr<Lumiverse::LumiverseType> lerped = LumiverseTypeUtils::lerp(current.val.get(), next.val.get(), t);
+              LumiverseTypeUtils::copyByVal(lerped.get(), param.second);
+            }
+          }
+        }
+      }
+    }
+  }
+
   void Layer::update(chrono::time_point<chrono::high_resolution_clock> updateStart) {
     // Grab waiting playback objects from the queue
     m_queue.lock();

@@ -53,22 +53,46 @@ struct Keyframe {
     t(time), val(v), useCueTiming(uct) { }
 };
 
-// A cue stores data for a particular look (called a cue)
-// Cues can be transitioned between, typically as a crossfade.
-// This class currently stores just a set look and transitions with upfade
-// and downfade time.
+/*!
+\brief A cue stores data for a particular look (called a cue)
+
+Cues in Lumiverse can be thought of as little mini-timelines.
+Each cue is able to store keyframes for every device parameter
+placed at arbitrary times in the cue. Cues can be run as stand-alone
+timelines or can be chained together in a cue list. In that mode, the last
+keyframe of each cue pulls its data from the destination cue.
+
+Cues can be transitioned between, typically as a crossfade.
+This class currently stores just a set look and transitions with upfade
+and downfade time.
+
+Note that the fade time applies when going from the current cue to the
+next cue. So if you have two Cues, cue 1 with time 3, and cue 2 with time 5,
+if you go from cue 1 to cue 2 the transition will happen in 3 seconds (assuming
+there are no additional keyframes added).
+*/
 class Cue {
 public:
   typedef map<string, map<string, shared_ptr<Lumiverse::LumiverseType> > > changedParams;
 
-  // Makes a blank cue.
+  /*!
+  \brief Makes a blank cue.
+  */
   Cue() : m_upfade(3.0f), m_downfade(3.0f) { }
 
-  // Constructs a cue from a rig. Default time is 3.
+  /*!
+  \brief Constructs a cue from a rig. Default time is 3.
+
+  This constructor will make a cue by pulling all of the values from the Rig
+  and storing them in the cue. It essentially "takes a picture" of the rig for use later.
+  \param rig Rig to create the cue from.
+  */
   Cue(Rig* rig);
 
-  // Creates a cue from the current state of the rig.
-  // Set fade time manually
+  /*!
+  \brief Creates a cue from the current state of the rig with the given time.
+  \param time Fade time for the cue
+  */
   Cue(Rig* rig, float time);
 
   /*!

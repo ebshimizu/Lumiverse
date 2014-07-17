@@ -63,7 +63,7 @@ int main(int argc, char**argv) {
   pb.addCueListToLayer("list1", "layer1");
   pb.addCueListToLayer("list2", "layer2");
 
-  layer1->goToCue(1);
+  layer1->goToCueAtTime(2, 3);
 
   // Prepare playback
   pb.start();
