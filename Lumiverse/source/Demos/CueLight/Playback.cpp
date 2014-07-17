@@ -13,6 +13,9 @@ namespace Lumiverse {
     }
 
     m_funcId = -1;
+
+    // Make a single programmer for this playback object
+    m_prog = unique_ptr<Programmer>(new Programmer(m_rig));
   }
 
   Playback::~Playback() {
@@ -69,6 +72,11 @@ namespace Lumiverse {
       for (auto& l : sortedLayers) {
         l->blend(m_state);
       }
+
+      // Blend the programmer layer
+      // This layer sits on top of everything else and anything captured by it
+      // will take precedence over everything.
+      m_prog->blend(m_state);
 
       // Write state to rig.
       m_rig->setAllDevices(m_state);

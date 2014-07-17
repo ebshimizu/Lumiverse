@@ -26,6 +26,8 @@ int main(int argc, char**argv) {
 
   DeviceSet inno = rig.query("inno");
 
+  pb.getProgrammer()->setParam("inno", "pan", 0.2f);
+
   LumiverseColor* color = (LumiverseColor*)rig.getDevice("inno")->getParam("color");
   color->setxy(0.4, 0.4);
 
@@ -81,7 +83,7 @@ int main(int argc, char**argv) {
   //list1.getCue(1)->insertKeyframe(4.5f, chan1);
 
   getchar();
-
+  pb.getProgrammer()->clearAndReset();
   layer1->goToCue(1);
   layer2->goToCue(1);
 

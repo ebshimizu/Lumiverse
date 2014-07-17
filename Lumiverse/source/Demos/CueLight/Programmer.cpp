@@ -8,6 +8,8 @@ Programmer::Programmer(Rig* rig) : m_rig(rig) {
   for (Device* d : devices) {
     m_devices[d->getId()] = new Device(d);
   }
+
+  captured = DeviceSet(m_rig);
 }
 
 Programmer::~Programmer()
@@ -129,7 +131,7 @@ Device* Programmer::operator[](string id) {
 }
 
 void Programmer::clearCaptured() {
-  captured = captured.select("");
+  captured = DeviceSet(m_rig);
 }
 
 void Programmer::reset() {
@@ -156,7 +158,7 @@ void Programmer::blend(map<string, Device*> state) {
   // Take each captured device, and write the parameters in.
   for (Device* d : captured.getDevices()) {
     for (auto& p : d->getRawParameters()) {
-      LumiverseTypeUtils::copyByVal(m_devices[d->getId()]->getParam(p.first), p.second);
+      LumiverseTypeUtils::copyByVal(m_devices[d->getId()]->getParam(p.first), state[d->getId()]->getParam(p.first));
     }
   }
 }

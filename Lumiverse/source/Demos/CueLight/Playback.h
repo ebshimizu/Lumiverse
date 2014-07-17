@@ -10,6 +10,7 @@
 #include "Cue.h"
 #include "CueList.h"
 #include "Layer.h"
+#include "Programmer.h"
 
 namespace Lumiverse {
 
@@ -131,6 +132,9 @@ namespace Lumiverse {
     */
     void detachFromRig();
 
+    /*! \brief Gets a reference to the programmer object stored by the playback */
+    const unique_ptr<Programmer>& getProgrammer() { return m_prog; }
+
   private:
     /*! \brief Map of layer names to layers. */
     map<string, shared_ptr<Layer> > m_layers;
@@ -144,7 +148,7 @@ namespace Lumiverse {
     // Does the updating of the rig while running.
     // unique_ptr<thread> m_updateLoop;
 
-    // True when the update loop is running
+    /*! \brief True when the update loop is running */
     bool m_running;
 
     /*! \brief ID of the attached function in the rig update loop */
@@ -156,8 +160,11 @@ namespace Lumiverse {
     // Loop time in seconds
     // float m_loopTime;
 
-    // Pointer to the rig that this playback runs on
+    /*! \brief Pointer to the rig that this playback runs on */
     Rig* m_rig;
+
+    /*! \brief Programmer object owned by the Playback */
+    unique_ptr<Programmer> m_prog;
   };
 }
 #endif

@@ -6,6 +6,10 @@
 #include <LumiverseCore.h>
 #include <memory>
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4503) // Debug symbol name too long for MSVS, pretty sure it's line 172
+#endif
+
 namespace Lumiverse {
 
 struct Keyframe {
