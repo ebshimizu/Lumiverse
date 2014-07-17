@@ -428,22 +428,22 @@ namespace Lumiverse {
     * 
     * \return Set of Device* contained by the DeviceSet
     */
-    inline const set<Device *> getDevices() { return m_workingSet; }
+    inline const set<Device *>& getDevices() { return m_workingSet; }
 
     /*!
-    * \brief Gets a list of the IDs contained by this DeviceSet
+    * \brief Gets a copy of the list of the IDs contained by this DeviceSet
     */
     vector<string> getIds();
 
     /*!
-    * \brief Gets a set of all the parameters used by devices in this set.
+    * \brief Gets a copy of the set of all the parameters used by devices in this set.
     *
     * Set means no duplicates
     */
     set<string> getAllParams();
 
     /*!
-    * \brief Gets a set of all the metadata keys used by devices in this set.
+    * \brief Gets a copy of the set of all the metadata keys used by devices in this set.
     */
     set<string> getAllMetadata();
 

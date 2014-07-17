@@ -13,14 +13,26 @@
 
 namespace Lumiverse {
 
-  // A playback object manages layers and coordinates their actions and updates.
-  // A playback doesn't actually do the playback, as all of that logic
-  // is now in Layers.
+  /*!
+  \brief A playback object manages layers and coordinates their actions and updates.
+
+  Playbacks are typically attached to the main update loop in Rig and
+  are limited in their update speed according to the speed of the Rig update loop.
+  You can choose to run a Playback in a separate thread, though you'll need to
+  create that thread yourself and call update() manually.
+
+  Playbacks manage a series of Layers, which can each have cues running on them.
+  The layers are updated by the Playback and then flattened down and sent to the Rig
+  during each call to Playback::update().
+  */
   class Playback
   {
   public:
-    // Initializes a playback object with desired refresh rate in Hz
-    Playback(Rig* rig, unsigned int refreshRate);
+    /*!
+    \brief Initializes a playback object.
+    \param rig Rig object associated with this playback.
+    */
+    Playback(Rig* rig);
 
     // Changes to make to playback: Playback must now maintain a list of layers
     // Layers are update in the playback update loop with layer->update()
@@ -41,20 +53,10 @@ namespace Lumiverse {
     void stop();
 
     /*!
-    * \brief Sets m_running to true but does not launch a separate thread.
-    */
-    void run();
-
-    /*!
-    * \brief Sets m_running to false but does not stop a separate thread.
-    */
-    void halt();
-
-    /*!
     * \brief Sets the playback update rate
     * \param rate Update loop rate in cycles/second
     */
-    void setRefreshRate(unsigned int rate);
+    // void setRefreshRate(unsigned int rate);
 
     /*!
     \brief Updates the layers contained by the Playback object and updates the Rig.
@@ -118,6 +120,17 @@ namespace Lumiverse {
     */
     void removeCueListFromLayer(string layerName);
 
+    /*!
+    \brief Binds the update function for this playback to the Rig's update function.
+    \param pid ID to assign to the function. Defaults to 1. Must be positive.
+    */
+    void attachToRig(int pid = 1);
+
+    /*!
+    \brief Unbinds the update function for this playback from the Rig.
+    */
+    void detachFromRig();
+
   private:
     /*! \brief Map of layer names to layers. */
     map<string, shared_ptr<Layer> > m_layers;
@@ -129,16 +142,19 @@ namespace Lumiverse {
     map<string, Device*> m_state;
 
     // Does the updating of the rig while running.
-    unique_ptr<thread> m_updateLoop;
+    // unique_ptr<thread> m_updateLoop;
 
     // True when the update loop is running
     bool m_running;
 
+    /*! \brief ID of the attached function in the rig update loop */
+    int m_funcId;
+
     // Refresh rate used by the update loop.
-    unsigned int m_refreshRate;
+    // unsigned int m_refreshRate;
 
     // Loop time in seconds
-    float m_loopTime;
+    // float m_loopTime;
 
     // Pointer to the rig that this playback runs on
     Rig* m_rig;

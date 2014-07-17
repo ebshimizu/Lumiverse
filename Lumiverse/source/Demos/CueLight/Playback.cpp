@@ -1,15 +1,18 @@
 #include "Playback.h"
 
 namespace Lumiverse {
-  Playback::Playback(Rig* rig, unsigned int refreshRate) : m_rig(rig) {
-    setRefreshRate(refreshRate);
+  Playback::Playback(Rig* rig) : m_rig(rig) {
+    // setRefreshRate(refreshRate);
     m_running = false;
 
-    for (auto& d : m_rig->getAllDevices().getDevices()) {
+    auto devices = m_rig->getAllDevices().getDevices();
+    for (Device* d : devices) {
       // Copy and reset to defaults
       m_state[d->getId()] = new Device(*d);
       m_state[d->getId()]->reset();
     }
+
+    m_funcId = -1;
   }
 
   Playback::~Playback() {
@@ -18,34 +21,20 @@ namespace Lumiverse {
 
   void Playback::start() {
     m_running = true;
-    m_updateLoop = unique_ptr<thread>(new thread(&Playback::update, this));
     Logger::log(INFO, "Started playback update loop");
   }
 
   void Playback::stop() {
     if (m_running) {
       m_running = false;
-      m_updateLoop->join();
       Logger::log(INFO, "Stopped playback update loop");
     }
   }
 
-  void Playback::run() {
-    m_running = true;
-    Logger::log(INFO, "Playback update loop ready.");
-  }
-
-  void Playback::halt() {
-    if (m_running) {
-      m_running = false;
-      Logger::log(INFO, "Playback update loop stopped.");
-    }
-  }
-
-  void Playback::setRefreshRate(unsigned int rate) {
-    m_refreshRate = rate;
-    m_loopTime = 1.0f / (float)m_refreshRate;
-  }
+  //void Playback::setRefreshRate(unsigned int rate) {
+  //  m_refreshRate = rate;
+  //  m_loopTime = 1.0f / (float)m_refreshRate;
+  //}
 
   void Playback::update() {
     if (m_running) {
@@ -150,6 +139,19 @@ namespace Lumiverse {
   void Playback::removeCueListFromLayer(string layerName) {
     if (m_layers.count(layerName) > 0) {
       m_layers[layerName]->removeCueList();
+    }
+  }
+
+  void Playback::attachToRig(int pid) {
+    // Bind update function to rig update function
+    if (pid > 0 && m_rig->addFunction(pid, [&]() { this->update(); })) {
+      m_funcId = pid;
+    }
+  }
+  
+  void Playback::detachFromRig() {
+    if (m_funcId > 0) {
+      m_rig->removeFunction(m_funcId);
     }
   }
 

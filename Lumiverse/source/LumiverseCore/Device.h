@@ -325,9 +325,9 @@ namespace Lumiverse {
     * This function is intended to provide the collection of parameters for a calling
     * function to iterate though. You may modify the data contained by the map
     * in a calling function.
-    * \return Pointer to the map of parameter names to parameter data.
+    * \return Reference to the map of parameter data.
     */
-    const map<string, LumiverseType*>* getRawParameters() { return &m_parameters; }
+    map<string, LumiverseType*>& getRawParameters() { return m_parameters; }
   private:
     /*! \brief Sets the id for the device
     *

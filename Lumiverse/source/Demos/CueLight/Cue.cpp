@@ -1,5 +1,7 @@
 #include "Cue.h"
 
+namespace Lumiverse {
+
 Cue::Cue(Rig* rig) : m_upfade(3.0f), m_downfade(3.0f), m_delay(0) {
   update(rig);
 }
@@ -26,8 +28,8 @@ Cue::Cue(Cue& other) {
 
   // Fully copy over cue data. Other instance may go out of scope whenever and
   // delete the cue data but since we have a shared_ptr, we should still have it.
-  for (auto it : other.m_cueData) {
-    for (auto param : it.second) {
+  for (auto& it : other.m_cueData) {
+    for (auto& param : it.second) {
       m_cueData[it.first][param.first] = param.second;
     }
   }
@@ -44,8 +46,8 @@ void Cue::operator=(const Cue& other) {
 
   // Fully copy over cue data. Other instance may go out of scope whenever and
   // delete the cue data but since we have a shared_ptr, we should still have it.
-  for (auto it : other.m_cueData) {
-    for (auto param : it.second) {
+  for (auto& it : other.m_cueData) {
+    for (auto &param : it.second) {
       m_cueData[it.first][param.first] = param.second;
     }
   }
@@ -168,7 +170,7 @@ void Cue::insertKeyframe(float time, DeviceSet devices, bool uct) {
   // For each device
   for (auto d : devices.getDevices()) {
     // For each parameter
-    for (auto p : *d->getRawParameters()) {
+    for (auto p : d->getRawParameters()) {
       insertKeyframe(d->getId(), p.first, d->getParam(p.first), time, uct);
     }
   }
@@ -190,9 +192,9 @@ void Cue::deleteKeyframe(string id, string param, float time) {
 
 void Cue::deleteKeyframe(float time, DeviceSet devices) {
   // For each device
-  for (auto d : devices.getDevices()) {
+  for (auto& d : devices.getDevices()) {
     // For each parameter
-    for (auto p : *d->getRawParameters()) {
+    for (auto& p : d->getRawParameters()) {
       deleteKeyframe(d->getId(), p.first, time);
     }
   }
@@ -202,7 +204,7 @@ map<string, set<Keyframe> > Cue::getParams(Device* d) {
   map<string, set<Keyframe> > paramKeyframes;
 
   // Copy all parameters to cue data list
-  for (auto a : *(d->getRawParameters())) {
+  for (auto& a : d->getRawParameters()) {
     // Insert the starting point as a keyframe.
     paramKeyframes[a.first].insert(Keyframe(0, shared_ptr<Lumiverse::LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
     
@@ -253,4 +255,6 @@ void Cue::updateParams(Device* d, map<string, shared_ptr<Lumiverse::LumiverseTyp
     }
     
   }
+}
+
 }

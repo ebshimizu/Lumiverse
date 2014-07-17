@@ -299,7 +299,7 @@ void Rig::update() {
     // These functions can be update functions you run in your own code
     // or other things that need to be in sync with stuff going over the network.
     for (auto& f : m_updateFunctions) {
-      f();
+      f.second();
     } 
 
     // Run the whole update thing for all patches
@@ -325,7 +325,7 @@ void Rig::setAllDevices(map<string, Device*> devices) {
   for (auto& kvp : devices) {
     if (m_devicesById.count(kvp.first) > 0) {
       auto params = kvp.second->getRawParameters();
-      for (auto& param : *params) {
+      for (auto& param : params) {
         // We want to copy instead of assign since we don't know where that LumiverseType data
         // is going to end up. Maybe it'd be better if devices did a copy instead...
         LumiverseTypeUtils::copyByVal(param.second, m_devicesById[kvp.first]->getParam(param.first));
@@ -426,25 +426,34 @@ JSONNode Rig::toJSON() {
   return root;
 }
 
-int Rig::addFunction(function<void()> func) {
+bool Rig::addFunction(int pid, function<void()> func) {
   // If the rig wasn't running, leave it that way.
   bool restart = false;
+  bool success = false;
 
   if (m_running) {
     stop();
     restart = true;
   }
 
-  m_updateFunctions.push_back(func);
-  
+  if (m_updateFunctions.count(pid) == 0) {
+    m_updateFunctions[pid] = func;
+    success = true;
+
+    stringstream ss;
+    ss << "Adding additional function to update loop with pid " << pid;
+    Logger::log(INFO, ss.str());
+  }
+  else {
+    stringstream ss;
+    ss << "Function with pid " << pid << " already exists in update loop. Cannot add new function";
+    Logger::log(ERR, ss.str());
+  }
+
   if (restart)
     run();
 
-  stringstream ss;
-  ss << "Adding additional function to update loop with pid " << m_updateFunctions.size() - 1;
-  Logger::log(INFO, ss.str());
-
-  return m_updateFunctions.size() - 1;
+  return success;
 }
 
 bool Rig::removeFunction(int pid) {
@@ -456,8 +465,8 @@ bool Rig::removeFunction(int pid) {
     restart = true;
   }
 
-  if (pid >= 0 && pid < m_updateFunctions.size()) {
-    m_updateFunctions.erase(m_updateFunctions.begin() + pid);
+  if (m_updateFunctions.count(pid) > 0) {
+    m_updateFunctions.erase(pid);
 
     stringstream ss;
     ss << "Removed additional function from update loop with pid " << pid;

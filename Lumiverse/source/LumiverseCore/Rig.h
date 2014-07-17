@@ -297,11 +297,12 @@ namespace Lumiverse {
      * The added function will be updated before the patch is updated
      * as part of Rig::update(). The update loop will be stopped during
      * the modification of the function list.
+     * \param pid ID to assign to the function
+     * \param func Function to execute
      * \sa m_updateFunctions
-     * \returns Location of the function in the array of functions. Use
-     * to later delete if needed.
+     * \returns False if a function with specified pid already exists. True on success.
      */
-    int addFunction(function<void()> func);
+    bool addFunction(int pid, function<void()> func);
 
     /*!
     * \brief Removes a function from the additional functions list.
@@ -422,7 +423,7 @@ namespace Lumiverse {
     * These functions run before the patches are updated and could potentially
     * be used to inject values into the rig before the patch happens.
     */
-    vector<function<void()>> m_updateFunctions;
+    map<int, function<void()> > m_updateFunctions;
 
     // May have more indicies in the future, like mapping by channel number.
   };

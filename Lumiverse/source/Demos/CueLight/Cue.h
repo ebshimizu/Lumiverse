@@ -6,20 +6,26 @@
 #include <LumiverseCore.h>
 #include <memory>
 
-using namespace Lumiverse;
+namespace Lumiverse {
 
 struct Keyframe {
-  // Time at which this keyframe is located. t=0 is start of timeline.
+  /*! \brief Time at which this keyframe is located. t=0 is start of timeline. */
   float t;
 
-  // Value of the keyframe at time t
-  // If this is nullptr, the keyframe is at the end of a cue and should take its value
-  // from the next cue in the sequence.
+  /*!
+  \brief Value of the keyframe at time t
+  
+  If this is nullptr, the keyframe is at the end of a cue and should take its value
+  from the next cue in the sequence.
+  */
   shared_ptr<Lumiverse::LumiverseType> val;
 
-  // If true, t will be set to [previous keyframe time] + up/down fade time at runtime.
-  // If set to false, it will use the time specified in t.
-  // Has no effect if val is not-null.
+  /*!
+  \brief If true, t will be set to [previous keyframe time] + up/down fade time at runtime.
+
+  If set to false, it will use the time specified in t.
+  Has no effect if val is not-null.
+  */
   bool useCueTiming;
 
   // Planned interpolation mode selection here. Additional parameters probably needed
@@ -30,10 +36,15 @@ struct Keyframe {
     return t < other.t;
   }
 
-  // Empty constructor
+  /*! \brief Empty constructor */
   Keyframe() { }
 
-  // Constructor with all values filled in.
+  /*!
+  \brief Constructor with all values filled in.
+  \param time Keyframe temporal location
+  \param v Value at specified time
+  \param uct Use Cue Timing (see useCueTiming member variable)
+  */
   Keyframe(float time, shared_ptr<Lumiverse::LumiverseType> v, bool uct) :
     t(time), val(v), useCueTiming(uct) { }
 };
@@ -130,7 +141,7 @@ public:
   // void deleteKeyframe(float time, DeviceSet devices, bool ripple = false);
 
   // Returns the cue data stored in this cue.
-  map<string, map<string, set<Keyframe> > >* getCueData() { return &m_cueData; }
+  map<string, map<string, set<Keyframe> > >& getCueData() { return m_cueData; }
 
   // Gets the upfade
   float getUpfade() { return m_upfade; }
@@ -139,7 +150,7 @@ public:
   float getDownfade() { return m_downfade; }
 
   // Returns the cue data for a device's parameter
-  set<Keyframe> getParamData(string deviceId, string param) { return m_cueData[deviceId][param]; }
+  set<Keyframe>& getParamData(string deviceId, string param) { return m_cueData[deviceId][param]; }
 
 private:
   // Upfade time
@@ -167,5 +178,5 @@ private:
   // Reserved for future use.
   // m_follow - cue follow time (time to wait before automatically taking the next cue)
 };
-
+}
 #endif

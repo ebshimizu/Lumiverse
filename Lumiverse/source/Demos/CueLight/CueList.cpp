@@ -1,5 +1,7 @@
 #include "CueList.h"
 
+namespace Lumiverse {
+
 CueList::CueList()
 {
 }
@@ -117,4 +119,6 @@ float CueList::getCueNumAtIndex(int index) {
   }
   
   return it->first;
+}
+
 }

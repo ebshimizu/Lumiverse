@@ -32,7 +32,7 @@ namespace Lumiverse {
     // This line resolves performance issues with blank layers.
     // For some strange reason.
     // this is the definition of a hack.
-    goToCue(Cue(m_layerState, 0), Cue(m_layerState, 0), false);
+    // goToCue(Cue(m_layerState, 0), Cue(m_layerState, 0), false);
 
     m_active = false;
     m_invertFilter = false;
@@ -51,6 +51,10 @@ namespace Lumiverse {
 
   void Layer::removeCueList() {
     m_cueList = nullptr;
+  }
+
+  void Layer::setOpacity(float val) {
+    m_opacity = (val > 1) ? 1 : ((val < 0) ? 0 : val);
   }
 
   void Layer::addParamFilter(string param) {
@@ -165,7 +169,7 @@ namespace Lumiverse {
     pbData.start = chrono::high_resolution_clock::now();
 
     stringstream ss;
-    ss << "Layer " << m_name << " began a cue playback at " << chrono::duration_cast<chrono::seconds>(pbData.start.time_since_epoch()).count() << "\n";
+    ss << "Layer " << m_name << " began a cue playback at " << chrono::duration_cast<chrono::seconds>(pbData.start.time_since_epoch()).count();
     Logger::log(LDEBUG, ss.str());
 
     lock_guard<mutex> lock(m_queue);
@@ -279,7 +283,7 @@ namespace Lumiverse {
         }
 
         // Go through each parameter in the device
-        for (auto& param : *(device.second->getRawParameters())) {
+        for (auto& param : device.second->getRawParameters()) {
           string paramName = param.first;
           LumiverseType* src = param.second;
           LumiverseType* dest = currentState[device.first]->getParam(param.first);
@@ -321,17 +325,17 @@ namespace Lumiverse {
     map<string, map<string, set<Keyframe> > > data;
 
     // The entire rig is stored, so comparison from a to be should be sufficient.
-    map<string, map<string, set<Keyframe> > >* cueAData = a.getCueData();
-    map<string, map<string, set<Keyframe> > >* cueBData = b.getCueData();
+    map<string, map<string, set<Keyframe> > >& cueAData = a.getCueData();
+    map<string, map<string, set<Keyframe> > >& cueBData = b.getCueData();
 
     // For all devices
-    for (auto& it : *cueAData) {
+    for (auto& it : cueAData) {
       // For all parameters in a device
       for (auto& param : it.second) {
         // The conditions for not animating a parameter are that it has two keyframes, and the
         // values in the keyframes are identical and we're not asserting this cue
         if (!assert && param.second.size() == 2 &&
-          LumiverseTypeUtils::equals(param.second.begin()->val.get(), (*cueBData)[it.first][param.first].begin()->val.get())) {
+          LumiverseTypeUtils::equals(param.second.begin()->val.get(), cueBData[it.first][param.first].begin()->val.get())) {
           continue;
         }
         else {
@@ -341,10 +345,10 @@ namespace Lumiverse {
             Keyframe k = Keyframe(*keyframe);
 
             if (keyframe->val == nullptr) {
-              k.val = (*cueBData)[it.first][param.first].begin()->val;
+              k.val = cueBData[it.first][param.first].begin()->val;
 
               if (k.useCueTiming) {
-                Lumiverse::LumiverseType* nextVal = (*cueBData)[it.first][param.first].begin()->val.get();
+                Lumiverse::LumiverseType* nextVal = cueBData[it.first][param.first].begin()->val.get();
                 Lumiverse::LumiverseType* thisVal = prev(keyframe)->val.get();
                 int result = LumiverseTypeUtils::cmp(thisVal, nextVal);
 

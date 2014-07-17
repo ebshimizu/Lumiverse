@@ -6,7 +6,7 @@
 #include <LumiverseCore.h>
 #include "Cue.h"
 
-using namespace Lumiverse;
+namespace Lumiverse {
 
 // A cue list is a list of cues. This class maintains the relationships
 // between cues and performs update operations.
@@ -38,7 +38,7 @@ public:
   void update(float num, Rig* rig, bool track = true);
 
   // Gets the list of cues
-  const map<float, Cue>* getCueList() { return &m_cues; }
+  const map<float, Cue>& getCueList() { return m_cues; }
 
   // Gets the number of the first cue.
   float getFirstCueNum() { return m_cues.begin()->first; }
@@ -92,4 +92,5 @@ private:
   float m_currentCue;
 };
 
+}
 #endif
