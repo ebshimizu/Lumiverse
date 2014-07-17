@@ -298,7 +298,7 @@ void Rig::update() {
     // Run additional functions before sending to patches
     // These functions can be update functions you run in your own code
     // or other things that need to be in sync with stuff going over the network.
-    for (auto f : m_updateFunctions) {
+    for (auto& f : m_updateFunctions) {
       f();
     } 
 
@@ -322,10 +322,10 @@ void Rig::update() {
 }
 
 void Rig::setAllDevices(map<string, Device*> devices) {
-  for (auto kvp : devices) {
+  for (auto& kvp : devices) {
     if (m_devicesById.count(kvp.first) > 0) {
       auto params = kvp.second->getRawParameters();
-      for (auto param : *params) {
+      for (auto& param : *params) {
         // We want to copy instead of assign since we don't know where that LumiverseType data
         // is going to end up. Maybe it'd be better if devices did a copy instead...
         LumiverseTypeUtils::copyByVal(param.second, m_devicesById[kvp.first]->getParam(param.first));
@@ -374,8 +374,8 @@ DeviceSet Rig::getDevices(string key, string val, bool isEqual) {
 set<string> Rig::getAllUsedParams() {
   set<string> params;
   
-  for (auto d : m_devices) {
-    for (auto s : d->getParamNames()) {
+  for (auto& d : m_devices) {
+    for (auto& s : d->getParamNames()) {
       params.insert(s);
     }
   }
@@ -416,7 +416,7 @@ JSONNode Rig::toJSON() {
 
   JSONNode patches;
   patches.set_name("patches");
-  for (auto p : m_patches) {
+  for (auto& p : m_patches) {
     JSONNode patch = p.second->toJSON();
     patch.set_name(p.first);
     patches.push_back(patch);

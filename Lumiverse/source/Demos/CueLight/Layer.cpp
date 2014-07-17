@@ -279,7 +279,7 @@ namespace Lumiverse {
         }
 
         // Go through each parameter in the device
-        for (auto param : *(device.second->getRawParameters())) {
+        for (auto& param : *(device.second->getRawParameters())) {
           string paramName = param.first;
           LumiverseType* src = param.second;
           LumiverseType* dest = currentState[device.first]->getParam(param.first);
@@ -325,9 +325,9 @@ namespace Lumiverse {
     map<string, map<string, set<Keyframe> > >* cueBData = b.getCueData();
 
     // For all devices
-    for (auto it : *cueAData) {
+    for (auto& it : *cueAData) {
       // For all parameters in a device
-      for (auto param : it.second) {
+      for (auto& param : it.second) {
         // The conditions for not animating a parameter are that it has two keyframes, and the
         // values in the keyframes are identical and we're not asserting this cue
         if (!assert && param.second.size() == 2 &&

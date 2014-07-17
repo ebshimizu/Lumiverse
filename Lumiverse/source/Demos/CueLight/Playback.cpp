@@ -5,7 +5,7 @@ namespace Lumiverse {
     setRefreshRate(refreshRate);
     m_running = false;
 
-    for (auto d : m_rig->getAllDevices().getDevices()) {
+    for (auto& d : m_rig->getAllDevices().getDevices()) {
       // Copy and reset to defaults
       m_state[d->getId()] = new Device(*d);
       m_state[d->getId()]->reset();
@@ -53,13 +53,13 @@ namespace Lumiverse {
       auto start = chrono::high_resolution_clock::now();
 
       // Update layers
-      for (auto kvp : m_layers) {
+      for (auto& kvp : m_layers) {
         kvp.second->update(start);
       }
 
       // Flatten layers
       // Reset state to defaults to start.
-      for (auto kvp : m_state) {
+      for (auto& kvp : m_state) {
         kvp.second->reset();
       }
 
@@ -67,7 +67,7 @@ namespace Lumiverse {
       set<shared_ptr<Layer>, function<bool(shared_ptr<Layer>, shared_ptr<Layer>)> >
         sortedLayers([](shared_ptr<Layer> lhs, shared_ptr<Layer> rhs) { return (*lhs) < (*rhs); });
 
-      for (auto kvp : m_layers) {
+      for (auto& kvp : m_layers) {
         if (kvp.second->isActive()) {
           // sorting is handled automatically by set<> according to the stl spec
           sortedLayers.insert(kvp.second);
@@ -77,7 +77,7 @@ namespace Lumiverse {
       // Blend active layers
       // Blending is done from the bottom up, with the state being passed to each
       // layer in order.
-      for (auto l : sortedLayers) {
+      for (auto& l : sortedLayers) {
         l->blend(m_state);
       }
 
