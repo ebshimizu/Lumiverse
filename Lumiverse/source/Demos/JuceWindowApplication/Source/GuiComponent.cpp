@@ -139,7 +139,7 @@ void GuiComponent::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_quitButton] -- add your button handler code here..
         
-        ((ArnoldPatch*)m_rig->getSimulationPatch())->abortRender();
+        ((ArnoldPatch*)m_rig->getSimulationPatch())->interruptRender();
         
         //[/UserButtonCode_quitButton]
     }

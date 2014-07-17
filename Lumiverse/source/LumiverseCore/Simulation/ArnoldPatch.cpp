@@ -136,10 +136,10 @@ void ArnoldPatch::renderLoop() {
     Logger::log(INFO, "Done.");
 }
 
-void ArnoldPatch::abortRender() {
+void ArnoldPatch::interruptRender() {
     if (m_renderloop != NULL) {
         if (AiRendering()) {
-            AiRenderAbort();
+            AiRenderInterrupt();
             Logger::log(INFO, "Aborted rendering to restart.");
         }
         m_renderloop->join();
@@ -171,7 +171,7 @@ void ArnoldPatch::update(set<Device *> devices) {
         return ;
     }
     
-    abortRender();
+    interruptRender();
     
     m_renderloop = new std::thread(&ArnoldPatch::renderLoop, this);
     
@@ -199,7 +199,7 @@ void ArnoldPatch::init() {
 * \brief Closes connections to the interfaces.
 */
 void ArnoldPatch::close() {
-    abortRender();
+    interruptRender();
     m_interface.close();
 }
 
