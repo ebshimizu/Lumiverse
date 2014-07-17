@@ -1,4 +1,4 @@
-/*! \file LumiverseTypeUtils.h
+ /*! \file LumiverseTypeUtils.h
 * \brief Utility functions for manipulating LumiverseTypes
 */
 #ifndef _LUMIVERSETYPEUTILS_H_

@@ -7,6 +7,48 @@
 //
 
 #include "RenderingComponent.h"
+#include "GuiComponent.h"
+
+RenderingComponent::RenderingComponent() {
+    addAndMakeVisible (m_intensity_label = new Label ("new label",
+                                                      TRANS("Intensity")));
+    m_intensity_label->setFont (Font (15.00f, Font::plain));
+    m_intensity_label->setJustificationType (Justification::centredLeft);
+    m_intensity_label->setEditable (false, false, false);
+    m_intensity_label->setColour (TextEditor::textColourId, Colours::black);
+    m_intensity_label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    
+    addAndMakeVisible (m_intensity_slider = new Slider ("new slider"));
+    m_intensity_slider->setRange (0, 10, 0);
+    m_intensity_slider->setSliderStyle (Slider::LinearHorizontal);
+    m_intensity_slider->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
+    
+    
+    //[UserPreSize]
+    //[/UserPreSize]
+    setSize (800, 600);
+}
+
+RenderingComponent::RenderingComponent(float *buffer, Image::PixelFormat format, int imageWidth, int imageHeight)
+: m_panel(format, imageWidth, imageHeight, true), m_color_buffer(buffer) {
+    addAndMakeVisible (m_intensity_label = new Label ("new label",
+                                                      TRANS("Intensity")));
+    m_intensity_label->setFont (Font (15.00f, Font::plain));
+    m_intensity_label->setJustificationType (Justification::centredLeft);
+    m_intensity_label->setEditable (false, false, false);
+    m_intensity_label->setColour (TextEditor::textColourId, Colours::black);
+    m_intensity_label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    
+    addAndMakeVisible (m_intensity_slider = new Slider ("new slider"));
+    m_intensity_slider->setRange (0, 10, 0);
+    m_intensity_slider->setSliderStyle (Slider::LinearHorizontal);
+    m_intensity_slider->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
+    
+    
+    //[UserPreSize]
+    //[/UserPreSize]
+    setSize (imageWidth, imageHeight);
+}
 
 void RenderingComponent::paint (Graphics& g) {
     if (m_color_buffer == NULL)

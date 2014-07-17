@@ -320,6 +320,15 @@ namespace Lumiverse {
     * \sa Patch
     */
     void update();
+      
+    /*!
+    * \brief Get a simulation patch
+    *
+    * Checks against all the registered patches and returns the first simulation patch found.
+    * \sa Patch
+    * \return A pointer to a simulation patch (the current implementation is the ArnoldPatch).
+    */
+    Patch *getSimulationPatch();
 
   private:
     /*!

@@ -263,11 +263,6 @@ namespace Lumiverse {
     */
     const map<string, LumiverseType*>* getRawParameters() { return &m_parameters; }
       
-    bool needsUpdate() const { return m_rerender_req; }
-    
-    // TODO: temperate solution for update flag.
-    bool m_rerender_req;
-      
   private:
     /*! \brief Sets the id for the device
     *
