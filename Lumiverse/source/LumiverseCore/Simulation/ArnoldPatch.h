@@ -101,7 +101,7 @@ namespace Lumiverse {
       
     float *getBufferPointer() { return m_interface.getBufferPointer(); }
       
-    void abortRender();
+    void interruptRender();
       
     void onDeviceChanged(std::string deviceName);
 
