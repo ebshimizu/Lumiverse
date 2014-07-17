@@ -341,13 +341,19 @@ namespace Lumiverse {
         else {
           // Otherwise just add all of cue a's keyframes into the active list and
           // fill in the blanks wiht cue b's data.
+          // For all the keyframes assigned to a parameter
           for (auto keyframe = param.second.begin(); keyframe != param.second.end(); ++keyframe) {
             Keyframe k = Keyframe(*keyframe);
 
+            // If the keyframe's value is null, we need to get the data from cue b.
             if (keyframe->val == nullptr) {
+              // Get the data from the first keyframe assigned to the parameter in cue b.
               k.val = cueBData[it.first][param.first].begin()->val;
 
+              // If we're using the default timing for this cue.
               if (k.useCueTiming) {
+                // Determine if the timing should pull from upfade or downfade.
+                // Compares the most recent cue value to the value in cue b to determine this.
                 Lumiverse::LumiverseType* nextVal = cueBData[it.first][param.first].begin()->val.get();
                 Lumiverse::LumiverseType* thisVal = prev(keyframe)->val.get();
                 int result = LumiverseTypeUtils::cmp(thisVal, nextVal);
@@ -363,6 +369,7 @@ namespace Lumiverse {
               }
             }
 
+            // If the keyframe has a value, we can skip all that cue timing nonsense.
             data[it.first][param.first].insert(k);
           }
         }

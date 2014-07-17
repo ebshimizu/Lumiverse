@@ -149,7 +149,7 @@ namespace Lumiverse {
 
     The layer state can be manipulated through this map.
     */
-    map<string, Device*> getLayerState() { return m_layerState; }
+    map<string, Device*>& getLayerState() { return m_layerState; }
 
     /*!
     \brief Goes to the next cue in the cue list if a cue list exists in the layer.

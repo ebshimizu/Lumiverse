@@ -267,11 +267,11 @@ namespace Lumiverse {
     /*!
     * \brief Gets the raw list of devices.
     * 
-    * Users are not allowed to modify the set of devices through this method,
+    * Users shouldn't modify the set of devices through this method,
     * but may read the data and modify device parameters.
     * \return Set of Devices maintained by this Rig
     */
-    const set<Device *>* getDeviceRaw() { return &m_devices; }
+    const set<Device *>& getDeviceRaw() { return m_devices; }
 
     /*!
     * \brief Writes the rig out to a JSON file

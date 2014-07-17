@@ -45,7 +45,7 @@ namespace Lumiverse {
     * \brief Constructs a DeviceSet unassociated with a Rig
     *
     * It should be noted that this constructor actually isn't particularly useful.
-    * Without a Rig*, the DeviceSet can't realyl do any sort of queries, though
+    * Without a Rig*, the DeviceSet can't really do any sort of queries, though
     * it can store an arbitrary list of deivces.
     * \sa DeviceSet(Rig*), DeviceSet(const DeviceSet&)
     */

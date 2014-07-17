@@ -56,7 +56,7 @@ void Cue::operator=(const Cue& other) {
 Cue::changedParams Cue::update(Rig* rig) {
   changedParams params;
   
-  for (auto d : *(rig->getDeviceRaw())) {
+  for (auto d : rig->getDeviceRaw()) {
     if (m_cueData.count(d->getId()) == 0) {
       // New cues don't send back changed parameters since there weren't really
       // things to change before they got added.
