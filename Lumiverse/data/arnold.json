@@ -26,6 +26,8 @@
     "arnold" : {
       "type" : "ArnoldPatch",
         "sceneFile" : "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/cornell.ass",
+        "pluginDir" : "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/LumiverseCore/lib/arnold/plugin",
+        "gamma" : 0.454545455,
         "lights" : {
             "mylight" : { "type" : "point_light" }
         },

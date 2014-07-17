@@ -386,6 +386,16 @@ JSONNode Rig::toJSON() {
 
   return root;
 }
+    
+Patch* Rig::getSimulationPatch() {
+    for (pair<string, Patch*> patch : m_patches) {
+        if (patch.second->getType() == "ArnoldPatch") {
+            return patch.second;
+        }
+    }
+        
+    return NULL;
+}
 
 int Rig::addFunction(function<void()> func) {
   // If the rig wasn't running, leave it that way.

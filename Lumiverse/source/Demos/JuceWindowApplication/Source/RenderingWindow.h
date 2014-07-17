@@ -12,19 +12,26 @@
 #include <iostream>
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "RenderingComponent.h"
+#include "GuiComponent.h"
+#include "../../../LumiverseCore/LumiverseCore.h"
+//[/Headers]
+
+using namespace Lumiverse;
 
 class RenderingWindow  : public DocumentWindow
 {
 public:
     //==============================================================================
-    RenderingWindow(int width, int height, float *buffer)
+    RenderingWindow(int width, int height, float *buffer, Rig *rig)
     : DocumentWindow ("Arnold Result",
                       Colours::lightgrey,
                       DocumentWindow::allButtons,
                       true)
     {
         // Create an instance of our main content component, and add it to our window..
-        setContentOwned (new RenderingComponent(buffer, Image::PixelFormat::ARGB, width, height), true);
+        //setContentOwned (new RenderingComponent(buffer, Image::PixelFormat::ARGB, width, height), true);
+        
+        setContentOwned(new GuiComponent(buffer, Image::PixelFormat::ARGB, width, height, rig), true);
         
         // Centre the window on the screen
         centreWithSize (getWidth(), getHeight());

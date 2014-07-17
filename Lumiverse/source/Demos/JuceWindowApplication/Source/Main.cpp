@@ -30,14 +30,15 @@ public:
     //==============================================================================
     void initialise (const String& commandLine) override
     {
-        // Add your application's initialisation code here..
+        
         m_rig = new Rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold.json");
         
         m_rig->init();
         
-        ArnoldPatch *patch = (ArnoldPatch*)m_rig->getPatch("arnold");
+        ArnoldPatch *patch = (ArnoldPatch*)m_rig->getSimulationPatch(); 
         
-        m_renderingWindow = new RenderingWindow(patch->getWidth(), patch->getHeight(), patch->getBufferPointer());
+        m_renderingWindow = new RenderingWindow(patch->getWidth(), patch->getHeight(),
+                                                patch->getBufferPointer(), m_rig);
         
         m_timer = new RepaintTimer(m_renderingWindow->getContentComponent());
         m_timer->startTimer(5000);
@@ -49,6 +50,7 @@ public:
     {
         // Add your application's shutdown code here..
         m_timer->stopTimer();
+        m_rig->stop();
         
         m_timer = nullptr;
         m_renderingWindow = nullptr;

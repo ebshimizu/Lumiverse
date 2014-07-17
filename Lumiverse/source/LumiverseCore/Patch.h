@@ -71,7 +71,7 @@ namespace Lumiverse {
     * \return String representing the type of the Patch
     */
     virtual string getType() = 0;
-
+      
     // Gets a mapping of device parameters to addresses for the patch type.
     // This is the full patch map.
     // Entries should look something like "deviceId.paramName -> 1 / 25" (DMX example)

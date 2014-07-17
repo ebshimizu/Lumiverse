@@ -14,11 +14,13 @@
 
 class RenderingComponent : public Component {
 public:
-    RenderingComponent(float *buffer, Image::PixelFormat format, int imageWidth, int imageHeight)
-    : m_panel(format, imageWidth, imageHeight, true), m_color_buffer(buffer) {
-        setSize (imageWidth, imageHeight);
+    RenderingComponent();
+    RenderingComponent(float *buffer, Image::PixelFormat format,
+                       int imageWidth, int imageHeight);
+    
+    ~RenderingComponent() {
+
     }
-    ~RenderingComponent() { }
     
     // TODO : add double buffer
     void paint (Graphics& g);
@@ -26,6 +28,11 @@ public:
 private:
     Image m_panel;
     float *m_color_buffer;
+    
+    ScopedPointer<Label> m_intensity_label;
+    ScopedPointer<Slider> m_intensity_slider;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RenderingComponent)
 };
 
 #endif /* defined(__JuceWindowApp__RenderingComponent__) */

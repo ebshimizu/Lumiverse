@@ -83,15 +83,9 @@ ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 
 # Add Arnold simulation code
 IF (LumiverseCore_INCLUDE_ARNOLD)
-    # SDL lib
-    #find_package(SDL REQUIRED)
-    # include_directories(
-    #   ${SDL_INCLUDE_DIR}
-    #)
-
     SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE}
-    #Simulation/LumiverseSimulation.h
     Simulation/ArnoldPatch.h Simulation/ArnoldPatch.cpp
+    Simulation/ArnoldInterface.h Simulation/ArnoldInterface.cpp
     Simulation/ArnoldParameterVector.h)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 

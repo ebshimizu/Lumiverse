@@ -4,70 +4,13 @@
 #include <sstream>
 
 namespace Lumiverse {
-/*
-    inline void sRGBValueToByte(double val, unsigned char &byte) {
-        byte = static_cast<unsigned char>( val * 0xff );
-    }
-    
-    // sets up the main window
-    static bool initializeWindow( int width, int height, const char* title )
-    {
-        if ( SDL_Init( SDL_INIT_VIDEO ) == -1 ) {
-            std::cout << "Error initializing SDL" << std::endl;
-            exit(-1);
-        }
-        
-        // set the caption
-        SDL_WM_SetCaption( title, title );
-        
-        // used the preferred bpp
-        unsigned int bits_per_pixel = SDL_GetVideoInfo()->vfmt->BitsPerPixel;
-        unsigned int flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
-        
-        // create the window
-        SDL_Surface* surface;
-        printf("\n%d, %d, %d, %d\n", width, height, bits_per_pixel, flags);
-        surface = SDL_SetVideoMode( width, height, bits_per_pixel, flags );
-        std::cout << "here" << std::endl;
-        if ( surface == 0 ) {
-            std::cout << "Error initializing SDL surface: " << SDL_GetError() << ", aborting initialization." << std::endl;
-            return false;
-        }
-        
-        return true;
-    }
-    
-    static void drawToSurface(SDL_Surface *surface, const size_t x, const size_t y,
-                              const AtRGBA &rgba) {
-        unsigned char bytes[4];
-        unsigned char *pixels = (unsigned char *)surface->pixels;
-        
-        for (size_t i = 0; i < 4 && i < surface->pitch; i++) {
-            sRGBValueToByte(rgba[i], bytes[i]);
-            pixels[(y * surface->w + x) * surface->pitch + i] = bytes[i];
-        }
-    }
-    
-    static void drawBufferToSurface(SDL_Surface *surface, const unsigned char *buffer, const size_t buffer_size) {
-        unsigned char *pixels = (unsigned char *)surface->pixels;
-        
-        memcpy(pixels, buffer, buffer_size);
-    }
-*/
-///////////
-
-ArnoldPatch::ArnoldPatch() :
-    m_buffer(NULL)  {
-
-}
 
 /*!
 * \brief Construct DMXPatch from JSON data.
 *
 * \param data JSONNode containing the DMXPatch object data.
 */
-ArnoldPatch::ArnoldPatch(const JSONNode data) :
-    m_buffer(NULL) {
+ArnoldPatch::ArnoldPatch(const JSONNode data) {
 	loadJSON(data);
 }
 
@@ -84,8 +27,19 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 
 		if (nodeName == "sceneFile") {
           JSONNode fileName = *i;
-          m_ass_file = fileName.as_string();
+          m_interface.setAssFile(fileName.as_string());
 		}
+        
+        if (nodeName == "pluginDir") {
+            JSONNode dir = *i;
+            m_interface.setPluginDirectory(dir.as_string());
+		}
+        
+        if (nodeName == "gamma") {
+            JSONNode gamma = *i;
+            m_interface.setGamma(gamma.as_float());
+		}
+        
         
         if (nodeName == "lights") {
 			JSONNode lights = *i;
@@ -93,7 +47,7 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 			while (light != lights.end()) {
 				std::string light_name = light->name();
                 
-				m_lights[light_name] = NULL;
+				m_lights[light_name] = ArnoldLightRecord();
                 
                 std::stringstream sstm;
                 sstm << "Added light " << light_name;
@@ -110,9 +64,7 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 			while (param != params.end()) {
 				std::string param_name = param->name();
 
-                ArnoldParam arnold_param;
-                loadArnoldParam(*param, arnold_param);
-				m_arnold_params[param_name] = arnold_param;
+                m_interface.loadArnoldParam(*param);
                 
                 std::stringstream sstm;
                 sstm << "Added param " << param_name;
@@ -128,269 +80,37 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 
 }
     
-void ArnoldPatch::loadArnoldParam(const JSONNode data, ArnoldParam &param) {
-    JSONNode::const_iterator i = data.begin();
-    
-	// Two rounds. In the first round, initialize the size of output (window), so it's
-	// possible to allocate memory for each light.
-	while (i != data.end()) {
-		std::string nodeName = i->name();
-        
-		if (nodeName == "dimension") {
-            JSONNode dimension = *i;
-            param.dimension = dimension.as_int();
-		}
-        
-        if (nodeName == "arnoldType") {
-			JSONNode type = *i;
-            param.arnoldTypeName = type.as_string();
-		}
-        
-		i++;
-	}
-}
-
-template<size_t D, typename T>
-void ArnoldPatch::parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) const {
-    T element;
-    std::string value_spaceless = value;
-    std::string pattern;
-    
-    
-    std::remove_if(value_spaceless.begin(), value_spaceless.end(),
-                                                   [](char x){return std::isspace(x);});
-    //value_spaceless.erase(end_pos, value_spaceless.end());
-    
-    if (typeid(T) == typeid(int) || typeid(T) == typeid(bool)) {
-        pattern = "%d";
-    }
-    else if (typeid(T) == typeid(float)) {
-        pattern = "%f";
-    }
-    
-    size_t offset = 0;
-    for (size_t i = 0; i < D; i++) {
-        sscanf(value_spaceless.c_str() + offset, pattern.c_str(), &element);
-        vector[i] = element;
-        
-        offset = value_spaceless.find(",", offset);
-        
-        if (offset == std::string::npos)
-            break;
-        offset++;
-    }
-}
-
-template<size_t D, typename T>
-    void ArnoldPatch::setSingleParameter(AtNode *node, const std::string &paramName, const std::string &value,
-                                         union AiNodeSet<T> aiNodeSet) const {
-    ArnoldParameterVector<D, T> paramVector;
-    parseArnoldParameter<D, T>(value, paramVector);
-    
-    if (D == 1)
-        aiNodeSet.AiNodeSet1D(node, paramName.c_str(), paramVector[0]);
-    else if (D == 2)
-        aiNodeSet.AiNodeSet2D(node, paramName.c_str(), paramVector[0], paramVector[1]);
-    else if (D == 3)
-        aiNodeSet.AiNodeSet3D(node, paramName.c_str(), paramVector[0], paramVector[1], paramVector[2]);
-    else if (D == 4)
-        aiNodeSet.AiNodeSet4D(node, paramName.c_str(), paramVector[0], paramVector[1], paramVector[2], paramVector[3]);
-}
-
-template<size_t D, typename T, class C>
-void ArnoldPatch::setArrayParameter(AtNode *node, const std::string &paramName, const std::string &value,
-                                    bool (*AiArraySet) (AtArray*, AtUInt32, C, const char*, int),
-                                    const int AiType) const {
-    ArnoldParameterVector<D, T> paramVector;
-    std::vector<ArnoldParameterVector<D, T>> array;
-    size_t offset = 0;
-    while (1) {
-        parseArnoldParameter<D, T>(value.substr(offset), paramVector);
-        array.push_back(paramVector);
-        
-        offset = value.find(";", offset);
-        
-        if (offset == std::string::npos)
-            break;
-        
-        offset++;
-    }
-    
-    AtArray *array_ptr = AiArray(array.size(), 1, AiType);
-    
-    for (size_t i = 0; i < array.size(); i++) {
-        C element;
-        T *ele_ptr = (T*)&element;
-        
-        for (size_t j = 0; j < D; j++) {
-            *(ele_ptr + j) = array[i][j];
-        }
-        
-        /* verify
-        if (typeid(C) == typeid(AtPoint))
-        for (size_t j = 0; j < D; j++) {
-            AtPoint* pnt_ptr = (AtPoint*)ele_ptr;
-            printf("point: %f, %f, %f\n", pnt_ptr->x, pnt_ptr->y, pnt_ptr->z);
-        }
-         */
-        
-        AiArraySet(array_ptr, i, element, __AI_FILE__, __AI_LINE__);
-    }
-    
-    AiNodeSetArray(node, paramName.c_str(), array_ptr);
-}
-    
-void ArnoldPatch::setArrayParameter(AtNode *light_ptr, const std::string &paramName, const std::string &value) {
-    ArnoldParam param = m_arnold_params[paramName];
-    
-    if (param.arnoldTypeName == "int") {
-        setArrayParameter<1, int, int>(light_ptr, paramName, value, AiArraySetIntFunc, AI_TYPE_INT);
-    }
-    else if (param.arnoldTypeName == "uint") {
-        setArrayParameter<1, unsigned int, unsigned int>(light_ptr, paramName, value, AiArraySetUIntFunc, AI_TYPE_UINT);
-    }
-    else if (param.arnoldTypeName == "bool") {
-        setArrayParameter<1, bool, bool>(light_ptr, paramName, value, AiArraySetBoolFunc, AI_TYPE_BOOLEAN);
-    }
-    else if (param.arnoldTypeName == "float") {
-        setArrayParameter<1, float, float>(light_ptr, paramName, value, AiArraySetFltFunc, AI_TYPE_FLOAT);
-    }
-    else if (param.arnoldTypeName == "point2") {
-        setArrayParameter<2, float, AtPoint2>(light_ptr, paramName, value, AiArraySetPnt2Func, AI_TYPE_POINT2);
-    }
-    else if (param.arnoldTypeName == "rgb") {
-        setArrayParameter<3, float, AtRGB>(light_ptr, paramName, value, AiArraySetRGBFunc, AI_TYPE_RGB);
-    }
-    else if (param.arnoldTypeName == "vector") {
-        setArrayParameter<3, float, AtVector>(light_ptr, paramName, value, AiArraySetVecFunc, AI_TYPE_VECTOR);
-    }
-    else if (param.arnoldTypeName == "point") {
-        setArrayParameter<3, float, AtPoint>(light_ptr, paramName, value, AiArraySetPntFunc, AI_TYPE_POINT);
-    }
-    else if (param.arnoldTypeName == "rgba") {
-        setArrayParameter<4, float, AtRGBA>(light_ptr, paramName, value, AiArraySetRGBAFunc, AI_TYPE_RGBA);
-    }
-}
-    
-void ArnoldPatch::setParameter(AtNode *light_ptr, const std::string &paramName, const std::string &value) {
-    ArnoldParam param = m_arnold_params[paramName];
-    
-    const AtNodeEntry *entry_ptr = AiNodeGetNodeEntry(light_ptr);
-    const AtParamEntry *param_ptr = AiNodeEntryLookUpParameter(entry_ptr, paramName.c_str());
-    if (AiParamGetType(param_ptr) == AI_TYPE_ARRAY) {
-        setArrayParameter(light_ptr, paramName, value);
-        return ;
-    }
-    
-    switch (param.dimension) {
-        case 1: {
-            if (param.arnoldTypeName == "int") {
-                union AiNodeSet<int> aiNodeSet;
-                aiNodeSet.AiNodeSet1D = AiNodeSetInt;
-                setSingleParameter<1, int>(light_ptr, paramName, value, aiNodeSet);
-            }
-            else if (param.arnoldTypeName == "uint") {
-                union AiNodeSet<unsigned int> aiNodeSet;
-                aiNodeSet.AiNodeSet1D = AiNodeSetUInt;
-                setSingleParameter<1, unsigned int>(light_ptr, paramName, value, aiNodeSet);
-                
-                /*
-                ArnoldParameterVector<1, unsigned int> paramVector;
-                parseArnoldParameter<1, unsigned int>(value, paramVector);
-                
-                AiNodeSetUInt(light_ptr, paramName.c_str(), paramVector[0]);
-                 */
-            }
-            else if (param.arnoldTypeName == "bool") {
-                union AiNodeSet<bool> aiNodeSet;
-                aiNodeSet.AiNodeSet1D = AiNodeSetBool;
-                setSingleParameter<1, bool>(light_ptr, paramName, value, aiNodeSet);
-            }
-            else if (param.arnoldTypeName == "float") {
-                union AiNodeSet<float> aiNodeSet;
-                aiNodeSet.AiNodeSet1D = AiNodeSetFlt;
-                setSingleParameter<1, float>(light_ptr, paramName, value, aiNodeSet);
-            }
-        
-            break;
-        }
-        case 2: {
-            if (param.arnoldTypeName == "point2") {
-                ArnoldParameterVector<2, float> paramVector;
-                parseArnoldParameter<2, float>(value, paramVector);
-                
-                AiNodeSetPnt2(light_ptr, paramName.c_str(), paramVector[0], paramVector[1]);
-            }
-
-            break;
-        }
-        case 3: {
-            ArnoldParameterVector<3, float> paramVector;
-            parseArnoldParameter<3, float>(value, paramVector);
-            
-            if (param.arnoldTypeName == "rgb") {
-                AiNodeSetRGB(light_ptr, paramName.c_str(),
-                             paramVector[0], paramVector[1], paramVector[2]);
-            }
-            else if (param.arnoldTypeName == "vector") {
-                AiNodeSetVec(light_ptr, paramName.c_str(),
-                             paramVector[0], paramVector[1], paramVector[2]);
-            }
-            else if (param.arnoldTypeName == "point") {
-                AiNodeSetPnt(light_ptr, paramName.c_str(),
-                             paramVector[0], paramVector[1], paramVector[2]);
-            }
-            
-            break;
-        }
-        case 4: {
-            ArnoldParameterVector<4, float> paramVector;
-            parseArnoldParameter<4, float>(value, paramVector);
-            
-            if (param.arnoldTypeName == "rgba") {
-                AiNodeSetRGBA(light_ptr, paramName.c_str(),
-                             paramVector[0], paramVector[1], paramVector[2], paramVector[3]);
-            }
-
-            break;
-        }
-        default:
-            break;
-    }
-
-}
-    
 void ArnoldPatch::loadLight(Device *d_ptr) {
 	std::string light_name = d_ptr->getId();
 	std::string type = d_ptr->getType();
 	AtNode *light_ptr;
     
-    if (m_lights[light_name] == NULL) {
+    if (m_lights.count(light_name) == 0)
+        return ;
+    
+    if (m_lights[light_name].light == NULL) {
         light_ptr = AiNode(type.c_str());
         AiNodeSetStr(light_ptr, "name", light_name.c_str());
     }
     else {
-        light_ptr = m_lights[light_name];
+        light_ptr = m_lights[light_name].light;
     }
 
     // TODO: mesh_light
     for (std::string meta : d_ptr->getMetadataKeyNames()) {
         std::string value;
         d_ptr->getMetadata(meta, value);
-        setParameter(light_ptr, meta, value);
+        m_interface.setParameter(light_ptr, meta, value);
     }
 
-	m_lights[light_name] = light_ptr;
-    
-    // verify
-    
+	m_lights[light_name].light = light_ptr;
 }
 
 /*!
 * \brief Destroys the object.
 */
 ArnoldPatch::~ArnoldPatch() {
-    delete[] m_buffer;
+
 }
 
 bool ArnoldPatch::updateLight(set<Device *> devices) {
@@ -401,7 +121,7 @@ bool ArnoldPatch::updateLight(set<Device *> devices) {
 		if (m_lights.count(name) == 0)
 			continue;
 		
-        if (d->needsUpdate()) {
+        if (m_lights[d->getId()].rerender_req) {
             rerender_rep = true;
             loadLight(d);
         }
@@ -410,6 +130,30 @@ bool ArnoldPatch::updateLight(set<Device *> devices) {
     return rerender_rep;
 }
 
+void ArnoldPatch::renderLoop() {
+    Logger::log(INFO, "Rendering...");
+    AiRender(AI_RENDER_MODE_CAMERA);
+    Logger::log(INFO, "Done.");
+}
+
+void ArnoldPatch::abortRender() {
+    if (m_renderloop != NULL) {
+        if (AiRendering()) {
+            AiRenderAbort();
+            Logger::log(INFO, "Aborted rendering to restart.");
+        }
+        m_renderloop->join();
+        m_renderloop = NULL;
+    }
+}
+
+void ArnoldPatch::onDeviceChanged(std::string deviceName) {
+    // TODO : LOCK
+    if (m_lights.count(deviceName) > 0) {
+        m_lights[deviceName].rerender_req = true;
+    }
+}
+    
 /*!
 * \brief Updates the values sent to the DMX network given the list of devices
 * in the rig.
@@ -423,35 +167,22 @@ void ArnoldPatch::update(set<Device *> devices) {
     
 	bool render_req = updateLight(devices);
 
-    if (render_req) {
-        //std::cout << "Loading ass ..." << AiASSLoad(m_ass_file.c_str(), AI_NODE_ALL & ~AI_NODE_LIGHT) << std::endl;
+    if (!render_req) {
+        return ;
     }
     
-    /*
-    AtNodeIterator *itr_ptr = AiUniverseGetNodeIterator(AI_NODE_ALL);
+    abortRender();
     
-    while (!AiNodeIteratorFinished(itr_ptr)) {
-        AtNode *node = AiNodeIteratorGetNext(itr_ptr);
-        std::cout << AiNodeGetName(node) << std::endl;
-    }
+    m_renderloop = new std::thread(&ArnoldPatch::renderLoop, this);
     
-    AiNodeIteratorDestroy(itr_ptr);
-    */
-    Logger::log(INFO, "Rendering...");
-    AiRender(AI_RENDER_MODE_CAMERA);
-    Logger::log(INFO, "Done.");
-    
+    // TODO : LOCK
     for (Device* d : devices) {
 		std::string name = d->getId();
 		if (m_lights.count(name) == 0)
 			continue;
-		d->m_rerender_req = false;
+		m_lights[name].rerender_req = false;
 	}
-    
-    //SDL_Surface* surface = SDL_GetVideoSurface();
-    //drawBufferToSurface(surface, m_buffer, surface->w * surface->h * 4);
-    
-    //AiEnd();
+
 }
 
 /*!
@@ -461,38 +192,15 @@ void ArnoldPatch::update(set<Device *> devices) {
 * if interfaces change.
 */
 void ArnoldPatch::init() {
-    AiBegin();
-    
-    AiASSLoad(m_ass_file.c_str(), AI_NODE_ALL & ~AI_NODE_LIGHT);
-    AiLoadPlugins("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/LumiverseCore/lib/arnold/plugin");
-    
-    AtNode *options = AiUniverseGetOptions();
-    m_width = AiNodeGetInt(options, "xres");
-    m_height = AiNodeGetInt(options, "yres");
-    
-    AtNode *driver = AiNode("driver_buffer");
-    AiNodeSetStr(driver, "name", "buffer_driver");
-    AiNodeSetInt(driver, "width", m_width);
-    AiNodeSetInt(driver, "height", m_height);
-    
-    m_buffer = new float[m_width * m_height * 4];
-
-    AiNodeSetPtr(driver, "buffer_pointer", m_buffer);
-    
-    // TODO: better
-    AtArray *outputs_array = AiArrayAllocate(1, 1, AI_TYPE_STRING);
-    AiArraySetStr(outputs_array, 0, "RGB RGB filter buffer_driver");
-    AiNodeSetArray(options, "outputs", outputs_array);
-    
-    //initializeWindow(width, height, "sdl test");
-    //AiEnd();
+    m_interface.init();
 }
 
 /*!
 * \brief Closes connections to the interfaces.
 */
 void ArnoldPatch::close() {
-    AiEnd();
+    abortRender();
+    m_interface.close();
 }
 
 /*!

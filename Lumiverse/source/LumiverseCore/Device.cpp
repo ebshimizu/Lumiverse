@@ -12,7 +12,6 @@ Device::Device(string id, unsigned int channel, string type) {
 
 Device::Device(string id, const JSONNode data) {
   m_id = id;
-  m_rerender_req = true;
   loadJSON(data);
 }
 

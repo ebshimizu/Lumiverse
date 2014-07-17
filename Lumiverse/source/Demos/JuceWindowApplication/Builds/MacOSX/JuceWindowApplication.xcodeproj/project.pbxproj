@@ -34,8 +34,10 @@
 		C22D1CBF99E2B745D4F3320E /* RecentFilesMenuTemplate.nib in Resources */ = {isa = PBXBuildFile; fileRef = 3E5BD84325D03274FFE48837 /* RecentFilesMenuTemplate.nib */; };
 		CB25E9532125DEAAE389134A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA55E96EDB2A15113AC77D23 /* AudioToolbox.framework */; };
 		CD86C78F6E3FA7D6BB42F11B /* juce_graphics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 18EE8B5897E96D38DE940F79 /* juce_graphics.mm */; };
-		D7CF7BD619749B7D0034E74A /* libLumiverseCore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D7CF7BD419749A370034E74A /* libLumiverseCore.dylib */; };
-		D7CF7BDA1974AE290034E74A /* RepaintTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7CF7BD81974AE290034E74A /* RepaintTimer.cpp */; };
+		D72C1CC4197718AA00DA2D22 /* libLumiverseCore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D72C1CC3197718AA00DA2D22 /* libLumiverseCore.dylib */; };
+		D72C1CC5197718B300DA2D22 /* libLumiverseCore.dylib in Resources */ = {isa = PBXBuildFile; fileRef = D72C1CC3197718AA00DA2D22 /* libLumiverseCore.dylib */; };
+		D75DF82F197733CB0083EDF6 /* GuiComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D75DF82B197733CB0083EDF6 /* GuiComponent.cpp */; };
+		D75DF830197733CB0083EDF6 /* RepaintTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D75DF82D197733CB0083EDF6 /* RepaintTimer.cpp */; };
 		DEC6767F18247C492C1E4446 /* juce_data_structures.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2A66DED5FDE04F68725774C8 /* juce_data_structures.mm */; };
 		F004E4FAF45AE51C69D300A9 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C40FE9132CD3E48F1D766D8 /* Carbon.framework */; };
 		F7F1A61FF75880EBFC28C8B8 /* juce_audio_devices.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9327B35B7452EB3B4A272039 /* juce_audio_devices.mm */; };
@@ -772,10 +774,12 @@
 		D68178F9D67AFC85D5E49FE6 /* juce_AbstractFifo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_AbstractFifo.cpp; path = ../../JuceLibraryCode/modules/juce_core/containers/juce_AbstractFifo.cpp; sourceTree = SOURCE_ROOT; };
 		D6A1DFF5082E1119941429DF /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		D721B9F41368EE7F318B96CB /* juce_ModifierKeys.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_ModifierKeys.cpp; path = ../../JuceLibraryCode/modules/juce_gui_basics/keyboard/juce_ModifierKeys.cpp; sourceTree = SOURCE_ROOT; };
+		D72C1CC3197718AA00DA2D22 /* libLumiverseCore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libLumiverseCore.dylib; sourceTree = "<group>"; };
+		D75DF82B197733CB0083EDF6 /* GuiComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GuiComponent.cpp; path = ../../Source/GuiComponent.cpp; sourceTree = "<group>"; };
+		D75DF82C197733CB0083EDF6 /* GuiComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuiComponent.h; path = ../../Source/GuiComponent.h; sourceTree = "<group>"; };
+		D75DF82D197733CB0083EDF6 /* RepaintTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RepaintTimer.cpp; path = ../../Source/RepaintTimer.cpp; sourceTree = "<group>"; };
+		D75DF82E197733CB0083EDF6 /* RepaintTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RepaintTimer.h; path = ../../Source/RepaintTimer.h; sourceTree = "<group>"; };
 		D77FB2EE289BD92339705E55 /* juce_Result.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_Result.cpp; path = ../../JuceLibraryCode/modules/juce_core/misc/juce_Result.cpp; sourceTree = SOURCE_ROOT; };
-		D7CF7BD419749A370034E74A /* libLumiverseCore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libLumiverseCore.dylib; sourceTree = "<group>"; };
-		D7CF7BD81974AE290034E74A /* RepaintTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RepaintTimer.cpp; sourceTree = "<group>"; };
-		D7CF7BD91974AE290034E74A /* RepaintTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepaintTimer.h; sourceTree = "<group>"; };
 		D7FAB49EA08FA2B0D7041A9C /* juce_SystemStats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_SystemStats.h; path = ../../JuceLibraryCode/modules/juce_core/system/juce_SystemStats.h; sourceTree = SOURCE_ROOT; };
 		D8CBFA90FE1A546B6ADAD148 /* juce_Typeface.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_Typeface.cpp; path = ../../JuceLibraryCode/modules/juce_graphics/fonts/juce_Typeface.cpp; sourceTree = SOURCE_ROOT; };
 		D8F16A3A1C5832954F3D893D /* juce_ComponentListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_ComponentListener.h; path = ../../JuceLibraryCode/modules/juce_gui_basics/components/juce_ComponentListener.h; sourceTree = SOURCE_ROOT; };
@@ -923,9 +927,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D7CF7BD619749B7D0034E74A /* libLumiverseCore.dylib in Frameworks */,
 				95EBE342821ADA518B7574DC /* Accelerate.framework in Frameworks */,
 				CB25E9532125DEAAE389134A /* AudioToolbox.framework in Frameworks */,
+				D72C1CC4197718AA00DA2D22 /* libLumiverseCore.dylib in Frameworks */,
 				F004E4FAF45AE51C69D300A9 /* Carbon.framework in Frameworks */,
 				A476C82629C06DE6F604722E /* Cocoa.framework in Frameworks */,
 				2E3196594F4F0D98C177FFCC /* CoreAudio.framework in Frameworks */,
@@ -1777,7 +1781,7 @@
 		8C498BA833040ADA993387D0 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				D7CF7BD419749A370034E74A /* libLumiverseCore.dylib */,
+				D72C1CC3197718AA00DA2D22 /* libLumiverseCore.dylib */,
 				339B8895A040E8D27B56EF59 /* JuceWindowApplication */,
 				978C74284931B64A66EEF9A5 /* Juce Modules */,
 				10E2280CE3558E78528F9D1F /* Juce Library Code */,
@@ -2116,8 +2120,10 @@
 				98713D46AF9F77FEF6D9C7E6 /* RenderingComponent.h */,
 				F59DCD92F48A634C32AE471C /* RenderingWindow.cpp */,
 				4C82F5DBAB47EFD6EDA7D6F8 /* RenderingWindow.h */,
-				D7CF7BD81974AE290034E74A /* RepaintTimer.cpp */,
-				D7CF7BD91974AE290034E74A /* RepaintTimer.h */,
+				D75DF82B197733CB0083EDF6 /* GuiComponent.cpp */,
+				D75DF82C197733CB0083EDF6 /* GuiComponent.h */,
+				D75DF82D197733CB0083EDF6 /* RepaintTimer.cpp */,
+				D75DF82E197733CB0083EDF6 /* RepaintTimer.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -2675,6 +2681,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C22D1CBF99E2B745D4F3320E /* RecentFilesMenuTemplate.nib in Resources */,
+				D72C1CC5197718B300DA2D22 /* libLumiverseCore.dylib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2686,6 +2693,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1D4B8D58B426A257BF0743C /* Main.cpp in Sources */,
+				D75DF830197733CB0083EDF6 /* RepaintTimer.cpp in Sources */,
+				D75DF82F197733CB0083EDF6 /* GuiComponent.cpp in Sources */,
 				8AD9630435CA50A04448C2A8 /* RenderingComponent.cpp in Sources */,
 				35A93AFAEDD1BBC3EA97042C /* RenderingWindow.cpp in Sources */,
 				106A89D5807E8C074ED0F098 /* juce_audio_basics.mm in Sources */,
@@ -2699,7 +2708,6 @@
 				CD86C78F6E3FA7D6BB42F11B /* juce_graphics.mm in Sources */,
 				BB814296B7A9B44090E10AD9 /* juce_gui_basics.mm in Sources */,
 				9944C77D2BF2412CDE4DA058 /* juce_gui_extra.mm in Sources */,
-				D7CF7BDA1974AE290034E74A /* RepaintTimer.cpp in Sources */,
 				20A4BB56E347FB10B1767F0E /* juce_opengl.mm in Sources */,
 				4AC44F3B900E049F86EC8BA9 /* juce_video.mm in Sources */,
 			);
