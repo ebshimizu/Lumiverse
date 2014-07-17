@@ -5,6 +5,7 @@
 
 #include "Rig.h"
 #include "types/LumiverseTypeUtils.h"
+#include "Cue.h"
 
 namespace Lumiverse {
 
@@ -119,6 +120,21 @@ public:
   \return Reference to the set of Devices managed by the programmer.
   */
   inline const map<string, Device *>& getDevices() { return m_devices; }
+
+  /*!
+  \brief Creates a cue from the programmer's state.
+
+  \param time Cue time in seconds. Default is 3.
+  */
+  Cue getCue(float time = 3);
+
+  /*!
+  \brief Captures the selected devices and copies their current values from the rig.
+
+  Any existing captured devices will be added to by this function.
+  \param DeviceSet devices to capture.
+  */
+  void captureFromRig(DeviceSet devices);
 
 private:
   /*!

@@ -163,4 +163,18 @@ void Programmer::blend(map<string, Device*> state) {
   }
 }
 
+Cue Programmer::getCue(float time) {
+  return Cue(m_devices, time);
+}
+
+void Programmer::captureFromRig(DeviceSet devices) {
+  for (Device* d : devices.getDevices()) {
+    for (auto& p : d->getRawParameters()) {
+      LumiverseTypeUtils::copyByVal(m_rig->getDevice(d->getId())->getParam(p.first), m_devices[d->getId()]->getParam(p.first));
+    }
+  }
+
+  captured = captured.add(devices);
+}
+
 }

@@ -71,7 +71,13 @@ public:
   // Set fade time manually
   Cue(Rig* rig, float time);
 
-  // Creates a cue from a set of devices. Generally this gets called by Layers
+  /*!
+  \brief Creates a cue from a set of devices.
+  
+  Generally this gets called by Layers or by the Programmer when creating a cue.
+  \param devices Map of devices to store. 
+  \param time Default cue timing to use
+  */
   Cue(map<string, Device*> devices, float time);
 
   // Creates a cue with different up and down fades.
@@ -80,21 +86,29 @@ public:
   // Creates a cue with different up and down fades, and a different delay
   Cue(Rig* rig, float up, float down, float delay);
 
-  // Copy a cue. Woooooo.
+  /*!
+  \brief Copy a cue.
+  */
   Cue(Cue& other);
 
   // Destructor
   ~Cue();
 
-  // Overloading the = to do a deep copy of the cue data.
+  /*!
+  \brief Does a deep copy of the cue data.
+  */
   void operator=(const Cue& other);
 
   // Modifiers
 
-  // Updates the changes between the rig and this cue.
-  // Tracking happens at the cue list level
-  // Returns a mapping of device id -> changed parameter and old value.
-  // Note that if you have internal cues, this will try to track changes through to those keyframes.
+  /*!
+  \brief Updates the changes between the rig and this cue.
+  
+  Tracking happens at the cue list level
+  Returns a mapping of device id -> changed parameter and old value.
+  Note that if you have internal cues, this will try to track changes through to those keyframes.
+  \param rig Rig that we're looking at for the update
+  */
   changedParams update(Rig* rig);
 
   // Slightly different arguments, acts the same as update(Rig*)
