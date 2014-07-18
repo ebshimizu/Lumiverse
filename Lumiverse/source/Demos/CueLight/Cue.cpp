@@ -2,6 +2,28 @@
 
 namespace Lumiverse {
 
+Keyframe::Keyframe(JSONNode node) {
+  auto it = node.begin();
+  while (it != node.end()) {
+    string name = it->name();
+
+    if (name == "time")
+      t = it->as_float();
+    else if (name == "useCueTiming")
+      useCueTiming = it->as_bool();
+    else if (name == "val") {
+      if (it->type() == 's') {
+        val = nullptr;
+      }
+      else {
+        val = shared_ptr<LumiverseType>(LumiverseTypeUtils::loadFromJSON(*it));
+      }
+    }
+
+    it++;
+  }
+}
+
 Cue::Cue(Rig* rig) : m_upfade(3.0f), m_downfade(3.0f), m_delay(0) {
   update(rig);
 }
@@ -20,6 +42,46 @@ Cue::Cue(Rig* rig, float up, float down) : m_upfade(up), m_downfade(down), m_del
 
 Cue::Cue(Rig* rig, float up, float down, float delay) : m_upfade(up), m_downfade(down), m_delay(delay) {
   update(rig);
+}
+
+Cue::Cue(JSONNode node) {
+  auto it = node.begin();
+  while (it != node.end()) {
+    string name = it->name();
+
+    if (name == "upfade")
+      m_upfade = it->as_float();
+    else if (name == "downfade")
+      m_downfade = it->as_float();
+    else if (name == "delay")
+      m_delay = it->as_float();
+    else if (name == "cueData") {
+      // The big one. Need to load the giant cueData map.
+      // devices are the top level
+      auto device = it->begin();
+      while (device != it->end()) {
+        string deviceName = device->name();
+        
+        // Parameter level
+        auto param = device->begin();
+        while (param != device->end()) {
+          string paramName = param->name();
+
+          // Get the kayframes.
+          auto kf = param->begin();
+          while (kf != param->end()) {
+            m_cueData[deviceName][paramName].insert(Keyframe(*kf));
+            kf++;
+          }
+        
+          param++;
+        }
+        device++;
+      }
+    }
+
+    it++;
+  }
 }
 
 Cue::Cue(Cue& other) {

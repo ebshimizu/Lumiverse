@@ -18,6 +18,25 @@ namespace Lumiverse {
     m_prog = unique_ptr<Programmer>(new Programmer(m_rig));
   }
 
+  Playback::Playback(Rig* rig, string filename) : m_rig(rig) {
+    m_running = false;
+
+    auto devices = m_rig->getAllDevices().getDevices();
+    for (Device* d : devices) {
+      // Copy and reset to defaults
+      m_state[d->getId()] = new Device(*d);
+      m_state[d->getId()]->reset();
+    }
+
+    m_funcId = -1;
+
+    // Make a single programmer for this playback object
+    m_prog = unique_ptr<Programmer>(new Programmer(m_rig));
+
+    // Load up cue and layer data.
+    load(filename);
+  }
+
   Playback::~Playback() {
     stop();
   }
@@ -190,10 +209,6 @@ namespace Lumiverse {
   JSONNode Playback::toJSON() {
     JSONNode root;
 
-    JSONNode rig = m_rig->toJSON();
-    rig.set_name("rig");
-    root.push_back(rig);
-
     JSONNode pb;
     pb.set_name("playback");
 
@@ -217,6 +232,77 @@ namespace Lumiverse {
 
     root.push_back(pb);
     return root;
+  }
+
+  bool Playback::load(string filename) {
+    ifstream data;
+    data.open(filename, ios::in | ios::binary | ios::ate);
+
+    if (data.is_open()) {
+      streamoff size = data.tellg();
+      char* memblock = new char[(unsigned int)size];
+
+      data.seekg(0, ios::beg);
+
+      stringstream ss;
+      ss << "Loading " << size << " bytes from " << filename;
+      Logger::log(INFO, ss.str());
+
+      data.read(memblock, size);
+      data.close();
+
+      JSONNode n = libjson::parse(memblock);
+
+      return loadJSON(n);
+    }
+    else {
+      stringstream ss;
+      ss << "Unable to load playback data from " << filename;
+      Logger::log(ERR, ss.str());
+      return false;
+    }
+  }
+
+  bool Playback::loadJSON(JSONNode node) {
+    auto data = node.find("playback");
+    if (data == node.end()) {
+      Logger::log(ERR, "No Playback data found");
+      return false;
+    }
+    
+    auto cueLists = data->find("cueLists");
+    if (cueLists == data->end()) {
+      Logger::log(INFO, "No cue lists found for Playback.");
+    }
+    else {
+      auto it = cueLists->begin();
+      while (it != cueLists->end()) {
+        m_cueLists[it->name()] = shared_ptr<CueList>(new CueList(*it));
+
+        it++;
+      }
+    }
+
+    auto layers = data->find("layers");
+    if (layers == data->end()) {
+      Logger::log(INFO, "No layers found for Playback.");
+    }
+    else {
+      auto it = layers->begin();
+      while (it != layers->end()) {
+        m_layers[it->name()] = shared_ptr<Layer>(new Layer(*it));
+
+        auto cueList = it->find("cueList");
+        if (cueList != it->end()) {
+          // Got a cue list to assign
+          addCueListToLayer(cueList->as_string(), it->name());
+        }
+
+        it++;
+      }
+    }
+
+    return true;
   }
 
 }

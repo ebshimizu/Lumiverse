@@ -6,6 +6,37 @@ CueList::CueList(string name) : m_name(name)
 {
 }
 
+CueList::CueList(JSONNode node) {
+  auto current = node.find("currentCue");
+  if (current != node.end()) {
+    m_currentCue = current->as_float();
+  }
+  else {
+    Logger::log(WARN, "No current cue assigned to cue list.");
+  }
+
+  auto cues = node.find("cues");
+  if (cues != node.end()) {
+    // Load cues
+    auto it = cues->begin();
+    while (it != cues->end()) {
+      stringstream ss;
+      ss << it->name();
+
+      float cueNum;
+      ss >> cueNum;
+
+      m_cues[cueNum] = Cue(*it);
+
+      ++it;
+    }
+  }
+  else {
+    Logger::log(WARN, "No cues found in cue list.");
+  }
+
+  m_name = node.name();
+}
 
 CueList::~CueList()
 {

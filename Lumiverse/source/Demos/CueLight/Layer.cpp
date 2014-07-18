@@ -21,6 +21,37 @@ namespace Lumiverse {
     init(rig);
   }
 
+  Layer::Layer(JSONNode node) {
+    auto it = node.begin();
+    while (it != node.end()) {
+      string name = it->name();
+
+      if (name == "name")
+        m_name = it->as_string();
+      else if (name == "priority")
+        m_priority = it->as_int();
+      else if (name == "invertFilter")
+        m_invertFilter = it->as_bool();
+      else if (name == "active")
+        m_active = it->as_bool();
+      else if (name == "mode")
+        m_mode = StringToBlendMode[it->as_string()];
+      else if (name == "opacity")
+        m_opacity = it->as_float();
+      // Cue list must be matched up one level above.
+      else if (name == "state") {
+        auto device = it->begin();
+
+        while (device != it->end()) {
+          m_layerState[device->name()] = new Device(device->name(), *device);
+          device++;
+        }
+      }
+
+      it++;
+    }
+  }
+
   void Layer::init(Rig* rig) {
     const set<Device*> devices = rig->getAllDevices().getDevices();
     for (auto d : devices) {

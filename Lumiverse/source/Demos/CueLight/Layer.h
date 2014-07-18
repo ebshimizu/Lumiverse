@@ -63,6 +63,11 @@ namespace Lumiverse {
     */
     Layer(Rig* rig, string name, int priority, DeviceSet set);
 
+    /*!
+    \brief Constructs a Layer from a JSON node.
+    */
+    Layer(JSONNode node);
+
     /*! \brief Destroys a layer */
     ~Layer();
 

@@ -22,6 +22,9 @@ public:
   /*! \brief Make a new empty cue list */
   CueList(string name);
 
+  /*! \brief Load a CueList from a JSON node */
+  CueList(JSONNode node);
+
   // Delete the cue list
   ~CueList();
 

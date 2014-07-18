@@ -51,6 +51,9 @@ struct Keyframe {
   */
   Keyframe(float time, shared_ptr<Lumiverse::LumiverseType> v, bool uct) :
     t(time), val(v), useCueTiming(uct) { }
+
+  /*! \brief */
+  Keyframe(JSONNode node);
 };
 
 /*!
@@ -109,6 +112,9 @@ public:
 
   // Creates a cue with different up and down fades, and a different delay
   Cue(Rig* rig, float up, float down, float delay);
+
+  /*! \brief Creates a cue from a JSON node. */
+  Cue(JSONNode node);
 
   /*!
   \brief Copy a cue.

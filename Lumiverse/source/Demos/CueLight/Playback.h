@@ -35,6 +35,15 @@ namespace Lumiverse {
     */
     Playback(Rig* rig);
 
+    /*!
+    \brief Loads a playback object from a file.
+
+    Must specify a rig to associate with the playback object.
+    \param rig Rig that will run the cues in. If there's a mis-match, some weird stuff will happen.
+    \param filename File to load the playback from.
+    */
+    Playback(Rig* rig, string filename);
+
     // Changes to make to playback: Playback must now maintain a list of layers
     // Layers are update in the playback update loop with layer->update()
     // Each layer now takes over the cue playback controls
@@ -157,6 +166,9 @@ namespace Lumiverse {
     */
     JSONNode toJSON();
 
+    /*! \brief Returns a pointer to the rig. */
+    Rig* getRig() { return m_rig; }
+
   private:
     /*! \brief Map of layer names to layers. */
     map<string, shared_ptr<Layer> > m_layers;
@@ -187,6 +199,12 @@ namespace Lumiverse {
 
     /*! \brief Programmer object owned by the Playback */
     unique_ptr<Programmer> m_prog;
+
+    /*! \brief Load Playback data from a file. */
+    bool load(string filename);
+
+    /*! \brief Loads data from a JSON object */
+    bool loadJSON(JSONNode node);
   };
 }
 #endif
