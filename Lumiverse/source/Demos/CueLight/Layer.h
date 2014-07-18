@@ -9,24 +9,25 @@
 
 #include <memory>
 #include <chrono>
+#include <unordered_map>
 
 namespace Lumiverse {
-  // Data that tracks the progress of a cue and stores the data used in the cue transition.
+  /*! \brief Data that tracks the progress of a cue and stores the data used in the cue transition. */
   struct PlaybackData {
     chrono::time_point<chrono::high_resolution_clock> start;    // Cue start time. More accurate to take difference between now and start instead of summing.
     map<string, map<string, set<Keyframe> > > activeKeyframes;
   };
 
-  // TODO: Get cue updating into the Layer update function
-  // Update Playback class to handle layer blending.
-
-  // A Layer stores a state of the Rig.
-  // Layers can contain a CueList, a static state, or an Effect (effects to
-  // be added later). Layers maintain their current state, blend mode, and
-  // visibility settings. The Playback object will interpret these settings
-  // and perform the appropriate functions to flatten the layers.
-  // Layers work by creating duplicates of the devices in a Rig 
-  // and manipulating their state.
+  /*!
+  \brief A Layer stores a state of the Rig.
+  
+  Layers can contain a CueList, a static state, or an Effect (effects to
+  be added later). Layers maintain their current state, blend mode, and
+  visibility settings. The Playback object will interpret these settings
+  and perform the appropriate functions to flatten the layers.
+  Layers work by creating duplicates of the devices in a Rig 
+  and manipulating their state.
+  */
   class Layer
   {
   public:
@@ -209,6 +210,9 @@ namespace Lumiverse {
     */
     void blend(map<string, Device*> currentState);
 
+    /*! \brief Returns the JSON representation of a Layer. */
+    JSONNode toJSON();
+
   private:
     /*!
     \brief Holds the information on the current state of the layer.
@@ -279,6 +283,22 @@ namespace Lumiverse {
     vector<PlaybackData> m_queuedPlayback;
 
     mutex m_queue;
+  };
+
+  /*! \brief Enum translation to string for JSON output */
+  static unordered_map<Layer::BlendMode, string> BlendModeToString {
+      { Layer::BLEND_OPAQUE, "BLEND_OPAQUE" },
+      { Layer::NULL_DEFAULT, "NULL_DEFAULT" },
+      { Layer::NULL_INTENSITY, "NULL_INTENSITY" },
+      { Layer::SELECTED_ONLY, "SELECTED_ONLY" }
+  };
+
+  /*! \brief String translation back to Enum for data load */
+  static unordered_map<string, Layer::BlendMode> StringToBlendMode {
+      { "BLEND_OPAQUE", Layer::BLEND_OPAQUE },
+      { "NULL_DEFAULT", Layer::NULL_DEFAULT },
+      { "NULL_INTENSITY", Layer::NULL_INTENSITY },
+      { "SELECTED_ONLY", Layer::SELECTED_ONLY }
   };
 
   // Comparison op overloads

@@ -184,7 +184,7 @@ namespace Lumiverse {
         Cue* nextCue = m_cueList->getNextCue(num);
         if (nextCue == nullptr) {
           // If there is no next cue, we stick to the one that does exist.
-          goToCue(num, 0);
+          goToCue(num, 0.01f);
           return;
         }
 
@@ -253,6 +253,8 @@ namespace Lumiverse {
 
       while (pb != m_playbackData.end()) {
         float cueTime = chrono::duration_cast<chrono::milliseconds>(updateStart - pb->start).count() / 1000.0f;
+        // clamp cueTime at 0
+        cueTime = (cueTime < 0) ? 0 : cueTime;
 
         auto devices = pb->activeKeyframes.begin();
 
@@ -436,6 +438,44 @@ namespace Lumiverse {
     }
 
     return data;
+  }
+
+  JSONNode Layer::toJSON() {
+    JSONNode layer;
+    layer.set_name(m_name);
+
+    layer.push_back(JSONNode("name", m_name));
+    layer.push_back(JSONNode("priority", m_priority));
+    layer.push_back(JSONNode("invertFilter", m_invertFilter));
+    layer.push_back(JSONNode("active", m_active));
+    layer.push_back(JSONNode("mode", BlendModeToString[m_mode]));
+    layer.push_back(JSONNode("opacity", m_opacity));
+    
+    if (hasCueList()) {
+      layer.push_back(JSONNode("cueList", m_cueList->getName()));
+    }
+    else {
+      layer.push_back(JSONNode("cueList", "null"));
+    }
+
+    // Copy state
+    JSONNode layerState;
+    layerState.set_name("state");
+    for (const auto& kvp : m_layerState) {
+      layerState.push_back(kvp.second->toJSON());
+    }
+
+    layer.push_back(layerState);
+
+    // Parameter filter, list of IDs really
+    JSONNode paramFilter;
+    paramFilter.set_name("paramFilter");
+    for (const auto& id : m_selectedDevices.getIds()) {
+      paramFilter.push_back(JSONNode(id, id));
+    }
+    layer.push_back(paramFilter.as_array());
+
+    return layer;
   }
 
 }

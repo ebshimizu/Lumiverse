@@ -257,4 +257,54 @@ void Cue::updateParams(Device* d, map<string, shared_ptr<Lumiverse::LumiverseTyp
   }
 }
 
+JSONNode Cue::toJSON() {
+  JSONNode cue;
+  cue.push_back(JSONNode("upfade", m_upfade));
+  cue.push_back(JSONNode("downfade", m_downfade));
+  cue.push_back(JSONNode("delay", m_delay));
+
+  JSONNode cueData;
+
+  // Get the actual data.
+  for (auto& id : m_cueData) {
+    // Device
+    JSONNode deviceData;
+    deviceData.set_name(id.first);
+    
+    for (auto& param : id.second) {
+      // Parameter
+      JSONNode paramData;
+      paramData.set_name(param.first);
+
+      for (auto& keyframe : param.second) {
+        // Keyframes
+        JSONNode kf;
+        stringstream ss;
+        ss << keyframe.t;
+
+        kf.set_name(ss.str());
+        kf.push_back(JSONNode("time", keyframe.t));
+
+        if (keyframe.val != nullptr) {
+          kf.push_back(keyframe.val->toJSON("val"));
+        }
+        else {
+          kf.push_back(JSONNode("val", "null"));
+        }
+        kf.push_back(JSONNode("useCueTiming", keyframe.useCueTiming));
+
+        paramData.push_back(kf);
+      }
+
+      deviceData.push_back(paramData);
+    }
+    cueData.push_back(deviceData);
+  }
+
+  cueData.set_name("cueData");
+  cue.push_back(cueData);
+
+  return cue;
+}
+
 }

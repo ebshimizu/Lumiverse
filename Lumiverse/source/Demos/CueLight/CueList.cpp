@@ -2,7 +2,7 @@
 
 namespace Lumiverse {
 
-CueList::CueList()
+CueList::CueList(string name) : m_name(name)
 {
 }
 
@@ -119,6 +119,27 @@ float CueList::getCueNumAtIndex(int index) {
   }
   
   return it->first;
+}
+
+JSONNode CueList::toJSON() {
+  JSONNode list;
+  list.set_name(m_name);
+  list.push_back(JSONNode("currentCue", m_currentCue));
+
+  JSONNode cues;
+  cues.set_name("cues");
+  for (auto& kvp : m_cues) {
+    stringstream ss;
+    ss << kvp.first;
+
+    JSONNode cue = kvp.second.toJSON();
+    cue.set_name(ss.str());
+    
+    cues.push_back(cue);
+  }
+
+  list.push_back(cues);
+  return list;
 }
 
 }

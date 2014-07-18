@@ -117,8 +117,17 @@ namespace Lumiverse {
     }
   }
 
-  void Playback::addCueList(string id, shared_ptr<CueList> cueList) {
-    m_cueLists[id] = cueList;
+  bool Playback::addCueList(shared_ptr<CueList> cueList) {
+    if (m_cueLists.count(cueList->getName()) == 0) {
+      m_cueLists[cueList->getName()] = cueList;
+      return true;
+    }
+    else {
+      stringstream ss;
+      ss << "Playback already has a cue list named " << cueList->getName();
+      Logger::log(ERR, ss.str());
+      return false;
+    }
   }
 
   shared_ptr<CueList> Playback::getCueList(string id) {
@@ -161,6 +170,53 @@ namespace Lumiverse {
     if (m_funcId > 0) {
       m_rig->removeFunction(m_funcId);
     }
+  }
+
+  bool Playback::save(string filename, bool overwrite) {
+    // Test if the file already exists.
+    ifstream ifile(filename);
+    if (ifile.is_open() && !overwrite) {
+      return false;
+    }
+    ifile.close();
+
+    ofstream pbFile;
+    pbFile.open(filename, ios::out | ios::trunc);
+    pbFile << toJSON().write_formatted();
+
+    return true;
+  }
+
+  JSONNode Playback::toJSON() {
+    JSONNode root;
+
+    JSONNode rig = m_rig->toJSON();
+    rig.set_name("rig");
+    root.push_back(rig);
+
+    JSONNode pb;
+    pb.set_name("playback");
+
+    // Cue Lists first.
+    JSONNode lists;
+    lists.set_name("cueLists");
+
+    for (auto& kvp : m_cueLists) {
+      lists.push_back(kvp.second->toJSON());
+    }
+    pb.push_back(lists);
+
+    // Layers next
+    JSONNode layers;
+    layers.set_name("layers");
+
+    for (auto& kvp : m_layers) {
+      layers.push_back(kvp.second->toJSON());
+    }
+    pb.push_back(layers);
+
+    root.push_back(pb);
+    return root;
   }
 
 }

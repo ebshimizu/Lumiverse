@@ -19,8 +19,8 @@ namespace Lumiverse {
 class CueList
 {
 public:
-  // Make a new empty cue list
-  CueList();
+  /*! \brief Make a new empty cue list */
+  CueList(string name);
 
   // Delete the cue list
   ~CueList();
@@ -84,12 +84,27 @@ public:
   // For those who need to access a cue by indexing into an array
   // we've got you covered.
   float getCueNumAtIndex(int index);
+
+  /*! \brief Sets the name of the cue list. */
+  void setName(string name) { m_name = name; }
+
+  /*! \brief Gets the name of the cue list. */
+  string getName() { return m_name; }
+
+  /*!
+  \brief Returns the JSON representation of the cue list.
+  */
+  JSONNode toJSON();
+
 private:
   // List of cues. Cue numbers can be floats.
   map<float, Cue> m_cues;
 
   // The last cue executed in the cue list.
   float m_currentCue;
+
+  /*! \brief Name of the list */
+  string m_name;
 };
 
 }

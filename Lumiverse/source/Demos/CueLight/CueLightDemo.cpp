@@ -10,9 +10,9 @@ using namespace Lumiverse;
 
 int main(int argc, char**argv) {
   Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.json");
-  shared_ptr<CueList> list1(new CueList());
+  shared_ptr<CueList> list1(new CueList("list1"));
   shared_ptr<Layer> layer1(new Layer(&rig, "layer1", 1));
-  shared_ptr<CueList> list2(new CueList());
+  shared_ptr<CueList> list2(new CueList("list2"));
   shared_ptr<Layer> layer2(new Layer(&rig, "layer2", 2));
 
   layer1->setMode(Layer::BLEND_OPAQUE);
@@ -52,8 +52,8 @@ int main(int argc, char**argv) {
   list2->storeCue(1, cue3);
 
   // Add cue list to playback
-  pb.addCueList("list1", list1);
-  pb.addCueList("list2", list2);
+  pb.addCueList(list1);
+  pb.addCueList(list2);
 
   // Add layer to playback
   pb.addLayer(layer1);
@@ -62,6 +62,9 @@ int main(int argc, char**argv) {
   // Add cue list to layer
   pb.addCueListToLayer("list1", "layer1");
   pb.addCueListToLayer("list2", "layer2");
+
+  pb.save("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights_test.json", true);
+  return 1;
 
   layer1->goToCueAtTime(2, 3);
 

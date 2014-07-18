@@ -87,10 +87,10 @@ namespace Lumiverse {
     /*!
     \brief Adds a cue list to the Playback
 
-    \param id Cue list identifier. Should be unique to the Playback.
+    If a list already exists with the same name, this function will return false.
     \param cueList Cue list to add.
     */
-    void addCueList(string id, shared_ptr<CueList> cueList);
+    bool addCueList(shared_ptr<CueList> cueList);
 
     /*!
     \brief Retrieves a cue list from the Playback
@@ -134,6 +134,28 @@ namespace Lumiverse {
 
     /*! \brief Gets a reference to the programmer object stored by the playback */
     const unique_ptr<Programmer>& getProgrammer() { return m_prog; }
+
+    /*!
+    \brief Saves a JSON file containing all information stored by the playback,
+    including the Rig.
+
+    File will contain the Rig and everything contained in this playback file.
+    Loading of this output file should be done by Playback::load()
+    \param filename Path to file
+    \param overwrite If a file with the specified name already exists, that file
+    will be overwritten if overwrite is set to true. Defaults to false.
+    \return True on success, false on failure.
+    */
+    bool save(string filename, bool overwrite = false);
+
+    /*!
+    \brief Returns the JSON representation of this playback object.
+
+    Some things don't need to be saved since they'll be reconstructed on load.
+    The state of the playback and the programmer will be constructed on load.
+    \return JSONNode containing all Playback information (includes the Rig)
+    */
+    JSONNode toJSON();
 
   private:
     /*! \brief Map of layer names to layers. */

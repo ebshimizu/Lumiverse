@@ -194,6 +194,9 @@ public:
   // Returns the cue data for a device's parameter
   set<Keyframe>& getParamData(string deviceId, string param) { return m_cueData[deviceId][param]; }
 
+  /*! \brief Returns the JSON representation of the cue. */
+  JSONNode toJSON();
+
 private:
   // Upfade time
   float m_upfade;
@@ -204,9 +207,12 @@ private:
   // Delay before doing any fades, default timing.
   float m_delay;
 
-  // Data for this particular cue.
-  // Stored in a map from ID -> parameter -> set of keyframes in ascending order (t=0 first)
-  // It's pretty much the device without the metadata.
+  /*!
+  \brief Data for this particular cue.
+  
+  Stored in a map from ID -> parameter -> set of keyframes in ascending order (t=0 first)
+  It's pretty much the device without the metadata.
+  */
   map<string, map<string, set<Keyframe> > > m_cueData;
 
   // Gets the parameters for the device and returns them in a map
