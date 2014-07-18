@@ -1,5 +1,5 @@
-/*! \file DMXPatch.h
-* \brief Implementation of a patch for a DMX system.
+/*! \file ArnoldPatch.h
+* \brief Implementation of a patch for Arnold.
 */
 #ifndef _ArnoldPATCH_H_
 #define _ArnoldPATCH_H_
@@ -29,8 +29,7 @@ namespace Lumiverse {
       : rerender_req(true), light(NULL) { }
       ArnoldLightRecord(AtNode *node)
       : rerender_req(true), light(node) { }
-        
-      // TODO: re-render the scene if position changed.
+      
       bool rerender_req;
       AtNode *light;
   };
@@ -103,7 +102,7 @@ namespace Lumiverse {
       
     void interruptRender();
       
-    void onDeviceChanged(std::string deviceName);
+    void onDeviceChanged(Device *d);
 
   private:
 

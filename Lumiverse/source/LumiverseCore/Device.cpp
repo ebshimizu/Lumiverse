@@ -46,6 +46,10 @@ bool Device::setParam(string param, LumiverseType* val) {
   }
 
   m_parameters[param] = val;
+
+  // callback
+  onParameterChanged();
+    
   return ret;
 }
 
@@ -59,6 +63,10 @@ bool Device::setParam(string param, float val) {
   }
 
   *((LumiverseFloat *)m_parameters[param]) = val;
+   
+  // callback
+  onParameterChanged();
+    
   return ret;
 }
 
@@ -74,6 +82,9 @@ bool Device::setParam(string param, string val, float val2) {
     data->setTweak(val2);
   }
 
+  // callback
+  onParameterChanged();
+    
   return true;
 }
 
@@ -111,6 +122,10 @@ bool Device::setMetadata(string key, string val) {
   }
 
   m_metadata[key] = val;
+    
+  // callback
+  onMetadataChanged();
+    
   return ret;
 }
 
@@ -118,10 +133,16 @@ void Device::clearMetadataValues() {
   for (auto& kv : m_metadata) {
     kv.second = "";
   }
+    
+  // callback
+  onMetadataChanged();
 }
 
 void Device::clearAllMetadata() {
   m_metadata.clear();
+    
+  // callback
+  onMetadataChanged();
 }
 
 unsigned int Device::numMetadataKeys() {
@@ -141,6 +162,10 @@ void Device::reset() {
   for (auto p : m_parameters) {
     p.second->reset();
   }
+    
+  // callback
+  onParameterChanged();
+  onMetadataChanged();
 }
 
 string Device::toString() {
@@ -172,6 +197,14 @@ JSONNode Device::toJSON() {
   return root;
 }
 
+void Device::addParameterChangedCallback(DeviceCallbackFunction func) {
+    m_onParameterChangedFunctions.push_back(func);
+}
+
+void Device::addMetadataChangedCallback(DeviceCallbackFunction func) {
+    m_onMetadataChangedFunctions.push_back(func);
+}
+    
 JSONNode Device::parametersToJSON() {
   JSONNode params;
   params.set_name("parameters");
@@ -323,4 +356,17 @@ void Device::loadParams(const JSONNode data) {
     ++i;
   }
 }
+    
+void Device::onParameterChanged() {
+    for (DeviceCallbackFunction paramCallback : m_onParameterChangedFunctions) {
+        paramCallback(this);
+    }
+}
+    
+void Device::onMetadataChanged(){
+    for (DeviceCallbackFunction metaCallback : m_onMetadataChangedFunctions) {
+        metaCallback(this);
+    }
+}
+    
 }

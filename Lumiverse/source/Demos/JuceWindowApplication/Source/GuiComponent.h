@@ -62,6 +62,7 @@ private:
     ScopedPointer<Label> m_intensity_label;
     ScopedPointer<Slider> m_intensity_slider;
     ScopedPointer<Button> m_abort_button;
+    ScopedPointer<LookAndFeel> m_lookandfeel;
     
     Image m_panel;
     float *m_color_buffer;
