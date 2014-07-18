@@ -19,6 +19,7 @@ int main(int argc, char**argv) {
   layer1->activate();
   layer2->activate();
   layer2->setOpacity(1);
+
   Playback pb(&rig);
   pb.attachToRig();
 
@@ -62,9 +63,6 @@ int main(int argc, char**argv) {
   // Add cue list to layer
   pb.addCueListToLayer("list1", "layer1");
   pb.addCueListToLayer("list2", "layer2");
-
-  pb.save("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights_test.json", true);
-  return 1;
 
   layer1->goToCueAtTime(2, 3);
 
