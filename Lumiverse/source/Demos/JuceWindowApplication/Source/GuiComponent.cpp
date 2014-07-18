@@ -32,6 +32,8 @@ GuiComponent::GuiComponent (float *buffer, Image::PixelFormat format,
 : m_panel(format, imageWidth, imageHeight, true), m_color_buffer(buffer),
 m_width(imageWidth), m_height(imageHeight), m_rig(rig)
 {
+    setLookAndFeel(m_lookandfeel = new juce::LookAndFeel_V3());
+    
     addAndMakeVisible (m_intensity_label = new Label ("new label",
                                           TRANS("Intensity")));
     m_intensity_label->setFont (Font (15.00f, Font::plain));
@@ -66,7 +68,7 @@ GuiComponent::~GuiComponent()
 
     m_intensity_label = nullptr;
     m_intensity_slider = nullptr;
-
+    m_lookandfeel = nullptr;
 
     //[Destructor]. You can add your own custom destruction code here..
     //[/Destructor]
@@ -77,7 +79,15 @@ void GuiComponent::paint (Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
-
+    Path outline;
+    outline.addRectangle (m_width, 0, m_width, m_height);
+    Colour baseColour = Colour::fromFloatRGBA(0.95, 0.95, 0.95, 1.f);
+    
+    g.setGradientFill (ColourGradient (baseColour, 0.0f, 0.0f,
+                                       baseColour.darker (0.2f), 0.0f, m_height,
+                                       false));
+    g.fillPath (outline);
+    
     if (m_color_buffer == NULL)
         return ;
     
@@ -123,7 +133,7 @@ void GuiComponent::sliderValueChanged (Slider* sliderThatWasMoved)
          */
         m_rig->getDevice("mylight")->setMetadata("intensity",
                         m_intensity_slider->getTextFromValue(m_intensity_slider->getValue()).toStdString());
-        ((ArnoldPatch*)m_rig->getSimulationPatch())->onDeviceChanged("mylight");
+        //((ArnoldPatch*)m_rig->getSimulationPatch())->onDeviceChanged("mylight");
     }
 
     //[UsersliderValueChanged_Post]

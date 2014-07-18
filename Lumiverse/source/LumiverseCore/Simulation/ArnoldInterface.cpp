@@ -9,11 +9,10 @@ void ArnoldInterface::loadArnoldParam(const JSONNode data) {
     ArnoldParam arnold_param;
     JSONNode::const_iterator i = data.begin();
     
-	// Two rounds. In the first round, initialize the size of output (window), so it's
-	// possible to allocate memory for each light.
 	while (i != data.end()) {
 		std::string nodeName = i->name();
         
+        // Two values for parameter mapping.
 		if (nodeName == "dimension") {
             JSONNode dimension = *i;
             arnold_param.dimension = dimension.as_int();
@@ -30,17 +29,18 @@ void ArnoldInterface::loadArnoldParam(const JSONNode data) {
     m_arnold_params[data.name()] = arnold_param;
 }
 
+// TODO: handle illegal formats
 template<size_t D, typename T>
 void ArnoldInterface::parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) const {
     T element;
     std::string value_spaceless = value;
     std::string pattern;
     
-    
+    // Removes spaces
     std::remove_if(value_spaceless.begin(), value_spaceless.end(),
                                                    [](char x){return std::isspace(x);});
-    //value_spaceless.erase(end_pos, value_spaceless.end());
     
+    // Reads two different types
     if (typeid(T) == typeid(int) || typeid(T) == typeid(bool)) {
         pattern = "%d";
     }
@@ -48,6 +48,7 @@ void ArnoldInterface::parseArnoldParameter(const std::string &value, ArnoldParam
         pattern = "%f";
     }
     
+    // Format: "v1, v2, ..."
     size_t offset = 0;
     for (size_t i = 0; i < D; i++) {
         sscanf(value_spaceless.c_str() + offset, pattern.c_str(), &element);
@@ -63,18 +64,19 @@ void ArnoldInterface::parseArnoldParameter(const std::string &value, ArnoldParam
 
 template<size_t D, typename T>
     void ArnoldInterface::setSingleParameter(AtNode *node, const std::string &paramName, const std::string &value,
-                                         union AiNodeSet<T> aiNodeSet) const {
+                                         union AiNodeSetter<T> aiNodeSetter) const {
     ArnoldParameterVector<D, T> paramVector;
     parseArnoldParameter<D, T>(value, paramVector);
     
+    // Calls APIs with different dimension.
     if (D == 1)
-        aiNodeSet.AiNodeSet1D(node, paramName.c_str(), paramVector[0]);
+        aiNodeSetter.AiNodeSetter1D(node, paramName.c_str(), paramVector[0]);
     else if (D == 2)
-        aiNodeSet.AiNodeSet2D(node, paramName.c_str(), paramVector[0], paramVector[1]);
+        aiNodeSetter.AiNodeSetter2D(node, paramName.c_str(), paramVector[0], paramVector[1]);
     else if (D == 3)
-        aiNodeSet.AiNodeSet3D(node, paramName.c_str(), paramVector[0], paramVector[1], paramVector[2]);
+        aiNodeSetter.AiNodeSetter3D(node, paramName.c_str(), paramVector[0], paramVector[1], paramVector[2]);
     else if (D == 4)
-        aiNodeSet.AiNodeSet4D(node, paramName.c_str(), paramVector[0], paramVector[1], paramVector[2], paramVector[3]);
+        aiNodeSetter.AiNodeSetter4D(node, paramName.c_str(), paramVector[0], paramVector[1], paramVector[2], paramVector[3]);
 }
 
 template<size_t D, typename T, class C>
@@ -84,6 +86,8 @@ void ArnoldInterface::setArrayParameter(AtNode *node, const std::string &paramNa
     ArnoldParameterVector<D, T> paramVector;
     std::vector<ArnoldParameterVector<D, T>> array;
     size_t offset = 0;
+    
+    // Cuts input with ;
     while (1) {
         parseArnoldParameter<D, T>(value.substr(offset), paramVector);
         array.push_back(paramVector);
@@ -98,6 +102,7 @@ void ArnoldInterface::setArrayParameter(AtNode *node, const std::string &paramNa
     
     AtArray *array_ptr = AiArray(array.size(), 1, AiType);
     
+    // Sets elements of the array
     for (size_t i = 0; i < array.size(); i++) {
         C element;
         T *ele_ptr = (T*)&element;
@@ -115,6 +120,7 @@ void ArnoldInterface::setArrayParameter(AtNode *node, const std::string &paramNa
 void ArnoldInterface::setArrayParameter(AtNode *light_ptr, const std::string &paramName, const std::string &value) {
     ArnoldParam param = m_arnold_params[paramName];
     
+    // Handles different function calls
     if (param.arnoldTypeName == "int") {
         setArrayParameter<1, int, int>(light_ptr, paramName, value, AiArraySetIntFunc, AI_TYPE_INT);
     }
@@ -147,6 +153,7 @@ void ArnoldInterface::setArrayParameter(AtNode *light_ptr, const std::string &pa
 void ArnoldInterface::setParameter(AtNode *light_ptr, const std::string &paramName, const std::string &value) {
     ArnoldParam param = m_arnold_params[paramName];
     
+    // Calls another function if the parameter type is "array"
     const AtNodeEntry *entry_ptr = AiNodeGetNodeEntry(light_ptr);
     const AtParamEntry *param_ptr = AiNodeEntryLookUpParameter(entry_ptr, paramName.c_str());
     if (AiParamGetType(param_ptr) == AI_TYPE_ARRAY) {
@@ -157,71 +164,61 @@ void ArnoldInterface::setParameter(AtNode *light_ptr, const std::string &paramNa
     switch (param.dimension) {
         case 1: {
             if (param.arnoldTypeName == "int") {
-                union AiNodeSet<int> aiNodeSet;
-                aiNodeSet.AiNodeSet1D = AiNodeSetInt;
-                setSingleParameter<1, int>(light_ptr, paramName, value, aiNodeSet);
+                union AiNodeSetter<int> AiNodeSetter;
+                AiNodeSetter.AiNodeSetter1D = AiNodeSetInt;
+                setSingleParameter<1, int>(light_ptr, paramName, value, AiNodeSetter);
             }
             else if (param.arnoldTypeName == "uint") {
-                union AiNodeSet<unsigned int> aiNodeSet;
-                aiNodeSet.AiNodeSet1D = AiNodeSetUInt;
-                setSingleParameter<1, unsigned int>(light_ptr, paramName, value, aiNodeSet);
-                
-                /*
-                ArnoldParameterVector<1, unsigned int> paramVector;
-                parseArnoldParameter<1, unsigned int>(value, paramVector);
-                
-                AiNodeSetUInt(light_ptr, paramName.c_str(), paramVector[0]);
-                 */
+                union AiNodeSetter<unsigned int> AiNodeSetter;
+                AiNodeSetter.AiNodeSetter1D = AiNodeSetUInt;
+                setSingleParameter<1, unsigned int>(light_ptr, paramName, value, AiNodeSetter);
             }
             else if (param.arnoldTypeName == "bool") {
-                union AiNodeSet<bool> aiNodeSet;
-                aiNodeSet.AiNodeSet1D = AiNodeSetBool;
-                setSingleParameter<1, bool>(light_ptr, paramName, value, aiNodeSet);
+                union AiNodeSetter<bool> AiNodeSetter;
+                AiNodeSetter.AiNodeSetter1D = AiNodeSetBool;
+                setSingleParameter<1, bool>(light_ptr, paramName, value, AiNodeSetter);
             }
             else if (param.arnoldTypeName == "float") {
-                union AiNodeSet<float> aiNodeSet;
-                aiNodeSet.AiNodeSet1D = AiNodeSetFlt;
-                setSingleParameter<1, float>(light_ptr, paramName, value, aiNodeSet);
+                union AiNodeSetter<float> AiNodeSetter;
+                AiNodeSetter.AiNodeSetter1D = AiNodeSetFlt;
+                setSingleParameter<1, float>(light_ptr, paramName, value, AiNodeSetter);
             }
         
             break;
         }
         case 2: {
             if (param.arnoldTypeName == "point2") {
-                ArnoldParameterVector<2, float> paramVector;
-                parseArnoldParameter<2, float>(value, paramVector);
-                
-                AiNodeSetPnt2(light_ptr, paramName.c_str(), paramVector[0], paramVector[1]);
+                union AiNodeSetter<float> AiNodeSetter;
+                AiNodeSetter.AiNodeSetter2D = AiNodeSetPnt2;
+                setSingleParameter<2, float>(light_ptr, paramName, value, AiNodeSetter);
             }
 
             break;
         }
         case 3: {
-            ArnoldParameterVector<3, float> paramVector;
-            parseArnoldParameter<3, float>(value, paramVector);
-            
+            union AiNodeSetter<float> AiNodeSetter;
+
             if (param.arnoldTypeName == "rgb") {
-                AiNodeSetRGB(light_ptr, paramName.c_str(),
-                             paramVector[0], paramVector[1], paramVector[2]);
+                AiNodeSetter.AiNodeSetter3D = AiNodeSetRGB;
+                setSingleParameter<3, float>(light_ptr, paramName, value, AiNodeSetter);
             }
             else if (param.arnoldTypeName == "vector") {
-                AiNodeSetVec(light_ptr, paramName.c_str(),
-                             paramVector[0], paramVector[1], paramVector[2]);
+                AiNodeSetter.AiNodeSetter3D = AiNodeSetVec;
+                setSingleParameter<3, float>(light_ptr, paramName, value, AiNodeSetter);
             }
             else if (param.arnoldTypeName == "point") {
-                AiNodeSetPnt(light_ptr, paramName.c_str(),
-                             paramVector[0], paramVector[1], paramVector[2]);
+                AiNodeSetter.AiNodeSetter3D = AiNodeSetPnt;
+                setSingleParameter<3, float>(light_ptr, paramName, value, AiNodeSetter);
             }
             
             break;
         }
         case 4: {
-            ArnoldParameterVector<4, float> paramVector;
-            parseArnoldParameter<4, float>(value, paramVector);
+            union AiNodeSetter<float> AiNodeSetter;
             
             if (param.arnoldTypeName == "rgba") {
-                AiNodeSetRGBA(light_ptr, paramName.c_str(),
-                             paramVector[0], paramVector[1], paramVector[2], paramVector[3]);
+                AiNodeSetter.AiNodeSetter4D = AiNodeSetRGBA;
+                setSingleParameter<4, float>(light_ptr, paramName, value, AiNodeSetter);
             }
 
             break;
@@ -232,15 +229,11 @@ void ArnoldInterface::setParameter(AtNode *light_ptr, const std::string &paramNa
 
 }
 
-/*!
-* \brief Initializes connections and other network settings for the patch.
-*
-* Call this AFTER all interfaces have been assigned. May need to call again
-* if interfaces change.
-*/
 void ArnoldInterface::init() {
+    // Starts a arnold session
     AiBegin();
     
+    // Doesn't read light node from the ass file
     AiASSLoad(m_ass_file.c_str(), AI_NODE_ALL & ~AI_NODE_LIGHT);
     AiLoadPlugins(m_plugin_dir.c_str());
     
@@ -248,35 +241,30 @@ void ArnoldInterface::init() {
     m_width = AiNodeGetInt(options, "xres");
     m_height = AiNodeGetInt(options, "yres");
     
+    // Set a driver to output result into a float buffer
     AtNode *driver = AiNode("driver_buffer");
     AiNodeSetStr(driver, "name", "buffer_driver");
     AiNodeSetInt(driver, "width", m_width);
     AiNodeSetInt(driver, "height", m_height);
-    
     AiNodeSetFlt(driver, "gamma", m_gamma);
     
+    // Assume we are using RGBA
     m_buffer = new float[m_width * m_height * 4];
 
     AiNodeSetPtr(driver, "buffer_pointer", m_buffer);
     
-    // TODO: better
+    // Register the driver to the arnold options
+    // TODO: more drivers
     AtArray *outputs_array = AiArrayAllocate(1, 1, AI_TYPE_STRING);
     AiArraySetStr(outputs_array, 0, "RGB RGB filter buffer_driver");
     AiNodeSetArray(options, "outputs", outputs_array);
 }
 
-/*!
-* \brief Closes connections to the interfaces.
-*/
 void ArnoldInterface::close() {
     AiEnd();
 }
 
-/*!
-* \brief Exports a JSONNode with the data in this patch
-*
-* \return JSONNode containing the DMXPatch object
-*/
+// TODO:
 JSONNode ArnoldInterface::toJSON() {
 	return JSONNode("test", 0);
 }

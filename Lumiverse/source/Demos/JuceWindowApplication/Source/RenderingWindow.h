@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "RenderingComponent.h"
 #include "GuiComponent.h"
 #include "../../../LumiverseCore/LumiverseCore.h"
 //[/Headers]

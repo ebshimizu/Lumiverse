@@ -122,6 +122,12 @@ bool ArnoldPatch::updateLight(set<Device *> devices) {
 			continue;
 		
         if (m_lights[d->getId()].rerender_req) {
+            if (m_lights[d->getId()].light == NULL) {
+                Device::DeviceCallbackFunction callback = std::bind(&ArnoldPatch::onDeviceChanged, this,
+                                                                    std::placeholders::_1);
+                d->addMetadataChangedCallback(callback);
+            }
+            
             rerender_rep = true;
             loadLight(d);
         }
@@ -142,15 +148,17 @@ void ArnoldPatch::interruptRender() {
             AiRenderInterrupt();
             Logger::log(INFO, "Aborted rendering to restart.");
         }
+        
+        // TODO : no such process error
         m_renderloop->join();
         m_renderloop = NULL;
     }
 }
 
-void ArnoldPatch::onDeviceChanged(std::string deviceName) {
+void ArnoldPatch::onDeviceChanged(Device *d) {
     // TODO : LOCK
-    if (m_lights.count(deviceName) > 0) {
-        m_lights[deviceName].rerender_req = true;
+    if (m_lights.count(d->getId()) > 0) {
+        m_lights[d->getId()].rerender_req = true;
     }
 }
     
@@ -163,8 +171,6 @@ void ArnoldPatch::onDeviceChanged(std::string deviceName) {
 // TODO: Relationship between Device and Light??
 // (Simulation light)
 void ArnoldPatch::update(set<Device *> devices) {
-    //AiBegin();
-    
 	bool render_req = updateLight(devices);
 
     if (!render_req) {

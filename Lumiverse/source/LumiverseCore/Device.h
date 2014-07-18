@@ -263,6 +263,33 @@ namespace Lumiverse {
     */
     const map<string, LumiverseType*>* getRawParameters() { return &m_parameters; }
       
+    /** Indicates the function signature for parameter and metadata callbacks.
+    Currently a device have to pass in "this" pointer. It seems to be other
+    way to access fields inside Device class. This typedef makes it easier to
+    change signature. */
+    typedef function<void(Device*)> DeviceCallbackFunction;
+    
+    /*!
+    * \brief Registers a callback function for parameter changed event.
+    *
+    * All registered functinos would be called when a parameter is changed
+    * by Device::setParam and Device::reset function.
+    * \param func The callback function.
+    * \sa addMetadataChangedCallback(DeviceCallbackFunction func)
+    */
+    void addParameterChangedCallback(DeviceCallbackFunction func);
+    
+    /*!
+    * \brief Registers a callback function for metadata changed event.
+    *
+    * All registered functinos would be called when a metadata is changed
+    * by Device::setMetadata, Device::clearMetadataValues, Device::clearAllMetadata,
+    * and Device::reset.
+    * \param func The callback function.
+    * \sa addParameterChangedCallback(DeviceCallbackFunction func)
+    */
+    void addMetadataChangedCallback(DeviceCallbackFunction func);
+      
   private:
     /*! \brief Sets the id for the device
     *
@@ -307,6 +334,18 @@ namespace Lumiverse {
     JSONNode metadataToJSON();
 
     /*!
+    * \brief Calls all the registered callbacks of parameter changed iterately.
+    * \sa onMetadataChanged()
+    */
+    void onParameterChanged();
+      
+    /*!
+    * \brief Calls all the registered callbacks of metadata changed iterately.
+    * \sa onParameterChanged()
+    */
+    void onMetadataChanged();
+      
+    /*!
     * \brief Unique identifier for the device.
     *
     * Note that while you can use any characters you want in this, you really shouldn't
@@ -345,6 +384,24 @@ namespace Lumiverse {
     * assuming it can be serialized to a string.
     */
     map<string, string> m_metadata;
+    
+    /*!
+    * \brief List of functions to run when a parameter is changed.
+    *
+    * Currently a device have to pass in "this" pointer. It seems to be other
+    * way to access fields inside Device class. This function would inform
+    * instances which need to respond to the update.
+    */
+    vector<DeviceCallbackFunction> m_onParameterChangedFunctions;
+      
+    /*!
+    * \brief List of functions to run when a metadata is changed.
+    *
+    * Currently a device have to pass in "this" pointer. It seems to be other
+    * way to access fields inside Device class. This function would inform
+    * instances which need to respond to the update.
+    */
+    vector<DeviceCallbackFunction> m_onMetadataChangedFunctions;
   };
 }
 

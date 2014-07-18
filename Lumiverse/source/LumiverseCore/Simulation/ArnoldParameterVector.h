@@ -1,5 +1,5 @@
 /*! \file ArnoldParameterVector.h
-* \brief Stores a floating posize_t value in Lumiverse
+* \brief Stores a vector used by ArnoldPatch
 */
 #ifndef _ArnoldParameterVECTOR_H_
 #define _ArnoldParameterVECTOR_H_
@@ -10,10 +10,7 @@
 #include <sstream>
 
 namespace Lumiverse {
-// TODO: better big number
-#define BIG_NUMBER 1e30
-    
-	  /*!
+  /*!
   * \brief Defines a float in Lumiverse
   *
   * This class allows limits to be set on the minimum and maximum values for
