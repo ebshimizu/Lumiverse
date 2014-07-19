@@ -197,14 +197,32 @@ JSONNode Device::toJSON() {
   return root;
 }
 
-void Device::addParameterChangedCallback(DeviceCallbackFunction func) {
-    m_onParameterChangedFunctions.push_back(func);
+int Device::addParameterChangedCallback(DeviceCallbackFunction func) {
+    size_t id = m_onParameterChangedFunctions.size();
+    m_onParameterChangedFunctions[id] = func;
+
+    return id;
 }
 
-void Device::addMetadataChangedCallback(DeviceCallbackFunction func) {
-    m_onMetadataChangedFunctions.push_back(func);
+int Device::addMetadataChangedCallback(DeviceCallbackFunction func) {
+    size_t id = m_onMetadataChangedFunctions.size();
+    m_onMetadataChangedFunctions[id] = func;
+
+    return id;
 }
     
+void Device::deleteParameterChangedCallback(int id) {
+    if (m_onParameterChangedFunctions.count(id) > 0) {
+	m_onParameterChangedFunctions.erase(id);
+    }
+}
+
+void Device::deleteMetadataChangedCallback(int id) {
+    if (m_onMetadataChangedFunctions.count(id) > 0) {
+	m_onMetadataChangedFunctions.erase(id);
+    }
+}
+
 JSONNode Device::parametersToJSON() {
   JSONNode params;
   params.set_name("parameters");

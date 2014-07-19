@@ -275,9 +275,10 @@ namespace Lumiverse {
     * All registered functinos would be called when a parameter is changed
     * by Device::setParam and Device::reset function.
     * \param func The callback function.
+    * \return The int id for the registered function.
     * \sa addMetadataChangedCallback(DeviceCallbackFunction func)
     */
-    void addParameterChangedCallback(DeviceCallbackFunction func);
+    int addParameterChangedCallback(DeviceCallbackFunction func);
     
     /*!
     * \brief Registers a callback function for metadata changed event.
@@ -286,9 +287,26 @@ namespace Lumiverse {
     * by Device::setMetadata, Device::clearMetadataValues, Device::clearAllMetadata,
     * and Device::reset.
     * \param func The callback function.
+    * \return The int id for the registered function.
     * \sa addParameterChangedCallback(DeviceCallbackFunction func)
     */
-    void addMetadataChangedCallback(DeviceCallbackFunction func);
+    int addMetadataChangedCallback(DeviceCallbackFunction func);
+
+    /*!
+    * \brief Deletes a registered callback for parameter change
+    *
+    * \param id The id returned when the callback is registered
+    * \sa addParameterChangedCallback(DeviceCallbackFunction func)
+    */
+    void deleteParameterChangedCallback(int id);
+
+    /*!
+    * \brief Deletes a registered callback for metadata change
+    *
+    * \param id The id returned when the callback is registered
+    * \sa addMetadataChangedCallback(DeviceCallbackFunction func)
+    */
+    void deleteMetadataChangedCallback(int id);
       
   private:
     /*! \brief Sets the id for the device
@@ -386,22 +404,22 @@ namespace Lumiverse {
     map<string, string> m_metadata;
     
     /*!
-    * \brief List of functions to run when a parameter is changed.
+    * \brief List of functions to run when a parameter is changed. Each function has an int id.
     *
     * Currently a device have to pass in "this" pointer. It seems to be other
     * way to access fields inside Device class. This function would inform
     * instances which need to respond to the update.
     */
-    vector<DeviceCallbackFunction> m_onParameterChangedFunctions;
+    map<int, DeviceCallbackFunction> m_onParameterChangedFunctions;
       
     /*!
-    * \brief List of functions to run when a metadata is changed.
+    * \brief List of functions to run when a metadata is changed. Each function has an int id.
     *
     * Currently a device have to pass in "this" pointer. It seems to be other
     * way to access fields inside Device class. This function would inform
     * instances which need to respond to the update.
     */
-    vector<DeviceCallbackFunction> m_onMetadataChangedFunctions;
+    map<int, DeviceCallbackFunction> m_onMetadataChangedFunctions;
   };
 }
 
