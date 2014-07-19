@@ -1,233 +1,308 @@
 #include "Playback.h"
 
-Playback::Playback(Rig* rig, unsigned int refreshRate) : m_rig(rig) {
-  setRefreshRate(refreshRate);
-  m_running = false;
-}
-
-Playback::~Playback() {
-  stop();
-}
-
-void Playback::start() {
-  m_running = true;
-  m_updateLoop = unique_ptr<thread>(new thread(&Playback::update, this));
-  Logger::log(INFO, "Started playback update loop");
-}
-
-void Playback::stop() {
-  if (m_running) {
+namespace Lumiverse {
+  Playback::Playback(Rig* rig) : m_rig(rig) {
+    // setRefreshRate(refreshRate);
     m_running = false;
-    m_updateLoop->join();
-    Logger::log(INFO, "Stopped playback update loop");
-  }
-}
 
-void Playback::goToCue(Cue& cue, float time) {
-  Cue tempCue(m_rig, time);
-
-  goToCue(tempCue, cue, true);
-}
-
-void Playback::goToCue(Cue& first, Cue& next, bool assert) {
-  PlaybackData pbData;
-
-  // Running a cue is as simple as running the keyframes in it
-  // Of course, simple is relative as we have to populate the list of active
-  // keyframes with keyframes that actually do a change to the device during the cue.
-  pbData.activeKeyframes = diff(first, next, assert);
-
-  pbData.start = chrono::high_resolution_clock::now();
-
-  stringstream ss;
-  ss << "Added cue to playback at " << chrono::duration_cast<chrono::seconds>(pbData.start.time_since_epoch()).count() << "\n";
-  Logger::log(LDEBUG, ss.str());
-
-  m_playbackData.push_back(pbData);
-}
-
-void Playback::goToCue(CueList& list, float first, float next, bool assert) {
-  Cue* firstCue = list.getCue(first);
-  Cue* nextCue = list.getCue(next);
-
-  if (firstCue != nullptr && nextCue != nullptr) {
-    list.setCurrentCue(next);
-    goToCue(*firstCue, *nextCue, assert);
-  }
-  else {
-    stringstream ss;
-    ss << "Cannot go from cue " << first << " to cue " << next;
-    Logger::log(ERR, ss.str());
-  }
-}
-
-void Playback::goToNextCue(CueList& list, float num, bool assert) {
-  Cue* firstCue = list.getCue(num);
-  Cue* nextCue = list.getNextCue(num);
-
-  if (firstCue != nullptr && nextCue != nullptr) {
-    list.setCurrentCue(list.getNextCueNum(num));
-    goToCue(*firstCue, *nextCue, assert);
-  }
-  else {
-    stringstream ss;
-    ss << "Cannot to next cue from cue " << num;
-    Logger::log(ERR, ss.str());
-  }
-}
-
-void Playback::goToNextCue(CueList& list, bool assert) {
-  goToNextCue(list, list.getCurrentCue(), assert);
-}
-
-void Playback::goToList(CueList& list, bool assert) {
-  goToNextCue(list, list.getFirstCueNum(), assert);
-}
-
-void Playback::setRefreshRate(unsigned int rate) {
-  m_refreshRate = rate;
-  m_loopTime = 1.0f / (float)m_refreshRate;
-}
-
-void Playback::update() {
-  while (m_running) {
-    // Gets start time
-    auto start = chrono::high_resolution_clock::now();
-
-    // Update playback data and set rig state if there is anything currently active
-    // Note that in the event of conflicts this would be a Latest Takes Precedence system
-    if (m_playbackData.size() > 0) {
-      auto pb = m_playbackData.begin();
-
-      while (pb != m_playbackData.end()) {
-        float cueTime = chrono::duration_cast<chrono::milliseconds>(start - pb->start).count() / 1000.0f;
-
-        auto devices = pb->activeKeyframes.begin();
-
-        // Plan is to go through each active parameter, find which keyframes we should interpolate,
-        // and do the interpolation. For keyframes at the end, we should clamp to the final value.
-        // Keyframes are organized by device->parameter->keyframes
-        while (devices != pb->activeKeyframes.end()) {
-          auto parameters = devices->second.begin();
-          while (parameters != devices->second.end()) {
-            Keyframe first;
-            Keyframe next;
-            bool nextFound = false;
-            // Find the keyframes that contain cueTime in their interval (first <= cueTime < next)
-            for (auto keyframe = parameters->second.begin(); keyframe != parameters->second.end(); ) {
-              // We know that keyframes are ordered in ascending order, so the first one that's greater
-              // than cueTime is the "next" keyframe.
-              if (keyframe->t > cueTime) {
-                next = *keyframe;
-                first = *prev(keyframe);
-                nextFound = true;
-                break;
-              }
-
-              ++keyframe;
-            }
-
-            // If we didn't find a next keyframe, we ended up at the end. Time to clamp
-            if (!nextFound) {
-              LumiverseTypeUtils::copyByVal(prev(parameters->second.end())->val.get(),
-                m_rig->getDevice(devices->first)->getParam(parameters->first));
-
-              pb->activeKeyframes[devices->first].erase(parameters++);
-            }
-            else {
-              // Otherwise, do a lerp between keyframes.
-              // First need to convert the cueTime to a position from 0-1
-              float t = (cueTime - first.t) / (next.t - first.t);
-              shared_ptr<Lumiverse::LumiverseType> lerped = LumiverseTypeUtils::lerp(first.val.get(), next.val.get(), t);
-              LumiverseTypeUtils::copyByVal(lerped.get(), m_rig->getDevice(devices->first)->getParam(parameters->first));
-              ++parameters;
-            }
-          }
-
-          if (pb->activeKeyframes[devices->first].size() == 0) {
-            // Delete the device entry if no more things are active
-            pb->activeKeyframes.erase(devices++);
-          }
-          else {
-            devices++;
-          }
-        }
-
-        // Delete the entire playback object if everything is done
-        if (pb->activeKeyframes.size() == 0) {
-          m_playbackData.erase(pb++);
-          // Apparently when m_playbackData is 0 at the end of this weird stuff happens.
-          if (m_playbackData.size() == 0)
-            break;
-        }
-        else {
-          ++pb;
-        }
-      }
+    auto devices = m_rig->getAllDevices().getDevices();
+    for (Device* d : devices) {
+      // Copy and reset to defaults
+      m_state[d->getId()] = new Device(*d);
+      m_state[d->getId()]->reset();
     }
 
-    // Sleep a bit depending on how long the update took.
-    auto end = chrono::high_resolution_clock::now();
-    auto elapsed = end - start;
-    float elapsedSec = chrono::duration_cast<chrono::milliseconds>(elapsed).count() / 1000.0f;
-    
-    if (elapsedSec < m_loopTime) {
-      unsigned int ms = (unsigned int)(1000 * (m_loopTime - elapsedSec));
-      this_thread::sleep_for(chrono::milliseconds(ms));
+    m_funcId = -1;
+
+    // Make a single programmer for this playback object
+    m_prog = unique_ptr<Programmer>(new Programmer(m_rig));
+  }
+
+  Playback::Playback(Rig* rig, string filename) : m_rig(rig) {
+    m_running = false;
+
+    auto devices = m_rig->getAllDevices().getDevices();
+    for (Device* d : devices) {
+      // Copy and reset to defaults
+      m_state[d->getId()] = new Device(*d);
+      m_state[d->getId()]->reset();
+    }
+
+    m_funcId = -1;
+
+    // Make a single programmer for this playback object
+    m_prog = unique_ptr<Programmer>(new Programmer(m_rig));
+
+    // Load up cue and layer data.
+    load(filename);
+  }
+
+  Playback::~Playback() {
+    stop();
+  }
+
+  void Playback::start() {
+    m_running = true;
+    Logger::log(INFO, "Started playback update loop");
+  }
+
+  void Playback::stop() {
+    if (m_running) {
+      m_running = false;
+      Logger::log(INFO, "Stopped playback update loop");
+    }
+  }
+
+  //void Playback::setRefreshRate(unsigned int rate) {
+  //  m_refreshRate = rate;
+  //  m_loopTime = 1.0f / (float)m_refreshRate;
+  //}
+
+  void Playback::update() {
+    if (m_running) {
+      // Gets start time
+      auto start = chrono::high_resolution_clock::now();
+
+      // Update layers
+      for (auto& kvp : m_layers) {
+        kvp.second->update(start);
+      }
+
+      // Flatten layers
+      // Reset state to defaults to start.
+      for (auto& kvp : m_state) {
+        kvp.second->reset();
+      }
+
+      // Sort active layers
+      set<shared_ptr<Layer>, function<bool(shared_ptr<Layer>, shared_ptr<Layer>)> >
+        sortedLayers([](shared_ptr<Layer> lhs, shared_ptr<Layer> rhs) { return (*lhs) < (*rhs); });
+
+      for (auto& kvp : m_layers) {
+        if (kvp.second->isActive()) {
+          // sorting is handled automatically by set<> according to the stl spec
+          sortedLayers.insert(kvp.second);
+        }
+      }
+
+      // Blend active layers
+      // Blending is done from the bottom up, with the state being passed to each
+      // layer in order.
+      for (auto& l : sortedLayers) {
+        l->blend(m_state);
+      }
+
+      // Blend the programmer layer
+      // This layer sits on top of everything else and anything captured by it
+      // will take precedence over everything.
+      m_prog->blend(m_state);
+
+      // Write state to rig.
+      m_rig->setAllDevices(m_state);
+
+      // For now I'm locking this to the update loop in rig
+      // We'll see how it goes
+
+      // Sleep a bit depending on how long the update took.
+      // auto end = chrono::high_resolution_clock::now();
+      //auto elapsed = end - start;
+      //float elapsedSec = chrono::duration_cast<chrono::milliseconds>(elapsed).count() / 1000.0f;
+
+      //if (elapsedSec < m_loopTime) {
+      //  unsigned int ms = (unsigned int)(1000 * (m_loopTime - elapsedSec));
+      //  this_thread::sleep_for(chrono::milliseconds(ms));
+      //}
+      //else {
+      //  Logger::log(WARN, "Playback Update loop running slowly");
+      //}
+    }
+  }
+
+  void Playback::addLayer(shared_ptr<Layer> layer) {
+    m_layers[layer->getName()] = layer;
+  }
+
+  shared_ptr<Layer> Playback::getLayer(string name) {
+    if (m_layers.count(name) > 0) {
+      return m_layers[name];
+    }
+
+    return nullptr;
+  }
+
+  void Playback::deleteLayer(string name) {
+    if (m_layers.count(name) > 0) {
+      m_layers.erase(name);
+    }
+  }
+
+  bool Playback::addCueList(shared_ptr<CueList> cueList) {
+    if (m_cueLists.count(cueList->getName()) == 0) {
+      m_cueLists[cueList->getName()] = cueList;
+      return true;
     }
     else {
-      Logger::log(WARN, "Playback Update loop running slowly");
+      stringstream ss;
+      ss << "Playback already has a cue list named " << cueList->getName();
+      Logger::log(ERR, ss.str());
+      return false;
     }
   }
-}
 
-map<string, map<string, set<Keyframe> > > Playback::diff(Cue& a, Cue& b, bool assert) {
-  map<string, map<string, set<Keyframe> > > data;
+  shared_ptr<CueList> Playback::getCueList(string id) {
+    if (m_cueLists.count(id) > 0) {
+      return m_cueLists[id];
+    }
 
-  // The entire rig is stored, so comparison from a to be should be sufficient.
-  map<string, map<string, set<Keyframe> > >* cueAData = a.getCueData();
-  map<string, map<string, set<Keyframe> > >* cueBData = b.getCueData();
+    return nullptr;
+  }
 
-  // For all devices
-  for (auto it : *cueAData) {
-    // For all parameters in a device
-    for (auto param : it.second) {
-      // The conditions for not animating a parameter are that it has two keyframes, and the
-      // values in the keyframes are identical and we're not asserting this cue
-      if (!assert && param.second.size() == 2 &&
-        LumiverseTypeUtils::equals(param.second.begin()->val.get(), (*cueBData)[it.first][param.first].begin()->val.get())) {
-        continue;
+  void Playback::deleteCueList(string id) {
+    if (m_cueLists.count(id) > 0) {
+      m_cueLists.erase(id);
+    }
+  }
+
+  bool Playback::addCueListToLayer(string cueListId, string layerName) {
+    if (m_layers.count(layerName) > 0 && m_cueLists.count(cueListId) > 0) {
+      m_layers[layerName]->setCueList(m_cueLists[cueListId]);
+      return true;
+    }
+
+    return false;
+  }
+
+  void Playback::removeCueListFromLayer(string layerName) {
+    if (m_layers.count(layerName) > 0) {
+      m_layers[layerName]->removeCueList();
+    }
+  }
+
+  void Playback::attachToRig(int pid) {
+    // Bind update function to rig update function
+    if (pid > 0 && m_rig->addFunction(pid, [&]() { this->update(); })) {
+      m_funcId = pid;
+    }
+  }
+  
+  void Playback::detachFromRig() {
+    if (m_funcId > 0) {
+      m_rig->removeFunction(m_funcId);
+    }
+  }
+
+  bool Playback::save(string filename, bool overwrite) {
+    // Test if the file already exists.
+    ifstream ifile(filename);
+    if (ifile.is_open() && !overwrite) {
+      return false;
+    }
+    ifile.close();
+
+    ofstream pbFile;
+    pbFile.open(filename, ios::out | ios::trunc);
+    pbFile << toJSON().write_formatted();
+
+    return true;
+  }
+
+  JSONNode Playback::toJSON() {
+    JSONNode root;
+
+    JSONNode pb;
+    pb.set_name("playback");
+
+    // Cue Lists first.
+    JSONNode lists;
+    lists.set_name("cueLists");
+
+    for (auto& kvp : m_cueLists) {
+      lists.push_back(kvp.second->toJSON());
+    }
+    pb.push_back(lists);
+
+    // Layers next
+    JSONNode layers;
+    layers.set_name("layers");
+
+    for (auto& kvp : m_layers) {
+      layers.push_back(kvp.second->toJSON());
+    }
+    pb.push_back(layers);
+
+    root.push_back(pb);
+    return root;
+  }
+
+  bool Playback::load(string filename) {
+    ifstream data;
+    data.open(filename, ios::in | ios::binary | ios::ate);
+
+    if (data.is_open()) {
+      streamoff size = data.tellg();
+      char* memblock = new char[(unsigned int)size];
+
+      data.seekg(0, ios::beg);
+
+      stringstream ss;
+      ss << "Loading " << size << " bytes from " << filename;
+      Logger::log(INFO, ss.str());
+
+      data.read(memblock, size);
+      data.close();
+
+      JSONNode n = libjson::parse(memblock);
+
+      return loadJSON(n);
+    }
+    else {
+      stringstream ss;
+      ss << "Unable to load playback data from " << filename;
+      Logger::log(ERR, ss.str());
+      return false;
+    }
+  }
+
+  bool Playback::loadJSON(JSONNode node) {
+    auto data = node.find("playback");
+    if (data == node.end()) {
+      Logger::log(ERR, "No Playback data found");
+      return false;
+    }
+    
+    auto cueLists = data->find("cueLists");
+    if (cueLists == data->end()) {
+      Logger::log(INFO, "No cue lists found for Playback.");
+    }
+    else {
+      auto it = cueLists->begin();
+      while (it != cueLists->end()) {
+        m_cueLists[it->name()] = shared_ptr<CueList>(new CueList(*it));
+
+        it++;
       }
-      else {
-        // Otherwise just add all of cue a's keyframes into the active list and
-        // fill in the blanks wiht cue b's data.
-        for (auto keyframe = param.second.begin(); keyframe != param.second.end(); ++keyframe) {
-          Keyframe k = Keyframe(*keyframe);
+    }
 
-          if (keyframe->val == nullptr) {
-            k.val = (*cueBData)[it.first][param.first].begin()->val;
+    auto layers = data->find("layers");
+    if (layers == data->end()) {
+      Logger::log(INFO, "No layers found for Playback.");
+    }
+    else {
+      auto it = layers->begin();
+      while (it != layers->end()) {
+        m_layers[it->name()] = shared_ptr<Layer>(new Layer(*it));
 
-            if (k.useCueTiming) {
-              Lumiverse::LumiverseType* nextVal = (*cueBData)[it.first][param.first].begin()->val.get();
-              Lumiverse::LumiverseType* thisVal = prev(keyframe)->val.get();
-              int result = LumiverseTypeUtils::cmp(thisVal, nextVal);
-              
-              if (result == -1) {
-                // Upfade. a -> b uses cue a's timing.
-                k.t = prev(keyframe)->t + a.getUpfade();
-              }
-              else if (result == 1) {
-                // Downfade
-                k.t = prev(keyframe)->t + a.getDownfade();
-              }
-            }
-          }
-
-          data[it.first][param.first].insert(k);
+        auto cueList = it->find("cueList");
+        if (cueList != it->end()) {
+          // Got a cue list to assign
+          addCueListToLayer(cueList->as_string(), it->name());
         }
+
+        it++;
       }
     }
+
+    return true;
   }
 
-  return data;
 }

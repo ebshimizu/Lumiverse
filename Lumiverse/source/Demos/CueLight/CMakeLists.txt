@@ -15,9 +15,13 @@ add_library (CueLight
 	Cue.h
 	CueList.h
 	Playback.h
+	Layer.h
+	Programmer.h
 	Cue.cpp
 	CueList.cpp
-	Playback.cpp)
+	Playback.cpp
+	Layer.cpp
+	Programmer.cpp)
 
 add_executable (CueLightDemo
 	CueLightDemo.cpp)

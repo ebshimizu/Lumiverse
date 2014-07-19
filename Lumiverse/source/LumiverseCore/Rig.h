@@ -267,11 +267,11 @@ namespace Lumiverse {
     /*!
     * \brief Gets the raw list of devices.
     * 
-    * Users are not allowed to modify the set of devices through this method,
+    * Users shouldn't modify the set of devices through this method,
     * but may read the data and modify device parameters.
     * \return Set of Devices maintained by this Rig
     */
-    const set<Device *>* getDeviceRaw() { return &m_devices; }
+    const set<Device *>& getDeviceRaw() { return m_devices; }
 
     /*!
     * \brief Writes the rig out to a JSON file
@@ -297,11 +297,12 @@ namespace Lumiverse {
      * The added function will be updated before the patch is updated
      * as part of Rig::update(). The update loop will be stopped during
      * the modification of the function list.
+     * \param pid ID to assign to the function
+     * \param func Function to execute
      * \sa m_updateFunctions
-     * \returns Location of the function in the array of functions. Use
-     * to later delete if needed.
+     * \returns False if a function with specified pid already exists. True on success.
      */
-    int addFunction(function<void()> func);
+    bool addFunction(int pid, function<void()> func);
 
     /*!
     * \brief Removes a function from the additional functions list.
@@ -329,6 +330,15 @@ namespace Lumiverse {
     * \return A pointer to a simulation patch (the current implementation is the ArnoldPatch).
     */
     Patch *getSimulationPatch();
+
+    /*!
+    * \brief Updates the parameters of the devices stored in the specified map.
+    *
+    * This function allows you to do mass updates of devices in a Rig.
+    * This function will only update parameters not metadata
+    * \param devices Map of device id -> Device* containing the data to update the rig with.
+    */
+    void setAllDevices(map<string, Device*> devices);
 
   private:
     /*!
@@ -422,7 +432,7 @@ namespace Lumiverse {
     * These functions run before the patches are updated and could potentially
     * be used to inject values into the rig before the patch happens.
     */
-    vector<function<void()>> m_updateFunctions;
+    map<int, function<void()> > m_updateFunctions;
 
     // May have more indicies in the future, like mapping by channel number.
   };

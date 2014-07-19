@@ -49,5 +49,9 @@ namespace Logger {
       }
     }
   }
+
+  void setLogLevel(LOG_LEVEL level) {
+    logLevel = level;
+  }
 }
 }

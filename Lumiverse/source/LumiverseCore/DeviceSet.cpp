@@ -341,7 +341,7 @@ DeviceSet DeviceSet::add(string key, string val, bool isEqual) {
 DeviceSet DeviceSet::add(string key, regex val, bool isEqual) {
   DeviceSet newSet(*this);
 
-  for (auto d : m_rig->m_devices) {
+  for (auto& d : m_rig->m_devices) {
     string data;
     if (d->getMetadata(key, data)) {
       if (regex_match(data, val) == isEqual) {
@@ -356,7 +356,7 @@ DeviceSet DeviceSet::add(string key, regex val, bool isEqual) {
 DeviceSet DeviceSet::add(string key, LumiverseType* val, function<bool(LumiverseType* a, LumiverseType* b)> cmp, bool isEqual) {
   DeviceSet newSet(*this);
 
-  for (auto d : m_rig->m_devices) {
+  for (auto& d : m_rig->m_devices) {
     LumiverseType* data = d->getParam(key);
     if (data != nullptr) {
       if (cmp(data, val) == isEqual) {
@@ -364,6 +364,14 @@ DeviceSet DeviceSet::add(string key, LumiverseType* val, function<bool(Lumiverse
       }
     }
   }
+
+  return newSet;
+}
+
+DeviceSet DeviceSet::add(DeviceSet set) {
+  DeviceSet newSet(*this);
+
+  newSet.addSet(set);
 
   return newSet;
 }
@@ -412,7 +420,7 @@ DeviceSet DeviceSet::remove(string key, string val, bool isEqual) {
 DeviceSet DeviceSet::remove(string key, regex val, bool isEqual) {
   DeviceSet newSet(*this);
 
-  for (auto d : m_workingSet) {
+  for (auto& d : m_workingSet) {
     string data;
     if (d->getMetadata(key, data)) {
       if (regex_match(data, val) == isEqual) {
@@ -431,7 +439,7 @@ DeviceSet DeviceSet::remove(string key, regex val, bool isEqual) {
 DeviceSet DeviceSet::remove(string key, LumiverseType* val, function<bool(LumiverseType* a, LumiverseType* b)> cmp, bool isEqual) {
   DeviceSet newSet(*this);
 
-  for (auto d : m_workingSet) {
+  for (auto& d : m_workingSet) {
     LumiverseType* data = d->getParam(key);
     if (data != nullptr) {
       if (cmp(data, val) == isEqual) {
@@ -447,8 +455,16 @@ DeviceSet DeviceSet::remove(string key, LumiverseType* val, function<bool(Lumive
   return newSet;
 }
 
+DeviceSet DeviceSet::remove(DeviceSet set) {
+  DeviceSet newSet(*this);
+  
+  newSet.removeSet(set);
+
+  return newSet;
+}
+
 void DeviceSet::reset() {
-  for (auto d : m_workingSet) {
+  for (auto& d : m_workingSet) {
     d->reset();
   }
 }
@@ -468,13 +484,13 @@ void DeviceSet::addSet(DeviceSet otherSet) {
 }
 
 void DeviceSet::removeSet(DeviceSet otherSet) {
-  for (auto d : otherSet.m_workingSet) {
+  for (auto& d : otherSet.m_workingSet) {
     removeDevice(d);
   }
 }
 
 void DeviceSet::setParam(string param, float val) {
-  for (auto d : m_workingSet) {
+  for (auto& d : m_workingSet) {
     if (d->paramExists(param)) {
       d->setParam(param, val);
     }
@@ -482,9 +498,41 @@ void DeviceSet::setParam(string param, float val) {
 }
 
 void DeviceSet::setParam(string param, string val, float val2) {
-  for (auto d : m_workingSet) {
+  for (auto& d : m_workingSet) {
     if (d->paramExists(param)) {
       d->setParam(param, val, val2);
+    }
+  }
+}
+
+void DeviceSet::setParam(string param, string channel, double val) {
+  for (auto& d : m_workingSet) {
+    if (d->paramExists(param)) {
+      d->setParam(param, channel, val);
+    }
+  }
+}
+
+void DeviceSet::setParam(string param, double x, double y, double weight) {
+  for (auto& d : m_workingSet) {
+    if (d->paramExists(param)) {
+      d->setParam(param, x, y, weight);
+    }
+  }
+}
+
+void DeviceSet::setColorRGBRaw(string param, double r, double g, double b, double weight) {
+  for (auto& d : m_workingSet) {
+    if (d->paramExists(param)) {
+      d->setColorRGBRaw(param, r, g, b, weight);
+    }
+  }
+}
+
+void DeviceSet::setColorRGB(string param, double r, double g, double b, double weight, RGBColorSpace cs) {
+  for (auto& d : m_workingSet) {
+    if (d->paramExists(param)) {
+      d->setColorRGB(param, r, g, b, weight, cs);
     }
   }
 }
@@ -492,7 +540,7 @@ void DeviceSet::setParam(string param, string val, float val2) {
 vector<string> DeviceSet::getIds() {
   vector<string> ids;
   
-  for (auto d : m_workingSet) {
+  for (auto& d : m_workingSet) {
     ids.push_back(d->getId());
   }
 
@@ -502,8 +550,8 @@ vector<string> DeviceSet::getIds() {
 set<string> DeviceSet::getAllParams() {
   set<string> params;
 
-  for (auto d : m_workingSet) {
-    for (auto s : d->getParamNames()) {
+  for (auto& d : m_workingSet) {
+    for (auto& s : d->getParamNames()) {
       params.insert(s);
     }
   }
@@ -514,8 +562,8 @@ set<string> DeviceSet::getAllParams() {
 set<string> DeviceSet::getAllMetadata() {
   set<string> params;
 
-  for (auto d : m_workingSet) {
-    for (auto s : d->getMetadataKeyNames()) {
+  for (auto& d : m_workingSet) {
+    for (auto& s : d->getMetadataKeyNames()) {
       params.insert(s);
     }
   }

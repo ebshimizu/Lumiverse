@@ -53,6 +53,11 @@ namespace Lumiverse {
     */
     virtual string asString() = 0;
 
+    /*!
+    * \brief Returns true if the value is equal to the default value for the type.
+    */
+    virtual bool isDefault() = 0;
+
     // Yeah actually there's not much here because types are
     // all different.
   };

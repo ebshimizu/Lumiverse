@@ -1,11 +1,39 @@
 #include "Cue.h"
 
+namespace Lumiverse {
+
+Keyframe::Keyframe(JSONNode node) {
+  auto it = node.begin();
+  while (it != node.end()) {
+    string name = it->name();
+
+    if (name == "time")
+      t = it->as_float();
+    else if (name == "useCueTiming")
+      useCueTiming = it->as_bool();
+    else if (name == "val") {
+      if (it->type() == 's') {
+        val = nullptr;
+      }
+      else {
+        val = shared_ptr<LumiverseType>(LumiverseTypeUtils::loadFromJSON(*it));
+      }
+    }
+
+    it++;
+  }
+}
+
 Cue::Cue(Rig* rig) : m_upfade(3.0f), m_downfade(3.0f), m_delay(0) {
   update(rig);
 }
 
 Cue::Cue(Rig* rig, float time) : m_upfade(time), m_downfade(time), m_delay(0) {
   update(rig);
+}
+
+Cue::Cue(map<string, Device*> devices, float time) : m_upfade(time), m_downfade(time), m_delay(0) {
+  update(devices);
 }
 
 Cue::Cue(Rig* rig, float up, float down) : m_upfade(up), m_downfade(down), m_delay(0) {
@@ -16,14 +44,54 @@ Cue::Cue(Rig* rig, float up, float down, float delay) : m_upfade(up), m_downfade
   update(rig);
 }
 
+Cue::Cue(JSONNode node) {
+  auto it = node.begin();
+  while (it != node.end()) {
+    string name = it->name();
+
+    if (name == "upfade")
+      m_upfade = it->as_float();
+    else if (name == "downfade")
+      m_downfade = it->as_float();
+    else if (name == "delay")
+      m_delay = it->as_float();
+    else if (name == "cueData") {
+      // The big one. Need to load the giant cueData map.
+      // devices are the top level
+      auto device = it->begin();
+      while (device != it->end()) {
+        string deviceName = device->name();
+        
+        // Parameter level
+        auto param = device->begin();
+        while (param != device->end()) {
+          string paramName = param->name();
+
+          // Get the kayframes.
+          auto kf = param->begin();
+          while (kf != param->end()) {
+            m_cueData[deviceName][paramName].insert(Keyframe(*kf));
+            kf++;
+          }
+        
+          param++;
+        }
+        device++;
+      }
+    }
+
+    it++;
+  }
+}
+
 Cue::Cue(Cue& other) {
   m_upfade = other.m_upfade;
   m_downfade = other.m_downfade;
 
   // Fully copy over cue data. Other instance may go out of scope whenever and
   // delete the cue data but since we have a shared_ptr, we should still have it.
-  for (auto it : other.m_cueData) {
-    for (auto param : it.second) {
+  for (auto& it : other.m_cueData) {
+    for (auto& param : it.second) {
       m_cueData[it.first][param.first] = param.second;
     }
   }
@@ -40,8 +108,8 @@ void Cue::operator=(const Cue& other) {
 
   // Fully copy over cue data. Other instance may go out of scope whenever and
   // delete the cue data but since we have a shared_ptr, we should still have it.
-  for (auto it : other.m_cueData) {
-    for (auto param : it.second) {
+  for (auto& it : other.m_cueData) {
+    for (auto &param : it.second) {
       m_cueData[it.first][param.first] = param.second;
     }
   }
@@ -50,7 +118,7 @@ void Cue::operator=(const Cue& other) {
 Cue::changedParams Cue::update(Rig* rig) {
   changedParams params;
   
-  for (auto d : *(rig->getDeviceRaw())) {
+  for (auto d : rig->getDeviceRaw()) {
     if (m_cueData.count(d->getId()) == 0) {
       // New cues don't send back changed parameters since there weren't really
       // things to change before they got added.
@@ -64,6 +132,30 @@ Cue::changedParams Cue::update(Rig* rig) {
 
       if (changed.size() > 0) {
         params[d->getId()] = changed;
+      }
+    }
+  }
+
+  return params;
+}
+
+Cue::changedParams Cue::update(map<string, Device*> devices) {
+  changedParams params;
+
+  for (auto kvp : devices) {
+    if (m_cueData.count(kvp.second->getId()) == 0) {
+      // New cues don't send back changed parameters since there weren't really
+      // things to change before they got added.
+      // In a timeline system, this first update sets the initial state and the ending keyframes
+      // based on the timing provided in the beginning.
+      m_cueData[kvp.second->getId()] = getParams(kvp.second);
+    }
+    else {
+      map<string, shared_ptr<Lumiverse::LumiverseType> > changed;
+      updateParams(kvp.second, changed);
+
+      if (changed.size() > 0) {
+        params[kvp.second->getId()] = changed;
       }
     }
   }
@@ -138,9 +230,9 @@ void Cue::insertKeyframe(string id, string param, Lumiverse::LumiverseType* data
 
 void Cue::insertKeyframe(float time, DeviceSet devices, bool uct) {
   // For each device
-  for (auto d : *devices.getDevices()) {
+  for (auto d : devices.getDevices()) {
     // For each parameter
-    for (auto p : *d->getRawParameters()) {
+    for (auto p : d->getRawParameters()) {
       insertKeyframe(d->getId(), p.first, d->getParam(p.first), time, uct);
     }
   }
@@ -162,9 +254,9 @@ void Cue::deleteKeyframe(string id, string param, float time) {
 
 void Cue::deleteKeyframe(float time, DeviceSet devices) {
   // For each device
-  for (auto d : *devices.getDevices()) {
+  for (auto& d : devices.getDevices()) {
     // For each parameter
-    for (auto p : *d->getRawParameters()) {
+    for (auto& p : d->getRawParameters()) {
       deleteKeyframe(d->getId(), p.first, time);
     }
   }
@@ -174,7 +266,7 @@ map<string, set<Keyframe> > Cue::getParams(Device* d) {
   map<string, set<Keyframe> > paramKeyframes;
 
   // Copy all parameters to cue data list
-  for (auto a : *(d->getRawParameters())) {
+  for (auto& a : d->getRawParameters()) {
     // Insert the starting point as a keyframe.
     paramKeyframes[a.first].insert(Keyframe(0, shared_ptr<Lumiverse::LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
     
@@ -225,4 +317,56 @@ void Cue::updateParams(Device* d, map<string, shared_ptr<Lumiverse::LumiverseTyp
     }
     
   }
+}
+
+JSONNode Cue::toJSON() {
+  JSONNode cue;
+  cue.push_back(JSONNode("upfade", m_upfade));
+  cue.push_back(JSONNode("downfade", m_downfade));
+  cue.push_back(JSONNode("delay", m_delay));
+
+  JSONNode cueData;
+
+  // Get the actual data.
+  for (auto& id : m_cueData) {
+    // Device
+    JSONNode deviceData;
+    deviceData.set_name(id.first);
+    
+    for (auto& param : id.second) {
+      // Parameter
+      JSONNode paramData;
+      paramData.set_name(param.first);
+
+      for (auto& keyframe : param.second) {
+        // Keyframes
+        JSONNode kf;
+        stringstream ss;
+        ss << keyframe.t;
+
+        kf.set_name(ss.str());
+        kf.push_back(JSONNode("time", keyframe.t));
+
+        if (keyframe.val != nullptr) {
+          kf.push_back(keyframe.val->toJSON("val"));
+        }
+        else {
+          kf.push_back(JSONNode("val", "null"));
+        }
+        kf.push_back(JSONNode("useCueTiming", keyframe.useCueTiming));
+
+        paramData.push_back(kf);
+      }
+
+      deviceData.push_back(paramData);
+    }
+    cueData.push_back(deviceData);
+  }
+
+  cueData.set_name("cueData");
+  cue.push_back(cueData);
+
+  return cue;
+}
+
 }

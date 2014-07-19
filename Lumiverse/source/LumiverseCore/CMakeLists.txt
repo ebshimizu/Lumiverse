@@ -2,13 +2,15 @@ include_directories("${CMAKE_CURRENT_LIST_DIR}/types"
   "${CMAKE_CURRENT_LIST_DIR}/DMX"
   "${CMAKE_CURRENT_LIST_DIR}/lib/libjson"
   "${CMAKE_CURRENT_LIST_DIR}/lib/ftd2xx"
+  "${CMAKE_CURRENT_LIST_DIR}/lib/Eigen"
+  "${CMAKE_CURRENT_LIST_DIR}/lib/clp"
+  "${CMAKE_CURRENT_LIST_DIR}/lib/clp/CoinUtils"
   "${CMAKE_CURRENT_LIST_DIR}/Simulation"
   "${CMAKE_CURRENT_LIST_DIR}/lib/arnold/include")
-  #"${CMAKE_CURRENT_LIST_DIR}/lib/Eigen")
 
 # Lumiverse Core Version Number, in case its needed
 set (LumiverseCore_VERSION_MAJOR 1)
-set (LumiverseCore_VERSION_MINOR 0)
+set (LumiverseCore_VERSION_MINOR 1)
 set (LumiverseCore_INCLUDE_DMXPRO2INTERFACE ON CACHE BOOL "Build LumiverseCore with Enttec USB DMX Pro Mk II Driver")
 set (LumiverseCore_INCLUDE_KINET ON CACHE BOOL "Build LumiverseCore with KiNet Driver")
 set (LumiverseCore_INCLUDE_ARNOLD ON CACHE BOOL "Build LumiverseCore with Arnold Simulator")
@@ -91,7 +93,7 @@ ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
 # Build the libraries
 add_library(LumiverseCore SHARED ${LUMIVERSE_CORE_SOURCE})
-target_link_libraries(LumiverseCore libjson)
+target_link_libraries(LumiverseCore libjson clp)
 add_subdirectory(lib)
 
 # DMXPRO2 Interface build settings
@@ -151,14 +153,14 @@ IF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
 
 		SWIG_ADD_MODULE(lumiversepython python ${LUMIVERSE_CORE_SOURCE} LumiverseCore.i)
 
-		SWIG_LINK_LIBRARIES(lumiversepython ${PYTHON_LIBRARY} libjson)
+		SWIG_LINK_LIBRARIES(lumiversepython ${PYTHON_LIBRARY} libjson clp)
 	ENDIF (LumiverseCore_PYTHON_BINDINGS)
 
 	IF (LumiverseCore_CSHARP_BINDINGS)
 		MESSAGE("Including C# bindings...")
 		SWIG_ADD_MODULE(lumiversecsharp csharp ${LUMIVERSE_CORE_SOURCE} LumiverseCore.i)
 
-		SWIG_LINK_LIBRARIES(lumiversecsharp ftd2xx libjson)
+		SWIG_LINK_LIBRARIES(lumiversecsharp ftd2xx libjson clp)
 	ENDIF (LumiverseCore_CSHARP_BINDINGS)
 ENDIF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
 
@@ -185,6 +187,9 @@ INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Dependencies/lib
 	DESTINATION include/lib/libjson/_internal/Dependencies/libbase64++)
 INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Dependencies/mempool++/mempool.h
 	DESTINATION include/lib/libjson/_internal/Dependencies/mempool)
+
+FILE(GLOB clpfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.h)
+INSTALL(FILES ${clpfiles} DESTINATION include/lib/clp)
 
 INSTALL(TARGETS LumiverseCore LIBRARY DESTINATION lib)
 

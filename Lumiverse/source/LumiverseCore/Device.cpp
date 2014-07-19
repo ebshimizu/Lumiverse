@@ -15,6 +15,32 @@ Device::Device(string id, const JSONNode data) {
   loadJSON(data);
 }
 
+Device::Device(const Device& other) {
+  m_id = other.m_id;
+  m_channel = other.m_channel;
+  m_type = other.m_type;
+
+  // Need to do a deep copy of the parameters
+  for (auto kvp : other.m_parameters) {
+    m_parameters[kvp.first] = LumiverseTypeUtils::copy(kvp.second);
+  }
+
+  m_metadata = other.m_metadata;
+}
+
+Device::Device(Device* other) {
+  m_id = other->m_id;
+  m_channel = other->m_channel;
+  m_type = other->m_type;
+
+  // Need to do a deep copy of the parameters
+  for (auto kvp : other->m_parameters) {
+    m_parameters[kvp.first] = LumiverseTypeUtils::copy(kvp.second);
+  }
+
+  m_metadata = other->m_metadata;
+}
+
 Device::~Device() {
   for (auto& kv : m_parameters) {
     delete kv.second;
@@ -33,6 +59,14 @@ bool Device::getParam(string param, float& val) {
 LumiverseType* Device::getParam(string param) {
   if (m_parameters.count(param) > 0) {
     return m_parameters[param];
+  }
+
+  return nullptr;
+}
+
+LumiverseColor* Device::getColor(string param) {
+  if (m_parameters.count(param) > 0) {
+    return dynamic_cast<LumiverseColor*>(m_parameters[param]);
   }
 
   return nullptr;
@@ -85,6 +119,50 @@ bool Device::setParam(string param, string val, float val2) {
   // callback
   onParameterChanged();
     
+  return true;
+}
+
+bool Device::setParam(string param, string channel, double val) {
+  if (m_parameters.count(param) == 0) {
+    return false;
+  }
+
+  LumiverseColor* data = (LumiverseColor*)m_parameters[param];
+  data->setColorChannel(channel, val);
+
+  return true;
+}
+
+bool Device::setParam(string param, double x, double y, double weight) {
+  if (m_parameters.count(param) == 0) {
+    return false;
+  }
+
+  LumiverseColor* data = (LumiverseColor*)m_parameters[param];
+  data->setxy(x, y, weight);
+
+  return true;
+}
+
+bool Device::setColorRGBRaw(string param, double r, double g, double b, double weight) {
+  if (m_parameters.count(param) == 0) {
+    return false;
+  }
+
+  LumiverseColor* data = (LumiverseColor*)m_parameters[param];
+  data->setRGBRaw(r, g, b, weight);
+
+  return true;
+}
+
+bool Device::setColorRGB(string param, double r, double g, double b, double weight, RGBColorSpace cs) {
+  if (m_parameters.count(param) == 0) {
+    return false;
+  }
+
+  LumiverseColor* data = (LumiverseColor*)m_parameters[param];
+  data->setRGB(r, g, b, weight, cs);
+
   return true;
 }
 
@@ -298,77 +376,7 @@ void Device::loadParams(const JSONNode data) {
 
     // Go into the child node that has all the param data
     JSONNode paramData = *i;
-
-    auto type = paramData.find("type");
-    if (type != paramData.end()) {
-      // Add loading support for new types here
-      if (type->as_string() == "float") {
-        auto valNode = paramData.find("val");
-        auto defNode = paramData.find("default");
-        // TODO: Add in max and min fields
-
-        if (valNode != paramData.end() && defNode != paramData.end()) {
-          LumiverseFloat* param = new LumiverseFloat(valNode->as_float(), defNode->as_float());
-          setParam(paramName, (LumiverseType*)param);
-        }
-        else {
-          err = true;
-        }
-      }
-      else if (type->as_string() == "enum") {
-        auto activeNode = paramData.find("active");
-        auto tweakNode = paramData.find("tweak");
-        auto modeNode = paramData.find("mode");
-        auto defaultNode = paramData.find("default");
-        auto rangeNode = paramData.find("rangeMax");
-        auto keysNode = paramData.find("keys");
-        auto interpModeNode = paramData.find("interpMode");
-
-        // If any of the above are missing we should abort
-        if (modeNode != paramData.end() && defaultNode != paramData.end() &&
-          rangeNode != paramData.end() && keysNode != paramData.end() && interpModeNode != paramData.end()) {
-          // Get the keys into a map.
-          map<string, int> enumKeys;
-          JSONNode::const_iterator k = keysNode->begin();
-
-          while (k != keysNode->end()) {
-            JSONNode keyData = *k;
-
-            enumKeys[keyData.name()] = keyData.as_int();
-            k++;
-          }
-
-          // Make the enum
-          LumiverseEnum* param = new LumiverseEnum(enumKeys, modeNode->as_string(), interpModeNode->as_string(),
-            rangeNode->as_int(), defaultNode->as_string());
-
-          if (activeNode != paramData.end())
-            param->setVal(activeNode->as_string());
-          if (tweakNode != paramData.end())
-            param->setTweak(tweakNode->as_float());
-
-          setParam(paramName, (LumiverseType*)param);
-        }
-        else {
-          err = true;
-        }
-
-      }
-      else {
-        stringstream ss;
-        ss << "Unsupported type " << type->as_string() << " in " << paramName << " in " << m_id << ". Parameter not set.";
-        Logger::log(WARN, ss.str());
-      }
-    }
-    else {
-      err = true;
-    }
-
-    if (err) {
-      stringstream ss;
-      ss << "Invalid format for paramter " << paramName << " in " << m_id << ". Parameter not set.";
-      Logger::log(WARN, ss.str());
-    }
+    setParam(paramName, LumiverseTypeUtils::loadFromJSON(paramData));
 
     //increment the iterator
     ++i;

@@ -80,6 +80,14 @@ namespace Lumiverse {
     * \param message The message to put in the log
     */
     void log(LOG_LEVEL level, string message);
+
+    /*!
+    * \brief Sets the logLevel
+    *
+    * You could just set logLevel=[level] in plain code, but if you
+    * like functions better, here it is.
+    */
+    void setLogLevel(LOG_LEVEL level);
   };
 }
 #endif
