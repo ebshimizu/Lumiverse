@@ -5,11 +5,6 @@
 
 namespace Lumiverse {
 
-/*!
-* \brief Construct DMXPatch from JSON data.
-*
-* \param data JSONNode containing the DMXPatch object data.
-*/
 ArnoldPatch::ArnoldPatch(const JSONNode data) {
 	loadJSON(data);
 }
@@ -20,8 +15,6 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 	// Load options for raytracer application. (window, ray tracer, filter)
 	JSONNode::const_iterator i = data.begin();
 
-	// Two rounds. In the first round, initialize the size of output (window), so it's
-	// possible to allocate memory for each light.
 	while (i != data.end()) {
 		std::string nodeName = i->name();
 
@@ -81,9 +74,9 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 }
     
 void ArnoldPatch::loadLight(Device *d_ptr) {
-	std::string light_name = d_ptr->getId();
-	std::string type = d_ptr->getType();
-	AtNode *light_ptr;
+    std::string light_name = d_ptr->getId();
+    std::string type = d_ptr->getType();
+    AtNode *light_ptr;
     
     if (m_lights.count(light_name) == 0)
         return ;
@@ -103,7 +96,7 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
         m_interface.setParameter(light_ptr, meta, value);
     }
 
-	m_lights[light_name].light = light_ptr;
+    m_lights[light_name].light = light_ptr;
 }
 
 /*!
@@ -162,14 +155,6 @@ void ArnoldPatch::onDeviceChanged(Device *d) {
     }
 }
     
-/*!
-* \brief Updates the values sent to the DMX network given the list of devices
-* in the rig.
-*
-* The list of devices should be maintained outside of this class.
-*/
-// TODO: Relationship between Device and Light??
-// (Simulation light)
 void ArnoldPatch::update(set<Device *> devices) {
 	bool render_req = updateLight(devices);
 
@@ -191,29 +176,15 @@ void ArnoldPatch::update(set<Device *> devices) {
 
 }
 
-/*!
-* \brief Initializes connections and other network settings for the patch.
-*
-* Call this AFTER all interfaces have been assigned. May need to call again
-* if interfaces change.
-*/
 void ArnoldPatch::init() {
     m_interface.init();
 }
 
-/*!
-* \brief Closes connections to the interfaces.
-*/
 void ArnoldPatch::close() {
     interruptRender();
     m_interface.close();
 }
 
-/*!
-* \brief Exports a JSONNode with the data in this patch
-*
-* \return JSONNode containing the DMXPatch object
-*/
 JSONNode ArnoldPatch::toJSON() {
 	return JSONNode("test", 0);
 }

@@ -11,43 +11,44 @@
 
 namespace Lumiverse {
   /*!
-  * \brief Defines a float in Lumiverse
+  * \brief Defines a vector type for Arnold parameters, like color, vector etc.
   *
-  * This class allows limits to be set on the minimum and maximum values for
-  * the variable in question.
-  * Overloads for comparison ops and arithmetic ops are located in Lumiverse namespace.
-  * \sa Lumiverse
+  * This class is used by ArnoldInterface to temporarily contain value and the corresponding
+  * arnold parameter name.
+  * \tparam D Dimension
+  * \tparam T Value type
+  * \sa ArnoldInterface
   */
   template<size_t D, typename T>
   class ArnoldParameterVector
   {
   public:
-    typedef T Element;
     /*!
-    * \brief Constructs a float, default value is 0.
+    * \brief Constructs a vector with the values passed as an array.
     * 
-    * \param val Initial value
-    * \param def Default value. When reset() is called, `val` will be set to `def`.
-    * \param max Maximum allowed value
-    * \param min Minimum allowed value
+    * If the pointer is NULL, uses 0 to fill the D-dimensional vector.
+    * \param val A pointer to an array
     * \sa reset()
     */
     ArnoldParameterVector(T *val = NULL);
 
     /*!
-    * \brief Constructs a float with the contents of a different float
+    * \brief Constructs a vector with the contents of a different vector
+    *
+    * If the other vector has a dimension less than D, then only part of this
+    * vector would get rewritten.
     * \param other The other object to copy from
     */
     ArnoldParameterVector(ArnoldParameterVector* other);
 
     /*!
-    * \brief Destroys the float.
+    * \brief Destroys the vector.
     */
-	~ArnoldParameterVector() { };
+    ~ArnoldParameterVector() { };
 
     /*!
-    * \brief Says that this object is a float.
-    * \return String with contents: `"float"`
+    * \brief Says that this object is a vector for a arnold parameter.
+    * \return String with contents: `"arnold type name" + "dimension"`
     */
     string getTypeName() {
 		std::string result;
@@ -71,33 +72,53 @@ namespace Lumiverse {
     ArnoldParameterVector& operator/=(float val);
     ArnoldParameterVector& operator/=(ArnoldParameterVector& val);
 
-	Element& operator[]( size_t i ) {
+    T& operator[]( size_t i ) {
         // assumes all members are in a contiguous block
         // todo assert
         return m_elements[i];
     }
 
-	size_t getDimension() { return D; }
-
-	void resize(size_t dim) { m_elements.reserve(dim); }
-
-	/*! \brief Gets the value of the float 
-    * \return Value of the object
+    /*!
+    * \brief Returns the dimension of this vector.
+    * \return The dimension
     */
-	Element getElement(size_t i) { return m_elements[i]; }
-
-	Element* getElements() { return &m_elements[0]; }
+    size_t getDimension() { return D; }
 
     /*!
-    * \brief Sets the value of the float
+    * \brief Resizes the vector to a specific dimension.
+    * \param dim The dimension
+    */
+    void resize(size_t dim) { m_elements.reserve(dim); }
+
+    /*! 
+     * \brief Gets the nth element
+     * \param i The n
+     * \return Value of the element
+     */
+    T getElement(size_t i) { return m_elements[i]; }
+
+    /*! 
+     * \brief Gets the pointer to corresponding array.
+     * \return The pointer to the value array.
+     */
+    T* getElements() { return &m_elements[0]; }
+
+    /*!
+    * \brief Sets the value of a element
+    * \param i A specific dimension
     * \param val New value
     */
-	void setElement(size_t i, Element val) { m_elements[i] = val; }
+    void setElement(size_t i, T val) { m_elements[i] = val; }
       
   private:
+    /*!
+    * \brief The actual array contains the elements.
+    */
+    T m_elements[D];
 
-	Element m_elements[D];
-
+    /*!
+    * \brief The type name of arnold parameter.
+    */
     std::string m_arnoldTypeName;
   };
 
@@ -148,15 +169,23 @@ namespace Lumiverse {
   // Arithmetic overrides
   template<size_t D, typename T>
   inline ArnoldParameterVector<D, T> operator+(ArnoldParameterVector<D, T>& lhs, ArnoldParameterVector<D, T>& rhs) {
-    ArnoldParameterVector<D, T> val = Element(lhs);
-    val += rhs;
+    ArnoldParameterVector<D, T> val = ArnoldParameterVector<D, T>(lhs);
+
+    for (size_t i = 0; i < D; i++) {
+	val.getElement(i) += rhs.getElement(i);
+    }
+
     return val;
   }
 
   template<size_t D, typename T>
   inline ArnoldParameterVector<D, T> operator-(ArnoldParameterVector<D, T>& lhs, ArnoldParameterVector<D, T>& rhs) {
-    ArnoldParameterVector<D, T> val = Element(lhs);
-    val -= rhs;
+    ArnoldParameterVector<D, T> val = ArnoldParameterVector<D, T>(lhs);
+
+    for (size_t i = 0; i < D; i++) {
+	val.getElement(i) -= rhs.getElement(i);
+    }
+
     return val;
   }
 

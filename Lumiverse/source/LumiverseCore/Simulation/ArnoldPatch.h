@@ -19,11 +19,13 @@
 #include "ArnoldParameterVector.h"
 #include "ArnoldInterface.h"
 
-
 namespace Lumiverse {
 
   struct ArnoldParam;
-    
+
+  /*! \brief Record that denotes if a arnold light node requires
+   * update.
+   */    
   struct ArnoldLightRecord {
       ArnoldLightRecord()
       : rerender_req(true), light(NULL) { }
@@ -35,23 +37,25 @@ namespace Lumiverse {
   };
     
   /*!
-  * \brief  
-  *
+  * \brief The Arnold Patch object is responsible for the communication
+  * between the Arnold renderer and the Lumiverse devices. The major part
+  * of communication is done with help of an ArnoldInterface object.
+  * ArnoldPatch handles parsing Json and passing info to ArnoldInterface.
   *  
-  * \sa  
+  * \sa ArnoldInterface
   */
   class ArnoldPatch : public Patch
   {
   public:
     /*!
-    * \brief Constructs a DMXPatch object.
+    * \brief Constructs a ArnoldPatch object.
     */
     ArnoldPatch() : m_renderloop(NULL) { }
 
     /*!
-    * \brief Construct DMXPatch from JSON data.
+    * \brief Construct ArnoldPatch from JSON data.
     *
-    * \param data JSONNode containing the DMXPatch object data.
+    * \param data JSONNode containing the ArnoldPatch object data.
     */
     ArnoldPatch(const JSONNode data);
 
@@ -61,63 +65,113 @@ namespace Lumiverse {
     virtual ~ArnoldPatch();
 
     /*!
-    * \brief Updates the values sent to the DMX network given the list of devices
+    * \brief Updates the rendering given the list of devices
     * in the rig.
     *
-    * The list of devices should be maintained outside of this class.
+    * The list of devices should be maintained outside of this class. 
+    * This function would potentially interrupt the rendering and
+    * restart with new parameters.
     */
     virtual void update(set<Device *> devices);
 
     /*!
-    * \brief Initializes connections and other network settings for the patch.
-    *
-    * Call this AFTER all interfaces have been assigned. May need to call again
-    * if interfaces change.
+    * \brief Initializes Arnold with ArnoldInterface.
     */
     virtual void init();
 
     /*!
-    * \brief Closes connections to the interfaces.
+    * \brief Closes the Arnold session.
     */
     virtual void close();
 
     /*!
     * \brief Exports a JSONNode with the data in this patch
     *
-    * \return JSONNode containing the DMXPatch object
+    * \return JSONNode containing the ArnoldPatch object
     */
     virtual JSONNode toJSON();
 
     /*!
     * \brief Gets the type of this object.
     *
-    * \return String containing "DMXPatch"
+    * \return String containing "ArnoldPatch"
     */
     virtual string getType() { return "ArnoldPatch"; }
       
+    /*!
+    * \brief Gets the width of result.
+    *
+    * \return The width of result
+    */
     int getWidth() { return m_interface.getWidth(); }
+
+    /*!
+    * \brief Gets the height of result.
+    *
+    * \return The height of result
+    */
     int getHeight() { return m_interface.getHeight(); }
       
+    /*!
+    * \brief Gets the pointer to the frame buffer.
+    *
+    * \return The pointer to the frame buffer.
+    */
     float *getBufferPointer() { return m_interface.getBufferPointer(); }
       
+    /*!
+    * \brief Stops the working rendering procedure if Arnold is running.
+    */
     void interruptRender();
-      
+    
+  private:
+    /*!
+    * \brief Callback function for devices.
+    * 
+    * \param d The device which calls this function.
+    */
     void onDeviceChanged(Device *d);
 
-  private:
-
+    /*!
+    * \brief Calls Arnold render function.
+    * This function runs in a separate thread.
+    */
     void renderLoop();
     
-	bool updateLight(set<Device *> devices);
+    /*!
+    * \brief Resets the arnold light node with updated parameters of deices.
+    * This function would return if there is any light having new parameter. This indicates the scene should be re-rendered.
+    * \param devices The device list.
+    * \return If the scene needs to be rendered again.
+    */
+    bool updateLight(set<Device *> devices);
 
-	void loadJSON(const JSONNode data);
+    /*!
+    * \brief Loads data from a parsed JSON object
+    * \param data JSON data to load
+    */
+    void loadJSON(const JSONNode data);
 
-	void loadLight(Device *d_ptr);
+    /*!
+    * \brief Loads a arnold light node.
+    * This function is also used to update a light node.
+    * \param d_ptr The device with updated parameters.
+    */
+    void loadLight(Device *d_ptr);
 
-	map<string, ArnoldLightRecord> m_lights;
+    /*!
+    * \brief A list contains infos about if a light is updated.
+    */
+    map<string, ArnoldLightRecord> m_lights;
 
+    /*!
+    * \brief Arnold Interface
+    */
     ArnoldInterface m_interface;
-      
+	
+    /*!
+    * \brief The separate thread running the render loop.
+    */
     std::thread *m_renderloop;
   };
 }

@@ -42,7 +42,7 @@ namespace Lumiverse {
   *
   * ArnoldInterface is mainly responsible to configure light node of arnold. It keeps a list of mappings
   * from metadata ids to Arnold types. ArnoldInterface also creates and closes Arnold session.
-  * \sa  
+  * \sa ArnoldPatch
   */
   class ArnoldInterface
   {
