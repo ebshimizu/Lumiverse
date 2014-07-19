@@ -7,6 +7,7 @@
 
 #include "../LumiverseType.h"
 #include <string>
+#include <stdio.h>
 
 class LumiverseType;
 
@@ -142,6 +143,8 @@ namespace Lumiverse {
     * Precision goes up to 4 decimal places.
     */
     virtual string asString();
+
+    virtual bool isDefault();
 
   private:
     /*!

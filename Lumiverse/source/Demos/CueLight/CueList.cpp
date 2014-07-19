@@ -1,9 +1,42 @@
 #include "CueList.h"
 
-CueList::CueList()
+namespace Lumiverse {
+
+CueList::CueList(string name) : m_name(name)
 {
 }
 
+CueList::CueList(JSONNode node) {
+  auto current = node.find("currentCue");
+  if (current != node.end()) {
+    m_currentCue = current->as_float();
+  }
+  else {
+    Logger::log(WARN, "No current cue assigned to cue list.");
+  }
+
+  auto cues = node.find("cues");
+  if (cues != node.end()) {
+    // Load cues
+    auto it = cues->begin();
+    while (it != cues->end()) {
+      stringstream ss;
+      ss << it->name();
+
+      float cueNum;
+      ss >> cueNum;
+
+      m_cues[cueNum] = Cue(*it);
+
+      ++it;
+    }
+  }
+  else {
+    Logger::log(WARN, "No cues found in cue list.");
+  }
+
+  m_name = node.name();
+}
 
 CueList::~CueList()
 {
@@ -84,6 +117,30 @@ float CueList::getNextCueNum(float num) {
   return current->first;
 }
 
+Cue* CueList::getPrevCue(float num) {
+  auto current = m_cues.find(num);
+  if (current == m_cues.begin()) {
+    return nullptr;
+  }
+
+  current--;
+  if (current == m_cues.begin()) {
+    return nullptr;
+  }
+
+  return &current->second;
+}
+
+float CueList::getPrevCueNum(float num) {
+  auto current = m_cues.find(num);
+  if (current == m_cues.begin()) {
+    return -1;
+  }
+
+  current--;
+  return current->first;
+}
+
 float CueList::getCueNumAtIndex(int index) {
   auto it = m_cues.begin();
   
@@ -93,4 +150,27 @@ float CueList::getCueNumAtIndex(int index) {
   }
   
   return it->first;
+}
+
+JSONNode CueList::toJSON() {
+  JSONNode list;
+  list.set_name(m_name);
+  list.push_back(JSONNode("currentCue", m_currentCue));
+
+  JSONNode cues;
+  cues.set_name("cues");
+  for (auto& kvp : m_cues) {
+    stringstream ss;
+    ss << kvp.first;
+
+    JSONNode cue = kvp.second.toJSON();
+    cue.set_name(ss.str());
+    
+    cues.push_back(cue);
+  }
+
+  list.push_back(cues);
+  return list;
+}
+
 }

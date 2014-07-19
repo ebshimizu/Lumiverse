@@ -245,7 +245,7 @@ bool DMXPro2Interface::openDevice(int device_num)
 #pragma warning(pop)
       build_ver = (uint8_t)version & 0xFF;
       stringstream ss;
-      ss << "D2XX Driver Version:: " << major_ver << "." << minor_ver << "." << build_ver;
+      ss << "D2XX Driver Version:: " << (int)major_ver << "." << (int)minor_ver << "." << build_ver;
       Logger::log(INFO, ss.str());
     }
     else
@@ -312,7 +312,7 @@ bool DMXPro2Interface::openDevice(int device_num)
     ss << "\n\t  BREAK TIME: " << BreakTime << " micro sec";
     MABTime = (int)(m_PROParams.MaBTime * 10.67);
     ss << "\n\t  MAB TIME: " << MABTime << " micro sec";
-    ss << "\n\t  SEND REFRESH RATE: " << m_PROParams.RefreshRate << " packets/sec";
+    ss << "\n\t  SEND REFRESH RATE: " << (int)m_PROParams.RefreshRate << " packets/sec";
     ss << "\n----------------------------------------------------------------\n";
     Logger::log(INFO, ss.str());
     return true;

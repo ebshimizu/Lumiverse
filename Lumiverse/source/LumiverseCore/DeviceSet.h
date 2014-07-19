@@ -45,7 +45,7 @@ namespace Lumiverse {
     * \brief Constructs a DeviceSet unassociated with a Rig
     *
     * It should be noted that this constructor actually isn't particularly useful.
-    * Without a Rig*, the DeviceSet can't realyl do any sort of queries, though
+    * Without a Rig*, the DeviceSet can't really do any sort of queries, though
     * it can store an arbitrary list of deivces.
     * \sa DeviceSet(Rig*), DeviceSet(const DeviceSet&)
     */
@@ -256,6 +256,13 @@ namespace Lumiverse {
     DeviceSet add(string query);
 
     /*!
+    * \brief Adds devices from another set.
+    *
+    * \param set The other set of devices
+    */
+    DeviceSet add(DeviceSet set);
+
+    /*!
     * \brief Removes a device from the set.
     * \param device Device to remove
     * \return DeviceSet containing its current contents without the specified Device.
@@ -333,6 +340,13 @@ namespace Lumiverse {
     */
     DeviceSet remove(string query);
 
+    /*!
+    * \brief Removes devices contained in another set from this set.
+    *
+    * \param set Set of devices to remove from this set.
+    */
+    DeviceSet remove(DeviceSet set);
+
     // Inverts the selection.
     //DeviceSet invert();
 
@@ -367,27 +381,69 @@ namespace Lumiverse {
     */
     void setParam(string param, string val, float val2 = -1.0f);
 
+    /*! \brief Sets the value of a LumiverseColor parameter
+    *
+    * LumiverseColors present a bit of a challenge for group selections.
+    * Every light has differen color representations, so not every function
+    * will work for every group. This function will call the corresponding
+    * set param function for each device, but not every device may react to it.
+    * \param param Parameter name
+    * \param channel Color channel name
+    * \param val Value of the color channel
+    * \sa LumiverseColor, LumiverseType
+    */
+    void setParam(string param, string channel, double val);
+
+    /*! \brief Sets the value of a LumiverseColor parameter using LumiverseColor::setxy()
+    *
+    * x and y are chromaticity coordinates in the xyY color space.
+    * Ideally this function would be the unifying function for all devices in a Rig.
+    * However, it only works if you know the XYZ values for each color of LED in a light,
+    * and it doesn't work with CMY fixtures at the moment.
+    * \param param Parameter name.
+    * \param x x coordinate
+    * \param y y coordinate
+    * \sa LumiverseColor, LumiverseType, setParam(string, string, double)
+    */
+    void setParam(string param, double x, double y, double weight = 1.0);
+
+    /*! \brief Sets the value of a LumiverseColor parameter
+    *
+    * Not gonna work terribly well if you're mixing fixtures that don't have RGB for
+    * some reason in your selection.
+    * Proxy for LumiverseColor::setRGBRaw().
+    * \sa LumiverseColor::setRGBRaw(), LumiverseColor, LumiverseType
+    */
+    void setColorRGBRaw(string param, double r, double g, double b, double weight = 1.0);
+
+    /*! \brief Sets the value of a LumiverseColor parameter
+    *
+    * Proxy for LumiverseColor::setRGB().
+    * \sa LumiverseColor::setRGB(), LumiverseColor, LumiverseType
+    */
+    void setColorRGB(string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
+
     /*!
     * \brief Gets the devices managed by this set.
     * 
     * \return Set of Device* contained by the DeviceSet
     */
-    inline const set<Device *>* getDevices() { return &m_workingSet; }
+    inline const set<Device *>& getDevices() { return m_workingSet; }
 
     /*!
-    * \brief Gets a list of the IDs contained by this DeviceSet
+    * \brief Gets a copy of the list of the IDs contained by this DeviceSet
     */
     vector<string> getIds();
 
     /*!
-    * \brief Gets a set of all the parameters used by devices in this set.
+    * \brief Gets a copy of the set of all the parameters used by devices in this set.
     *
     * Set means no duplicates
     */
     set<string> getAllParams();
 
     /*!
-    * \brief Gets a set of all the metadata keys used by devices in this set.
+    * \brief Gets a copy of the set of all the metadata keys used by devices in this set.
     */
     set<string> getAllMetadata();
 

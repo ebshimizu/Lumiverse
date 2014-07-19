@@ -369,6 +369,8 @@ string DMXPatch::conversionTypeToString(conversionType t) {
   else if (t == RGB_REPEAT2) return "RGB_REPEAT2";
   else if (t == RGB_REPEAT3) return "RGB_REPEAT3";
   else if (t == RGB_REPEAT4) return "RGB_REPEAT4";
+  else if (t == COLOR_RGB) return "COLOR_RGB";
+  else if (t == COLOR_RGBW) return "COLOR_RGBW";
   else {
     Logger::log(WARN, "Unknown converstion type. Defaulting to float to single.");
     return "FLOAT_TO_SINGLE";

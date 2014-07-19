@@ -6,7 +6,9 @@
 
 #pragma once
 
-#include "LumiverseCore.h"
+#include "LumiverseFloat.h"
+#include "LumiverseEnum.h"
+#include "LumiverseColor.h"
 
 namespace Lumiverse {
   /*! 
@@ -76,6 +78,9 @@ namespace Lumiverse {
     * \return true if lhs < rhs
     */
     bool lessThan(LumiverseType* lhs, LumiverseType* rhs);
+
+    /*! \brief Loads a LumiverseType from a JSON node. */
+    LumiverseType* loadFromJSON(JSONNode node);
   }
 }
 #endif

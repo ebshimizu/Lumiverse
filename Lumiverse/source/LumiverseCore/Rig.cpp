@@ -23,6 +23,33 @@ Rig::Rig(string filename) {
 void Rig::loadJSON(JSONNode root) {
   JSONNode::const_iterator i = root.begin();
 
+  auto version = root.find("version");
+  if (version == root.end()) {
+    Logger::log(ERR, "No version specified for input file. Aborting load.");
+    return;
+  }
+  else {
+    stringstream ss;
+    stringstream ss2(version->as_string());
+
+    ss << LumiverseCore_VERSION_MAJOR << "." << LumiverseCore_VERSION_MINOR;
+    
+    float libVer;
+    float fileVer;
+
+    ss >> libVer;
+    ss2 >> fileVer;
+
+    if (fileVer < libVer) {
+      // Friendly warning if you're loading an old file.
+      Logger::log(WARN, "File created against earlier version of Lumiverse. Check logs for any load problems.");
+    }
+    else if (fileVer > libVer) {
+      // Loading newer file with older library.
+      Logger::log(WARN, "File created against newer version of Lumiverse. Check logs for any load problems.");
+    }
+  }
+
   while (i != root.end()){
     // get the node name and value as a string
     std::string nodeName = i->name();
@@ -277,9 +304,9 @@ void Rig::update() {
     // Run additional functions before sending to patches
     // These functions can be update functions you run in your own code
     // or other things that need to be in sync with stuff going over the network.
-    for (auto f : m_updateFunctions) {
-      f();
-    }
+    for (auto& f : m_updateFunctions) {
+      f.second();
+    } 
 
     // Run the whole update thing for all patches
     for (auto& p : m_patches) {
@@ -296,6 +323,24 @@ void Rig::update() {
     }
     else {
       Logger::log(WARN, "Rig Update loop running slowly");
+    }
+  }
+}
+
+void Rig::setAllDevices(map<string, Device*> devices) {
+  for (auto& kvp : devices) {
+    if (m_devicesById.count(kvp.first) > 0) {
+      auto params = kvp.second->getRawParameters();
+      for (auto& param : params) {
+        // We want to copy instead of assign since we don't know where that LumiverseType data
+        // is going to end up. Maybe it'd be better if devices did a copy instead...
+        LumiverseTypeUtils::copyByVal(param.second, m_devicesById[kvp.first]->getParam(param.first));
+      }
+    }
+    else {
+      stringstream ss;
+      ss << "Rig does not contain a device with id: " << kvp.first;
+      Logger::log(WARN, ss.str());
     }
   }
 }
@@ -335,8 +380,8 @@ DeviceSet Rig::getDevices(string key, string val, bool isEqual) {
 set<string> Rig::getAllUsedParams() {
   set<string> params;
   
-  for (auto d : m_devices) {
-    for (auto s : d->getParamNames()) {
+  for (auto& d : m_devices) {
+    for (auto& s : d->getParamNames()) {
       params.insert(s);
     }
   }
@@ -377,7 +422,7 @@ JSONNode Rig::toJSON() {
 
   JSONNode patches;
   patches.set_name("patches");
-  for (auto p : m_patches) {
+  for (auto& p : m_patches) {
     JSONNode patch = p.second->toJSON();
     patch.set_name(p.first);
     patches.push_back(patch);
@@ -397,25 +442,34 @@ Patch* Rig::getSimulationPatch() {
     return NULL;
 }
 
-int Rig::addFunction(function<void()> func) {
+bool Rig::addFunction(int pid, function<void()> func) {
   // If the rig wasn't running, leave it that way.
   bool restart = false;
+  bool success = false;
 
   if (m_running) {
     stop();
     restart = true;
   }
 
-  m_updateFunctions.push_back(func);
-  
+  if (m_updateFunctions.count(pid) == 0) {
+    m_updateFunctions[pid] = func;
+    success = true;
+
+    stringstream ss;
+    ss << "Adding additional function to update loop with pid " << pid;
+    Logger::log(INFO, ss.str());
+  }
+  else {
+    stringstream ss;
+    ss << "Function with pid " << pid << " already exists in update loop. Cannot add new function";
+    Logger::log(ERR, ss.str());
+  }
+
   if (restart)
     run();
 
-  stringstream ss;
-  ss << "Adding additional function to update loop with pid " << m_updateFunctions.size() - 1;
-  Logger::log(INFO, ss.str());
-
-  return m_updateFunctions.size() - 1;
+  return success;
 }
 
 bool Rig::removeFunction(int pid) {
@@ -427,8 +481,8 @@ bool Rig::removeFunction(int pid) {
     restart = true;
   }
 
-  if (pid >= 0 && pid < m_updateFunctions.size()) {
-    m_updateFunctions.erase(m_updateFunctions.begin() + pid);
+  if (m_updateFunctions.count(pid) > 0) {
+    m_updateFunctions.erase(pid);
 
     stringstream ss;
     ss << "Removed additional function from update loop with pid " << pid;
