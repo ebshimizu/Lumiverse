@@ -73,6 +73,6 @@
 #include "DMX/KiNetInterface.h"
 #endif
 
-//#ifdef USE_ARNOLD
+#ifdef USE_ARNOLD
 #include "Simulation/ArnoldPatch.h"
-//#endif
+#endif

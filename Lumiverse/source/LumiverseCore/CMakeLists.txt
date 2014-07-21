@@ -92,8 +92,10 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
 # Build the libraries
-add_library(LumiverseCore SHARED ${LUMIVERSE_CORE_SOURCE})
+add_library(LumiverseCore ${LUMIVERSE_CORE_SOURCE})
+add_library(LumiverseCoreShared SHARED ${LUMIVERSE_CORE_SOURCE})
 target_link_libraries(LumiverseCore libjson clp)
+target_link_libraries(LumiverseCoreShared libjson clp)
 add_subdirectory(lib)
 
 # DMXPRO2 Interface build settings
@@ -103,6 +105,7 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
         set_property(TARGET ftd2xx PROPERTY IMPORTED_LOCATION
             ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/ftd2xx/ftd2xx.lib)
         target_link_libraries(LumiverseCore ftd2xx)
+        target_link_libraries(LumiverseCoreShared ftd2xx)
     ENDIF(WIN32)
 
     IF(APPLE)
@@ -110,6 +113,7 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
         set_property(TARGET ftd2xx PROPERTY IMPORTED_LOCATION
             ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/ftd2xx/libftd2xx.1.2.2.dylib)
         target_link_libraries(LumiverseCore ftd2xx)
+        target_link_libraries(LumiverseCoreShared ftd2xx)
 
         # Note that this does copy over the libftd2xx library to the proper location to run on OS X
         # It's really not that much fun to do so I'm looking for a better way of doing it.
@@ -131,6 +135,7 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
         set_property(TARGET ai PROPERTY IMPORTED_LOCATION
             ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/arnold/bin/libai.dylib)
         target_link_libraries(LumiverseCore ai)
+        target_link_libraries(LumiverseCoreShared ai)
     ENDIF(APPLE)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
@@ -191,7 +196,8 @@ INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Dependencies/mem
 FILE(GLOB clpfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.h)
 INSTALL(FILES ${clpfiles} DESTINATION include/lib/clp)
 
-INSTALL(TARGETS LumiverseCore LIBRARY DESTINATION lib)
+INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
+INSTALL(TARGETS LumiverseCoreShared DESTINATION lib)
 
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
     FILE(GLOB pro2files ${CMAKE_CURRENT_SOURCE_DIR}/lib/ftd2xx/*.H)

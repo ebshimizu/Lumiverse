@@ -384,14 +384,14 @@ void Device::loadParams(const JSONNode data) {
 }
     
 void Device::onParameterChanged() {
-    for (DeviceCallbackFunction paramCallback : m_onParameterChangedFunctions) {
-        paramCallback(this);
+    for (const auto& kvp : m_onParameterChangedFunctions) {
+        kvp.second(this);
     }
 }
     
 void Device::onMetadataChanged(){
-    for (DeviceCallbackFunction metaCallback : m_onMetadataChangedFunctions) {
-        metaCallback(this);
+    for (const auto& kvp : m_onMetadataChangedFunctions) {
+        kvp.second(this);
     }
 }
     

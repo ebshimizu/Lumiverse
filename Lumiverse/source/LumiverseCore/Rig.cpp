@@ -118,10 +118,12 @@ void Rig::loadPatches(JSONNode root) {
       patch = (Patch*) new DMXPatch(*i);
       addPatch(nodeName, patch);
     }
-    if (patchType == "ArnoldPatch") {
+#ifdef USE_ARNOLD
+    else if (patchType == "ArnoldPatch") {
       patch = (Patch*) new ArnoldPatch(*i);
       addPatch(nodeName, patch);
     }
+#endif
     else {
       stringstream ss;
       ss << "Unknown Patch type " << patchType << " in Patch ID " << nodeName << "Patch not loaded.";

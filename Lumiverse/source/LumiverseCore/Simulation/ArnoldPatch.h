@@ -13,7 +13,10 @@
 #include <algorithm>
 #include <cstdio>
 
+#ifdef USE_ARNOLD
 #include <ai.h>
+#endif
+
 #include "../Patch.h"
 #include "../lib/libjson/libjson.h"
 #include "ArnoldParameterVector.h"
