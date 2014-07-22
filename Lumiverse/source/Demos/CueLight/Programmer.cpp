@@ -164,7 +164,8 @@ void Programmer::blend(map<string, Device*> state) {
 }
 
 Cue Programmer::getCue(float time) {
-  return Cue(m_devices, time);
+  Cue cue(m_devices, time);
+  return cue;
 }
 
 void Programmer::captureFromRig(DeviceSet devices) {

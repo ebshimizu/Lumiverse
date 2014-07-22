@@ -291,7 +291,7 @@ namespace Lumiverse {
   };
 
   /*! \brief Enum translation to string for JSON output */
-  static unordered_map<Layer::BlendMode, string> BlendModeToString {
+  static unordered_map<Layer::BlendMode, string, std::hash<unsigned int>> BlendModeToString {
       { Layer::BLEND_OPAQUE, "BLEND_OPAQUE" },
       { Layer::NULL_DEFAULT, "NULL_DEFAULT" },
       { Layer::NULL_INTENSITY, "NULL_INTENSITY" },
@@ -339,4 +339,18 @@ namespace Lumiverse {
     return !(lhs < rhs);
   }
 }
+
+namespace std
+{
+    template<>
+    struct hash<Lumiverse::Layer::BlendMode>
+    {
+        size_t operator()( const Lumiverse::Layer::BlendMode& arg ) const
+        {
+            std::hash<unsigned int> hasher;
+            return hasher( static_cast<unsigned int>( arg ) );
+        }
+    };
+}
+
 #endif
