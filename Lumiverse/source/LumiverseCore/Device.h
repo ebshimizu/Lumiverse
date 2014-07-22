@@ -194,6 +194,13 @@ namespace Lumiverse {
     */
     bool setParam(string param, string val, float val2 = -1.0f);
 
+    /*!
+    \brief Fully specify the value of an enumeration.
+
+    \sa LumiverseEnum
+    */
+    bool setParam(string param, string val, float val2, LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode);
+
     /*! \brief Sets the value of a LumiverseColor parameter
     *
     * \param param Parameter name

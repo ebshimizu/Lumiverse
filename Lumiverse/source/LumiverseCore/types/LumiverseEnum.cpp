@@ -159,6 +159,17 @@ bool LumiverseEnum::setVal(string name, float tweak) {
   return false;
 }
 
+bool LumiverseEnum::setVal(string name, float tweak, Mode enumMode, InterpolationMode interpMode) {
+  if (setVal(name)) {
+    setTweak(tweak);
+    setMode(enumMode);
+    setInterpMode(interpMode);
+    return true;
+  }
+
+  return false;
+}
+
 bool LumiverseEnum::setVal(float val) {
   // Need to protect this section from someone writing stuff during the process
   lock_guard<mutex> lock(m_enumMapMutex);
@@ -272,6 +283,14 @@ bool LumiverseEnum::isDefault() {
   float target = (m_mode == FIRST) ? 0.0f : (m_mode == LAST) ? 1 : 0.5f;
 
   return (m_active == m_default) && (m_tweak == target);
+}
+
+vector<string> LumiverseEnum::getVals() {
+  vector<string> vals;
+  for (const auto& kvp : m_startToName) {
+    vals.push_back(kvp.second);
+  }
+  return vals;
 }
 
 void LumiverseEnum::setTweakWithMode() {

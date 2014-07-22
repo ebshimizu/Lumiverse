@@ -394,6 +394,13 @@ namespace Lumiverse {
     */
     void setParam(string param, string channel, double val);
 
+    /*!
+    \brief Sets the value of a LumiverseEnum parameter
+
+    \sa Device::setParam()
+    */
+    void setParam(string param, string val, float val2, LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode);
+
     /*! \brief Sets the value of a LumiverseColor parameter using LumiverseColor::setxy()
     *
     * x and y are chromaticity coordinates in the xyY color space.

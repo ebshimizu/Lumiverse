@@ -196,10 +196,81 @@
         		"White" : [81.33195, 79.590576, 47.302138]
         	}
         },
-        "shutter" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
-        "rainbow" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
-        "moveSpeed" : { "type" : "float", "val" : 0.0, "default" : 0.0 },
-        "control" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+        "shutter" : {
+          "type" : "enum",
+          "active" : "SHUTTER CLOSED",
+          "default" : "SHUTTER CLOSED",
+          "tweak" : 0.5,
+          "rangeMax" : 255,
+          "mode" : "CENTER",
+          "interpMode" : "SMOOTH_WITHIN_OPTION",
+          "keys" : {
+            "SHUTTER CLOSED" : 0,
+            "OPEN" : 32,
+            "STROBE" : 64,
+            "OPEN 2" : 96,
+            "SLOW OPEN - FAST CLOSE" : 128,
+            "OPEN 3" : 160,
+            "RANDOM STROBE" : 192,
+            "OPEN 4" : 224
+          }
+        },
+        "rainbow" : {
+          "type" : "enum",
+          "active" : "NO FUNCTION",
+          "default" : "NO FUNCTION",
+          "tweak" : 0.5,
+          "rangeMax" : 255,
+          "mode" : "CENTER",
+          "interpMode" : "SMOOTH_WITHIN_OPTION",
+          "keys" : {
+            "NO FUNCTION" : 0,
+            "RAINBOW 1" : 10,
+            "RAINBOW 2" : 40,
+            "RAINBOW 3" : 72,
+            "RAINBOW 4" : 104,
+            "RAINBOW 5" : 136,
+            "RAINBOW 6" : 168,
+            "RAINBOW 7" : 200,
+            "CROSSFADING COLORS" : 232
+          }
+        },
+        "moveSpeed" : {
+          "type" : "enum",
+          "active" : "MAX - MIN MOVEMENT SPEED",
+          "default" : "MAX - MIN MOVEMENT SPEED",
+          "tweak" : 0.0,
+          "rangeMax" : 255,
+          "mode" : "FIRST",
+          "interpMode" : "SMOOTH_WITHIN_OPTION",
+          "keys" : {
+            "MAX - MIN MOVEMENT SPEED" : 0,
+            "BLACKOUT BY MOVEMENT" : 226,
+            "NO FUNCTION" : 236
+          }
+        },
+        "control" : {
+          "type" : "enum",
+          "active" : "NORMAL",
+          "default" : "NORMAL",
+          "tweak" : 0.5,
+          "rangeMax" : 255,
+          "mode" : "CENTER",
+          "interpMode" : "SMOOTH_WITHIN_OPTION",
+          "keys" : {
+            "NORMAL" : 0,
+            "ALL MOTOR RESET" : 80,
+            "NO FUNCTION" : 85,
+            "INTERNAL PROGRAM 1" : 100,
+            "INTERNAL PROGRAM 2" : 120,
+            "INTERNAL PROGRAM 3" : 140,
+            "INTERNAL PROGRAM 4" : 160,
+            "INTERNAL PROGRAM 5" : 180,
+            "INTERNAL PROGRAM 6" : 200,
+            "INTERNAL PROGRAM 7" : 220,
+            "SOUND ACTIVE PROGRAM" : 240            
+          }
+        }
       },
       "metadata" : {
         "location" : "floor right"
@@ -253,10 +324,10 @@
           "pan" : [ 0, "FLOAT_TO_FINE" ],
           "tilt" : [ 2, "FLOAT_TO_FINE" ],
           "color" : [ 4, "COLOR_RGBW" ],
-          "shutter" : [ 8, "FLOAT_TO_SINGLE" ],
-          "rainbow" : [ 10, "FLOAT_TO_SINGLE" ],
-          "moveSpeed" : [ 11, "FLOAT_TO_SINGLE" ],
-          "control" : [ 12, "FLOAT_TO_SINGLE" ]
+          "shutter" : [ 8, "ENUM" ],
+          "rainbow" : [ 10, "ENUM" ],
+          "moveSpeed" : [ 11, "ENUM" ],
+          "control" : [ 12, "ENUM" ]
         },
         "Lustr+" : {
           "intensity" : [ 7 , "FLOAT_TO_SINGLE" ],
