@@ -36,8 +36,9 @@ void ArnoldInterface::parseArnoldParameter(const std::string &value, ArnoldParam
     std::string value_spaceless = value;
     std::string pattern;
     
-    // Removes spaces
-    std::remove_if(value_spaceless.begin(), value_spaceless.end(),
+    // Removes spaces when the input type is not string
+    if (typeid(std::string) != typeid(T))
+        std::remove_if(value_spaceless.begin(), value_spaceless.end(),
                                                    [](char x){return std::isspace(x);});
     
     // Reads two different types
@@ -52,6 +53,16 @@ void ArnoldInterface::parseArnoldParameter(const std::string &value, ArnoldParam
     size_t offset = 0;
     for (size_t i = 0; i < D; i++) {
         sscanf(value_spaceless.c_str() + offset, pattern.c_str(), &element);
+        /*
+        else {
+            // If input type is string, find substrings divided by commas.
+            int comma;
+            if ((comma = value_spaceless.find(",", offset)) != std::string::npos)
+                element = value_spaceless.substr(offset, comma - offset);
+            else
+                element = value_spaceless;
+        }
+         */
         vector[i] = element;
         
         offset = value_spaceless.find(",", offset);
@@ -182,6 +193,11 @@ void ArnoldInterface::setParameter(AtNode *light_ptr, const std::string &paramNa
                 union AiNodeSetter<float> AiNodeSetter;
                 AiNodeSetter.AiNodeSetter1D = AiNodeSetFlt;
                 setSingleParameter<1, float>(light_ptr, paramName, value, AiNodeSetter);
+            }
+            else if (param.arnoldTypeName == "string") {
+                union AiNodeSetter<const char*> AiNodeSetter;
+                AiNodeSetter.AiNodeSetter1D = AiNodeSetStr;
+                setSingleParameter<1, const char*>(light_ptr, paramName, value, AiNodeSetter);
             }
         
             break;

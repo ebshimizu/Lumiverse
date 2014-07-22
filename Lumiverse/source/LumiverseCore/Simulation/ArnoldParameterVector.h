@@ -222,7 +222,7 @@ namespace Lumiverse {
 	T val_s;
 
 	for (size_t i = 0; i < D; i++) {
-		val_s = (val) ? val[i] : 0.0f;
+		val_s = (val) ? val[i] : 0;
 
 		m_elements[i] = val_s;
 	}
@@ -239,7 +239,7 @@ ArnoldParameterVector<D, T>::ArnoldParameterVector(ArnoldParameterVector* other)
 	}
 
 	for (; i < D; i++) {
-		m_elements.push_back(Element());
+		m_elements.push_back(T());
 	}
 }
 
