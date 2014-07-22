@@ -88,6 +88,14 @@ public:
   Device* operator[](string id);
 
   /*!
+  \brief Returns a device from the Programmer.
+
+  \param id Device ID
+  \return Pointer to specified device. nullptr if device does not exist.
+  */
+  Device* getDevice(string id);
+
+  /*!
   \brief Clears the list of captured devices but does not reset the state of the devices.
   */
   void clearCaptured();

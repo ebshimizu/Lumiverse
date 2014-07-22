@@ -126,6 +126,10 @@ void Programmer::setColorRGBRaw(string selection, string param, double r, double
 }
 
 Device* Programmer::operator[](string id) {
+  return getDevice(id);
+}
+
+Device* Programmer::getDevice(string id) {
   captured = captured.add(id);
   return m_devices.count(id) > 0 ? m_devices[id] : nullptr;
 }
