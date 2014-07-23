@@ -67,6 +67,7 @@ public:
   void setParam(DeviceSet selection, string param, string val, float val2 = -1.0f);
   void setParam(DeviceSet selection, string param, string channel, double val);
   void setParam(DeviceSet selection, string param, double x, double y, double weight = 1.0);
+  void setParam(DeviceSet selection, string param, string val, float val2, LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode);
   void setColorRGB(DeviceSet selection, string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
   void setColorRGBRaw(DeviceSet selection, string param, double r, double g, double b, double weight = 1.0);
 
@@ -74,6 +75,7 @@ public:
   void setParam(string selection, string param, string val, float val2 = -1.0f);
   void setParam(string selection, string param, string channel, double val);
   void setParam(string selection, string param, double x, double y, double weight = 1.0);
+  void setParam(string selection, string param, string val, float val2, LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode);
   void setColorRGB(string selection, string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
   void setColorRGBRaw(string selection, string param, double r, double g, double b, double weight = 1.0);
 
