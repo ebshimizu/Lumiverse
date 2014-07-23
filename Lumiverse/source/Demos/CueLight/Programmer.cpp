@@ -79,6 +79,19 @@ void Programmer::setParam(DeviceSet selection, string param, double x, double y,
   }
 }
 
+void Programmer::setParam(DeviceSet selection, string param, string val, float val2,
+  LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode)
+{
+  // add selection to captured
+  captured = captured.add(selection);
+
+  for (Device* d : selection.getDevices()) {
+    if (m_devices.count(d->getId()) > 0) {
+      m_devices[d->getId()]->setParam(param, val, val2, mode, interpMode);
+    }
+  }
+}
+
 void Programmer::setColorRGB(DeviceSet selection, string param, double r, double g, double b, double weight, RGBColorSpace cs) {
   // add selection to captured
   captured = captured.add(selection);
@@ -115,6 +128,12 @@ void Programmer::setParam(string selection, string param, string channel, double
 
 void Programmer::setParam(string selection, string param, double x, double y, double weight) {
   setParam(m_rig->query(selection), param, x, y, weight);
+}
+
+void Programmer::setParam(string selection, string param, string val, float val2,
+  LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode)
+{
+  setParam(m_rig->query(selection), param, val, val2, mode, interpMode);
 }
 
 void Programmer::setColorRGB(string selection, string param, double r, double g, double b, double weight, RGBColorSpace cs) {
