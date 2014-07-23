@@ -96,6 +96,15 @@ public:
   Device* getDevice(string id);
 
   /*!
+  \brief Returns a device from the programmer without capturing it.
+
+  Used to read state of the devices.
+  \param id DeviceID
+  \return Pointer to specified device. nullptr if device does not exist.
+  */
+  const Device* readDevice(string id);
+
+  /*!
   \brief Clears the list of captured devices but does not reset the state of the devices.
   */
   void clearCaptured();
