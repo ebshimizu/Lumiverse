@@ -125,7 +125,7 @@ namespace Lumiverse {
     stringstream ss;
     ss << "(";
     bool first = true;
-
+    m_mapMutex.lock();
     for (const auto& kvp : m_deviceChannels) {
       if (!first)
         ss << ", ";
@@ -134,6 +134,7 @@ namespace Lumiverse {
 
       ss << kvp.first << " : " << kvp.second;
     }
+    m_mapMutex.unlock();
     ss << ")";
     return ss.str();
   }

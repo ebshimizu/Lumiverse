@@ -173,6 +173,14 @@ private:
   */
   Rig* m_rig;
 
+  /*! \brief Mutex for interacting with the programmer. */
+  mutex m_progMutex;
+
+  /*! \brief Safely adds a set to the set of captured devices. */
+  void addCaptured(DeviceSet set);
+
+  /*! \brief Safely adds an ID to the set of captured devices. */
+  void addCaptured(string id);
 };
 
 }
