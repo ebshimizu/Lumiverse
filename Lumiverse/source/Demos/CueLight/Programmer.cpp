@@ -134,6 +134,10 @@ Device* Programmer::getDevice(string id) {
   return m_devices.count(id) > 0 ? m_devices[id] : nullptr;
 }
 
+const Device* Programmer::readDevice(string id) {
+  return m_devices.count(id) > 0 ? m_devices[id] : nullptr;
+}
+
 void Programmer::clearCaptured() {
   captured = DeviceSet(m_rig);
 }
