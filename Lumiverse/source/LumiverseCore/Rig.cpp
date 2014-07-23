@@ -136,6 +136,8 @@ void Rig::loadPatches(JSONNode root) {
 }
 
 void Rig::reset() {
+  stop();
+
   // Delete Devices
   for (auto& d : m_devices) {
     delete d;
@@ -228,6 +230,11 @@ bool Rig::load(string filename) {
 }
 
 void Rig::addDevice(Device* device) {
+  if (m_running) {
+    Logger::log(ERR, "Can't add Devices to the Rig while the Rig is running.");
+    return;
+  }
+
   // Don't add duplicates.
   if (m_devicesById.count(device->getId()) > 0)
   {
@@ -251,6 +258,11 @@ Device* Rig::getDevice(string id) {
 }
 
 void Rig::deleteDevice(string id) {
+  if (m_running) {
+    Logger::log(ERR, "Can't delete devices while Rig is running.");
+    return;
+  }
+
   if (m_devicesById.count(id) == 0)
     return;
 
@@ -273,6 +285,11 @@ void Rig::deleteDevice(string id) {
 }
 
 void Rig::addPatch(string id, Patch* patch) {
+  if (m_running) {
+    Logger::log(ERR, "Can't add patches while Rig is running.");
+    return;
+  }
+
   // No duplicates.
   if (m_patches.count(id) > 0)
     return;
@@ -285,6 +302,11 @@ Patch* Rig::getPatch(string id) {
 }
 
 void Rig::deletePatch(string id) {
+  if (m_running) {
+    Logger::log(ERR, "Can't remove patches while Rig is running.");
+    return;
+  }
+
   if (m_patches.count(id) == 0)
     return;
 
