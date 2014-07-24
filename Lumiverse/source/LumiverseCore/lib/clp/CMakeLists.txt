@@ -1,8 +1,6 @@
 INCLUDE (CheckIncludeFiles)
 
-include_directories("${CMAKE_CURRENT_LIST_DIR}/CoinUtils"
-  "${CMAKE_CURRENT_BINARY_DIR}"
-)
+include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
 SET (CLP_HAVE_CONFIG "")
 

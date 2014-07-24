@@ -33,23 +33,32 @@ namespace Lumiverse {
       LumiverseColor* otherColor = (LumiverseColor*)other;
       m_weight = otherColor->m_weight;
       m_mode = otherColor->m_mode;
+
+      m_mapMutex.lock();
       m_deviceChannels = otherColor->m_deviceChannels;
       m_basisVectors = otherColor->m_basisVectors;
+      m_mapMutex.unlock();
     }
   }
   
   LumiverseColor::LumiverseColor(LumiverseColor* other) {
     m_weight = other->m_weight;
     m_mode = other->m_mode;
+
+    m_mapMutex.lock();
     m_deviceChannels = other->m_deviceChannels;
     m_basisVectors = other->m_basisVectors;
+    m_mapMutex.unlock();
   }
 
   LumiverseColor::LumiverseColor(const LumiverseColor& other) {
     m_weight = other.m_weight;
     m_mode = other.m_mode;
+
+    m_mapMutex.lock();
     m_deviceChannels = other.m_deviceChannels;
     m_basisVectors = other.m_basisVectors;
+    m_mapMutex.unlock();
   }
 
   void LumiverseColor::initMode() {
@@ -74,7 +83,7 @@ namespace Lumiverse {
     // Resets the color channels to 0.
     m_weight = 1;
 
-    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+    for (auto& it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
       it->second = 0;
     }
   }
@@ -83,14 +92,14 @@ namespace Lumiverse {
     JSONNode channels;
     channels.set_name("channels");
 
-    for (auto kvp : m_deviceChannels) {
+    for (const auto& kvp : m_deviceChannels) {
       channels.push_back(JSONNode(kvp.first, kvp.second));
     }
 
     JSONNode basis;
     basis.set_name("basis");
 
-    for (auto kvp : m_basisVectors) {
+    for (const auto& kvp : m_basisVectors) {
       JSONNode vec;
       vec.set_name(kvp.first);
       vec.push_back(JSONNode("X", kvp.second[0]));
@@ -116,15 +125,16 @@ namespace Lumiverse {
     stringstream ss;
     ss << "(";
     bool first = true;
-
-    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+    m_mapMutex.lock();
+    for (const auto& kvp : m_deviceChannels) {
       if (!first)
         ss << ", ";
       if (first)
         first = false;
 
-      ss << it->first << " : " << it->second;
+      ss << kvp.first << " : " << kvp.second;
     }
+    m_mapMutex.unlock();
     ss << ")";
     return ss.str();
   }
@@ -307,16 +317,16 @@ namespace Lumiverse {
   }
 
   void LumiverseColor::operator=(LumiverseColor& other) {
-    lock_guard<mutex> lock(m_mapMutex);
-
     m_weight = other.m_weight;
     m_mode = other.m_mode;
+    
+    m_mapMutex.lock();
     m_deviceChannels = other.m_deviceChannels;
     m_basisVectors = other.m_basisVectors;
+    m_mapMutex.unlock();
   }
 
   LumiverseColor& LumiverseColor::operator+=(double val) {
-    lock_guard<mutex> lock(m_mapMutex);
     for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
       m_deviceChannels[it->first] = clamp(it->second + val, 0, 1);
     }
@@ -329,7 +339,6 @@ namespace Lumiverse {
   }
 
   LumiverseColor& LumiverseColor::operator*=(double val) {
-    lock_guard<mutex> lock(m_mapMutex);
     for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
       m_deviceChannels[it->first] = clamp(it->second * val, 0, 1);
     }
@@ -342,14 +351,12 @@ namespace Lumiverse {
   }
 
   shared_ptr<LumiverseType> LumiverseColor::lerp(LumiverseColor* rhs, float t) {
-    lock_guard<mutex> lock(m_mapMutex);
-
     // We lerp the weights, and then we lerp the color params of the lhs.
     LumiverseColor* newColor = new LumiverseColor(this);
 
-    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+    for (const auto& kvp : m_deviceChannels) {
       // Standard lerp for each color channel: (1 - t) * lhs + t * rhs
-      newColor->setColorChannel(it->first, (1 - t) * it->second + rhs->getColorChannel(it->first) * t);
+      newColor->setColorChannel(kvp.first, (1 - t) * kvp.second + rhs->getColorChannel(kvp.first) * t);
     }
 
     // Lerp weights
@@ -358,10 +365,8 @@ namespace Lumiverse {
   }
 
   bool LumiverseColor::isEqual(LumiverseColor& other) {
-    lock_guard<mutex> lock(m_mapMutex);
-
-    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
-      if (!doubleEq(it->second, other.getColorChannel(it->first)))
+    for (const auto& kvp : m_deviceChannels) {
+      if (!doubleEq(kvp.second, other.getColorChannel(kvp.first)))
         return false;
     }
 
@@ -372,7 +377,7 @@ namespace Lumiverse {
     // All channels must be 0 and weight must be 1 for default.
     bool channelsNull = true;
 
-    for (auto c : m_deviceChannels) {
+    for (const auto& c : m_deviceChannels) {
       channelsNull &= (c.second == 0);
     }
 
@@ -390,15 +395,14 @@ namespace Lumiverse {
   double LumiverseColor::sumComponent(int i) {
     double ret = 0;
 
-    lock_guard<mutex> lock(m_mapMutex);
-    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
-      if (m_basisVectors.count(it->first) == 0) {
+    for (const auto& kvp : m_deviceChannels) {
+      if (m_basisVectors.count(kvp.first) == 0) {
         stringstream ss;
-        ss << "No basis component named " << it->first << " contained in color basis. Ignoring...";
+        ss << "No basis component named " << kvp.first << " contained in color basis. Ignoring...";
         Logger::log(WARN, ss.str());
         continue;
       }
-      ret += it->second * m_basisVectors[it->first][i] * m_weight;
+      ret += kvp.second * m_basisVectors[kvp.first][i] * m_weight;
     }
     return ret;
   }
@@ -471,8 +475,8 @@ namespace Lumiverse {
       vector<double> xCoef;
       vector<double> yCoef;
 
-      for (auto it = m_basisVectors.begin(); it != m_basisVectors.end(); it++) {
-        Eigen::Vector3d bv = it->second;
+      for (const auto& kvp : m_basisVectors) {
+        Eigen::Vector3d bv = kvp.second;
 
         // Calculate X coefficients. Equal to (X1 - x(X1+Y1+Z1))
         xCoef.push_back(bv[0] - x * (bv[0] + bv[1] + bv[2]));
@@ -490,8 +494,8 @@ namespace Lumiverse {
 
       // Set value for device channels if model is optimal
       int index = 0;
-      for (auto it = m_basisVectors.begin(); it != m_basisVectors.end(); it++) {
-        m_deviceChannels[it->first] = res[index];
+      for (const auto& kvp : m_basisVectors) {
+        m_deviceChannels[kvp.first] = res[index];
         index++;
       }
       m_weight = weight;

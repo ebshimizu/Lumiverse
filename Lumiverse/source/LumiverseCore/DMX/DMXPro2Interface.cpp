@@ -245,7 +245,7 @@ bool DMXPro2Interface::openDevice(int device_num)
 #pragma warning(pop)
       build_ver = (uint8_t)version & 0xFF;
       stringstream ss;
-      ss << "D2XX Driver Version:: " << (int)major_ver << "." << (int)minor_ver << "." << build_ver;
+      ss << "D2XX Driver Version:: " << (int)major_ver << "." << (int)minor_ver << "." << (int)build_ver;
       Logger::log(INFO, ss.str());
     }
     else
@@ -255,7 +255,7 @@ bool DMXPro2Interface::openDevice(int device_num)
     ftStatus = FT_GetLatencyTimer(m_deviceHandle, (PUCHAR)&latencyTimer);
     if (ftStatus == FT_OK) {
       stringstream ss;
-      ss << "Latency Timer:: " << latencyTimer;
+      ss << "Latency Timer:: " << (int)latencyTimer;
       Logger::log(INFO, ss.str());
     }
     else
