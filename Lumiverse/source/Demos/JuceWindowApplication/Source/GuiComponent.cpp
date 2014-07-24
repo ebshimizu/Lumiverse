@@ -33,29 +33,20 @@ GuiComponent::GuiComponent (float *buffer, Image::PixelFormat format,
 m_width(imageWidth), m_height(imageHeight), m_rig(rig)
 {
     setLookAndFeel(m_lookandfeel = new juce::LookAndFeel_V3());
-    
-    addAndMakeVisible (m_intensity_label = new Label ("new label",
-                                          TRANS("Intensity")));
-    m_intensity_label->setFont (Font (15.00f, Font::plain));
-    m_intensity_label->setJustificationType (Justification::centredLeft);
-    m_intensity_label->setEditable (false, false, false);
-    m_intensity_label->setColour (TextEditor::textColourId, Colours::black);
-    m_intensity_label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-    
-    addAndMakeVisible (m_intensity_slider = new Slider ("new slider"));
-    m_intensity_slider->setRange (0, 10, 0);
-    m_intensity_slider->setSliderStyle (Slider::LinearHorizontal);
-    m_intensity_slider->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
-    m_intensity_slider->addListener (this);
 
     addAndMakeVisible (m_abort_button = new TextButton (String::empty));
     m_abort_button->setButtonText ("Abort");
     m_abort_button->addListener (this);
     
+    int height = addDevicePads();
+    int dcwidth = 0;
+    
+    if (m_device_pads.size() > 0)
+        dcwidth = m_device_pads[0]->getWidth();
+    
     //[UserPreSize]
     //[/UserPreSize]
-    setSize (imageWidth + 200, imageHeight);
-
+    setSize (imageWidth + dcwidth, std::max(height, imageHeight));
 
     //[Constructor] You can add your own custom stuff here..
     //[/Constructor]
@@ -66,10 +57,13 @@ GuiComponent::~GuiComponent()
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
-    m_intensity_label = nullptr;
-    m_intensity_slider = nullptr;
+    m_abort_button = nullptr;
     m_lookandfeel = nullptr;
 
+    for (DeviceComponent *dc : m_device_pads) {
+        delete dc;
+    }
+    
     //[Destructor]. You can add your own custom destruction code here..
     //[/Destructor]
 }
@@ -109,35 +103,15 @@ void GuiComponent::paint (Graphics& g)
 void GuiComponent::resized()
 {
     m_abort_button->setBounds (getWidth() - 176, getHeight() - 60, 120, 32);
+
+    int last_height = 0;
+    for (DeviceComponent *dc : m_device_pads) {
+        dc->setBounds(m_width, last_height, dc->getWidth(), dc->getHeight());
+        last_height += dc->getHeight();
+    }
     
-    m_intensity_label->setBounds (16, 16, 150, 24);
-    m_intensity_slider->setBounds (24, 48, 150, 24);
-    m_intensity_label->setTopLeftPosition(m_width + 10, 10);
-    m_intensity_slider->setTopLeftPosition(m_width + 10, 10 + 30);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
-}
-
-void GuiComponent::sliderValueChanged (Slider* sliderThatWasMoved)
-{
-    //[UsersliderValueChanged_Pre]
-    //[/UsersliderValueChanged_Pre]
-
-    if (sliderThatWasMoved == m_intensity_slider)
-    {
-        //[UserSliderCode_slider] -- add your slider handling code here..
-        //[/UserSliderCode_slider]
-        /*
-        m_intensity_label->setText(m_intensity_slider->getTextFromValue(m_intensity_slider->getValue()),
-                                   juce::NotificationType::dontSendNotification);
-         */
-        m_rig->getDevice("mylight")->setMetadata("intensity",
-                        m_intensity_slider->getTextFromValue(m_intensity_slider->getValue()).toStdString());
-        //((ArnoldPatch*)m_rig->getSimulationPatch())->onDeviceChanged("mylight");
-    }
-
-    //[UsersliderValueChanged_Post]
-    //[/UsersliderValueChanged_Post]
 }
 
 void GuiComponent::buttonClicked (Button* buttonThatWasClicked)
@@ -156,6 +130,25 @@ void GuiComponent::buttonClicked (Button* buttonThatWasClicked)
     
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
+}
+
+//==============================================================================
+
+int GuiComponent::addDevicePads() {
+    if (m_rig == NULL)
+        return 0;
+    
+    int height = 0;
+    
+    for (Device *device : m_rig->getDeviceRaw()) {
+        DeviceComponent *dc = new DeviceComponent(device);
+        addAndMakeVisible(dc);
+        m_device_pads.add(dc);
+        
+        height += dc->getHeight();
+    }
+    
+    return height;
 }
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...

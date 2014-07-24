@@ -9,8 +9,6 @@
 #include <string>
 #include <stdio.h>
 
-class LumiverseType;
-
 namespace Lumiverse {
   /*!
   * \brief Defines a float in Lumiverse

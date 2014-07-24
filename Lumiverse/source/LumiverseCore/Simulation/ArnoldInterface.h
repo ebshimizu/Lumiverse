@@ -218,6 +218,13 @@ namespace Lumiverse {
     void parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) const;
       
     /*!
+    * \brief Appends the new output command to the outputs attribute of options.
+    *
+    * \param buffer_output The output command (typically using a driver_buffer node).
+    */
+    void appendToOutputs(const std::string buffer_output);
+      
+    /*!
     * \brief The list containing the mappings between metadata to Arnold parameter.
     * \sa ArnoldParam
     */

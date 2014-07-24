@@ -8,7 +8,7 @@ using namespace Lumiverse;
 int main(int argc, char**argv) {
   // Logger::setLogFile("OLLlog.txt");
   
-  Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold.json");
+  Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric.json");
 
   // Init rig
   rig.init();
@@ -17,7 +17,7 @@ int main(int argc, char**argv) {
   // rig.addFunction([]() { cout << "Testing additional functions\n"; });
 
   rig.run();
-
+/*
   rig.getDevice("inno")->setParam("shutter", 0.95);
   rig.getDevice("inno")->setParam("intensity", 1.0);
   rig.getDevice("inno")->setParam("pan", 0.4);
@@ -33,8 +33,17 @@ int main(int argc, char**argv) {
   cout << "Available commands: select [query], set [parameter]=[value], reset, info [device id], info selected\n";
   cout << "Only floating point parameters are currently supported.\n";
   DeviceSet current;
-  
+  */
+    bool flag = true;
   while (1) {
+    Device *par1 = rig.getDevice("par1");
+      LumiverseColor *par_color = (LumiverseColor *)par1->getParam("color");
+      
+      if (flag) {
+          printf("%f, %f, %f\n", par_color->getRGB()[0], par_color->getRGB()[1], par_color->getRGB()[2]);
+          flag = false;
+      }
+      /*
     cout << ">> ";
 
     string input;
@@ -93,5 +102,6 @@ int main(int argc, char**argv) {
 
       current.setParam(key, val);
     }
+       */
   }
 }

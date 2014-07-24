@@ -5,7 +5,8 @@
 
 namespace Lumiverse {
 
-ArnoldPatch::ArnoldPatch(const JSONNode data) {
+ArnoldPatch::ArnoldPatch(const JSONNode data) :
+m_renderloop(NULL) {
 	loadJSON(data);
 }
 
@@ -95,6 +96,24 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
         d_ptr->getMetadata(meta, value);
         m_interface.setParameter(light_ptr, meta, value);
     }
+    
+    // Sets arnold params with device params
+    // This process is after parsing metadata, so parameters here can overwrite values from metadata
+    for (std::string param : d_ptr->getParamNames()) {
+        LumiverseType *raw = d_ptr->getParam(param);
+        
+        // First parse lumiverse type into string. So we can reuse the function for metadata.
+        // It's obviously inefficient.
+        if (raw->getTypeName() == "float") {
+            m_interface.setParameter(light_ptr, param, ((LumiverseFloat*)raw)->asString());
+        }
+        else if (raw->getTypeName() == "color") {
+            Eigen::Vector3d rgb = ((LumiverseColor*)raw)->getRGB();
+            std::stringstream ss;
+            ss << rgb[0] << ", " << rgb[1] << ", ", rgb[2];
+            m_interface.setParameter(light_ptr, param, ss.str());
+        }
+    }
 
     m_lights[light_name].light = light_ptr;
 }
@@ -118,6 +137,7 @@ bool ArnoldPatch::updateLight(set<Device *> devices) {
             if (m_lights[d->getId()].light == NULL) {
                 Device::DeviceCallbackFunction callback = std::bind(&ArnoldPatch::onDeviceChanged, this,
                                                                     std::placeholders::_1);
+                d->addParameterChangedCallback(callback);
                 d->addMetadataChangedCallback(callback);
             }
             
@@ -142,8 +162,12 @@ void ArnoldPatch::interruptRender() {
             Logger::log(INFO, "Aborted rendering to restart.");
         }
         
-        // TODO : no such process error
-        m_renderloop->join();
+        try {
+            m_renderloop->join();
+        }
+        catch (const std::system_error& e) {
+            Logger::log(ERR, "Thread doesn't exist.");
+        }
         m_renderloop = NULL;
     }
 }
