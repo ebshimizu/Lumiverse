@@ -197,6 +197,9 @@ public:
   // Gets the downfade
   float getDownfade() { return m_downfade; }
 
+  /*! \brief Gets the delay from a cue. */
+  float getDelay() { return m_delay; }
+
   // Returns the cue data for a device's parameter
   set<Keyframe>& getParamData(string deviceId, string param) { return m_cueData[deviceId][param]; }
 

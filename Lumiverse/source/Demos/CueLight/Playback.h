@@ -169,6 +169,9 @@ namespace Lumiverse {
     /*! \brief Returns a pointer to the rig. */
     Rig* getRig() { return m_rig; }
 
+    /*! \brief Returns a list of the cue list names contained in the Playback. */
+    vector<string> getCueListNames();
+
   private:
     /*! \brief Map of layer names to layers. */
     map<string, shared_ptr<Layer> > m_layers;
