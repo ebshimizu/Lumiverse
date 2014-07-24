@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <vector>
 
 namespace Lumiverse {
   /*! \brief Defines an enumeration in Lumiverse.
@@ -205,6 +206,15 @@ namespace Lumiverse {
     bool setVal(string name, float tweak);
 
     /*!
+    \brief Sets the value of the enumeration and other options
+    \param name Name of the option
+    \param tweaj Tweak value between 0 and 1.
+    \param enumMode The Mode of the enumeration
+    \param interpMode Interpolation mode of the enumeration.
+    */
+    bool setVal(string name, float tweak, Mode enumMode, InterpolationMode interpMode);
+
+    /*!
     * \brief Sets the value of the enumeration numerically.
     *
     * This will take a value and convert it to the proper enumeration option
@@ -236,6 +246,11 @@ namespace Lumiverse {
     * \return Active enumeration option
     */
     string getVal() { return m_active; }
+
+    /*!
+    \brief Gets the first value in the active range.
+    */
+    int getValIndex() { return m_nameToStart[m_active]; }
 
     /*!
     * \brief Gets the tweak value for the enumeration
@@ -303,6 +318,21 @@ namespace Lumiverse {
     * \brief Returns true if the current value of the enumeration is equal to the default.
     */
     virtual bool isDefault();
+
+    /*!
+    \brief Gets a list of all the possible values the enumeration can take
+    */
+    vector<string> getVals();
+
+    /*!
+    \brief Returns a reference to the map of values to the start of their range.
+    */
+    const map<string, int>& getValsToStart() { return m_nameToStart; }
+
+    /*!
+    \brief Returns a reference to the map of range starts to values
+    */
+    const map<int, string>& getStartToVals() { return m_startToName; }
 
   private:
     /*!

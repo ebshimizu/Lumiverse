@@ -122,6 +122,17 @@ bool Device::setParam(string param, string val, float val2) {
   return true;
 }
 
+bool Device::setParam(string param, string val, float val2, LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode) {
+  if (m_parameters.count(param) == 0) {
+    return false;
+  }
+
+  LumiverseEnum* data = (LumiverseEnum *)m_parameters[param];
+  data->setVal(val, val2, mode, interpMode);
+
+  return true;
+}
+
 bool Device::setParam(string param, string channel, double val) {
   if (m_parameters.count(param) == 0) {
     return false;

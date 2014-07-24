@@ -8,7 +8,11 @@ using namespace Lumiverse;
 int main(int argc, char**argv) {
   // Logger::setLogFile("OLLlog.txt");
   
+<<<<<<< HEAD
   Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric.json");
+=======
+  Rig rig("../../../data/movingLights.json");
+>>>>>>> upstream/master
 
   // Init rig
   rig.init();
@@ -17,7 +21,27 @@ int main(int argc, char**argv) {
   // rig.addFunction([]() { cout << "Testing additional functions\n"; });
 
   rig.run();
+<<<<<<< HEAD
 /*
+=======
+
+  rig.getDevice("inno")->setParam("shutter", "OPEN");
+  rig.getDevice("inno")->setParam("intensity", 0.15);
+  rig.getDevice("inno")->setParam("pan", 0.4);
+  rig.getDevice("inno")->setParam("tilt", 0.25);
+  LumiverseEnum* testEnum = (LumiverseEnum*)rig.getDevice("inno")->getParam("shutter");
+  // Concurrency tests
+
+  std::function<void()> myFunc = [testEnum]() { while (1) { cout << testEnum->asString() << "\n"; this_thread::sleep_for(chrono::nanoseconds(1)); } };
+  std::thread myThread(myFunc);
+  while (1)
+  {
+    testEnum->setVal(rand() % 255);
+    this_thread::sleep_for(chrono::nanoseconds(1));
+  }
+
+
+>>>>>>> upstream/master
   rig.getDevice("inno")->setParam("shutter", 0.95);
   rig.getDevice("inno")->setParam("intensity", 1.0);
   rig.getDevice("inno")->setParam("pan", 0.4);

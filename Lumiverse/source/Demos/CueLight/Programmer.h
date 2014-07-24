@@ -67,6 +67,7 @@ public:
   void setParam(DeviceSet selection, string param, string val, float val2 = -1.0f);
   void setParam(DeviceSet selection, string param, string channel, double val);
   void setParam(DeviceSet selection, string param, double x, double y, double weight = 1.0);
+  void setParam(DeviceSet selection, string param, string val, float val2, LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode);
   void setColorRGB(DeviceSet selection, string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
   void setColorRGBRaw(DeviceSet selection, string param, double r, double g, double b, double weight = 1.0);
 
@@ -74,6 +75,7 @@ public:
   void setParam(string selection, string param, string val, float val2 = -1.0f);
   void setParam(string selection, string param, string channel, double val);
   void setParam(string selection, string param, double x, double y, double weight = 1.0);
+  void setParam(string selection, string param, string val, float val2, LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode);
   void setColorRGB(string selection, string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
   void setColorRGBRaw(string selection, string param, double r, double g, double b, double weight = 1.0);
 
@@ -86,6 +88,23 @@ public:
   \return Pointer to the specified device. Nullptr otherwise.
   */
   Device* operator[](string id);
+
+  /*!
+  \brief Returns a device from the Programmer.
+
+  \param id Device ID
+  \return Pointer to specified device. nullptr if device does not exist.
+  */
+  Device* getDevice(string id);
+
+  /*!
+  \brief Returns a device from the programmer without capturing it.
+
+  Used to read state of the devices.
+  \param id DeviceID
+  \return Pointer to specified device. nullptr if device does not exist.
+  */
+  const Device* readDevice(string id);
 
   /*!
   \brief Clears the list of captured devices but does not reset the state of the devices.
@@ -154,6 +173,14 @@ private:
   */
   Rig* m_rig;
 
+  /*! \brief Mutex for interacting with the programmer. */
+  mutex m_progMutex;
+
+  /*! \brief Safely adds a set to the set of captured devices. */
+  void addCaptured(DeviceSet set);
+
+  /*! \brief Safely adds an ID to the set of captured devices. */
+  void addCaptured(string id);
 };
 
 }

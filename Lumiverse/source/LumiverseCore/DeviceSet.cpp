@@ -505,6 +505,14 @@ void DeviceSet::setParam(string param, string val, float val2) {
   }
 }
 
+void DeviceSet::setParam(string param, string val, float val2, LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode) {
+  for (auto& d : m_workingSet) {
+    if (d->paramExists(param)) {
+      d->setParam(param, val, val2, mode, interpMode);
+    }
+  }
+}
+
 void DeviceSet::setParam(string param, string channel, double val) {
   for (auto& d : m_workingSet) {
     if (d->paramExists(param)) {

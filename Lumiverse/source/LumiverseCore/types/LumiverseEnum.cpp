@@ -63,7 +63,7 @@ void LumiverseEnum::init(map<string, int> keys, string active, Mode mode, string
 
   m_nameToStart = keys;
 
-  for (auto kvp : keys) {
+  for (const auto& kvp : keys) {
     m_startToName[kvp.second] = kvp.first;
   }
 }
@@ -93,7 +93,7 @@ JSONNode LumiverseEnum::toJSON(string name) {
   JSONNode keys;
   keys.set_name("keys");
 
-  for (auto kvp : m_startToName) {
+  for (const auto& kvp : m_startToName) {
     keys.push_back(JSONNode(kvp.second, kvp.first));
   }
 
@@ -159,10 +159,19 @@ bool LumiverseEnum::setVal(string name, float tweak) {
   return false;
 }
 
+bool LumiverseEnum::setVal(string name, float tweak, Mode enumMode, InterpolationMode interpMode) {
+  if (setVal(name)) {
+    setTweak(tweak);
+    setMode(enumMode);
+    setInterpMode(interpMode);
+    return true;
+  }
+
+  return false;
+}
+
 bool LumiverseEnum::setVal(float val) {
   // Need to protect this section from someone writing stuff during the process
-  lock_guard<mutex> lock(m_enumMapMutex);
-
   // Clamp cases are trivial.
   if (val < m_startToName.begin()->first) {
     return setVal(m_startToName.begin()->second, 0.0f);
@@ -171,9 +180,10 @@ bool LumiverseEnum::setVal(float val) {
     return setVal(m_startToName.end()->second, 1.0f);
   }
 
+  lock_guard<mutex> lock(m_enumMapMutex);
   // Otherwise we need to figure out what the value should be
   int start;
-  for (auto kvp : m_startToName) {
+  for (const auto& kvp : m_startToName) {
     // So yeah this is pretty slow. It's a search for a point in a range
     // but in the interest of getting things running first we'll do the slow thing.
     if (val < kvp.first)
@@ -215,8 +225,6 @@ float LumiverseEnum::getRangeVal() {
 
 shared_ptr<LumiverseType> LumiverseEnum::lerp(LumiverseEnum* rhs, float t) {
   // Protect access to maps during this process
-  m_enumMapMutex.lock();
-
   LumiverseEnum* newEnum = new LumiverseEnum(rhs);
   
   if (m_interpMode == SNAP) {
@@ -233,7 +241,6 @@ shared_ptr<LumiverseType> LumiverseEnum::lerp(LumiverseEnum* rhs, float t) {
     newEnum->setVal(getRangeVal() * (1 - t) + rhs->getRangeVal() * t);
   }
 
-  m_enumMapMutex.unlock();
   return shared_ptr<LumiverseType>((LumiverseType*)newEnum);
 }
 
@@ -250,7 +257,7 @@ void LumiverseEnum::operator=(const LumiverseEnum& val) {
 
   // Before we do a copy of the maps, check to see if they aren't already the same.
   if (val.m_nameToStart.size() == m_nameToStart.size()) {
-    for (auto& kvp : m_nameToStart) {
+    for (const auto& kvp : m_nameToStart) {
       if (kvp.second != val.m_nameToStart.find(kvp.first)->second) {
         break;
       }
@@ -272,6 +279,14 @@ bool LumiverseEnum::isDefault() {
   float target = (m_mode == FIRST) ? 0.0f : (m_mode == LAST) ? 1 : 0.5f;
 
   return (m_active == m_default) && (m_tweak == target);
+}
+
+vector<string> LumiverseEnum::getVals() {
+  vector<string> vals;
+  for (const auto& kvp : m_startToName) {
+    vals.push_back(kvp.second);
+  }
+  return vals;
 }
 
 void LumiverseEnum::setTweakWithMode() {
