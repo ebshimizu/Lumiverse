@@ -87,6 +87,7 @@ Cue::Cue(JSONNode node) {
 Cue::Cue(Cue& other) {
   m_upfade = other.m_upfade;
   m_downfade = other.m_downfade;
+  m_delay = other.m_delay;
 
   // Fully copy over cue data. Other instance may go out of scope whenever and
   // delete the cue data but since we have a shared_ptr, we should still have it.
@@ -105,6 +106,7 @@ Cue::~Cue() {
 void Cue::operator=(const Cue& other) {
   m_upfade = other.m_upfade;
   m_downfade = other.m_downfade;
+  m_delay = other.m_delay;
 
   // Fully copy over cue data. Other instance may go out of scope whenever and
   // delete the cue data but since we have a shared_ptr, we should still have it.
