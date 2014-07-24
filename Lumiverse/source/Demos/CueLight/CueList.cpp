@@ -93,6 +93,23 @@ void CueList::update(float num, Rig* rig, bool track) {
   }
 }
 
+float CueList::getFirstCueNum() {
+  if (m_cues.size() == 0) {
+    // No cues defaults this to 0.    
+    return 0;
+  }
+  return m_cues.begin()->first;
+}
+
+float CueList::getLastCueNum() {
+  if (m_cues.size() == 0) {
+    // No cues defaults this to 0
+    return 0;
+  }
+
+  return m_cues.rbegin()->first;
+}
+
 Cue* CueList::getNextCue(float num) {
   auto current = m_cues.find(num);
   if (current == m_cues.end()) {

@@ -105,7 +105,7 @@ public:
   \param devices Map of devices to store. 
   \param time Default cue timing to use
   */
-  Cue(map<string, Device*> devices, float time);
+  Cue(map<string, Device*> devices, float up, float down, float delay);
 
   // Creates a cue with different up and down fades.
   Cue(Rig* rig, float up, float down);
@@ -206,6 +206,24 @@ public:
   /*! \brief Returns the JSON representation of the cue. */
   JSONNode toJSON();
 
+  /*!
+  \brief Returns the length of the cue.
+  
+  If the length hasn't been updated recently, this will calculate it.
+  Otherwise it'll return the m_length value calculated at an earlier time.
+  */
+  float getLength();
+
+  /*!
+  \brief Returns a one word description of the keyframe characteristics
+
+  Returns one of three values at the moment:
+  Standalone - Cue contains no null keyframes (does not cross fade between cues)
+  Hybrid - Cue contains null keyframes (some parameters cross fade between cues)
+  Linked - All parameters have null keyframes (all parameters cross fade between cues)
+  */
+  string getType();
+
 private:
   // Upfade time
   float m_upfade;
@@ -215,6 +233,19 @@ private:
 
   // Delay before doing any fades, default timing.
   float m_delay;
+
+  /*! \brief Stores the length of the cue in seconds. */
+  float m_length;
+
+  /*! \brief Indicates if the length stored in m_length is up to date. */
+  bool m_lengthIsUpdated;
+
+  /*!
+  \brief Cue type.
+  
+  If equal to "" then getType() will recheck the type of the cue;
+  */
+  string m_type;
 
   /*!
   \brief Data for this particular cue.

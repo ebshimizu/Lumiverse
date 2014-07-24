@@ -199,8 +199,8 @@ void Programmer::blend(map<string, Device*> state) {
   m_progMutex.unlock();
 }
 
-Cue Programmer::getCue(float time) {
-  Cue cue(m_devices, time);
+Cue Programmer::getCue(float upfade, float downfade, float delay) {
+  Cue cue(m_devices, upfade, downfade, delay);
   return cue;
 }
 
