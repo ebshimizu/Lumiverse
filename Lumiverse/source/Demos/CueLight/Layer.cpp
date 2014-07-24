@@ -172,7 +172,7 @@ namespace Lumiverse {
       Cue* nextCue = m_cueList->getCue(num);
       
       if (nextCue != nullptr) {
-        Cue tempCue(m_layerState, time);
+        Cue tempCue(m_layerState, time, time, 0);
         m_cueList->setCurrentCue(num);
         goToCue(tempCue, *nextCue, true);
       }
