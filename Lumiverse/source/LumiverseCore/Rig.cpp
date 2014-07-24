@@ -1,6 +1,10 @@
 #include "Rig.h"
-// TODO : config
+
+#define USE_ARNOLD
+
+#ifdef USE_ARNOLD
 #include "Simulation/ArnoldPatch.h"
+#endif
 
 namespace Lumiverse {
 
@@ -118,12 +122,13 @@ void Rig::loadPatches(JSONNode root) {
       patch = (Patch*) new DMXPatch(*i);
       addPatch(nodeName, patch);
     }
-#ifdef USE_ARNOLD
+    // TODO: fix macro
+//#ifdef USE_ARNOLD
     else if (patchType == "ArnoldPatch") {
       patch = (Patch*) new ArnoldPatch(*i);
       addPatch(nodeName, patch);
     }
-#endif
+//#endif
     else {
       stringstream ss;
       ss << "Unknown Patch type " << patchType << " in Patch ID " << nodeName << "Patch not loaded.";
@@ -199,8 +204,9 @@ bool Rig::load(string filename) {
   if (data.is_open()) {
     reset();
 
+    // "+ 1" for the ending
     streamoff size = data.tellg();
-    char* memblock = new char[(unsigned int)size];
+    char* memblock = new char[(unsigned int)size + 1];
 
     data.seekg(0, ios::beg);
 
@@ -211,6 +217,10 @@ bool Rig::load(string filename) {
     data.read(memblock, size);
     data.close();
 
+    // It's not guaranteed that the following memory after memblock is blank.
+    // C-style string needs an end.
+    memblock[size] = '\0';
+      
     JSONNode n = libjson::parse(memblock);
 
     // This could get to be a large function, so let's break off into a helper.

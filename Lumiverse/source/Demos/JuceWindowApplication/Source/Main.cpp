@@ -8,6 +8,8 @@
   ==============================================================================
 */
 
+#include "GuiConfig.h"
+
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "../../../LumiverseCore/LumiverseCore.h"
 
@@ -31,7 +33,7 @@ public:
     void initialise (const String& commandLine) override
     {
         
-        m_rig = new Rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold.json");
+        m_rig = new Rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric.json");
         
         m_rig->init();
         
@@ -41,7 +43,7 @@ public:
                                                 patch->getBufferPointer(), m_rig);
         
         m_timer = new RepaintTimer(m_renderingWindow->getContentComponent());
-        m_timer->startTimer(5000);
+        m_timer->startTimer(1000);
         
         m_rig->run();
     }

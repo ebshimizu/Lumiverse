@@ -11,7 +11,7 @@ options
  texture_gamma 2.2
  camera persp
  threads 1
- outputs "RGBA RGBA filter jucerender"
+ outputs "RGBA RGBA filter testrender"
 }
 
 gaussian_filter
@@ -150,6 +150,10 @@ point_light
   intensity 1
   exposure 6
   samples 1
+  matrix 1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 0 0 0
 }
 
 

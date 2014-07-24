@@ -20,8 +20,13 @@
 #ifndef __JUCE_HEADER_F1E5D9BB3E654E28__
 #define __JUCE_HEADER_F1E5D9BB3E654E28__
 
+#pragma once
+
 //[Headers]     -- You can add your own extra header files here --
+#include <vector>
 #include "JuceHeader.h"
+#include "GuiConfig.h"
+#include "DeviceComponent.h"
 #include "../../../LumiverseCore/LumiverseCore.h"
 //[/Headers]
 
@@ -36,7 +41,6 @@ using namespace Lumiverse;
                                                                     //[/Comments]
 */
 class GuiComponent  : public Component,
-                      public SliderListener,
                       public ButtonListener
 {
 public:
@@ -51,18 +55,18 @@ public:
 
     void paint (Graphics& g);
     void resized();
-    void sliderValueChanged (Slider* sliderThatWasMoved);
     void buttonClicked (Button* buttonThatWasClicked);
     
 private:
+    int addDevicePads();
     //[UserVariables]   -- You can add your own custom variables in this section.
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Label> m_intensity_label;
-    ScopedPointer<Slider> m_intensity_slider;
     ScopedPointer<Button> m_abort_button;
     ScopedPointer<LookAndFeel> m_lookandfeel;
+    
+    Array<DeviceComponent*> m_device_pads;
     
     Image m_panel;
     float *m_color_buffer;

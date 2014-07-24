@@ -234,8 +234,7 @@ LumiverseType* LumiverseTypeUtils::loadFromJSON(JSONNode node) {
     err = true;
   }
 
-  if (err == true)
-    return nullptr;
+  return nullptr;
 }
 
 }

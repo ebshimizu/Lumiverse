@@ -9,6 +9,8 @@
 #ifndef __JuceWindowApp__RenderingWindow__
 #define __JuceWindowApp__RenderingWindow__
 
+#pragma once
+
 #include <iostream>
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "GuiComponent.h"

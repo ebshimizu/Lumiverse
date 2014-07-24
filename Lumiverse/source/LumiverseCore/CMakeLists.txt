@@ -196,6 +196,9 @@ INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Dependencies/mem
 FILE(GLOB clpfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.h)
 INSTALL(FILES ${clpfiles} DESTINATION include/lib/clp)
 
+FILE(GLOB arnoldfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/arnold/include/*.h)
+INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold)
+
 INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
 INSTALL(TARGETS LumiverseCoreShared DESTINATION lib)
 

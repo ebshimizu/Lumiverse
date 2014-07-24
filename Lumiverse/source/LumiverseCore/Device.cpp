@@ -369,14 +369,15 @@ void Device::loadParams(const JSONNode data) {
   JSONNode::const_iterator i = data.begin();
 
   while (i != data.end()){
-    bool err = false;
-
     // get the node name and value as a string
     std::string paramName = i->name();
 
     // Go into the child node that has all the param data
     JSONNode paramData = *i;
-    setParam(paramName, LumiverseTypeUtils::loadFromJSON(paramData));
+    LumiverseType *val = LumiverseTypeUtils::loadFromJSON(paramData);
+      
+    if (val != nullptr)
+        setParam(paramName, val);
 
     //increment the iterator
     ++i;

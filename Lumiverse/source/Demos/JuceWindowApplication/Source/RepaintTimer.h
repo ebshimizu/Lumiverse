@@ -9,6 +9,8 @@
 #ifndef __JuceWindowApp__RepaintTimer__
 #define __JuceWindowApp__RepaintTimer__
 
+#pragma once
+
 #include <iostream>
 #include "../JuceLibraryCode/JuceHeader.h"
 

@@ -53,16 +53,6 @@ void ArnoldInterface::parseArnoldParameter(const std::string &value, ArnoldParam
     size_t offset = 0;
     for (size_t i = 0; i < D; i++) {
         sscanf(value_spaceless.c_str() + offset, pattern.c_str(), &element);
-        /*
-        else {
-            // If input type is string, find substrings divided by commas.
-            int comma;
-            if ((comma = value_spaceless.find(",", offset)) != std::string::npos)
-                element = value_spaceless.substr(offset, comma - offset);
-            else
-                element = value_spaceless;
-        }
-         */
         vector[i] = element;
         
         offset = value_spaceless.find(",", offset);
@@ -167,7 +157,7 @@ void ArnoldInterface::setParameter(AtNode *light_ptr, const std::string &paramNa
     // Calls another function if the parameter type is "array"
     const AtNodeEntry *entry_ptr = AiNodeGetNodeEntry(light_ptr);
     const AtParamEntry *param_ptr = AiNodeEntryLookUpParameter(entry_ptr, paramName.c_str());
-    if (AiParamGetType(param_ptr) == AI_TYPE_ARRAY) {
+    if (AiParamGetType(param_ptr) == AI_TYPE_ARRAY && paramName != "matrix") {
         setArrayParameter(light_ptr, paramName, value);
         return ;
     }
@@ -195,9 +185,8 @@ void ArnoldInterface::setParameter(AtNode *light_ptr, const std::string &paramNa
                 setSingleParameter<1, float>(light_ptr, paramName, value, AiNodeSetter);
             }
             else if (param.arnoldTypeName == "string") {
-                union AiNodeSetter<const char*> AiNodeSetter;
-                AiNodeSetter.AiNodeSetter1D = AiNodeSetStr;
-                setSingleParameter<1, const char*>(light_ptr, paramName, value, AiNodeSetter);
+                // Use metadata directly for string value.
+                AiNodeSetStr(light_ptr, paramName.c_str(), value.c_str());
             }
         
             break;
@@ -239,19 +228,56 @@ void ArnoldInterface::setParameter(AtNode *light_ptr, const std::string &paramNa
 
             break;
         }
+        case 16: {
+            if (param.arnoldTypeName == "matrix") {
+                ArnoldParameterVector<16, float> paramVector;
+                parseArnoldParameter<16, float>(value, paramVector);
+                AtMatrix matrix;
+                
+                AiM4Identity (matrix);
+                
+                for (size_t x = 0; x < 4; x++) {
+                    for (size_t y = 0; y < 4; y++) {
+                        matrix[x][y] = paramVector.getElements()[x * 4 + y];
+                    }
+                }
+                
+                AiNodeSetMatrix(light_ptr, paramName.c_str(), matrix);
+            }
+            
+            break;
+        }
         default:
             break;
     }
 
 }
 
+void ArnoldInterface::appendToOutputs(const std::string buffer_output) {
+    // Append the new output to options (using the new filter)
+    AtNode *options = AiUniverseGetOptions();
+    AtArray *original = AiNodeGetArray(options, "outputs");
+    
+    size_t num_options = original->nelements + 1;
+    
+    AtArray *outputs_array = AiArrayAllocate(num_options, 1, AI_TYPE_STRING);
+    
+    for (size_t i = 0; i < num_options - 1; i++) {
+        AiArraySetStr(outputs_array, i, AiArrayGetStr(original, i));
+    }
+    
+    AiArraySetStr(outputs_array, num_options - 1, buffer_output.c_str());
+    AiNodeSetArray(options, "outputs", outputs_array);
+}
+    
 void ArnoldInterface::init() {
     // Starts a arnold session
     AiBegin();
     
-    // Doesn't read light node from the ass file
-    AiASSLoad(m_ass_file.c_str(), AI_NODE_ALL & ~AI_NODE_LIGHT);
     AiLoadPlugins(m_plugin_dir.c_str());
+    
+    // Doesn't read light node and filter node from the ass file
+    AiASSLoad(m_ass_file.c_str(), AI_NODE_ALL & ~AI_NODE_LIGHT);
     
     AtNode *options = AiUniverseGetOptions();
     m_width = AiNodeGetInt(options, "xres");
@@ -269,11 +295,14 @@ void ArnoldInterface::init() {
 
     AiNodeSetPtr(driver, "buffer_pointer", m_buffer);
     
+    // Create a filter
+    AtNode *filter = AiNode("gaussian_filter");
+    AiNodeSetStr(filter, "name", "filter");
+    AiNodeSetFlt(filter, "width", 2);
+    
     // Register the driver to the arnold options
-    // TODO: more drivers
-    AtArray *outputs_array = AiArrayAllocate(1, 1, AI_TYPE_STRING);
-    AiArraySetStr(outputs_array, 0, "RGB RGB filter buffer_driver");
-    AiNodeSetArray(options, "outputs", outputs_array);
+    // The function keeps the output options from ass file
+    appendToOutputs("RGBA RGBA filter buffer_driver");
 }
 
 void ArnoldInterface::close() {
