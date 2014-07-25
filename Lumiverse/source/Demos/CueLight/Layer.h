@@ -14,6 +14,7 @@
 namespace Lumiverse {
   /*! \brief Data that tracks the progress of a cue and stores the data used in the cue transition. */
   struct PlaybackData {
+    float delay;
     chrono::time_point<chrono::high_resolution_clock> start;    // Cue start time. More accurate to take difference between now and start instead of summing.
     map<string, map<string, set<Keyframe> > > activeKeyframes;
   };

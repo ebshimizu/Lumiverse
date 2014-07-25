@@ -198,6 +198,7 @@ namespace Lumiverse {
     pbData.activeKeyframes = diff(first, next, assert);
 
     pbData.start = chrono::high_resolution_clock::now();
+    pbData.delay = first.getDelay();
 
     stringstream ss;
     ss << "Layer " << m_name << " began a cue playback at " << chrono::duration_cast<chrono::seconds>(pbData.start.time_since_epoch()).count();
@@ -284,8 +285,13 @@ namespace Lumiverse {
 
       while (pb != m_playbackData.end()) {
         float cueTime = chrono::duration_cast<chrono::milliseconds>(updateStart - pb->start).count() / 1000.0f;
-        // clamp cueTime at 0
-        cueTime = (cueTime < 0) ? 0 : cueTime;
+        cueTime -= pb->delay;
+
+        // If we have a delay on the cue, don't do anything while the cue time is negative
+        if (cueTime < 0) {
+          pb++; 
+          continue;
+        }
 
         auto devices = pb->activeKeyframes.begin();
 

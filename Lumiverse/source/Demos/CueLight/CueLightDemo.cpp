@@ -37,7 +37,7 @@ int main(int argc, char**argv) {
   inno.setParam("tilt", 0.5f);
   inno.setParam("pan", 0.75f);
 
-  Cue cue1(&rig, 5.0f, 1.0f);
+  Cue cue1(&rig, 5.0f, 1.0f, 5.0f);
   list1->storeCue(1, cue1);
 
   color->setxy(0.2, 0.3);
@@ -63,8 +63,6 @@ int main(int argc, char**argv) {
   // Add cue list to layer
   pb.addCueListToLayer("list1", "layer1");
   pb.addCueListToLayer("list2", "layer2");
-
-  layer1->goToCueAtTime(2, 3);
 
   // Prepare playback
   pb.start();
