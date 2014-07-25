@@ -299,15 +299,15 @@ map<string, set<Keyframe> > Cue::getParams(Device* d) {
     paramKeyframes[a.first].insert(Keyframe(0, shared_ptr<Lumiverse::LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
     
     // Add extra keyframe if default cue delay is present.
-    if (m_delay > 0) {
-      paramKeyframes[a.first].insert(Keyframe(m_delay, shared_ptr<Lumiverse::LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
-    }
+    //if (m_delay > 0) {
+    //  paramKeyframes[a.first].insert(Keyframe(m_delay, shared_ptr<Lumiverse::LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
+    //}
 
     // The ending keyframe is a bit of an odd case. Since we don't know if it's an upfade or downfade
     // there's no way to know the final default timing. So we just pick upfade and set useCueTiming
     // to true so that the keyframe's t value is overwritten at runtime by the Playback object.
     // This can be set to not use cue timing later and then the timing is deterministic.
-    paramKeyframes[a.first].insert(Keyframe(m_upfade + m_delay, nullptr, true));
+    paramKeyframes[a.first].insert(Keyframe(m_upfade, nullptr, true));
   }
 
   return paramKeyframes;
