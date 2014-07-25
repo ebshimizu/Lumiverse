@@ -149,22 +149,25 @@ public:
   // is when you'd stop tracking the changes through.
   void trackedUpdate(changedParams& oldVals, Rig* rig);
 
-  // TODO
-  // Delay has a few scenarios that need to be addressed.
-  // 1. Delay was previously 0 going to non-zero
-  //    -Move all other keyframes forwards by delay
-  //    -Add a keyframe with the same value as the first keyframe at time t=delay
-  // 2. Delay was previously non-zero
-  //    -Move all keyframes except the first by newDelay - oldDelay. May need to traverse in forwards or backwards
-  //     order depending on if the diff is positive or negative
-  // If at any point a keyframe would go below t=0, return false and print an error message.
-  // Should probably test that before doing the actual operation
-  // bool setDelay(float delay)
+  /*!
+  \brief Sets the delay for a cue
+  
+  The delay tells the cue how long to wait before actually animating anything.
+  \param delay Delay in seconds.
+  */
+  void setDelay(float delay);
 
-  // Sets the time for the cue.
+  /*!
+  \brief Sets the upfade and downfade to the specified value.
+  \param time Upfade/downfade in seconds.
+  */
   void setTime(float time);
 
-  // Sets a time with an up and down fade that are different
+  /*!
+  \brief Sets a time with an up and down fade that are different.
+  \param up Upfade in seconds
+  \param down Downfade in seconds
+  */
   void setTime(float up, float down);
 
   // Keyframe modifiers
