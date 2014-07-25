@@ -410,19 +410,18 @@ float Cue::getLength() {
 
     for (const auto& id : m_cueData) {
       for (const auto& param : id.second) {
-        for (auto keyframe = param.second.begin(); keyframe != param.second.end(); ++keyframe) {
-          if (keyframe->useCueTiming) {
-            float keyframeTime = prev(keyframe)->t + cueTiming;
-            time = (keyframeTime > time) ? keyframeTime : time;
-          }
-          else {
-            time = (keyframe->t > time) ? keyframe->t : time;
-          }
+        auto lastKeyframe = param.second.rbegin();
+        if (lastKeyframe->useCueTiming) {
+          float keyframeTime = next(lastKeyframe)->t + cueTiming;
+          time = (keyframeTime > time) ? keyframeTime : time;
+        }
+        else {
+          time = (lastKeyframe->t > time) ? lastKeyframe->t : time;
         }
       }
     }
 
-    m_length = time;
+    m_length = time + m_delay;
     m_lengthIsUpdated = true;
     return m_length;
   }
