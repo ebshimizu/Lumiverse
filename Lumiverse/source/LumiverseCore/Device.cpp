@@ -96,6 +96,13 @@ bool Device::setParam(string param, float val) {
     m_parameters[param] = (LumiverseType*) new LumiverseFloat();
   }
 
+  // Checks param type
+  if (m_parameters[param]->getTypeName() != "float") {
+      Logger::log(WARN, "Trying to assign float value to a non-float type.");
+      
+      return false;
+  }
+    
   *((LumiverseFloat *)m_parameters[param]) = val;
    
   // callback
@@ -109,6 +116,13 @@ bool Device::setParam(string param, string val, float val2) {
     return false;
   }
 
+  // Checks param type
+  if (m_parameters[param]->getTypeName() != "enum") {
+    Logger::log(WARN, "Trying to assign enum value to a non-enum type.");
+        
+    return false;
+  }
+    
   LumiverseEnum* data = (LumiverseEnum *)m_parameters[param];
   data->setVal(val);
 

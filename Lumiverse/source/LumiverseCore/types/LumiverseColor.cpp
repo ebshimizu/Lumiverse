@@ -83,7 +83,7 @@ namespace Lumiverse {
     // Resets the color channels to 0.
     m_weight = 1;
 
-    for (auto& it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+    for (map<string, double>::iterator it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
       it->second = 0;
     }
   }
