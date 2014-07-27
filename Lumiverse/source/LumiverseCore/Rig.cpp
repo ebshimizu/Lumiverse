@@ -1,7 +1,6 @@
 #include "Rig.h"
 
-#define USE_ARNOLD
-
+// If add this include to Rig.h, may have the error "<ai.h> is missing".
 #ifdef USE_ARNOLD
 #include "Simulation/ArnoldPatch.h"
 #endif

@@ -102,40 +102,34 @@ namespace Lumiverse {
     *
     * \return The width of result
     */
-    int getWidth() { return m_interface.getWidth(); }
+    virtual int getWidth() { return m_interface.getWidth(); }
 
     /*!
     * \brief Gets the height of result.
     *
     * \return The height of result
     */
-    int getHeight() { return m_interface.getHeight(); }
+    virtual int getHeight() { return m_interface.getHeight(); }
       
     /*!
     * \brief Gets the pointer to the frame buffer.
     *
     * \return The pointer to the frame buffer.
     */
-    float *getBufferPointer() { return m_interface.getBufferPointer(); }
+    virtual float *getBufferPointer() { return m_interface.getBufferPointer(); }
       
     /*!
     * \brief Stops the working rendering procedure if Arnold is running.
     */
-    void interruptRender();
+    virtual void interruptRender();
     
-  private:
+  protected:
     /*!
     * \brief Callback function for devices.
     * 
     * \param d The device which calls this function.
     */
     void onDeviceChanged(Device *d);
-
-    /*!
-    * \brief Calls Arnold render function.
-    * This function runs in a separate thread.
-    */
-    void renderLoop();
     
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.
@@ -158,6 +152,12 @@ namespace Lumiverse {
     */
     void loadLight(Device *d_ptr);
 
+	/*!
+    * \brief Calls Arnold render function.
+    * This function runs in a separate thread.
+    */
+    void renderLoop();
+
     /*!
     * \brief A list contains infos about if a light is updated.
     */
@@ -167,6 +167,8 @@ namespace Lumiverse {
     * \brief Arnold Interface
     */
     ArnoldInterface m_interface;
+
+  private:
 	
     /*!
     * \brief The separate thread running the render loop.

@@ -88,6 +88,9 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
     SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE}
     Simulation/ArnoldPatch.h Simulation/ArnoldPatch.cpp
     Simulation/ArnoldInterface.h Simulation/ArnoldInterface.cpp
+	Simulation/ArnoldAnimationPatch.h Simulation/ArnoldAnimationPatch.cpp
+	Simulation/ArnoldFrameManager.h
+	Simulation/ArnoldMemoryFrameManager.h Simulation/ArnoldMemoryFrameManager.cpp
     Simulation/ArnoldParameterVector.h)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
@@ -125,12 +128,15 @@ ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 
 # Build with Arnold SDK (ai)
 IF (LumiverseCore_INCLUDE_ARNOLD)
-    # For SDL lib
-    # target_link_libraries(LumiverseCore ${SDL_LIBRARY})
-    IF(APPLE)
-        # add_subdirectory("Simulation/SDLmain")
-        # target_link_libraries(LumiverseCore SDLmain)
+    IF(WIN32)
+        add_library(ai STATIC IMPORTED)
+        set_property(TARGET ai PROPERTY IMPORTED_LOCATION
+            ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/arnold/bin/ai.lib)
+        target_link_libraries(LumiverseCore ai)
+        target_link_libraries(LumiverseCoreShared ai)
+    ENDIF(WIN32)
 
+    IF(APPLE)
         add_library(ai SHARED IMPORTED)
         set_property(TARGET ai PROPERTY IMPORTED_LOCATION
             ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/arnold/bin/libai.dylib)
