@@ -117,9 +117,28 @@ void Rig::loadPatches(JSONNode root) {
       addPatch(nodeName, patch);
     }
 #ifdef USE_ARNOLD
+    else if (patchType == "ArnoldAnimationPatch") {
+      patch = (Patch*) new ArnoldAnimationPatch(*i);
+      addPatch(nodeName, patch);
+      Device::DeviceCallbackFunction callback = std::bind(&ArnoldAnimationPatch::onDeviceChanged,
+                                                            (ArnoldAnimationPatch*)patch,
+                                                            std::placeholders::_1);
+      for (Device *d : getDeviceRaw()) {
+          d->addParameterChangedCallback(callback);
+          d->addMetadataChangedCallback(callback);
+      }
+    }
     else if (patchType == "ArnoldPatch") {
       patch = (Patch*) new ArnoldPatch(*i);
       addPatch(nodeName, patch);
+        
+        Device::DeviceCallbackFunction callback = std::bind(&ArnoldPatch::onDeviceChanged,
+                                                            (ArnoldPatch*)patch,
+                                                            std::placeholders::_1);
+        for (Device *d : getDeviceRaw()) {
+            d->addParameterChangedCallback(callback);
+            d->addMetadataChangedCallback(callback);
+        }
     }
 #endif
     else {
@@ -461,7 +480,8 @@ JSONNode Rig::toJSON() {
     
 Patch* Rig::getSimulationPatch() {
     for (pair<string, Patch*> patch : m_patches) {
-        if (patch.second->getType() == "ArnoldPatch") {
+        if (patch.second->getType() == "ArnoldPatch" ||
+            patch.second->getType() == "ArnoldAnimationPatch") {
             return patch.second;
         }
     }

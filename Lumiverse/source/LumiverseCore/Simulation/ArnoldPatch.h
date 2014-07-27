@@ -123,22 +123,35 @@ namespace Lumiverse {
     */
     virtual void interruptRender();
     
-  protected:
     /*!
     * \brief Callback function for devices.
     *
+    * This function is registered to all devices by the rig. Only devices in the list
+    * will change the state of patch.
     * \param d The device which calls this function.
     */
-    void onDeviceChanged(Device *d);
-    
+    virtual void onDeviceChanged(Device *d);
+      
+  protected:
+    /*!
+    * \brief Checks if any device connected with this patch has updated parameters or metadata.
+    * \param devices The device list.
+    * \return If there is any update.
+    */
+    bool isUpdateRequired(set<Device *> devices);
+      
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.
-    * This function would return if there is any light having new parameter. This indicates the scene should be re-rendered.
+    * This function updates light node for renderer.
     * \param devices The device list.
-    * \return If the scene needs to be rendered again.
     */
-    bool updateLight(set<Device *> devices);
-      
+    void updateLight(set<Device *> devices);
+    
+    /*!
+    * \brief Resets the update flags for lights.
+    */
+    void clearUpdateFlags();
+    
     /*!
     * \brief Loads data from a parsed JSON object
     * \param data JSON data to load

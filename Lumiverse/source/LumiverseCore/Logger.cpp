@@ -2,6 +2,8 @@
 
 namespace Lumiverse {
 namespace Logger {
+  mutex logMutex;
+    
   void setLogFile(string name) {
     logFile.open(name, ios::out | ios::app);
   }
@@ -40,6 +42,7 @@ namespace Logger {
   void log(LOG_LEVEL level, string message) {
     if ((unsigned int)level >= logLevel) {
 
+      logMutex.lock();
       // TODO: Change to configurable file output or something
       if (logFile.is_open()) {
         logFile << "[" << printLevel(level) << "]\t" << printTime() << " " << message << "\n";
@@ -47,6 +50,7 @@ namespace Logger {
       else {
         cout << "[" << printLevel(level) << "]\t" << printTime() << " " << message << "\n";
       }
+      logMutex.unlock();
     }
   }
 

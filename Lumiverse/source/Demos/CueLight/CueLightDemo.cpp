@@ -56,7 +56,7 @@ void simulation() {
 }
 
 void testArnoldAnimation() {
-	Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.json");
+	Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric_cue.json");
 	DeviceSet par1 = rig.query("par1");
 
 	rig.init();
@@ -66,19 +66,25 @@ void testArnoldAnimation() {
 
 	par1.setParam("intensity", 0.5);
 
-	this_thread::sleep_for(chrono::seconds(5));
+	this_thread::sleep_for(chrono::seconds(6));
 
 	par1.setParam("intensity", 0.8);
-
+    
+    this_thread::sleep_for(chrono::seconds(1));
 	rig.stop();
 	ArnoldAnimationPatch *ap = (ArnoldAnimationPatch*)rig.getSimulationPatch();
 	ap->close();
+    
+    while (1) {
+        
+    }
+    
 }
 
 int main(int argc, char**argv) {
-    simulation();
+  testArnoldAnimation();
     
-    return 0;
+  return 0;
     
   Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/movingLights.json");
   shared_ptr<CueList> list1(new CueList("list1"));

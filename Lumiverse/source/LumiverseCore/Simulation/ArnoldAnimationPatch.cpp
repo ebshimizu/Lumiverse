@@ -1,12 +1,18 @@
 
 #include "ArnoldAnimationPatch.h"
 
+#include <sstream>
+
 namespace Lumiverse {
 
 ArnoldAnimationPatch::ArnoldAnimationPatch(const JSONNode data)
 : m_worker(NULL), m_startPoint(chrono::system_clock::from_time_t(0)){
 	m_frameManager = new ArnoldMemoryFrameManager();
 	loadJSON(data);
+}
+    
+ArnoldAnimationPatch::~ArnoldAnimationPatch() {
+    close();
 }
 
 void ArnoldAnimationPatch::init() {
@@ -23,6 +29,9 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
 		m_startPoint = current;
 
 	frame.time = chrono::duration_cast<chrono::seconds>(current - m_startPoint).count();
+    frame.rerender_req = isUpdateRequired(devices);
+    clearUpdateFlags();
+    
 	for (Device *d : devices) {
 		// Checks if the device is connect to this patch
 		if (m_lights.count(d->getId()) > 0) {
@@ -32,6 +41,9 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
 		}
 	}
 
+    std::stringstream ss;
+    ss << "Sent new frame: " << frame.time << "(" << frame.rerender_req << ")";
+    Logger::log(LDEBUG, ss.str());
 	m_queue.lock();
 	m_queuedFrameDeviceInfo.push_back(frame);
 	m_queue.unlock();
@@ -79,27 +91,31 @@ void ArnoldAnimationPatch::workerLoop() {
 			m_queue.unlock();
 
 			if (isEndInfo(frame)) {
+                Logger::log(INFO, "Worker finished...");
 				return ;
 			}
 		}
 
-		// render
-		bool render_req = updateLight(frame.devices);
+        std::stringstream ss;
+        auto par = frame.devices.begin();
+        Device *d = *par;
+        float intensity;
+        d->getParam("intensity", intensity);
+        ss << "Received new frame: " << frame.time << "(" << frame.rerender_req << ")" << "\n"
+        << intensity;
+        Logger::log(LDEBUG, ss.str());
+        
+		// renders
+		bool render_req = frame.rerender_req;
 
 		if (render_req) {
-			renderLoop();
-
-			for (Device* d : frame.devices) {
-				std::string name = d->getId();
-				if (m_lights.count(name) == 0)
-					continue;
-				m_lights[name].rerender_req = false;
-			}
+            updateLight(frame.devices);
+            renderLoop();
+            
+            // dumps (only dumps when necessary)
+            m_frameManager->dump(frame.time, m_interface.getBufferPointer(),
+                                 m_interface.getWidth(), m_interface.getHeight());
 		}
-
-		//dump
-		m_frameManager->dump(frame.time, m_interface.getBufferPointer(), 
-			m_interface.getWidth(), m_interface.getHeight());
 
 		frame.clear();
 	}

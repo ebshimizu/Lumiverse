@@ -21,8 +21,9 @@ namespace Lumiverse {
   struct FrameDeviceInfo {
 	  time_t time;
 	  std::set<Device *> devices;
+      bool rerender_req;
 
-	  FrameDeviceInfo() : time(-1) { }
+	  FrameDeviceInfo() : time(-1), rerender_req(true) { }
 
 	  void clear() {
 		  time = -1;
@@ -70,7 +71,7 @@ namespace Lumiverse {
     virtual void close();
 
 	ArnoldFrameManager *getFrameManager() const;
-
+      
   private:
 	void workerLoop();
 
