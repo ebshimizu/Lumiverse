@@ -228,11 +228,10 @@ Lumiverse/docs
 driver/*
 Lumiverse/source/Demos/JuceWindowApplication/JuceLibraryCode/*
 Arnold-4.1.3.3-darwin/*
-<<<<<<< HEAD
 
 # Juce App builds
 Lumiverse/source/Demos/JuceWindowApplication/Builds/
-=======
+
 Lumiverse/source/LumiverseCore/lib/clp/ClpConfig.h
 Lumiverse/source/LumiverseCore/LumiverseCoreConfig.h
->>>>>>> upstream/master
+

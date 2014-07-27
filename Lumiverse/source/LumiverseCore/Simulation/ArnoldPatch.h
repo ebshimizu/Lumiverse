@@ -122,21 +122,15 @@ namespace Lumiverse {
     * \brief Stops the working rendering procedure if Arnold is running.
     */
     void interruptRender();
-    
-  private:
+
+  protected:
     /*!
     * \brief Callback function for devices.
-    * 
+    *
     * \param d The device which calls this function.
     */
     void onDeviceChanged(Device *d);
-
-    /*!
-    * \brief Calls Arnold render function.
-    * This function runs in a separate thread.
-    */
-    void renderLoop();
-    
+      
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.
     * This function would return if there is any light having new parameter. This indicates the scene should be re-rendered.
@@ -144,29 +138,36 @@ namespace Lumiverse {
     * \return If the scene needs to be rendered again.
     */
     bool updateLight(set<Device *> devices);
-
+      
     /*!
     * \brief Loads data from a parsed JSON object
     * \param data JSON data to load
     */
     void loadJSON(const JSONNode data);
-
+      
     /*!
     * \brief Loads a arnold light node.
     * This function is also used to update a light node.
     * \param d_ptr The device with updated parameters.
     */
     void loadLight(Device *d_ptr);
-
+    
     /*!
     * \brief A list contains infos about if a light is updated.
     */
     map<string, ArnoldLightRecord> m_lights;
-
+    
     /*!
     * \brief Arnold Interface
     */
     ArnoldInterface m_interface;
+    
+  private:
+    /*!
+    * \brief Calls Arnold render function.
+    * This function runs in a separate thread.
+    */
+    void renderLoop();
 	
     /*!
     * \brief The separate thread running the render loop.

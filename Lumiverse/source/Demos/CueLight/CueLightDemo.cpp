@@ -8,8 +8,58 @@
 using namespace std;
 using namespace Lumiverse;
 
+void simulation() {
+    Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric_cue.json");
+    
+    shared_ptr<CueList> list1(new CueList("list1"));
+    shared_ptr<Layer> layer1(new Layer(&rig, "layer1", 1));
+    
+    layer1->setMode(Layer::BLEND_OPAQUE);
+    layer1->activate();
+    
+    Playback pb(&rig);
+    pb.attachToRig();
+    
+    rig.init();
+    
+    DeviceSet par = rig.query("par1");
+    
+    par.setParam("intensity", 0.0f);
+    
+    Cue cue1(&rig, 1.0f, 5.0f);
+    list1->storeCue(1, cue1);
+    
+    par.setParam("intensity", 0.5f);
+    
+    Cue cue2(&rig);
+    //list1->storeCue(2, cue2);
+    
+    par.reset();
+    
+    pb.addCueList(list1);
+    pb.addLayer(layer1);
+    pb.addCueListToLayer("list1", "layer1");
+    
+    layer1->goToCueAtTime(1, 5);
+    //layer1->goToCueAtTime(2, 100);
+    
+    pb.start();
+    rig.run();
+    
+    while (1) {
+        float val;
+        rig["par1"]->getParam("intensity", val);
+        cout << "par1 Intensity: " << val << "\n";
+        this_thread::sleep_for(chrono::milliseconds(500));
+    }
+}
+
 int main(int argc, char**argv) {
-  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.json");
+    simulation();
+    
+    return 0;
+    
+  Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/movingLights.json");
   shared_ptr<CueList> list1(new CueList("list1"));
   shared_ptr<Layer> layer1(new Layer(&rig, "layer1", 1));
   shared_ptr<CueList> list2(new CueList("list2"));
