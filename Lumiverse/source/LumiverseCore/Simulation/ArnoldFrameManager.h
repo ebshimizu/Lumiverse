@@ -36,6 +36,8 @@ namespace Lumiverse {
 	virtual float *getCurrentFrameBuffer() const = 0;
 
 	virtual time_t getCurrentTime() const = 0;
+      
+    virtual time_t getNextTime() const = 0;
 
 	virtual bool hasNext() const = 0;
 

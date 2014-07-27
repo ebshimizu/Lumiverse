@@ -147,10 +147,7 @@ void ArnoldPatch::updateLight(set<Device *> devices) {
 		std::string name = d->getId();
 		if (m_lights.count(name) == 0)
 			continue;
-		
-        if (m_lights[d->getId()].rerender_req) {
-            loadLight(d);
-        }
+		loadLight(d);
 	}
 }
 
