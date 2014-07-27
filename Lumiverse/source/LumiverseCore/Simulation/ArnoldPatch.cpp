@@ -125,30 +125,41 @@ ArnoldPatch::~ArnoldPatch() {
 
 }
 
-bool ArnoldPatch::updateLight(set<Device *> devices) {
-    bool rerender_rep = false;
+bool ArnoldPatch::isUpdateRequired(set<Device *> devices) {
+    bool req = false;
     
+    for (Device* d : devices) {
+		std::string name = d->getId();
+		if (m_lights.count(name) == 0)
+			continue;
+		
+        if (m_lights[d->getId()].rerender_req) {
+            req = true;
+            break;
+        }
+	}
+    
+    return req;
+}
+    
+void ArnoldPatch::updateLight(set<Device *> devices) {
 	for (Device* d : devices) {
 		std::string name = d->getId();
 		if (m_lights.count(name) == 0)
 			continue;
 		
         if (m_lights[d->getId()].rerender_req) {
-            if (m_lights[d->getId()].light == NULL) {
-                Device::DeviceCallbackFunction callback = std::bind(&ArnoldPatch::onDeviceChanged, this,
-                                                                    std::placeholders::_1);
-                d->addParameterChangedCallback(callback);
-                d->addMetadataChangedCallback(callback);
-            }
-            
-            rerender_rep = true;
             loadLight(d);
         }
 	}
-    
-    return rerender_rep;
 }
 
+void ArnoldPatch::clearUpdateFlags() {
+    for (auto& record : m_lights) {
+        record.second.rerender_req = false;
+    }
+}
+    
 void ArnoldPatch::renderLoop() {
     Logger::log(INFO, "Rendering...");
     AiRender(AI_RENDER_MODE_CAMERA);
@@ -156,12 +167,11 @@ void ArnoldPatch::renderLoop() {
 }
 
 void ArnoldPatch::interruptRender() {
+    if (AiRendering()) {
+        AiRenderInterrupt();
+        Logger::log(INFO, "Aborted rendering to restart.");
+    }
     if (m_renderloop != NULL) {
-        if (AiRendering()) {
-            AiRenderInterrupt();
-            Logger::log(INFO, "Aborted rendering to restart.");
-        }
-        
         try {
             m_renderloop->join();
         }
@@ -176,28 +186,22 @@ void ArnoldPatch::onDeviceChanged(Device *d) {
     // TODO : LOCK
     if (m_lights.count(d->getId()) > 0) {
         m_lights[d->getId()].rerender_req = true;
+        Logger::log(LDEBUG, "Intensity changed...");
     }
 }
     
 void ArnoldPatch::update(set<Device *> devices) {
-	bool render_req = updateLight(devices);
+	bool render_req = isUpdateRequired(devices);
 
     if (!render_req) {
         return ;
     }
+    updateLight(devices);
+    clearUpdateFlags();
     
     interruptRender();
     
     m_renderloop = new std::thread(&ArnoldPatch::renderLoop, this);
-    
-    // TODO : LOCK
-    for (Device* d : devices) {
-		std::string name = d->getId();
-		if (m_lights.count(name) == 0)
-			continue;
-		m_lights[name].rerender_req = false;
-	}
-
 }
 
 void ArnoldPatch::init() {

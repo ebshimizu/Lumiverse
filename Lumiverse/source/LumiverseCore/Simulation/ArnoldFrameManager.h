@@ -29,7 +29,7 @@ namespace Lumiverse {
     /*!
     * \brief Destroys the object.
     */
-    virtual ~ArnoldFrameManager();
+    virtual ~ArnoldFrameManager() { }
 
 	virtual void dump(time_t time, float *frame, size_t width, size_t height) = 0;
 
