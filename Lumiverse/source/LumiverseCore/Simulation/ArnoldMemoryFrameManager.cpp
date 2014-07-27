@@ -45,6 +45,19 @@ time_t ArnoldMemoryFrameManager::getCurrentTime() const {
 	return -1;
 }
 
+time_t ArnoldMemoryFrameManager::getNextTime() const {
+    if (hasNext()) {
+        size_t count = 0;
+        for (FrameData fd : m_bufferSet) {
+            if (count == m_current + 2)
+                return fd.time;
+            count++;
+        }
+    }
+    
+    return -1;
+}
+    
 bool ArnoldMemoryFrameManager::hasNext() const {
 	if (m_current + 1 < m_bufferSet.size())
 		return true;

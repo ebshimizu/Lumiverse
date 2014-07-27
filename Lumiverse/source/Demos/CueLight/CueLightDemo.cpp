@@ -68,7 +68,7 @@ void testArnoldAnimation() {
 
 	this_thread::sleep_for(chrono::seconds(6));
 
-	par1.setParam("intensity", 0.8);
+	par1.setParam("intensity", 1.8);
     
     this_thread::sleep_for(chrono::seconds(1));
 	rig.stop();

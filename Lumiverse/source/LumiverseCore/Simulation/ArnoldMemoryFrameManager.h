@@ -53,6 +53,8 @@ namespace Lumiverse {
 
 	virtual time_t getCurrentTime() const;
 
+    virtual time_t getNextTime() const;
+      
 	virtual bool hasNext() const;
 
 	virtual void clear();
