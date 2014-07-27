@@ -4,9 +4,30 @@
 #include "CueList.h"
 #include "Layer.h"
 #include "Playback.h"
+#include "Simulation/ArnoldAnimationPatch.h"
 
 using namespace std;
 using namespace Lumiverse;
+
+void testArnoldAnimation() {
+	Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.json");
+	DeviceSet par1 = rig.query("par1");
+
+	rig.init();
+	rig.run();
+
+	this_thread::sleep_for(chrono::seconds(2));
+
+	par1.setParam("intensity", 0.5);
+
+	this_thread::sleep_for(chrono::seconds(5));
+
+	par1.setParam("intensity", 0.8);
+
+	rig.stop();
+	ArnoldAnimationPatch *ap = (ArnoldAnimationPatch*)rig.getSimulationPatch();
+	ap->close();
+}
 
 int main(int argc, char**argv) {
   Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.json");
