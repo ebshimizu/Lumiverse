@@ -10,7 +10,7 @@
 
 #include <algorithm>
 #include <cstdio>
-#include <ai.h>
+#include "../lib/arnold/include/ai.h"
 #include "../Patch.h"
 #include "../lib/libjson/libjson.h"
 #include "ArnoldParameterVector.h"

@@ -21,7 +21,12 @@
 #include "Device.h"
 #include "Logger.h"
 #include "DeviceSet.h"
+#include "lib/arnold/include/ai.h"
 #include "lib/libjson/libjson.h"
+
+#ifdef USE_ARNOLD
+#include "Simulation/ArnoldPatch.h"
+#endif
 
 namespace Lumiverse {
   class DeviceSet;

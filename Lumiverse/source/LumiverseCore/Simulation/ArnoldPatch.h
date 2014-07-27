@@ -102,27 +102,27 @@ namespace Lumiverse {
     *
     * \return The width of result
     */
-    int getWidth() { return m_interface.getWidth(); }
+    virtual int getWidth() { return m_interface.getWidth(); }
 
     /*!
     * \brief Gets the height of result.
     *
     * \return The height of result
     */
-    int getHeight() { return m_interface.getHeight(); }
+    virtual int getHeight() { return m_interface.getHeight(); }
       
     /*!
     * \brief Gets the pointer to the frame buffer.
     *
     * \return The pointer to the frame buffer.
     */
-    float *getBufferPointer() { return m_interface.getBufferPointer(); }
+    virtual float *getBufferPointer() { return m_interface.getBufferPointer(); }
       
     /*!
     * \brief Stops the working rendering procedure if Arnold is running.
     */
-    void interruptRender();
-
+    virtual void interruptRender();
+    
   protected:
     /*!
     * \brief Callback function for devices.
@@ -130,7 +130,7 @@ namespace Lumiverse {
     * \param d The device which calls this function.
     */
     void onDeviceChanged(Device *d);
-      
+    
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.
     * This function would return if there is any light having new parameter. This indicates the scene should be re-rendered.
@@ -151,23 +151,24 @@ namespace Lumiverse {
     * \param d_ptr The device with updated parameters.
     */
     void loadLight(Device *d_ptr);
-    
-    /*!
-    * \brief A list contains infos about if a light is updated.
-    */
-    map<string, ArnoldLightRecord> m_lights;
-    
-    /*!
-    * \brief Arnold Interface
-    */
-    ArnoldInterface m_interface;
-    
-  private:
-    /*!
+
+	/*!
     * \brief Calls Arnold render function.
     * This function runs in a separate thread.
     */
     void renderLoop();
+
+    /*!
+    * \brief A list contains infos about if a light is updated.
+    */
+    map<string, ArnoldLightRecord> m_lights;
+
+    /*!
+    * \brief Arnold Interface
+    */
+    ArnoldInterface m_interface;
+
+  private:
 	
     /*!
     * \brief The separate thread running the render loop.

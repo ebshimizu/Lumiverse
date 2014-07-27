@@ -75,4 +75,6 @@
 
 #ifdef USE_ARNOLD
 #include "Simulation/ArnoldPatch.h"
+#include "Simulation/ArnoldAnimationPatch.h"
+#include "Simulation/ArnoldFrameManager.h"
 #endif
