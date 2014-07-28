@@ -57,12 +57,6 @@ public:
   */
   float getLastCueNum();
 
-  // Gets the current cue in this particular cue list
-  float getCurrentCue() { return m_currentCue; }
-
-  // Sets the current cue in the cue list
-  void setCurrentCue(float val) { m_currentCue = val; }
-
   // Gets a cue and allows user to modify it.
   Cue* getCue(float num) {
     if (m_cues.count(num) > 0) {
@@ -113,9 +107,6 @@ public:
 private:
   // List of cues. Cue numbers can be floats.
   map<float, Cue> m_cues;
-
-  // The last cue executed in the cue list.
-  float m_currentCue;
 
   /*! \brief Name of the list */
   string m_name;
