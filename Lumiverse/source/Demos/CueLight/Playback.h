@@ -172,6 +172,12 @@ namespace Lumiverse {
     /*! \brief Returns a list of the cue list names contained in the Playback. */
     vector<string> getCueListNames();
 
+    /*! \brief Returns a list of the layer names contained in the Playback. */
+    vector<string> getLayerNames();
+
+    /*! \brief Returns a reference to the layers in the Playback. */
+    const map<string, shared_ptr<Layer> >& getLayers() { return m_layers; }
+
   private:
     /*! \brief Map of layer names to layers. */
     map<string, shared_ptr<Layer> > m_layers;

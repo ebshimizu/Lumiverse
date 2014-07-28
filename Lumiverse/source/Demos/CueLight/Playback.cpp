@@ -244,6 +244,16 @@ namespace Lumiverse {
     return names;
   }
 
+  vector<string> Playback::getLayerNames() {
+    vector<string> names;
+
+    for (const auto& kvp : m_layers) {
+      names.push_back(kvp.first);
+    }
+
+    return names;
+  }
+
   bool Playback::load(string filename) {
     ifstream data;
     data.open(filename, ios::in | ios::binary | ios::ate);
