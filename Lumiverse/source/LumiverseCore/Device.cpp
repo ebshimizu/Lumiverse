@@ -66,7 +66,9 @@ LumiverseType* Device::getParam(string param) {
 
 LumiverseColor* Device::getColor(string param) {
   if (m_parameters.count(param) > 0) {
-    return dynamic_cast<LumiverseColor*>(m_parameters[param]);
+      if (m_parameters[param]->getTypeName() == "color") {
+          return (LumiverseColor*)(m_parameters[param]);
+      }
   }
 
   return nullptr;
@@ -144,6 +146,9 @@ bool Device::setParam(string param, string val, float val2, LumiverseEnum::Mode 
   LumiverseEnum* data = (LumiverseEnum *)m_parameters[param];
   data->setVal(val, val2, mode, interpMode);
 
+  // callback
+  onParameterChanged();
+    
   return true;
 }
 
@@ -155,6 +160,9 @@ bool Device::setParam(string param, string channel, double val) {
   LumiverseColor* data = (LumiverseColor*)m_parameters[param];
   data->setColorChannel(channel, val);
 
+  // callback
+  onParameterChanged();
+    
   return true;
 }
 
@@ -166,6 +174,9 @@ bool Device::setParam(string param, double x, double y, double weight) {
   LumiverseColor* data = (LumiverseColor*)m_parameters[param];
   data->setxy(x, y, weight);
 
+  // callback
+  onParameterChanged();
+    
   return true;
 }
 
@@ -177,6 +188,9 @@ bool Device::setColorRGBRaw(string param, double r, double g, double b, double w
   LumiverseColor* data = (LumiverseColor*)m_parameters[param];
   data->setRGBRaw(r, g, b, weight);
 
+  // callback
+  onParameterChanged();
+    
   return true;
 }
 
@@ -188,6 +202,9 @@ bool Device::setColorRGB(string param, double r, double g, double b, double weig
   LumiverseColor* data = (LumiverseColor*)m_parameters[param];
   data->setRGB(r, g, b, weight, cs);
 
+  // callback
+  onParameterChanged();
+    
   return true;
 }
 
