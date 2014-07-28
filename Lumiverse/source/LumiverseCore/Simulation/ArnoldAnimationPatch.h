@@ -1,5 +1,5 @@
 /*! \file ArnoldAnimationPatch.h
-* \brief Implementation of a patch for a DMX system.
+* \brief Subclass of ArnoldPatch to render frames of an animation.
 */
 #ifndef _ArnoldAnimationPATCH_H_
 #define _ArnoldAnimationPATCH_H_
@@ -12,78 +12,140 @@
 #include "ArnoldPatch.h"
 #include "ArnoldMemoryFrameManager.h"
 
-#include <future>
 #include <thread>
 #include <chrono>
 #include <iostream>
 
 namespace Lumiverse {
+  /*! \brief The state info for worker thread. */
   struct FrameDeviceInfo {
-	  time_t time;
-	  std::set<Device *> devices;
-      bool rerender_req;
+      // The time point of this frame.
+      // It's actually the duration counted from the update is first time
+      // called.
+      time_t time;
+      // Copies for devices connected to this patch.
+      std::set<Device *> devices;
 
-	  FrameDeviceInfo() : time(-1), rerender_req(true) { }
+      /*! \brief Constructor. */
+      FrameDeviceInfo() : time(-1), rerender_req(true) { }
 
-	  void clear() {
-		  time = -1;
+      /*! \brief Releases the copies for devices. */
+      void clear() {
+	  time = -1;
 
-		  for (Device *d : devices) {
-			  if (d != NULL)
-				  delete d;
-		  }
-		  devices.clear();
+	  for (Device *d : devices) {
+	      if (d != NULL)
+		  delete d;
 	  }
+	  devices.clear();
+      }
   };
 
   /*!
-  * \brief  
-  *
+  * \brief A subclass of ArnoldPatch. 
+  * Instead of interrupting the worker thread every time a new rendering 
+  * task is received, this class keeps all requests in a queue. A worker
+  * thread grasps tasks and dumps frame buffer to a ArnoldFrameManager.
   *  
-  * \sa  
+  * \sa ArnoldPatch, ArnoldFrameManager
   */
   class ArnoldAnimationPatch : public ArnoldPatch
   {
   public:
     /*!
-    * \brief Constructs a DMXPatch object.
+    * \brief Constructs a ArnoldAnimationPatch object.
     */
-	ArnoldAnimationPatch() : m_worker(NULL), 
-		m_startPoint(std::chrono::system_clock::from_time_t(0)),
-		m_frameManager(NULL) { }
+    ArnoldAnimationPatch() : m_worker(NULL), 
+	  m_startPoint(std::chrono::system_clock::from_time_t(0)),
+	  m_frameManager(NULL) { }
 
-	ArnoldAnimationPatch(const JSONNode data);
+    /*!
+    * \brief Construct ArnoldPatch from JSON data.
+    *
+    * \param data JSONNode containing the ArnoldAnimationPatch object data.
+    */
+    ArnoldAnimationPatch(const JSONNode data);
 
     /*!
     * \brief Destroys the object.
     */
     virtual ~ArnoldAnimationPatch();
 
-	virtual void init();
+    /*!
+    * \brief Initializes Arnold with function of its parent class and
+    * starts a worker thread.
+    */
+    virtual void init();
 
-	virtual string getType() { return "ArnoldAnimationPatch"; }
+    /*!
+    * \brief Gets the type of this object.
+    *
+    * \return String containing "ArnoldAnimationPatch"
+    */
+    virtual string getType() { return "ArnoldAnimationPatch"; }
 
-	virtual void update(set<Device *> devices);
+    /*!
+    * \brief Updates the rendering queue given the list of devices
+    * in the rig.
+    *
+    * Before enqueuing the rendering info, main thread checks if
+    * there is any parameter or metadata changed during last update
+    * interval. It only adds a new request when it's truly necessary.
+    */
+    virtual void update(set<Device *> devices);
 
-	/*!
-    * \brief Closes the Arnold session.
+    /*!
+    * \brief Waits for the worker thread and closes the Arnold session.
+    *
+    * The main thread sends a special frame info at the beginning of
+    * this function. (a info with devices list only containning a NULL)
+    * Then the thread would wait to join the worker thread. After all
+    * there are done, closes the arnold session as the parent class.
     */
     virtual void close();
 
+    /*!
+    * \brief Returns the ArnoldFrameManager to reconstruction the 
+    * animation.
+    *
+    * \return The ArnoldFrameManager object containning all the frame
+    * and their corresponding time point.
+    */
     ArnoldFrameManager *getFrameManager() const;
-      
+
   private:
-	void workerLoop();
+    /*!
+    * \brief Worker loop.
+    *
+    * Dequeues a new task. Sets the light parameters and renders. Dumps
+    * the frame buffer. The loop ends when an end info is received.
+    */
+    void workerLoop();
 
-	bool isEndInfo(const FrameDeviceInfo &data) const;
+    /*!
+    * \brief Checks if the passed in info is an end info.
+    *
+    * An end info is the FrameDeviceInfo with time = -1 and 
+    * devices = { NULL }.
+    */
+    bool isEndInfo(const FrameDeviceInfo &data) const;
 
+    // The worker thread.
     std::thread *m_worker;
 
-	std::mutex m_queue;
-	std::vector<FrameDeviceInfo> m_queuedFrameDeviceInfo;
-	std::chrono::time_point<std::chrono::system_clock> m_startPoint;
+    // The lock for the task queue.
+    std::mutex m_queue;
 
-	ArnoldFrameManager *m_frameManager;
+    // The task queue.
+    std::vector<FrameDeviceInfo> m_queuedFrameDeviceInfo;
+
+    // The start point for time points in FrameDeviceInfo.
+    // It's the moment when update function is called for the first
+    // time.
+    std::chrono::time_point<std::chrono::system_clock> m_startPoint;
+
+    // The ArnoldFrameManager object. Used to store frame buffers.
+    ArnoldFrameManager *m_frameManager;
   };
     
 }
