@@ -7,14 +7,6 @@ CueList::CueList(string name) : m_name(name)
 }
 
 CueList::CueList(JSONNode node) {
-  auto current = node.find("currentCue");
-  if (current != node.end()) {
-    m_currentCue = current->as_float();
-  }
-  else {
-    Logger::log(WARN, "No current cue assigned to cue list.");
-  }
-
   auto cues = node.find("cues");
   if (cues != node.end()) {
     // Load cues
@@ -172,7 +164,6 @@ float CueList::getCueNumAtIndex(int index) {
 JSONNode CueList::toJSON() {
   JSONNode list;
   list.set_name(m_name);
-  list.push_back(JSONNode("currentCue", m_currentCue));
 
   JSONNode cues;
   cues.set_name("cues");

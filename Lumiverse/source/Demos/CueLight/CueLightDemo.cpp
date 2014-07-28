@@ -9,7 +9,7 @@ using namespace std;
 using namespace Lumiverse;
 
 int main(int argc, char**argv) {
-  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.json");
+  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.rig.json");
   shared_ptr<CueList> list1(new CueList("list1"));
   shared_ptr<Layer> layer1(new Layer(&rig, "layer1", 1));
   shared_ptr<CueList> list2(new CueList("list2"));
@@ -33,7 +33,7 @@ int main(int argc, char**argv) {
   color->setxy(0.4, 0.4);
 
   inno.setParam("intensity", 0.0f);
-  inno.setParam("shutter", 0.95f);
+  inno.setParam("shutter", "OPEN");
   inno.setParam("tilt", 0.5f);
   inno.setParam("pan", 0.75f);
 

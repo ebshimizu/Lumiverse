@@ -2,7 +2,6 @@
 	"playback" : {
 		"cueLists" : {
 			"list1" : {
-				"currentCue" : 1,
 				"cues" : {
 					"1" : {
 						"upfade" : 5,
@@ -1464,7 +1463,6 @@
 				}
 			},
 			"list2" : {
-				"currentCue" : 1,
 				"cues" : {
 					"1" : {
 						"upfade" : 3,
@@ -1947,6 +1945,7 @@
 				"active" : true,
 				"mode" : "BLEND_OPAQUE",
 				"opacity" : 1,
+				"currentCue" : -1,
 				"cueList" : "list1",
 				"state" : {
 					"inno" : {
@@ -2238,6 +2237,7 @@
 				"active" : true,
 				"mode" : "NULL_DEFAULT",
 				"opacity" : 1,
+				"currentCue" : -1,
 				"cueList" : "list2",
 				"state" : {
 					"inno" : {

@@ -63,7 +63,7 @@
 				},
 				"intensity" : {
 					"type" : "float",
-					"val" : 0.574,
+					"val" : 0,
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
