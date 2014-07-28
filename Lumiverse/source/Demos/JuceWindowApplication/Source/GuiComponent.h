@@ -57,6 +57,10 @@ public:
     void resized();
     void buttonClicked (Button* buttonThatWasClicked);
     
+    void setBuffer(float *buffer) {
+        m_color_buffer = buffer;
+    }
+    
 private:
     int addDevicePads();
     //[UserVariables]   -- You can add your own custom variables in this section.

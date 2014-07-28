@@ -77,4 +77,5 @@
 #include "Simulation/ArnoldPatch.h"
 #include "Simulation/ArnoldAnimationPatch.h"
 #include "Simulation/ArnoldFrameManager.h"
+#include "Simulation/ArnoldMemoryFrameManager.h"
 #endif

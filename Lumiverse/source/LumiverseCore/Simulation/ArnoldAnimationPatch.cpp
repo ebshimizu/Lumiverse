@@ -28,7 +28,7 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
 	if (m_startPoint == chrono::system_clock::from_time_t(0))
 		m_startPoint = current;
 
-	frame.time = chrono::duration_cast<chrono::seconds>(current - m_startPoint).count();
+	frame.time = chrono::duration_cast<chrono::milliseconds>(current - m_startPoint).count();
     frame.rerender_req = isUpdateRequired(devices);
     clearUpdateFlags();
     
@@ -101,8 +101,7 @@ void ArnoldAnimationPatch::workerLoop() {
         Device *d = *par;
         float intensity;
         d->getParam("intensity", intensity);
-        ss << "Received new frame: " << frame.time << "(" << frame.rerender_req << ")" << "\n"
-        << intensity;
+        ss << "Received new frame: " << frame.time << "(" << frame.rerender_req << ")";
         Logger::log(LDEBUG, ss.str());
         
 		// renders

@@ -70,7 +70,7 @@ namespace Lumiverse {
     */
     virtual void close();
 
-	ArnoldFrameManager *getFrameManager() const;
+    ArnoldFrameManager *getFrameManager() const;
       
   private:
 	void workerLoop();

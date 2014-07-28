@@ -26,4 +26,4 @@ private:
     ScopedPointer<Component> m_refreshPointer;
 };
 
-#endif /* defined(__JuceWindowApp__RefreshTimer__) */
+#endif /* defined(__JuceWindowApp__RepaintTimer__) */

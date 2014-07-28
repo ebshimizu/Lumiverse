@@ -12,7 +12,7 @@ void ArnoldMemoryFrameManager::dump(time_t time, float *frame, size_t width, siz
 
 	fd.time = time;
 	fd.buffer = new float[width * height * 4];
-	memcpy(fd.buffer, frame, sizeof(width * height * 4));
+	memcpy(fd.buffer, frame, sizeof(float) * width * height * 4);
 
 	m_buffer.lock();
 	m_bufferSet.insert(fd);
@@ -24,7 +24,7 @@ float *ArnoldMemoryFrameManager::getCurrentFrameBuffer() const {
 	// potentially inefficient
 	size_t count = 0;
 	for (FrameData fd : m_bufferSet) {
-		if (count == m_current)
+		if (count == m_current.load())
 			return fd.buffer;
 		count++;
 	}
@@ -37,7 +37,7 @@ time_t ArnoldMemoryFrameManager::getCurrentTime() const {
 	// potentially inefficient
 	size_t count = 0;
 	for (FrameData fd : m_bufferSet) {
-		if (count == m_current)
+		if (count == m_current.load())
 			return fd.time;
 		count++;
 	}
@@ -49,7 +49,7 @@ time_t ArnoldMemoryFrameManager::getNextTime() const {
     if (hasNext()) {
         size_t count = 0;
         for (FrameData fd : m_bufferSet) {
-            if (count == m_current + 2)
+            if (count == m_current.load() + 1)
                 return fd.time;
             count++;
         }
@@ -59,7 +59,7 @@ time_t ArnoldMemoryFrameManager::getNextTime() const {
 }
     
 bool ArnoldMemoryFrameManager::hasNext() const {
-	if (m_current + 1 < m_bufferSet.size())
+	if (m_current.load() + 1 < m_bufferSet.size())
 		return true;
 	return false;
 }
