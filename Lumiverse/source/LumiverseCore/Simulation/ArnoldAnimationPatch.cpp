@@ -12,7 +12,9 @@ ArnoldAnimationPatch::ArnoldAnimationPatch(const JSONNode data)
 }
     
 ArnoldAnimationPatch::~ArnoldAnimationPatch() {
-    close();
+    delete m_frameManager;
+    if (m_worker != NULL)
+        m_worker->join();
 }
 
 void ArnoldAnimationPatch::init() {
@@ -31,6 +33,10 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
 	frame.time = chrono::duration_cast<chrono::milliseconds>(current - m_startPoint).count();
     frame.rerender_req = isUpdateRequired(devices);
     clearUpdateFlags();
+
+    // There's no need to send this frame
+    if (!frame.rerender_req)
+        return ;
     
 	for (Device *d : devices) {
 		// Checks if the device is connect to this patch
@@ -61,7 +67,8 @@ void ArnoldAnimationPatch::close() {
 
 	// Waits until worker finishes its job
 	m_worker->join();
-
+    m_worker = NULL;
+    
 	// Close arnold interface
 	ArnoldPatch::close();
 }
