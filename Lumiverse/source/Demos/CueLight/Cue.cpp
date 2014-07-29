@@ -32,7 +32,8 @@ Cue::Cue(Rig* rig, float time) : m_upfade(time), m_downfade(time), m_delay(0) {
   update(rig);
 }
 
-Cue::Cue(map<string, Device*> devices, float time) : m_upfade(time), m_downfade(time), m_delay(0) {
+Cue::Cue(map<string, Device*> devices, float up, float down, float delay)
+  : m_upfade(up), m_downfade(down), m_delay(delay) {
   update(devices);
 }
 
@@ -87,6 +88,10 @@ Cue::Cue(JSONNode node) {
 Cue::Cue(Cue& other) {
   m_upfade = other.m_upfade;
   m_downfade = other.m_downfade;
+  m_delay = other.m_delay;
+  m_length = other.m_length;
+  m_lengthIsUpdated = other.m_lengthIsUpdated;
+  m_type = other.m_type;
 
   // Fully copy over cue data. Other instance may go out of scope whenever and
   // delete the cue data but since we have a shared_ptr, we should still have it.
@@ -105,6 +110,10 @@ Cue::~Cue() {
 void Cue::operator=(const Cue& other) {
   m_upfade = other.m_upfade;
   m_downfade = other.m_downfade;
+  m_delay = other.m_delay;
+  m_length = other.m_length;
+  m_lengthIsUpdated = other.m_lengthIsUpdated;
+  m_type = other.m_type;
 
   // Fully copy over cue data. Other instance may go out of scope whenever and
   // delete the cue data but since we have a shared_ptr, we should still have it.
@@ -117,6 +126,8 @@ void Cue::operator=(const Cue& other) {
 
 Cue::changedParams Cue::update(Rig* rig) {
   changedParams params;
+  m_lengthIsUpdated = false;
+  m_type = "";
   
   for (auto d : rig->getDeviceRaw()) {
     if (m_cueData.count(d->getId()) == 0) {
@@ -141,6 +152,8 @@ Cue::changedParams Cue::update(Rig* rig) {
 
 Cue::changedParams Cue::update(map<string, Device*> devices) {
   changedParams params;
+  m_lengthIsUpdated = false;
+  m_type = "";
 
   for (auto kvp : devices) {
     if (m_cueData.count(kvp.second->getId()) == 0) {
@@ -165,6 +178,8 @@ Cue::changedParams Cue::update(map<string, Device*> devices) {
 
 void Cue::trackedUpdate(Cue::changedParams& oldVals, Rig* rig) {
   auto it = oldVals.begin();
+  m_lengthIsUpdated = false;
+  m_type = "";
 
   while (it != oldVals.end()) {
     auto params = it->second.begin();
@@ -208,6 +223,7 @@ void Cue::setTime(float time) {
 void Cue::setTime(float up, float down) {
   m_upfade = up;
   m_downfade = down;
+  m_lengthIsUpdated = false;
 }
 
 void Cue::insertKeyframe(string id, string param, Lumiverse::LumiverseType* data, float time, bool uct) {
@@ -226,6 +242,9 @@ void Cue::insertKeyframe(string id, string param, Lumiverse::LumiverseType* data
     m_cueData[id][param].erase(old.first);
     m_cueData[id][param].insert(k);
   }
+
+  m_lengthIsUpdated = false;
+  m_type = "";
 }
 
 void Cue::insertKeyframe(float time, DeviceSet devices, bool uct) {
@@ -236,6 +255,9 @@ void Cue::insertKeyframe(float time, DeviceSet devices, bool uct) {
       insertKeyframe(d->getId(), p.first, d->getParam(p.first), time, uct);
     }
   }
+
+  m_lengthIsUpdated = false;
+  m_type = "";
 }
 
 void Cue::deleteKeyframe(string id, string param, float time) {
@@ -250,6 +272,9 @@ void Cue::deleteKeyframe(string id, string param, float time) {
       return;
     }
   }
+
+  m_lengthIsUpdated = false;
+  m_type = "";
 }
 
 void Cue::deleteKeyframe(float time, DeviceSet devices) {
@@ -260,6 +285,9 @@ void Cue::deleteKeyframe(float time, DeviceSet devices) {
       deleteKeyframe(d->getId(), p.first, time);
     }
   }
+
+  m_lengthIsUpdated = false;
+  m_type = "";
 }
 
 map<string, set<Keyframe> > Cue::getParams(Device* d) {
@@ -271,15 +299,15 @@ map<string, set<Keyframe> > Cue::getParams(Device* d) {
     paramKeyframes[a.first].insert(Keyframe(0, shared_ptr<Lumiverse::LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
     
     // Add extra keyframe if default cue delay is present.
-    if (m_delay > 0) {
-      paramKeyframes[a.first].insert(Keyframe(m_delay, shared_ptr<Lumiverse::LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
-    }
+    //if (m_delay > 0) {
+    //  paramKeyframes[a.first].insert(Keyframe(m_delay, shared_ptr<Lumiverse::LumiverseType>(LumiverseTypeUtils::copy(a.second)), false));
+    //}
 
     // The ending keyframe is a bit of an odd case. Since we don't know if it's an upfade or downfade
     // there's no way to know the final default timing. So we just pick upfade and set useCueTiming
     // to true so that the keyframe's t value is overwritten at runtime by the Playback object.
     // This can be set to not use cue timing later and then the timing is deterministic.
-    paramKeyframes[a.first].insert(Keyframe(m_upfade + m_delay, nullptr, true));
+    paramKeyframes[a.first].insert(Keyframe(m_upfade, nullptr, true));
   }
 
   return paramKeyframes;
@@ -367,6 +395,67 @@ JSONNode Cue::toJSON() {
   cue.push_back(cueData);
 
   return cue;
+}
+
+float Cue::getLength() {
+  if (m_lengthIsUpdated) {
+    return m_length;
+  }
+  else {
+    // the hard way.
+    // Go through and find the maximum time that a keyframe is set to.
+    // First figure out if we should count upfade or downfade if a keyframe has useCueTiming set to true.
+    float cueTiming = (m_upfade > m_downfade) ? m_upfade : m_downfade;
+    float time = 0;
+
+    for (const auto& id : m_cueData) {
+      for (const auto& param : id.second) {
+        auto lastKeyframe = param.second.rbegin();
+        if (lastKeyframe->useCueTiming) {
+          float keyframeTime = next(lastKeyframe)->t + cueTiming;
+          time = (keyframeTime > time) ? keyframeTime : time;
+        }
+        else {
+          time = (lastKeyframe->t > time) ? lastKeyframe->t : time;
+        }
+      }
+    }
+
+    m_length = time + m_delay;
+    m_lengthIsUpdated = true;
+    return m_length;
+  }
+}
+
+string Cue::getType() {
+  if (m_type == "")
+  {
+    bool oneNull = false;
+    bool allNull = true;
+
+    for (const auto& id : m_cueData) {
+      for (const auto& param : id.second) {
+        // The relevant parts of this check are the last keyframes of each parameter.
+        // They are the only keyframes that can be null.
+        if (param.second.rbegin()->val == nullptr) {
+          oneNull = true;
+          allNull &= true;
+        }
+        else {
+          allNull &= false;
+        }
+      }
+    }
+
+    if (allNull)
+      m_type = "Linked";
+    else if (oneNull)
+      m_type = "Hybrid";
+    else
+      m_type = "Standalone";
+  }
+
+  return m_type;
 }
 
 }

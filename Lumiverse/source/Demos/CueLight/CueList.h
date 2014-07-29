@@ -43,14 +43,19 @@ public:
   // Gets the list of cues
   const map<float, Cue>& getCueList() { return m_cues; }
 
-  // Gets the number of the first cue.
-  float getFirstCueNum() { return m_cues.begin()->first; }
+  /*!
+  \brief Gets the number of the first cue. 
+  
+  If no cues exist, this returns 0.
+  */
+  float getFirstCueNum();
 
-  // Gets the current cue in this particular cue list
-  float getCurrentCue() { return m_currentCue; }
-
-  // Sets the current cue in the cue list
-  void setCurrentCue(float val) { m_currentCue = val; }
+  /*!
+  \brief Gets the number of the last cue.
+  
+  If no cues exist, this returns 0.
+  */
+  float getLastCueNum();
 
   // Gets a cue and allows user to modify it.
   Cue* getCue(float num) {
@@ -102,9 +107,6 @@ public:
 private:
   // List of cues. Cue numbers can be floats.
   map<float, Cue> m_cues;
-
-  // The last cue executed in the cue list.
-  float m_currentCue;
 
   /*! \brief Name of the list */
   string m_name;

@@ -14,6 +14,7 @@
 namespace Lumiverse {
   /*! \brief Data that tracks the progress of a cue and stores the data used in the cue transition. */
   struct PlaybackData {
+    float delay;
     chrono::time_point<chrono::high_resolution_clock> start;    // Cue start time. More accurate to take difference between now and start instead of summing.
     map<string, map<string, set<Keyframe> > > activeKeyframes;
   };
@@ -150,6 +151,12 @@ namespace Lumiverse {
     /*! \brief Gets the priority. */
     int getPriority() { return m_priority; }
 
+    /*! \brief Gets the cue list. */
+    const shared_ptr<CueList>& getCueList() { return m_cueList; }
+
+    /*! \brief Gets the current cue. */
+    float getCurrentCue() { return m_currentCue; }
+
     /*!
     \brief Gets the layer state.
 
@@ -181,9 +188,11 @@ namespace Lumiverse {
     \brief Goes to the specified cue in a cue list.
 
     \param num The cue number to go to. If the cue doesn't exist, the layer will not change.
-    \param time Fade time. Default is 3s.
+    \param up Upfade. Defaults to 3s.
+    \param down Downfade. Defaults to 3s.
+    \param delay Delay. Defaults to 0s.
     */
-    void goToCue(float num, float time = 3);
+    void goToCue(float num, float up = 3, float down = 3, float delay = 0);
 
     /*!
     \brief Sets the layer state to the state at the specified time in a cue.
@@ -263,6 +272,9 @@ namespace Lumiverse {
     /*! \brief Copies the devices and does other Layer initialization */
     void init(Rig* rig);
 
+    /*! \brief Current cue in the cue list. */
+    float m_currentCue;
+
     /*!
     \brief Goes to an arbitrary cue from an arbitrary cue.
 
@@ -285,6 +297,7 @@ namespace Lumiverse {
     /*! \brief Stores the data used during playback. */
     vector<PlaybackData> m_playbackData;
 
+    /*! \brief Queue for adding playback data to the update loop. */
     vector<PlaybackData> m_queuedPlayback;
 
     mutex m_queue;
