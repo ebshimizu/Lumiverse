@@ -242,7 +242,15 @@ namespace Lumiverse {
     bool setColorRGB(string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
 
     // Will need additional overloads for each new type. Which kinda sucks.
-
+      
+    /*!
+    * \brief Copies the data from source into target parameter.
+    *
+    * \param param Id of the target parameter
+    * \param source Pointer to the data source
+    */
+    void copyParamByValue(string param, LumiverseType* source);
+      
     /*! 
     * \brief Checks for the existance of a parameter
     *

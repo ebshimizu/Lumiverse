@@ -7,7 +7,8 @@ namespace Lumiverse {
 
 // Uses chrono::system_clock::from_time_t(0) as an invalid value.
 ArnoldAnimationPatch::ArnoldAnimationPatch(const JSONNode data)
-: m_worker(NULL), m_startPoint(chrono::system_clock::from_time_t(0)){
+: m_worker(NULL), m_startPoint(chrono::system_clock::from_time_t(0)),
+    m_recording(false) {
     m_frameManager = new ArnoldMemoryFrameManager();
     loadJSON(data);
 }
@@ -26,8 +27,11 @@ void ArnoldAnimationPatch::init() {
     // Starts a worker thread.
     m_worker = new std::thread(&ArnoldAnimationPatch::workerLoop, this);
 }
-
+    
 void ArnoldAnimationPatch::update(set<Device *> devices) {
+    if (!m_recording)
+        return ;
+    
     FrameDeviceInfo frame;
     chrono::time_point<chrono::system_clock> current = chrono::system_clock::now();
 
@@ -61,7 +65,9 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
     // Since there aren't many competitions (worker runs slowly),
     // it's okay to just use a coarse lock.
     m_queue.lock();
-    m_queuedFrameDeviceInfo.push_back(frame);
+    // Checks if start point was reset during this update call.
+    if (m_startPoint != chrono::system_clock::from_time_t(0))
+        m_queuedFrameDeviceInfo.push_back(frame);
     m_queue.unlock();
 }
 
@@ -79,12 +85,45 @@ void ArnoldAnimationPatch::close() {
     m_worker->join();
     m_worker = NULL;
     
+    m_recording = false;
+    
     // Close arnold interface
     ArnoldPatch::close();
 }
 
 ArnoldFrameManager *ArnoldAnimationPatch::getFrameManager() const {
     return m_frameManager;
+}
+
+void ArnoldAnimationPatch::reset() {
+    // We want to block both worker and main thread during resetting
+    m_queue.lock();
+    
+    // Resets start point to init.
+    m_startPoint = chrono::system_clock::from_time_t(0);
+    
+    // Clears queue.
+    for (FrameDeviceInfo d : m_queuedFrameDeviceInfo) {
+        d.clear();
+    }
+    
+    m_queuedFrameDeviceInfo.clear();
+    
+    // Just in case that close()'s already been called.
+    if (m_worker != NULL) {
+        // Manully interrupts worker here.
+        m_interface.interrupt();
+    }
+    else {
+        // Reset() can set a closed ArnoldAnimationPatch to its initial state.
+        m_worker = new std::thread(&ArnoldAnimationPatch::workerLoop, this);
+    }
+
+    m_frameManager->clear();
+    
+    m_recording = false;
+    
+    m_queue.unlock();
 }
 
 //============================ Worker Code =========================
@@ -110,8 +149,8 @@ void ArnoldAnimationPatch::workerLoop() {
 	    m_queue.unlock();
 
 	    if (isEndInfo(frame)) {
-                Logger::log(INFO, "Worker finished...");
-		return ;
+            Logger::log(INFO, "Worker finished...");
+            return ;
 	    }
 	}
 
@@ -120,11 +159,14 @@ void ArnoldAnimationPatch::workerLoop() {
         Logger::log(LDEBUG, ss.str());
         
 	updateLight(frame.devices);
-	renderLoop();
+    int code = m_interface.render();
             
-	// dumps
-	m_frameManager->dump(frame.time, m_interface.getBufferPointer(),
-			     m_interface.getWidth(), m_interface.getHeight());
+	// Dumps only when the image was rendered successfully.
+    // If the worker was reset while rendering, doesn't dump.
+    if (code == AI_SUCCESS) {
+        m_frameManager->dump(frame.time, m_interface.getBufferPointer(),
+                             m_interface.getWidth(), m_interface.getHeight());
+    }
 
 	// Releases copies of devices.
 	frame.clear();

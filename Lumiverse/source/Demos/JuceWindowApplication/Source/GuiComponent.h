@@ -28,6 +28,8 @@
 #include "GuiConfig.h"
 #include "DeviceComponent.h"
 #include "../../../LumiverseCore/LumiverseCore.h"
+#include "RepaintTimer.h"
+#include "AnimationTimer.h"
 //[/Headers]
 
 using namespace Lumiverse;
@@ -68,6 +70,7 @@ private:
 
     //==============================================================================
     ScopedPointer<Button> m_abort_button;
+    ScopedPointer<Button> m_switch_button;
     ScopedPointer<LookAndFeel> m_lookandfeel;
     
     Array<DeviceComponent*> m_device_pads;
@@ -78,7 +81,9 @@ private:
     int m_width, m_height;
     
     Rig *m_rig;
-
+    ScopedPointer<RepaintTimer> m_timer;
+    ScopedPointer<AnimationTimer> m_animation_timer;
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GuiComponent)
 };

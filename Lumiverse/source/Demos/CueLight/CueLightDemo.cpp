@@ -25,40 +25,57 @@ void simulation() {
     
     DeviceSet par = rig.query("par1");
     
-    par.setParam("intensity", 0.0f);
+    par.setParam("intensity", 0.8f);
     
-    Cue cue1(&rig, 1.0f, 5.0f);
+    Cue cue1(&rig, 1.0f, 1.0f);
     list1->storeCue(1, cue1);
-    
-    par.setParam("intensity", 0.5f);
-    
-    Cue cue2(&rig);
-    //list1->storeCue(2, cue2);
-    
-    par.reset();
     
     pb.addCueList(list1);
     pb.addLayer(layer1);
     pb.addCueListToLayer("list1", "layer1");
     
-    layer1->goToCueAtTime(1, 5);
-    //layer1->goToCueAtTime(2, 100);
+    // Test keyframe insertion
+    //DeviceSet chan1 = rig.query("#1");
+    //chan1.setParam("intensity", 0.0f);
+    par.setParam("intensity", 0.5f);
+
+    list1->getCue(1)->insertKeyframe(4, par);
     
+    par.setParam("intensity", 0.3f);
+    Cue cue2(&rig);
+    list1->storeCue(2, cue2);
+    
+    //par.reset();
+    //list1->getCue(1)->insertKeyframe(5, par);
+    
+    //chan1.setParam("intensity", 1.0f);
+    //list1.getCue(1)->insertKeyframe(4.5f, chan1);
+    
+    // Test keyframe overwrite
+    //chan1.setParam("intensity", 0.0f);
+    //list1.getCue(1)->insertKeyframe(4.5f, chan1);
+    pb.save("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric_cue.pb.json",
+            true);
     pb.start();
     rig.run();
     
+    layer1->go();
+    layer1->go();
+    
+    time_t t = 0;
     while (1) {
         float val;
         rig["par1"]->getParam("intensity", val);
-        cout << "par1 Intensity: " << val << "\n";
+        cout << "par1 Intensity: " << val << "\t" << t << "\n";
         this_thread::sleep_for(chrono::milliseconds(500));
+        t += 500;
     }
 }
 
 void testArnoldAnimation() {
 	Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric_cue.json");
 	DeviceSet par1 = rig.query("par1");
-
+    
 	rig.init();
 	rig.run();
 
@@ -82,6 +99,9 @@ void testArnoldAnimation() {
 }
 
 int main(int argc, char**argv) {
+    simulation();
+    
+    return 0;
   Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.rig.json");
   shared_ptr<CueList> list1(new CueList("list1"));
   shared_ptr<Layer> layer1(new Layer(&rig, "layer1", 1));

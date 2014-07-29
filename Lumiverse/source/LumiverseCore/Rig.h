@@ -332,10 +332,11 @@ namespace Lumiverse {
     * \brief Get a simulation patch
     *
     * Checks against all the registered patches and returns the first simulation patch found.
-    * \sa Patch
+    * \param type Type name to distinguish different Simulation Patch.
     * \return A pointer to a simulation patch (the current implementation is the ArnoldPatch).
+    * \sa Patch
     */
-    Patch *getSimulationPatch();
+    Patch *getSimulationPatch(string type);
 
     /*!
     * \brief Updates the parameters of the devices stored in the specified map.

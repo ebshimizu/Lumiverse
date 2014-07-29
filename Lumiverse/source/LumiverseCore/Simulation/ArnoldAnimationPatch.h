@@ -27,7 +27,7 @@ namespace Lumiverse {
       std::set<Device *> devices;
 
       /*! \brief Constructor. */
-      FrameDeviceInfo() : time(-1), rerender_req(true) { }
+      FrameDeviceInfo() : time(-1) { }
 
       /*! \brief Releases the copies for devices. */
       void clear() {
@@ -57,7 +57,7 @@ namespace Lumiverse {
     */
     ArnoldAnimationPatch() : m_worker(NULL), 
 	  m_startPoint(std::chrono::system_clock::from_time_t(0)),
-	  m_frameManager(NULL) { }
+	  m_frameManager(NULL), m_recording(false) { }
 
     /*!
     * \brief Construct ArnoldPatch from JSON data.
@@ -77,6 +77,12 @@ namespace Lumiverse {
     */
     virtual void init();
 
+    /*!
+    * \brief Starts recording.
+    * Main thread starts to send frame info to worker.
+    */
+    void startRecording() { m_recording = true; }
+      
     /*!
     * \brief Gets the type of this object.
     *
@@ -112,6 +118,13 @@ namespace Lumiverse {
     * and their corresponding time point.
     */
     ArnoldFrameManager *getFrameManager() const;
+    
+    /*!
+    * \brief Resets the object to its initial state.
+    *
+    * Including resetting start point, clearing frame manager, interrupting worker and clearing worker's queue.
+    */
+    void reset();
 
   private:
     /*!
@@ -146,6 +159,12 @@ namespace Lumiverse {
 
     // The ArnoldFrameManager object. Used to store frame buffers.
     ArnoldFrameManager *m_frameManager;
+      
+    /*! \brief Indicates the status of the update loop.
+    *
+    * True if recording.
+    */
+    bool m_recording;
   };
     
 }

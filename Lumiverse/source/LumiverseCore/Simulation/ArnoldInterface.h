@@ -178,6 +178,18 @@ namespace Lumiverse {
     */
     float getGamma() { return m_gamma; }
       
+    /*!
+    * \brief Starts rendering with Arnold.
+    * Returns the error code of AiRender, so the caller can know if the renderer was interrupted.
+    * \return Error code of arnold.
+    */
+    int render();
+      
+    /*!
+    * \brief Interrupts current rendering.
+    */
+    void interrupt();
+      
   private:
     /*!
     * \brief Helper function to sets a arnold non-array parameter.

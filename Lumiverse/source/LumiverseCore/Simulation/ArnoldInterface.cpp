@@ -271,6 +271,9 @@ void ArnoldInterface::appendToOutputs(const std::string buffer_output) {
 }
     
 void ArnoldInterface::init() {
+    // TODO : to use env var (different apis for linux and win)
+    AiLicenseSetServer("pike.graphics.cs.cmu.edu", 5053);
+    
     // Starts a arnold session
     AiBegin();
     
@@ -312,6 +315,23 @@ void ArnoldInterface::close() {
 // TODO:
 JSONNode ArnoldInterface::toJSON() {
 	return JSONNode("test", 0);
+}
+    
+int ArnoldInterface::render() {
+    int code;
+    
+    Logger::log(INFO, "Rendering...");
+    code = AiRender(AI_RENDER_MODE_CAMERA);
+    Logger::log(INFO, "Done.");
+    
+    return code;
+}
+    
+void ArnoldInterface::interrupt() {
+    if (AiRendering()) {
+        AiRenderInterrupt();
+        Logger::log(INFO, "Aborted rendering to restart.");
+    }
 }
 
 }
