@@ -41,7 +41,7 @@ namespace Lumiverse {
   * of communication is done with help of an ArnoldInterface object.
   * ArnoldPatch handles parsing Json and passing info to ArnoldInterface.
   *  
-  * \sa ArnoldInterface
+  * \sa ArnoldInterface, ArnoldAnimationPatch
   */
   class ArnoldPatch : public Patch
   {
@@ -102,26 +102,26 @@ namespace Lumiverse {
     *
     * \return The width of result
     */
-    virtual int getWidth() { return m_interface.getWidth(); }
+    int getWidth() { return m_interface.getWidth(); }
 
     /*!
     * \brief Gets the height of result.
     *
     * \return The height of result
     */
-    virtual int getHeight() { return m_interface.getHeight(); }
+    int getHeight() { return m_interface.getHeight(); }
       
     /*!
     * \brief Gets the pointer to the frame buffer.
     *
     * \return The pointer to the frame buffer.
     */
-    virtual float *getBufferPointer() { return m_interface.getBufferPointer(); }
+    float *getBufferPointer() { return m_interface.getBufferPointer(); }
       
     /*!
     * \brief Stops the working rendering procedure if Arnold is running.
     */
-    virtual void interruptRender();
+    void interruptRender();
     
     /*!
     * \brief Callback function for devices.
@@ -130,7 +130,7 @@ namespace Lumiverse {
     * will change the state of patch.
     * \param d The device which calls this function.
     */
-    virtual void onDeviceChanged(Device *d);
+    void onDeviceChanged(Device *d);
       
   protected:
     /*!
