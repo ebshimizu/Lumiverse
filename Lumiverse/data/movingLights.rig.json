@@ -9,10 +9,10 @@
 				"color" : {
 					"type" : "color",
 					"channels" : {
-						"Blue" : 0.438,
-						"Green" : 0.167,
+						"Blue" : 0,
+						"Green" : 0,
 						"Red" : 0,
-						"White" : 0.606
+						"White" : 0
 					},
 					"basis" : {
 						"Blue" : [
@@ -84,7 +84,7 @@
 				},
 				"pan" : {
 					"type" : "float",
-					"val" : 0.753,
+					"val" : 0,
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
@@ -111,7 +111,7 @@
 				},
 				"shutter" : {
 					"type" : "enum",
-					"active" : "OPEN",
+					"active" : "SHUTTER CLOSED",
 					"tweak" : 0.5,
 					"mode" : "CENTER",
 					"default" : "SHUTTER CLOSED",
@@ -130,7 +130,7 @@
 				},
 				"tilt" : {
 					"type" : "float",
-					"val" : 0.681,
+					"val" : 0,
 					"default" : 0,
 					"max" : 1,
 					"min" : 0

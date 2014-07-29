@@ -79,9 +79,11 @@ namespace Lumiverse {
     }
   }
 
-  void Layer::setCueList(shared_ptr<CueList> list) {
+  void Layer::setCueList(shared_ptr<CueList> list, bool resetCurrentCue) {
     m_cueList = list;
-    m_currentCue = -1;
+
+    if (resetCurrentCue)
+      m_currentCue = -1;
   }
 
   void Layer::removeCueList() {
