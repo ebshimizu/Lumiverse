@@ -77,7 +77,7 @@ namespace Lumiverse {
 
     The layer will automatically go to the first cue in the list.
     */
-    void setCueList(shared_ptr<CueList> list);
+    void setCueList(shared_ptr<CueList> list, bool resetCurrentCue = true);
 
     /*! \brief Removes the active cue list from the layer. Layer will reset to defaults. */
     void removeCueList();

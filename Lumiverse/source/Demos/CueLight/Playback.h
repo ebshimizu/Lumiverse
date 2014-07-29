@@ -120,8 +120,9 @@ namespace Lumiverse {
     function will return false.
     \param cueListId Cue list identifier
     \param layerName Name of the layer to assign the cue list to.
+    \param resetCurrenCue Set to true to reset the current cue of the layer (resets to -1)
     */
-    bool addCueListToLayer(string cueListId, string layerName);
+    bool addCueListToLayer(string cueListId, string layerName, bool resetCurrentCue = true);
 
     /*!
     \brief Removes a cue list assigned to a particular layer.

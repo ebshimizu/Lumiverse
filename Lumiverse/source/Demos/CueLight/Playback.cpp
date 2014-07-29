@@ -163,9 +163,9 @@ namespace Lumiverse {
     }
   }
 
-  bool Playback::addCueListToLayer(string cueListId, string layerName) {
+  bool Playback::addCueListToLayer(string cueListId, string layerName, bool resetCurrentCue) {
     if (m_layers.count(layerName) > 0 && m_cueLists.count(cueListId) > 0) {
-      m_layers[layerName]->setCueList(m_cueLists[cueListId]);
+      m_layers[layerName]->setCueList(m_cueLists[cueListId], resetCurrentCue);
       return true;
     }
 
@@ -315,7 +315,7 @@ namespace Lumiverse {
         auto cueList = it->find("cueList");
         if (cueList != it->end()) {
           // Got a cue list to assign
-          addCueListToLayer(cueList->as_string(), it->name());
+          addCueListToLayer(cueList->as_string(), it->name(), false);
         }
 
         it++;
