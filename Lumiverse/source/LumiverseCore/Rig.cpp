@@ -380,7 +380,8 @@ void Rig::setAllDevices(map<string, Device*> devices) {
       for (auto& param : params) {
         // We want to copy instead of assign since we don't know where that LumiverseType data
         // is going to end up. Maybe it'd be better if devices did a copy instead...
-        LumiverseTypeUtils::copyByVal(param.second, m_devicesById[kvp.first]->getParam(param.first));
+        //LumiverseTypeUtils::copyByVal(param.second, m_devicesById[kvp.first]->getParam(param.first));
+        m_devicesById[kvp.first]->copyParamByValue(param.first, param.second);
       }
     }
     else {
@@ -478,10 +479,11 @@ JSONNode Rig::toJSON() {
   return root;
 }
     
-Patch* Rig::getSimulationPatch() {
+Patch* Rig::getSimulationPatch(string type) {
     for (pair<string, Patch*> patch : m_patches) {
-        if (patch.second->getType() == "ArnoldPatch" ||
-            patch.second->getType() == "ArnoldAnimationPatch") {
+        if ((patch.second->getType() == "ArnoldPatch" ||
+            patch.second->getType() == "ArnoldAnimationPatch") &&
+            patch.second->getType() == type) {
             return patch.second;
         }
     }

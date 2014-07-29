@@ -158,16 +158,12 @@ void ArnoldPatch::clearUpdateFlags() {
 }
     
 void ArnoldPatch::renderLoop() {
-    Logger::log(INFO, "Rendering...");
-    AiRender(AI_RENDER_MODE_CAMERA);
-    Logger::log(INFO, "Done.");
+    m_interface.render();
 }
 
 void ArnoldPatch::interruptRender() {
-    if (AiRendering()) {
-        AiRenderInterrupt();
-        Logger::log(INFO, "Aborted rendering to restart.");
-    }
+    m_interface.interrupt();
+    
     if (m_renderloop != NULL) {
         try {
             m_renderloop->join();

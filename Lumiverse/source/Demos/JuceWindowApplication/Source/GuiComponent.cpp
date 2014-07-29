@@ -38,6 +38,10 @@ m_width(imageWidth), m_height(imageHeight), m_rig(rig)
     m_abort_button->setButtonText ("Abort");
     m_abort_button->addListener (this);
     
+    addAndMakeVisible (m_switch_button = new TextButton (String::empty));
+    m_switch_button->setButtonText ("Animation");
+    m_switch_button->addListener (this);
+    
     int height = addDevicePads();
     int dcwidth = 0;
     
@@ -50,13 +54,27 @@ m_width(imageWidth), m_height(imageHeight), m_rig(rig)
 
     //[Constructor] You can add your own custom stuff here..
     //[/Constructor]
+    
+    ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+    m_animation_timer = nullptr;
+    if (aap != NULL)
+        m_animation_timer = new AnimationTimer(this, aap->getFrameManager());
+    
+    m_timer = new RepaintTimer(this);
+    m_timer->startTimer(1000);
 }
 
 GuiComponent::~GuiComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
-
+    m_animation_timer->stopTimer();
+    m_timer->stopTimer();
+    
+    m_animation_timer = nullptr;
+    m_timer = nullptr;
+    
+    m_switch_button = nullptr;
     m_abort_button = nullptr;
     m_lookandfeel = nullptr;
 
@@ -123,9 +141,60 @@ void GuiComponent::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_quitButton] -- add your button handler code here..
         
-        ((ArnoldPatch*)m_rig->getSimulationPatch())->interruptRender();
+        ((ArnoldPatch*)m_rig->getSimulationPatch("ArnoldPatch"))->interruptRender();
         
         //[/UserButtonCode_quitButton]
+    }
+    else if (buttonThatWasClicked == m_switch_button) {
+        if (m_switch_button->getButtonText() == "Animation") {
+            m_timer->stopTimer();
+            m_animation_timer->startTimer(1000.f / 48);
+            Device *par1 = m_rig->getDevice("par1");
+            
+            ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+            aap->reset();
+            aap->startRecording();
+            
+            
+            LumiverseColor color(par1->getColor("color"));
+            LumiverseColor des(color);
+            des.setColorChannel("Red", 0.5);
+            des.setColorChannel("Green", 1.5);
+            time_t time = 0;
+            time_t endTime = 2000;
+            
+            do {
+                /*
+                 float t = (0.f + time) / endTime;
+                 Eigen::Vector3d t_rgb = (1 - t) * s_rgb + t * d_rgb;
+                 LumiverseColor mid(color);
+                 mid.setRGB(t_rgb[0], t_rgb[1], t_rgb[2]);
+                 */
+                if (time < endTime / 2) {
+                    LumiverseColor mid(color.lerp(&des, (2.f * time) / endTime).get());
+                    par1->setColorRGB("color", mid.getRGB()[0], mid.getRGB()[1], mid.getRGB()[2]);
+                }
+                else {
+                    LumiverseColor mid(des.lerp(&color, (2.f * time) / endTime - 1).get());
+                    par1->setColorRGB("color", mid.getRGB()[0], mid.getRGB()[1], mid.getRGB()[2]);
+                }
+                
+                this_thread::sleep_for(chrono::milliseconds(1000 / 24));
+                time += 1000 / 24;
+                
+            } while (time <= endTime);
+            
+            aap->close();
+            
+            m_switch_button->setButtonText("Interactive Rendering");
+        }
+        else {
+            ArnoldPatch *ap = (ArnoldPatch*)m_rig->getSimulationPatch("ArnoldPatch");
+            m_color_buffer = ap->getBufferPointer();
+            m_animation_timer->stopTimer();
+            m_timer->startTimer(1000);
+            m_switch_button->setButtonText("Animation");
+        }
     }
     
     //[UserbuttonClicked_Post]

@@ -69,8 +69,9 @@ bool ArnoldMemoryFrameManager::hasNext() const {
 void ArnoldMemoryFrameManager::clear() {
     reset();
     for (FrameData fd : m_bufferSet) {
-	delete [] fd.buffer;
+        delete [] fd.buffer;
     }
+    m_bufferSet.clear();
 }
 
 }

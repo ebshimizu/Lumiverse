@@ -13,21 +13,22 @@
 
 #include <iostream>
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "GuiComponent.h"
 #include "../../../LumiverseCore/LumiverseCore.h"
 
 using namespace Lumiverse;
 
+class GuiComponent;
+
 class AnimationTimer : public Timer {
 public:
-    AnimationTimer(ScopedPointer<GuiComponent> refresh_ptr, ArnoldFrameManager *frame_manager)
+    AnimationTimer(GuiComponent *refresh_ptr, ArnoldFrameManager *frame_manager)
     : m_refreshPointer(refresh_ptr), m_frame_manager(frame_manager), m_callback_count(0) { }
     ~AnimationTimer() { }
     
     virtual void timerCallback();
     
 private:
-    ScopedPointer<GuiComponent> m_refreshPointer;
+    GuiComponent *m_refreshPointer;
     ArnoldFrameManager *m_frame_manager;
     size_t m_callback_count;
 };

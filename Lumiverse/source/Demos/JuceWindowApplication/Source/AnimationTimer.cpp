@@ -7,6 +7,7 @@
 //
 
 #include "AnimationTimer.h"
+#include "GuiComponent.h"
 
 void AnimationTimer::timerCallback() {
     bool flag = false;

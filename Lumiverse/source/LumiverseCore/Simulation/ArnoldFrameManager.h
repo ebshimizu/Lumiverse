@@ -75,15 +75,15 @@ namespace Lumiverse {
     * \brief Resets the cursor to the beginning.
     */
     virtual void reset() {
-	m_current = 0;
+        m_current = 0;
     }
 
     /*!
     * \brief Moves the cursor to next position.
     */
     virtual void next() {
-	if (hasNext())
-	    m_current++;
+        if (hasNext())
+            m_current++;
     }
 
     /*!
@@ -92,12 +92,12 @@ namespace Lumiverse {
     * This may involve releasing memory block or closing file handle.
     */
     virtual void clear() {
-	reset();
+        reset();
     }
 
   protected:
     // An atomic counter to implement the cursor.
-    atomic<unsigned int> m_current;
+    std::atomic<unsigned int> m_current;
   };
     
 }

@@ -208,6 +208,28 @@ bool Device::setColorRGB(string param, double r, double g, double b, double weig
   return true;
 }
 
+void Device::copyParamByValue(string param, LumiverseType* source) {
+    LumiverseType *target = getParam(param);
+    
+    if (!LumiverseTypeUtils::areSameType(source, target))
+        return;
+    
+    if (source->getTypeName() == "float") {
+        *((LumiverseFloat*)target) = *((LumiverseFloat*)source);
+    }
+    else if (source->getTypeName() == "enum") {
+        *((LumiverseEnum*)target) = *((LumiverseEnum*)source);
+    }
+    else if (source->getTypeName() == "color") {
+        *((LumiverseColor*)target) = *((LumiverseColor*)source);
+    }
+    else {
+        return;
+    }
+    
+    onParameterChanged();
+}
+    
 bool Device::paramExists(string param) {
   return (m_parameters.count(param) > 0);
 }

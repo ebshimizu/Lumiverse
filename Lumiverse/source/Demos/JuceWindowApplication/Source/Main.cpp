@@ -14,8 +14,6 @@
 #include "../../../LumiverseCore/LumiverseCore.h"
 
 #include "RenderingWindow.h"
-#include "RepaintTimer.h"
-#include "AnimationTimer.h"
 
 using namespace Lumiverse;
 
@@ -49,76 +47,21 @@ public:
         m_rig->run();
          */
         m_rig = new Rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric_cue.json");
-        Device *par1 = m_rig->getDevice("par1");
+        ArnoldPatch *ap = (ArnoldPatch*)m_rig->getSimulationPatch("ArnoldPatch");
         
         m_rig->init();
 
         m_rig->run();
-        /*
-        this_thread::sleep_for(chrono::seconds(2));
-        
-        par1->setParam("intensity", 0.5);
-        
-        this_thread::sleep_for(chrono::seconds(6));
-        
-        par1->setParam("intensity", 1.8);
-        
-        this_thread::sleep_for(chrono::seconds(1));
-        */
-        
-        LumiverseColor color(par1->getColor("color"));
-        LumiverseColor des(color);
-        des.setColorChannel("Red", 0.5);
-        des.setColorChannel("Green", 1.5);
-        time_t time = 0;
-        time_t endTime = 2000;
-        
-        Eigen::Vector3d s_rgb = color.getRGB();
-        Eigen::Vector3d d_rgb = des.getRGB();
-        
-        do {
-            /*
-            float t = (0.f + time) / endTime;
-            Eigen::Vector3d t_rgb = (1 - t) * s_rgb + t * d_rgb;
-            LumiverseColor mid(color);
-            mid.setRGB(t_rgb[0], t_rgb[1], t_rgb[2]);
-            */
-            if (time < endTime / 2) {
-                LumiverseColor mid(color.lerp(&des, (2.f * time) / endTime).get());
-                std::cout << "t: " << (2.f * time) / endTime << std::endl;
-                par1->setColorRGB("color", mid.getRGB()[0], mid.getRGB()[1], mid.getRGB()[2]);
-            }
-            else {
-                LumiverseColor mid(des.lerp(&color, (2.f * time) / endTime - 1).get());
-                std::cout << "t: " << (2.f * time) / endTime - 1 << std::endl;
-                par1->setColorRGB("color", mid.getRGB()[0], mid.getRGB()[1], mid.getRGB()[2]);
-            }
 
-            this_thread::sleep_for(chrono::milliseconds(1000 / 24));
-            time += 1000 / 24;
-        } while (time <= endTime);
-
-        m_rig->stop();
-        ArnoldAnimationPatch *ap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch();
-        ap->close();
-        
         m_renderingWindow = new RenderingWindow(ap->getWidth(), ap->getHeight(),
                                                 ap->getBufferPointer(), m_rig);
-        
-        m_animation_timer = new AnimationTimer((GuiComponent*)m_renderingWindow->getContentComponent(),
-                                               ap->getFrameManager());
-        m_animation_timer->startTimer(1000.f / 48);
     }
     
     void shutdown() override
     {
         // Add your application's shutdown code here..
-        m_animation_timer->stopTimer();
-        //m_timer->stopTimer();
         m_rig->stop();
-        
-        m_animation_timer = nullptr;
-        m_timer = nullptr;
+
         m_renderingWindow = nullptr;
         m_rig = nullptr;
     }
@@ -141,8 +84,7 @@ public:
 private:
     ScopedPointer<RenderingWindow> m_renderingWindow;
     ScopedPointer<Rig> m_rig;
-    ScopedPointer<RepaintTimer> m_timer;
-    ScopedPointer<AnimationTimer> m_animation_timer;
+
 };
 
 //==============================================================================

@@ -11,6 +11,7 @@
 #include "../lib/libjson/libjson.h"
 #include "ArnoldFrameManager.h"
 
+#include <set>
 #include <chrono>
 #include <iostream>
 
@@ -41,7 +42,7 @@ namespace Lumiverse {
 	/*!
 	 * \brief Constructs a ArnoldMemoryFrameManager object.
 	 */
-        ArnoldMemoryFrameManager() :
+    ArnoldMemoryFrameManager() :
         	m_bufferSet([] (FrameData l, FrameData r) { return l < r; }) { }
 
 	/*!
@@ -91,13 +92,13 @@ namespace Lumiverse {
 	/*!
 	 * \brief Clears the frame manager.
 	 * This function should be called before the object is destroyed.
-	 * Relseases memory for each frame buffer.
+	 * Releases memory for each frame buffer.
 	 */
 	virtual void clear();
 
       private:
 	// A set for frame data ordered by time ascendingly.
-	std::set<FrameData, function<bool(FrameData, FrameData)>> m_bufferSet;
+	std::set<FrameData, std::function<bool(FrameData, FrameData)>> m_bufferSet;
 	// Lock for the set.
 	std::mutex m_buffer;
     };
