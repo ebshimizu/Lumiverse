@@ -133,9 +133,6 @@ Cue* CueList::getPrevCue(float num) {
   }
 
   current--;
-  if (current == m_cues.begin()) {
-    return nullptr;
-  }
 
   return &current->second;
 }
