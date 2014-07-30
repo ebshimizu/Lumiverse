@@ -87,11 +87,11 @@ namespace Lumiverse {
     */
     void startRecording() { m_mode = ArnoldAnimationMode::RECORDING; }
       
-      /*!
-       * \brief Starts recording.
-       * Main thread starts to send frame info to worker.
-       */
-      void startInteractive() { m_mode = ArnoldAnimationMode::INTERACTIVE; }
+    /*!
+    * \brief Starts interactive mode.
+    * Worker thread can get interrupted. It always takes the most fresh info.
+    */
+    void startInteractive() { m_mode = ArnoldAnimationMode::INTERACTIVE; }
       
       
     /*!

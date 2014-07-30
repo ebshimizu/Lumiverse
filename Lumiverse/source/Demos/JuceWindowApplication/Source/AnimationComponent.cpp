@@ -34,10 +34,6 @@ AnimationComponent::AnimationComponent (Rig *rig, GuiComponent *parent)
     
     loadImages();
     
-    addAndMakeVisible (m_switch_button = new TextButton (String::empty));
-    m_switch_button->setButtonText ("Animation");
-    m_switch_button->addListener (this);
-    
     addAndMakeVisible (m_record_button = new ImageButton (String::empty));
     m_record_button->setButtonText ("Start");
     m_record_button->addListener (this);
@@ -63,8 +59,8 @@ AnimationComponent::AnimationComponent (Rig *rig, GuiComponent *parent)
     m_animation_timer = new AnimationTimer(parent, aap->getFrameManager());
     //aap->startInteractive();
     
-    m_timer = new RepaintTimer(this);
-    //m_timer->startTimer(1000);
+    m_timer = new RepaintTimer(parent);
+    m_timer->startTimer(1000);
 }
 
 AnimationComponent::~AnimationComponent()
@@ -78,7 +74,6 @@ AnimationComponent::~AnimationComponent()
     m_animation_timer = nullptr;
     m_timer = nullptr;
     
-    m_switch_button = nullptr;
     m_record_button = nullptr;
     m_play_button = nullptr;
     m_lookandfeel = nullptr;
@@ -103,12 +98,9 @@ void AnimationComponent::paint (Graphics& g)
 
 void AnimationComponent::resized()
 {
-    m_switch_button->setSize(120, 32);
-    m_record_button->setSize(120, 32);
-    m_play_button->setSize(48, 48);
+    m_record_button->setSize(m_record_image->getWidth(), m_record_image->getHeight());
+    m_play_button->setSize(m_play_button->getWidth(), m_play_button->getHeight());
     
-    m_switch_button->setTopLeftPosition(getWidth() - 176,
-                                (getHeight() - m_switch_button->getHeight()) / 2);
     m_record_button->setTopLeftPosition(getWidth() / 2 - m_record_button->getWidth() / 2,
                                 (getHeight() - m_record_button->getHeight()) / 2);
     m_play_button->setTopLeftPosition(20, (getHeight() - m_play_button->getHeight()) / 2);
@@ -116,39 +108,56 @@ void AnimationComponent::resized()
 
 void AnimationComponent::buttonClicked (Button* buttonThatWasClicked)
 {
-    if (buttonThatWasClicked == m_switch_button) {
-        if (m_switch_button->getButtonText() == "Animation") {            
-            m_switch_button->setButtonText("Interactive Rendering");
-        }
-        else {
-            m_animation_timer->stopTimer();
-            ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
-            aap->reset();
-            aap->startInteractive();
-            
-            m_timer->startTimer(1000);
-            m_switch_button->setButtonText("Animation");
-        }
-    }
-    else if (buttonThatWasClicked == m_record_button &&
-             m_switch_button->getButtonText() == "Interactive Rendering") {
-        ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+    ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+    
+    if (buttonThatWasClicked == m_record_button) {
+        
         if (m_record_button->getButtonText() == "Start") {
             aap->reset();
             aap->startRecording();
             m_record_button->setButtonText("Stop");
-        }
-        else {
-            aap->stop();
-            m_timer->stopTimer();
-            m_animation_timer->startTimer(1000.f / 48);
-            
             m_record_button->setImages (true, true, true,
                                         *m_stop_image, 0.9f, Colours::transparentBlack,
                                         *m_stop_image, 1.0f, Colours::transparentBlack,
                                         *m_stop_image, 1.0f, Colours::coral.withAlpha (0.8f),
                                         0.5f);
+        }
+        else {
+            aap->stop();
+            
+            aap->startInteractive();
+            
+            GuiComponent *parent = (GuiComponent *)this->getParentComponent();
+            parent->setBuffer(aap->getBufferPointer());
+            m_timer->startTimer(1000);
+            
+            
+            m_record_button->setImages (true, true, true,
+                                        *m_record_image, 0.9f, Colours::transparentBlack,
+                                        *m_record_image, 1.0f, Colours::transparentBlack,
+                                        *m_record_image, 1.0f, Colours::coral.withAlpha (0.8f),
+                                        0.5f);
             m_record_button->setButtonText("Start");
+        }
+    }
+    else if (buttonThatWasClicked == m_play_button) {
+        if (m_record_button->getButtonText() == "Start" &&
+            m_play_button->getButtonText() == "Play") {
+            m_timer->stopTimer();
+            m_animation_timer->startTimer(1000.f / 48);
+            m_play_button->setButtonText("Stop");
+        }
+        else if (m_play_button->getButtonText() == "Stop") {
+            m_animation_timer->stopTimer();
+
+            aap->reset();
+            aap->startInteractive();
+            
+            GuiComponent *parent = (GuiComponent *)this->getParentComponent();
+            parent->setBuffer(aap->getBufferPointer());
+            m_timer->startTimer(1000);
+            
+            m_play_button->setButtonText("Start");
         }
     }
 }

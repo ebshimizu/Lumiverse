@@ -65,7 +65,6 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Button> m_switch_button;
     ScopedPointer<ImageButton> m_play_button;
     ScopedPointer<ImageButton> m_record_button;
     ScopedPointer<LookAndFeel> m_lookandfeel;
@@ -78,9 +77,9 @@ private:
     ScopedPointer<RepaintTimer> m_timer;
     ScopedPointer<AnimationTimer> m_animation_timer;
     const int m_component_height = 50;
-    const String m_record_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/record.png";
-    const String m_stop_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/stop.png";
-    const String m_play_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/play.png";
+    const String m_record_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/Demos/JuceWindowApplication/Resource/record.png";
+    const String m_stop_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/Demos/JuceWindowApplication/Resource/stop.png";
+    const String m_play_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/Demos/JuceWindowApplication/Resource/play.png";
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AnimationComponent)
 };
