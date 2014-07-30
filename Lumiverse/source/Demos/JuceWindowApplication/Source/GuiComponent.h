@@ -27,6 +27,7 @@
 #include "JuceHeader.h"
 #include "GuiConfig.h"
 #include "DeviceComponent.h"
+#include "AnimationComponent.h"
 #include "../../../LumiverseCore/LumiverseCore.h"
 #include "RepaintTimer.h"
 #include "AnimationTimer.h"
@@ -71,14 +72,17 @@ private:
     //==============================================================================
     ScopedPointer<Button> m_abort_button;
     ScopedPointer<Button> m_switch_button;
+    ScopedPointer<Button> m_record_button;
     ScopedPointer<LookAndFeel> m_lookandfeel;
     
+    ScopedPointer<AnimationComponent> m_animation_pad;
     Array<DeviceComponent*> m_device_pads;
     
     Image m_panel;
     float *m_color_buffer;
     
     int m_width, m_height;
+    int m_upper_height;
     
     Rig *m_rig;
     ScopedPointer<RepaintTimer> m_timer;
