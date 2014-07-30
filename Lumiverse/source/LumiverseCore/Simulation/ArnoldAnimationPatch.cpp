@@ -8,7 +8,7 @@ namespace Lumiverse {
 // Uses chrono::system_clock::from_time_t(0) as an invalid value.
 ArnoldAnimationPatch::ArnoldAnimationPatch(const JSONNode data)
 : m_worker(NULL), m_startPoint(chrono::system_clock::from_time_t(0)),
-    m_recording(false) {
+    m_mode(ArnoldAnimationMode::INTERACTIVE) {
     m_frameManager = new ArnoldMemoryFrameManager();
     loadJSON(data);
 }
@@ -29,7 +29,7 @@ void ArnoldAnimationPatch::init() {
 }
     
 void ArnoldAnimationPatch::update(set<Device *> devices) {
-    if (!m_recording)
+    if (m_mode == ArnoldAnimationMode::STOPPED)
         return ;
     
     FrameDeviceInfo frame;
@@ -62,6 +62,10 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
     ss << "Sent new frame: " << frame.time;
     Logger::log(LDEBUG, ss.str());
 
+    if (m_mode == ArnoldAnimationMode::INTERACTIVE) {
+        m_interface.interrupt();
+    }
+    
     // Since there aren't many competitions (worker runs slowly),
     // it's okay to just use a coarse lock.
     m_queue.lock();
@@ -81,11 +85,15 @@ void ArnoldAnimationPatch::close() {
     m_queuedFrameDeviceInfo.push_back(frame);
     m_queue.unlock();
 
+    // Sets to interactive mode, so worker can immediately process
+    // the end info.
+    startInteractive();
+    
     // Waits until worker finishes its job
     m_worker->join();
     m_worker = NULL;
     
-    m_recording = false;
+    m_mode = ArnoldAnimationMode::STOPPED;
     
     // Close arnold interface
     ArnoldPatch::close();
@@ -121,9 +129,13 @@ void ArnoldAnimationPatch::reset() {
 
     m_frameManager->clear();
     
-    m_recording = false;
+    m_mode = ArnoldAnimationMode::INTERACTIVE;
     
     m_queue.unlock();
+}
+
+void ArnoldAnimationPatch::stop() {
+    m_mode = ArnoldAnimationMode::STOPPED;
 }
 
 //============================ Worker Code =========================
@@ -141,11 +153,21 @@ void ArnoldAnimationPatch::workerLoop() {
 	// Releases the lock immediately if the queue is still empty.
 	while (frame.time < 0) {
 	    m_queue.lock();
-	    if (m_queuedFrameDeviceInfo.size() > 0) {
-		// shallow copy
-		frame = m_queuedFrameDeviceInfo[0];
-		m_queuedFrameDeviceInfo.erase(m_queuedFrameDeviceInfo.begin());
-	    }
+        if (m_queuedFrameDeviceInfo.size() > 0) {
+            if (m_mode == ArnoldAnimationMode::RECORDING) {
+                // shallow copy
+                frame = m_queuedFrameDeviceInfo[0];
+                m_queuedFrameDeviceInfo.erase(m_queuedFrameDeviceInfo.begin());
+            }
+            else if (m_mode == ArnoldAnimationMode::INTERACTIVE) {
+                frame = m_queuedFrameDeviceInfo.back();
+                for (FrameDeviceInfo &info : m_queuedFrameDeviceInfo) {
+                    if (info.time != m_queuedFrameDeviceInfo.back().time)
+                        info.clear();
+                }
+                m_queuedFrameDeviceInfo.clear();
+            }
+        }
 	    m_queue.unlock();
 
 	    if (isEndInfo(frame)) {
@@ -154,16 +176,16 @@ void ArnoldAnimationPatch::workerLoop() {
 	    }
 	}
 
-        std::stringstream ss;
-        ss << "Received new frame: " << frame.time;
-        Logger::log(LDEBUG, ss.str());
+    std::stringstream ss;
+    ss << "Received new frame: " << frame.time;
+    Logger::log(LDEBUG, ss.str());
         
 	updateLight(frame.devices);
     int code = m_interface.render();
             
 	// Dumps only when the image was rendered successfully.
     // If the worker was reset while rendering, doesn't dump.
-    if (code == AI_SUCCESS) {
+    if (code == AI_SUCCESS && m_mode == ArnoldAnimationMode::RECORDING) {
         m_frameManager->dump(frame.time, m_interface.getBufferPointer(),
                              m_interface.getWidth(), m_interface.getHeight());
     }

@@ -288,7 +288,14 @@ void ArnoldInterface::init() {
     
     // Set a driver to output result into a float buffer
     AtNode *driver = AiNode("driver_buffer");
-    AiNodeSetStr(driver, "name", "buffer_driver");
+    
+    std::string name("buffer_driver");
+    std::stringstream ss;
+    ss << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() -
+                                                 chrono::system_clock::from_time_t(0)).count() % 1000;
+    name = name.append(ss.str());
+    
+    AiNodeSetStr(driver, "name", name.c_str());
     AiNodeSetInt(driver, "width", m_width);
     AiNodeSetInt(driver, "height", m_height);
     AiNodeSetFlt(driver, "gamma", m_gamma);
@@ -305,7 +312,8 @@ void ArnoldInterface::init() {
     
     // Register the driver to the arnold options
     // The function keeps the output options from ass file
-    appendToOutputs("RGBA RGBA filter buffer_driver");
+    std::string command("RGBA RGBA filter ");
+    appendToOutputs(command.append(name).c_str());
 }
 
 void ArnoldInterface::close() {

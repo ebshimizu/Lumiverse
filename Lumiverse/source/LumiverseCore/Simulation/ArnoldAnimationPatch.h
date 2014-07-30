@@ -41,6 +41,10 @@ namespace Lumiverse {
       }
   };
 
+  enum ArnoldAnimationMode {
+      INTERACTIVE, RECORDING, STOPPED
+  };
+    
   /*!
   * \brief A subclass of ArnoldPatch. 
   * Instead of interrupting the worker thread every time a new rendering 
@@ -57,7 +61,7 @@ namespace Lumiverse {
     */
     ArnoldAnimationPatch() : m_worker(NULL), 
 	  m_startPoint(std::chrono::system_clock::from_time_t(0)),
-	  m_frameManager(NULL), m_recording(false) { }
+	  m_frameManager(NULL), m_mode(ArnoldAnimationMode::INTERACTIVE) { }
 
     /*!
     * \brief Construct ArnoldPatch from JSON data.
@@ -81,7 +85,14 @@ namespace Lumiverse {
     * \brief Starts recording.
     * Main thread starts to send frame info to worker.
     */
-    void startRecording() { m_recording = true; }
+    void startRecording() { m_mode = ArnoldAnimationMode::RECORDING; }
+      
+      /*!
+       * \brief Starts recording.
+       * Main thread starts to send frame info to worker.
+       */
+      void startInteractive() { m_mode = ArnoldAnimationMode::INTERACTIVE; }
+      
       
     /*!
     * \brief Gets the type of this object.
@@ -125,6 +136,8 @@ namespace Lumiverse {
     * Including resetting start point, clearing frame manager, interrupting worker and clearing worker's queue.
     */
     void reset();
+      
+    void stop();
 
   private:
     /*!
@@ -164,7 +177,9 @@ namespace Lumiverse {
     *
     * True if recording.
     */
-    bool m_recording;
+
+      
+    ArnoldAnimationMode m_mode;
   };
     
 }

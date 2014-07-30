@@ -42,23 +42,33 @@ m_width(imageWidth), m_height(imageHeight), m_rig(rig)
     m_switch_button->setButtonText ("Animation");
     m_switch_button->addListener (this);
     
+    addAndMakeVisible (m_record_button = new TextButton (String::empty));
+    m_record_button->setButtonText ("Start");
+    m_record_button->addListener (this);
+    
+    
     int height = addDevicePads();
     int dcwidth = 0;
     
     if (m_device_pads.size() > 0)
         dcwidth = m_device_pads[0]->getWidth();
     
+    m_upper_height = std::max(height, imageHeight);
+    setSize (imageWidth + dcwidth, m_upper_height);
+    
+    addAndMakeVisible(m_animation_pad = new AnimationComponent(rig, this));
+    m_animation_pad->setTopLeftPosition(0, imageHeight);
+    
     //[UserPreSize]
     //[/UserPreSize]
-    setSize (imageWidth + dcwidth, std::max(height, imageHeight));
+    setSize (imageWidth + dcwidth, m_upper_height + m_animation_pad->getHeight());
 
     //[Constructor] You can add your own custom stuff here..
     //[/Constructor]
     
     ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
-    m_animation_timer = nullptr;
-    if (aap != NULL)
-        m_animation_timer = new AnimationTimer(this, aap->getFrameManager());
+    m_animation_timer = new AnimationTimer(this, aap->getFrameManager());
+    aap->startInteractive();
     
     m_timer = new RepaintTimer(this);
     m_timer->startTimer(1000);
@@ -68,6 +78,9 @@ GuiComponent::~GuiComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
+    ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+    aap->close();
+    
     m_animation_timer->stopTimer();
     m_timer->stopTimer();
     
@@ -76,6 +89,7 @@ GuiComponent::~GuiComponent()
     
     m_switch_button = nullptr;
     m_abort_button = nullptr;
+    m_record_button = nullptr;
     m_lookandfeel = nullptr;
 
     for (DeviceComponent *dc : m_device_pads) {
@@ -92,7 +106,7 @@ void GuiComponent::paint (Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
     Path outline;
-    outline.addRectangle (m_width, 0, m_width, m_height);
+    outline.addRectangle (m_width, 0, m_width, m_upper_height);
     Colour baseColour = Colour::fromFloatRGBA(0.95, 0.95, 0.95, 1.f);
     
     g.setGradientFill (ColourGradient (baseColour, 0.0f, 0.0f,
@@ -120,8 +134,10 @@ void GuiComponent::paint (Graphics& g)
 
 void GuiComponent::resized()
 {
-    m_abort_button->setBounds (getWidth() - 176, getHeight() - 60, 120, 32);
-
+    m_abort_button->setBounds (getWidth() - 176, m_upper_height - 60, 120, 32);
+    m_switch_button->setBounds (getWidth() - 176, m_upper_height - 60 - 40, 120, 32);
+    m_record_button->setBounds (getWidth() - 176, m_upper_height - 60 - 80, 120, 32);
+    
     int last_height = 0;
     for (DeviceComponent *dc : m_device_pads) {
         dc->setBounds(m_width, last_height, dc->getWidth(), dc->getHeight());
@@ -146,54 +162,32 @@ void GuiComponent::buttonClicked (Button* buttonThatWasClicked)
         //[/UserButtonCode_quitButton]
     }
     else if (buttonThatWasClicked == m_switch_button) {
-        if (m_switch_button->getButtonText() == "Animation") {
-            m_timer->stopTimer();
-            m_animation_timer->startTimer(1000.f / 48);
-            Device *par1 = m_rig->getDevice("par1");
-            
-            ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
-            aap->reset();
-            aap->startRecording();
-            
-            
-            LumiverseColor color(par1->getColor("color"));
-            LumiverseColor des(color);
-            des.setColorChannel("Red", 0.5);
-            des.setColorChannel("Green", 1.5);
-            time_t time = 0;
-            time_t endTime = 2000;
-            
-            do {
-                /*
-                 float t = (0.f + time) / endTime;
-                 Eigen::Vector3d t_rgb = (1 - t) * s_rgb + t * d_rgb;
-                 LumiverseColor mid(color);
-                 mid.setRGB(t_rgb[0], t_rgb[1], t_rgb[2]);
-                 */
-                if (time < endTime / 2) {
-                    LumiverseColor mid(color.lerp(&des, (2.f * time) / endTime).get());
-                    par1->setColorRGB("color", mid.getRGB()[0], mid.getRGB()[1], mid.getRGB()[2]);
-                }
-                else {
-                    LumiverseColor mid(des.lerp(&color, (2.f * time) / endTime - 1).get());
-                    par1->setColorRGB("color", mid.getRGB()[0], mid.getRGB()[1], mid.getRGB()[2]);
-                }
-                
-                this_thread::sleep_for(chrono::milliseconds(1000 / 24));
-                time += 1000 / 24;
-                
-            } while (time <= endTime);
-            
-            aap->close();
-            
+        if (m_switch_button->getButtonText() == "Animation") {            
             m_switch_button->setButtonText("Interactive Rendering");
         }
         else {
-            ArnoldPatch *ap = (ArnoldPatch*)m_rig->getSimulationPatch("ArnoldPatch");
-            m_color_buffer = ap->getBufferPointer();
             m_animation_timer->stopTimer();
+            ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+            aap->reset();
+            aap->startInteractive();
+            
             m_timer->startTimer(1000);
             m_switch_button->setButtonText("Animation");
+        }
+    }
+    else if (buttonThatWasClicked == m_record_button &&
+             m_switch_button->getButtonText() == "Interactive Rendering") {
+        ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+        if (m_record_button->getButtonText() == "Start") {
+            aap->reset();
+            aap->startRecording();
+            m_record_button->setButtonText("Stop");
+        }
+        else {
+            aap->stop();
+            m_timer->stopTimer();
+            m_animation_timer->startTimer(1000.f / 48);
+            m_record_button->setButtonText("Start");
         }
     }
     
