@@ -121,7 +121,7 @@ namespace Lumiverse {
     /*!
     * \brief Stops the working rendering procedure if Arnold is running.
     */
-    void interruptRender();
+    virtual void interruptRender();
     
     /*!
     * \brief Callback function for devices.

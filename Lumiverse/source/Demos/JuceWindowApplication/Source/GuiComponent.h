@@ -71,8 +71,6 @@ private:
 
     //==============================================================================
     ScopedPointer<Button> m_abort_button;
-    ScopedPointer<Button> m_switch_button;
-    ScopedPointer<Button> m_record_button;
     ScopedPointer<LookAndFeel> m_lookandfeel;
     
     ScopedPointer<AnimationComponent> m_animation_pad;

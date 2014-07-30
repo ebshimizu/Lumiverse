@@ -38,15 +38,6 @@ m_width(imageWidth), m_height(imageHeight), m_rig(rig)
     m_abort_button->setButtonText ("Abort");
     m_abort_button->addListener (this);
     
-    addAndMakeVisible (m_switch_button = new TextButton (String::empty));
-    m_switch_button->setButtonText ("Animation");
-    m_switch_button->addListener (this);
-    
-    addAndMakeVisible (m_record_button = new TextButton (String::empty));
-    m_record_button->setButtonText ("Start");
-    m_record_button->addListener (this);
-    
-    
     int height = addDevicePads();
     int dcwidth = 0;
     
@@ -71,7 +62,7 @@ m_width(imageWidth), m_height(imageHeight), m_rig(rig)
     aap->startInteractive();
     
     m_timer = new RepaintTimer(this);
-    m_timer->startTimer(1000);
+    //m_timer->startTimer(1000);
 }
 
 GuiComponent::~GuiComponent()
@@ -87,9 +78,7 @@ GuiComponent::~GuiComponent()
     m_animation_timer = nullptr;
     m_timer = nullptr;
     
-    m_switch_button = nullptr;
     m_abort_button = nullptr;
-    m_record_button = nullptr;
     m_lookandfeel = nullptr;
 
     for (DeviceComponent *dc : m_device_pads) {
@@ -135,17 +124,12 @@ void GuiComponent::paint (Graphics& g)
 void GuiComponent::resized()
 {
     m_abort_button->setBounds (getWidth() - 176, m_upper_height - 60, 120, 32);
-    m_switch_button->setBounds (getWidth() - 176, m_upper_height - 60 - 40, 120, 32);
-    m_record_button->setBounds (getWidth() - 176, m_upper_height - 60 - 80, 120, 32);
     
     int last_height = 0;
     for (DeviceComponent *dc : m_device_pads) {
         dc->setBounds(m_width, last_height, dc->getWidth(), dc->getHeight());
         last_height += dc->getHeight();
     }
-    
-    //[UserResized] Add your own custom resize handling here..
-    //[/UserResized]
 }
 
 void GuiComponent::buttonClicked (Button* buttonThatWasClicked)
@@ -157,10 +141,11 @@ void GuiComponent::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_quitButton] -- add your button handler code here..
         
-        ((ArnoldPatch*)m_rig->getSimulationPatch("ArnoldPatch"))->interruptRender();
+        ((ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch"))->interruptRender();
         
         //[/UserButtonCode_quitButton]
     }
+    /*
     else if (buttonThatWasClicked == m_switch_button) {
         if (m_switch_button->getButtonText() == "Animation") {            
             m_switch_button->setButtonText("Interactive Rendering");
@@ -190,6 +175,7 @@ void GuiComponent::buttonClicked (Button* buttonThatWasClicked)
             m_record_button->setButtonText("Start");
         }
     }
+     */
     
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
