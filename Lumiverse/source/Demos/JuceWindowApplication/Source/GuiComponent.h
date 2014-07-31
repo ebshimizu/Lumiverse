@@ -72,9 +72,11 @@ private:
     //==============================================================================
     ScopedPointer<Button> m_abort_button;
     ScopedPointer<LookAndFeel> m_lookandfeel;
-    
     ScopedPointer<AnimationComponent> m_animation_pad;
-    Array<DeviceComponent*> m_device_pads;
+    Array<PropertyComponent*> m_device_pads;
+    
+    PropertyPanel m_devices_property_panel;
+    ConcertinaPanel m_concertina_panel;
     
     Image m_panel;
     float *m_color_buffer;

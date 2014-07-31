@@ -107,6 +107,7 @@ ArnoldFrameManager *ArnoldAnimationPatch::getFrameManager() const {
 void ArnoldAnimationPatch::reset() {
     // We want to block both worker and main thread during resetting
     m_queue.lock();
+    m_mode = ArnoldAnimationMode::INTERACTIVE;
     
     // Resets start point to init.
     m_startPoint = chrono::system_clock::from_time_t(0);
@@ -130,8 +131,6 @@ void ArnoldAnimationPatch::reset() {
 
     m_frameManager->clear();
     
-    m_mode = ArnoldAnimationMode::INTERACTIVE;
-    
     m_queue.unlock();
 }
 
@@ -139,6 +138,18 @@ void ArnoldAnimationPatch::stop() {
     m_mode = ArnoldAnimationMode::STOPPED;
 }
 
+void ArnoldAnimationPatch::endRecording() {
+    FrameDeviceInfo frame;
+    frame.devices.insert(NULL);
+    
+    m_queue.lock();
+    m_queuedFrameDeviceInfo.push_back(frame);
+    m_queue.unlock();
+    
+    if (m_queuedFrameDeviceInfo.size() > 0)
+        m_mode = ArnoldAnimationMode::RENDERING;
+}
+    
 //============================ Worker Code =========================
 
 bool ArnoldAnimationPatch::isEndInfo(const FrameDeviceInfo &data) const {
@@ -155,7 +166,8 @@ void ArnoldAnimationPatch::workerLoop() {
 	while (frame.time < 0) {
 	    m_queue.lock();
         if (m_queuedFrameDeviceInfo.size() > 0) {
-            if (m_mode == ArnoldAnimationMode::RECORDING) {
+            if (m_mode == ArnoldAnimationMode::RECORDING ||
+                m_mode == ArnoldAnimationMode::RENDERING) {
                 // shallow copy
                 frame = m_queuedFrameDeviceInfo[0];
                 m_queuedFrameDeviceInfo.erase(m_queuedFrameDeviceInfo.begin());
@@ -172,6 +184,7 @@ void ArnoldAnimationPatch::workerLoop() {
 	    m_queue.unlock();
 
 	    if (isEndInfo(frame)) {
+            m_mode = ArnoldAnimationMode::STOPPED;
             Logger::log(INFO, "Worker finished...");
             return ;
 	    }
@@ -186,7 +199,9 @@ void ArnoldAnimationPatch::workerLoop() {
             
 	// Dumps only when the image was rendered successfully.
     // If the worker was reset while rendering, doesn't dump.
-    if (code == AI_SUCCESS && m_mode == ArnoldAnimationMode::RECORDING) {
+    if (code == AI_SUCCESS &&
+        (m_mode == ArnoldAnimationMode::RECORDING ||
+         m_mode == ArnoldAnimationMode::RENDERING)) {
         m_frameManager->dump(frame.time, m_interface.getBufferPointer(),
                              m_interface.getWidth(), m_interface.getHeight());
     }

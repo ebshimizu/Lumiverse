@@ -269,7 +269,12 @@ void ArnoldInterface::appendToOutputs(const std::string buffer_output) {
     AiArraySetStr(outputs_array, num_options - 1, buffer_output.c_str());
     AiNodeSetArray(options, "outputs", outputs_array);
 }
-    
+
+void ArnoldInterface::setSamples() {
+    AtNode *options = AiUniverseGetOptions();
+    AiNodeSetInt(options, "AA_samples", m_samples);
+}
+
 void ArnoldInterface::init() {
     // TODO : to use env var (different apis for linux and win)
     AiLicenseSetServer("pike.graphics.cs.cmu.edu", 5053);
@@ -285,6 +290,7 @@ void ArnoldInterface::init() {
     AtNode *options = AiUniverseGetOptions();
     m_width = AiNodeGetInt(options, "xres");
     m_height = AiNodeGetInt(options, "yres");
+    setSamples();
     
     // Set a driver to output result into a float buffer
     AtNode *driver = AiNode("driver_buffer");

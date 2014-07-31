@@ -42,7 +42,7 @@ namespace Lumiverse {
   };
 
   enum ArnoldAnimationMode {
-      INTERACTIVE, RECORDING, STOPPED
+      INTERACTIVE, RECORDING, RENDERING, STOPPED
   };
     
   /*!
@@ -86,6 +86,8 @@ namespace Lumiverse {
     * Main thread starts to send frame info to worker.
     */
     void startRecording() { m_mode = ArnoldAnimationMode::RECORDING; }
+    
+    void endRecording();
       
     /*!
     * \brief Starts interactive mode.
@@ -93,6 +95,7 @@ namespace Lumiverse {
     */
     void startInteractive() { m_mode = ArnoldAnimationMode::INTERACTIVE; }
       
+    bool isWorking() { return m_queuedFrameDeviceInfo.size() > 0; }
       
     /*!
     * \brief Gets the type of this object.
@@ -173,12 +176,8 @@ namespace Lumiverse {
     // The ArnoldFrameManager object. Used to store frame buffers.
     ArnoldFrameManager *m_frameManager;
       
-    /*! \brief Indicates the status of the update loop.
-    *
-    * True if recording.
+    /*! \brief Indicates the mode of ArnoldAnimationPatch.
     */
-
-      
     ArnoldAnimationMode m_mode;
   };
     

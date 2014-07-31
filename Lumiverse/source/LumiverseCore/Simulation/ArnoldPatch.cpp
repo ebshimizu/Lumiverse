@@ -34,6 +34,10 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
             m_interface.setGamma(gamma.as_float());
 		}
         
+        if (nodeName == "samples") {
+            JSONNode samples = *i;
+            m_interface.setSamples(samples.as_int());
+		}
         
         if (nodeName == "lights") {
 			JSONNode lights = *i;
@@ -111,7 +115,6 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
             Eigen::Vector3d rgb = ((LumiverseColor*)raw)->getRGB();
             std::stringstream ss;
             ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
-            Logger::log(LDEBUG, ss.str());
             m_interface.setParameter(light_ptr, param, ss.str());
         }
     }

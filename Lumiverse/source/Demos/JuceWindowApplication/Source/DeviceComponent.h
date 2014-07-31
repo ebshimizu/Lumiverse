@@ -39,7 +39,7 @@ using namespace Lumiverse;
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class DeviceComponent  : public Component,
+class DeviceComponent  : public PropertyComponent,
                       public SliderListener
 {
 public:
@@ -51,6 +51,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
     //[/UserMethods]
 
+    virtual void refresh();
     void paint (Graphics& g);
     void resized();
     void sliderValueChanged (Slider* sliderThatWasMoved);

@@ -53,12 +53,12 @@ namespace Lumiverse {
     * The frame buffer point is set to NULL. The buffer will be initialized after getting the size of output.
     * The default gamma is 2.2.
     */
-    ArnoldInterface() : m_buffer(NULL), m_gamma(2.2) { }
+    ArnoldInterface() : m_buffer(NULL), m_gamma(2.2), m_samples(-3) { }
       
     /*!
     * \brief Destroys the object.
     */
-    ~ArnoldInterface() { delete[] m_buffer; }
+    virtual ~ArnoldInterface() { delete[] m_buffer; }
       
     /*!
     * \brief Initializes the Arnold renderer.
@@ -178,6 +178,10 @@ namespace Lumiverse {
     */
     float getGamma() { return m_gamma; }
       
+    void setSamples(int samples) { m_samples = samples; }
+      
+    int getSamples() { return m_samples; }
+      
     /*!
     * \brief Starts rendering with Arnold.
     * Returns the error code of AiRender, so the caller can know if the renderer was interrupted.
@@ -189,6 +193,8 @@ namespace Lumiverse {
     * \brief Interrupts current rendering.
     */
     void interrupt();
+      
+    void setSamples();
       
   private:
     /*!
@@ -271,6 +277,11 @@ namespace Lumiverse {
     * \brief The gamma for gamma correction.
     */
     float m_gamma;
+      
+    /*!
+    * \brief Arnold AA samples
+    */
+    int m_samples;
   };
 }
 
