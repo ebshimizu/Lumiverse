@@ -277,7 +277,7 @@ namespace Lumiverse {
     * You should use this function when retrieving data to send over the network. 
     */
     double getColorChannel(string name) { return m_deviceChannels[name] * m_weight; }
-
+      
     /*!
     * \brief Subscript overload for accessing light color parameters.
     *

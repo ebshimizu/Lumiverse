@@ -90,7 +90,8 @@ void ArnoldAnimationPatch::close() {
     startInteractive();
     
     // Waits until worker finishes its job
-    m_worker->join();
+    if (m_worker != NULL)
+        m_worker->join();
     m_worker = NULL;
     
     m_mode = ArnoldAnimationMode::STOPPED;
