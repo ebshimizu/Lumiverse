@@ -44,8 +44,14 @@ m_width(imageWidth), m_height(imageHeight), m_rig(rig)
     if (m_device_pads.size() > 0)
         dcwidth = m_device_pads[0]->getWidth();
     
-    m_upper_height = std::max(height, imageHeight);
+    m_upper_height = imageHeight;
     setSize (imageWidth + dcwidth, m_upper_height);
+    
+    m_devices_property_panel.addSection("Devices", m_device_pads, true);
+    m_devices_property_panel.setBounds(0, 0, m_width, height);
+    m_concertina_panel.addPanel(0, &m_devices_property_panel, true);
+    addAndMakeVisible(m_concertina_panel);
+    m_concertina_panel.setBounds(m_width, 0, dcwidth, m_upper_height);
     
     addAndMakeVisible(m_animation_pad = new AnimationComponent(rig, this));
     m_animation_pad->setTopLeftPosition(0, imageHeight);
@@ -81,7 +87,7 @@ GuiComponent::~GuiComponent()
     m_abort_button = nullptr;
     m_lookandfeel = nullptr;
 
-    for (DeviceComponent *dc : m_device_pads) {
+    for (PropertyComponent *dc : m_device_pads) {
         delete dc;
     }
     
@@ -126,7 +132,7 @@ void GuiComponent::resized()
     m_abort_button->setBounds (getWidth() - 176, m_upper_height - 60, 120, 32);
     
     int last_height = 0;
-    for (DeviceComponent *dc : m_device_pads) {
+    for (PropertyComponent *dc : m_device_pads) {
         dc->setBounds(m_width, last_height, dc->getWidth(), dc->getHeight());
         last_height += dc->getHeight();
     }
@@ -191,7 +197,7 @@ int GuiComponent::addDevicePads() {
     
     for (Device *device : m_rig->getDeviceRaw()) {
         DeviceComponent *dc = new DeviceComponent(device);
-        addAndMakeVisible(dc);
+        //addAndMakeVisible(dc);
         m_device_pads.add(dc);
         
         height += dc->getHeight();

@@ -123,14 +123,15 @@ void AnimationComponent::buttonClicked (Button* buttonThatWasClicked)
                                         0.5f);
         }
         else {
-            aap->stop();
+            aap->endRecording();
             
-            aap->startInteractive();
+            if (!aap->isWorking()) {
+                aap->startInteractive();
             
-            GuiComponent *parent = (GuiComponent *)this->getParentComponent();
-            parent->setBuffer(aap->getBufferPointer());
-            m_timer->startTimer(1000);
-            
+                GuiComponent *parent = (GuiComponent *)this->getParentComponent();
+                parent->setBuffer(aap->getBufferPointer());
+                m_timer->startTimer(1000);
+            }
             
             m_record_button->setImages (true, true, true,
                                         *m_record_image, 0.9f, Colours::transparentBlack,
@@ -142,12 +143,15 @@ void AnimationComponent::buttonClicked (Button* buttonThatWasClicked)
     }
     else if (buttonThatWasClicked == m_play_button) {
         if (m_record_button->getButtonText() == "Start" &&
-            m_play_button->getButtonText() == "Play") {
+            m_play_button->getButtonText() == "Play" &&
+            !aap->isWorking()) {
             m_timer->stopTimer();
             m_animation_timer->startTimer(1000.f / 48);
             m_play_button->setButtonText("Stop");
         }
         else if (m_play_button->getButtonText() == "Stop") {
+            if (aap->isWorking())
+                return;
             m_animation_timer->stopTimer();
 
             aap->reset();

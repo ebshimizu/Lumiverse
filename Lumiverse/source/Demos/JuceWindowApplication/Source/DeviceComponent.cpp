@@ -30,7 +30,7 @@ using namespace Lumiverse;
 
 //==============================================================================
 DeviceComponent::DeviceComponent (Device *d_ptr)
-: m_device(d_ptr)
+: PropertyComponent(TRANS(d_ptr->getId()), m_component_height), m_device(d_ptr)
 {
     setLookAndFeel(m_lookandfeel = new juce::LookAndFeel_V3());
     
@@ -47,6 +47,7 @@ DeviceComponent::DeviceComponent (Device *d_ptr)
     
     //[UserPreSize]
     //[/UserPreSize]
+    setPreferredHeight(height);
     setSize (200, height);
 
     //[Constructor] You can add your own custom stuff here..
@@ -68,6 +69,10 @@ DeviceComponent::~DeviceComponent()
 }
 
 //==============================================================================
+void DeviceComponent::refresh() {
+    
+}
+
 void DeviceComponent::paint (Graphics& g)
 {
     Path outline;
@@ -83,6 +88,7 @@ void DeviceComponent::paint (Graphics& g)
 
 void DeviceComponent::resized()
 {
+    /*
     m_name_label->setBounds(m_padding, m_padding, m_component_width, m_component_height);
     
     for (auto label : m_param_labels) {
@@ -100,7 +106,7 @@ void DeviceComponent::resized()
         slider.second->setBounds(m_padding, (m_padding + m_component_height) * order + m_padding,
                                 m_component_width, m_component_height);
     }
-
+     */
 }
 
 void DeviceComponent::sliderValueChanged (Slider* sliderThatWasMoved)
@@ -117,8 +123,6 @@ void DeviceComponent::sliderValueChanged (Slider* sliderThatWasMoved)
             m_device->setParam(param, val);
         }
         else if (m_device->paramExists("color")) {
-            //m_device->getColor()->setColorChannel(sliderThatWasMoved->getName().toStdString(),
-                                            //      sliderThatWasMoved->getValue());
             m_device->setParam("color", sliderThatWasMoved->getName().toStdString(),
                                sliderThatWasMoved->getValue());
         }
@@ -179,7 +183,6 @@ int DeviceComponent::parseParameters() {
             
             std::stringstream sss;
             sss << counter;
-            param_slider->setComponentID(TRANS(sss.str()));
             initSlider(param_slider, last_pos + m_padding, sss.str(),
                        val_float->getVal(), val_float->getMin(), val_float->getMax());
             
@@ -207,12 +210,31 @@ int DeviceComponent::parseParameters() {
                 
                 std::stringstream sss;
                 sss << counter;
-                param_slider->setComponentID(TRANS(sss.str()));
                 initSlider(param_slider, last_pos + m_padding, sss.str(),
                            chan.second, 0.f, 10.f);
                 
                 m_param_sliders[chan.first] = param_slider;
                 counter++;
+                
+                // Creates channel label
+                LumiverseColor chan_color(color);
+                chan_color.reset();
+                chan_color.setColorChannel(chan.first, 0.5f);
+                Eigen::Vector3d rgb = chan_color.getRGB();
+                
+                Label *chan_label = new Label (TRANS(chan.first) + TRANS(" label"));
+                addAndMakeVisible (chan_label);
+                chan_label->setFont (Font (12.f, Font::plain));
+                chan_label->setJustificationType (Justification::centredLeft);
+                chan_label->setEditable (false, false, false);
+                chan_label->setColour (Label::ColourIds::backgroundColourId,
+                                       Colour::fromFloatRGBA(rgb[0], rgb[1], rgb[2], 1.f));
+                chan_label->setBounds(m_padding / 2 + m_component_width, last_pos + m_padding,
+                                      m_component_width, m_component_height);
+                
+                chan_label->setComponentID(TRANS(sss.str()));
+                
+                m_param_labels[chan.first] = chan_label;
                 last_pos += m_padding + m_component_height;
             }
         }
