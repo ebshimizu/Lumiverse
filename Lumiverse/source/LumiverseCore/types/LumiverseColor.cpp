@@ -281,7 +281,9 @@ namespace Lumiverse {
 
   bool LumiverseColor::setColorChannel(string name, double val) {
     if (m_deviceChannels.count(name) > 0) {
-      m_deviceChannels[name] = clamp(val, 0, 1);
+      // ??
+      //m_deviceChannels[name] = clamp(val, 0, 1);
+      m_deviceChannels[name] = val;
       return true;
     }
     else {

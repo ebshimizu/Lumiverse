@@ -110,7 +110,8 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
         else if (raw->getTypeName() == "color") {
             Eigen::Vector3d rgb = ((LumiverseColor*)raw)->getRGB();
             std::stringstream ss;
-            ss << rgb[0] << ", " << rgb[1] << ", ", rgb[2];
+            ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
+            Logger::log(LDEBUG, ss.str());
             m_interface.setParameter(light_ptr, param, ss.str());
         }
     }
