@@ -110,10 +110,17 @@ void DeviceComponent::sliderValueChanged (Slider* sliderThatWasMoved)
 
     if (m_param_sliders.count(sliderThatWasMoved->getName().toStdString()) > 0) {
         // Try to set parameter. If the param doesn't exist, use it as a color channel
-        if (!m_device->setParam(sliderThatWasMoved->getName().toStdString(),
-                                sliderThatWasMoved->getValue()) &&
-            m_device->paramExists("color")) {
-            
+        // Assume the name is "color".
+        std::string param = sliderThatWasMoved->getName().toStdString();
+        float val = sliderThatWasMoved->getValue();
+        if (m_device->paramExists(param)) {
+            m_device->setParam(param, val);
+        }
+        else if (m_device->paramExists("color")) {
+            //m_device->getColor()->setColorChannel(sliderThatWasMoved->getName().toStdString(),
+                                            //      sliderThatWasMoved->getValue());
+            m_device->setParam("color", sliderThatWasMoved->getName().toStdString(),
+                               sliderThatWasMoved->getValue());
         }
     }
     
@@ -204,7 +211,7 @@ int DeviceComponent::parseParameters() {
                 initSlider(param_slider, last_pos + m_padding, sss.str(),
                            chan.second, 0.f, 10.f);
                 
-                m_param_sliders[param.first] = param_slider;
+                m_param_sliders[chan.first] = param_slider;
                 counter++;
                 last_pos += m_padding + m_component_height;
             }

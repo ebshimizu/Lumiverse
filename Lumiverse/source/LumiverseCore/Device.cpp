@@ -139,10 +139,11 @@ bool Device::setParam(string param, string val, float val2) {
 }
 
 bool Device::setParam(string param, string val, float val2, LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode) {
-  if (m_parameters.count(param) == 0) {
+  if (m_parameters.count(param) == 0 ||
+      m_parameters[param]->getTypeName() != "enum") {
     return false;
   }
-
+    
   LumiverseEnum* data = (LumiverseEnum *)m_parameters[param];
   data->setVal(val, val2, mode, interpMode);
 
@@ -153,21 +154,23 @@ bool Device::setParam(string param, string val, float val2, LumiverseEnum::Mode 
 }
 
 bool Device::setParam(string param, string channel, double val) {
-  if (m_parameters.count(param) == 0) {
+  if (m_parameters.count(param) == 0 ||
+      m_parameters[param]->getTypeName() != "color") {
     return false;
   }
 
   LumiverseColor* data = (LumiverseColor*)m_parameters[param];
-  data->setColorChannel(channel, val);
-
-  // callback
-  onParameterChanged();
+  bool ret;
+  if ((ret = data->setColorChannel(channel, val)))
+      // callback
+      onParameterChanged();
     
-  return true;
+  return ret;
 }
 
 bool Device::setParam(string param, double x, double y, double weight) {
-  if (m_parameters.count(param) == 0) {
+  if (m_parameters.count(param) == 0 ||
+        m_parameters[param]->getTypeName() != "color") {
     return false;
   }
 
@@ -181,7 +184,8 @@ bool Device::setParam(string param, double x, double y, double weight) {
 }
 
 bool Device::setColorRGBRaw(string param, double r, double g, double b, double weight) {
-  if (m_parameters.count(param) == 0) {
+  if (m_parameters.count(param) == 0 ||
+        m_parameters[param]->getTypeName() != "color") {
     return false;
   }
 
@@ -195,7 +199,8 @@ bool Device::setColorRGBRaw(string param, double r, double g, double b, double w
 }
 
 bool Device::setColorRGB(string param, double r, double g, double b, double weight, RGBColorSpace cs) {
-  if (m_parameters.count(param) == 0) {
+  if (m_parameters.count(param) == 0 ||
+        m_parameters[param]->getTypeName() != "color") {
     return false;
   }
 
@@ -207,7 +212,7 @@ bool Device::setColorRGB(string param, double r, double g, double b, double weig
     
   return true;
 }
-
+    
 void Device::copyParamByValue(string param, LumiverseType* source) {
     LumiverseType *target = getParam(param);
     
