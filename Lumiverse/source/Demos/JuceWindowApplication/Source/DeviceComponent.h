@@ -58,6 +58,10 @@ public:
 private:
     int parseParameters();
     
+    void initLabel(Label *label, int y, string id);
+    void initSlider(Slider *slider, int y, string id,
+                    float val, float min, float max);
+    
     //[UserVariables]   -- You can add your own custom variables in this section.
     //[/UserVariables]
 

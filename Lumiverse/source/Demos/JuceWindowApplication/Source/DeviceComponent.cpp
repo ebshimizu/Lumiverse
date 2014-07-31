@@ -35,8 +35,7 @@ DeviceComponent::DeviceComponent (Device *d_ptr)
     setLookAndFeel(m_lookandfeel = new juce::LookAndFeel_V3());
     
     // Name
-    addAndMakeVisible (m_name_label = new Label ("name",
-                                                      TRANS(d_ptr->getId())));
+    addAndMakeVisible (m_name_label = new Label ("name", TRANS(d_ptr->getId())));
     m_name_label->setFont (Font (15.00f, Font::plain));
     m_name_label->setJustificationType (Justification::centredLeft);
     m_name_label->setEditable (false, false, false);
@@ -56,9 +55,6 @@ DeviceComponent::DeviceComponent (Device *d_ptr)
 
 DeviceComponent::~DeviceComponent()
 {
-    //[Destructor_pre]. You can add your own custom destruction code here..
-    //[/Destructor_pre]
-
     m_lookandfeel = nullptr;
     
     for (auto label : m_param_labels) {
@@ -68,15 +64,12 @@ DeviceComponent::~DeviceComponent()
     for (auto slider : m_param_sliders) {
         delete slider.second;
     }
-    //[Destructor]. You can add your own custom destruction code here..
-    //[/Destructor]
+
 }
 
 //==============================================================================
 void DeviceComponent::paint (Graphics& g)
 {
-    //[UserPrePaint] Add your own custom painting code here..
-    //[/UserPrePaint]
     Path outline;
     outline.addRectangle (0, 0, getWidth(), getHeight());
     Colour baseColour = Colour::fromFloatRGBA(0.95, 0.95, 0.95, 1.f);
@@ -86,9 +79,6 @@ void DeviceComponent::paint (Graphics& g)
                                        false));
 
     g.fillPath (outline);
-    
-    //[UserPaint] Add your own custom painting code here..
-    //[/UserPaint]
 }
 
 void DeviceComponent::resized()
@@ -110,9 +100,7 @@ void DeviceComponent::resized()
         slider.second->setBounds(m_padding, (m_padding + m_component_height) * order + m_padding,
                                 m_component_width, m_component_height);
     }
-    
-    //[UserResized] Add your own custom resize handling here..
-    //[/UserResized]
+
 }
 
 void DeviceComponent::sliderValueChanged (Slider* sliderThatWasMoved)
@@ -120,20 +108,46 @@ void DeviceComponent::sliderValueChanged (Slider* sliderThatWasMoved)
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
 
-    if (m_param_sliders.count(sliderThatWasMoved->getName().toStdString()) > 0)
-    {
-        /*
-        m_device->setMetadata("intensity",
-                        m_intensity_slider->getTextFromValue(m_intensity_slider->getValue()).toStdString());
-        */
-        m_device->setParam(sliderThatWasMoved->getName().toStdString(), sliderThatWasMoved->getValue());
+    if (m_param_sliders.count(sliderThatWasMoved->getName().toStdString()) > 0) {
+        // Try to set parameter. If the param doesn't exist, use it as a color channel
+        if (!m_device->setParam(sliderThatWasMoved->getName().toStdString(),
+                                sliderThatWasMoved->getValue()) &&
+            m_device->paramExists("color")) {
+            
+        }
     }
-
+    
     //[UsersliderValueChanged_Post]
     //[/UsersliderValueChanged_Post]
 }
 
 //==============================================================================
+void DeviceComponent::initLabel(Label *label, int y, string id) {
+    addAndMakeVisible (label);
+    label->setFont (Font (15.00f, Font::plain));
+    label->setJustificationType (Justification::centredLeft);
+    label->setEditable (false, false, false);
+    label->setColour (TextEditor::textColourId, Colours::black);
+    label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    
+    label->setBounds(m_padding, y, m_component_width, m_component_height);
+    
+    label->setComponentID(TRANS(id));
+}
+
+void DeviceComponent::initSlider(Slider *slider, int y, string id, float val, float min, float max) {
+    addAndMakeVisible (slider);
+    slider->setRange (min, max, 0);
+    slider->setValue(val);
+    slider->setSliderStyle (Slider::LinearHorizontal);
+    slider->setTextBoxStyle (Slider::TextBoxLeft, false, 30, 20);
+    slider->addListener (this);
+    
+    slider->setBounds(m_padding, y, m_component_width, m_component_height);
+    
+    slider->setComponentID(TRANS(id));
+}
+
 int DeviceComponent::parseParameters() {
     int last_pos = m_padding + m_component_height;
     int counter = 1;
@@ -144,42 +158,56 @@ int DeviceComponent::parseParameters() {
             LumiverseFloat *val_float = (LumiverseFloat*)val;
             // Param label
             Label *param_label = new Label (TRANS(param.first) + TRANS(" label"), TRANS(param.first));
-            addAndMakeVisible (param_label);
-            param_label->setFont (Font (15.00f, Font::plain));
-            param_label->setJustificationType (Justification::centredLeft);
-            param_label->setEditable (false, false, false);
-            param_label->setColour (TextEditor::textColourId, Colours::black);
-            param_label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-            
-            param_label->setBounds(m_padding, last_pos + m_padding, m_component_width, m_component_height);
-            
+
             std::stringstream ssl;
             ssl << counter;
-            param_label->setComponentID(TRANS(ssl.str()));
-            
+            initLabel(param_label, last_pos + m_padding, ssl.str());
+
             m_param_labels[param.first] = param_label;
-            
             counter++;
-            last_pos = last_pos + m_padding + m_component_height;
+            last_pos += m_padding + m_component_height;
             
             // Param slider
             Slider *param_slider = new Slider(TRANS(param.first));
-            addAndMakeVisible (param_slider);
-            param_slider->setRange (val_float->getMin(), val_float->getMax(), 0);
-            param_slider->setValue(val_float->getVal());
-            param_slider->setSliderStyle (Slider::LinearHorizontal);
-            param_slider->setTextBoxStyle (Slider::TextBoxLeft, false, 30, 20);
-            param_slider->addListener (this);
-            
-            param_slider->setBounds(m_padding, last_pos + m_padding, m_component_width, m_component_height);
             
             std::stringstream sss;
             sss << counter;
             param_slider->setComponentID(TRANS(sss.str()));
+            initSlider(param_slider, last_pos + m_padding, sss.str(),
+                       val_float->getVal(), val_float->getMin(), val_float->getMax());
             
-            counter++;
-            last_pos = last_pos + m_padding + m_component_height;
             m_param_sliders[param.first] = param_slider;
+            counter++;
+            last_pos += m_padding + m_component_height;
+        }
+        else if (val->getTypeName() == "color") {
+            LumiverseColor *color = (LumiverseColor*)val;
+            map<string, double> channels = color->getColorParams();
+            
+            Label *param_label = new Label (TRANS(param.first) + TRANS(" label"), TRANS(param.first));
+            
+            std::stringstream ssl;
+            ssl << counter;
+            initLabel(param_label, last_pos + m_padding, ssl.str());
+            
+            m_param_labels[param.first] = param_label;
+            counter++;
+            last_pos += m_padding + m_component_height;
+            
+            // Adds color channels
+            for (auto chan : channels) {
+                Slider *param_slider = new Slider(TRANS(chan.first));
+                
+                std::stringstream sss;
+                sss << counter;
+                param_slider->setComponentID(TRANS(sss.str()));
+                initSlider(param_slider, last_pos + m_padding, sss.str(),
+                           chan.second, 0.f, 10.f);
+                
+                m_param_sliders[param.first] = param_slider;
+                counter++;
+                last_pos += m_padding + m_component_height;
+            }
         }
     }
     
