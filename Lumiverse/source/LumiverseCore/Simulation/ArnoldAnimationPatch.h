@@ -17,6 +17,10 @@
 #include <iostream>
 
 namespace Lumiverse {
+  enum ArnoldAnimationMode {
+      INTERACTIVE, RECORDING, RENDERING, STOPPED
+  };
+    
   /*! \brief The state info for worker thread. */
   struct FrameDeviceInfo {
       // The time point of this frame.
@@ -25,9 +29,10 @@ namespace Lumiverse {
       time_t time;
       // Copies for devices connected to this patch.
       std::set<Device *> devices;
+      ArnoldAnimationMode mode;
 
       /*! \brief Constructor. */
-      FrameDeviceInfo() : time(-1) { }
+      FrameDeviceInfo() : time(-1), mode(ArnoldAnimationMode::INTERACTIVE) { }
 
       /*! \brief Releases the copies for devices. */
       void clear() {
@@ -39,10 +44,6 @@ namespace Lumiverse {
 	  }
 	  devices.clear();
       }
-  };
-
-  enum ArnoldAnimationMode {
-      INTERACTIVE, RECORDING, RENDERING, STOPPED
   };
     
   /*!
@@ -141,6 +142,9 @@ namespace Lumiverse {
     void reset();
       
     void stop();
+      
+    void setPreviewSamples(int preview) { m_preview_samples = preview; }
+    void setRenderSamples(int render) { m_render_samples = render; }
 
   private:
     /*!
@@ -150,14 +154,6 @@ namespace Lumiverse {
     * the frame buffer. The loop ends when an end info is received.
     */
     void workerLoop();
-
-    /*!
-    * \brief Checks if the passed in info is an end info.
-    *
-    * An end info is the FrameDeviceInfo with time = -1 and 
-    * devices = { NULL }.
-    */
-    bool isEndInfo(const FrameDeviceInfo &data) const;
 
     // The worker thread.
     std::thread *m_worker;
@@ -179,6 +175,9 @@ namespace Lumiverse {
     /*! \brief Indicates the mode of ArnoldAnimationPatch.
     */
     ArnoldAnimationMode m_mode;
+      
+    int m_preview_samples;
+    int m_render_samples;
   };
     
 }

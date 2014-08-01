@@ -56,11 +56,10 @@ AnimationComponent::AnimationComponent (Rig *rig, GuiComponent *parent)
     setSize (parent->getWidth(), m_component_height);
     
     ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
-    m_animation_timer = new AnimationTimer(parent, aap->getFrameManager());
-    //aap->startInteractive();
-    
-    m_timer = new RepaintTimer(parent);
-    m_timer->startTimer(1000);
+    m_animation_timer = new AnimationTimer(parent, aap->getFrameManager(), aap->getBufferPointer());
+    m_animation_timer->startTimer(1000.f / 48);
+    m_animation_timer->startInteractive();
+    aap->startInteractive();
 }
 
 AnimationComponent::~AnimationComponent()
@@ -69,10 +68,7 @@ AnimationComponent::~AnimationComponent()
     aap->close();
     
     m_animation_timer->stopTimer();
-    m_timer->stopTimer();
-    
     m_animation_timer = nullptr;
-    m_timer = nullptr;
     
     m_record_button = nullptr;
     m_play_button = nullptr;
@@ -127,10 +123,7 @@ void AnimationComponent::buttonClicked (Button* buttonThatWasClicked)
             
             if (!aap->isWorking()) {
                 aap->startInteractive();
-            
-                GuiComponent *parent = (GuiComponent *)this->getParentComponent();
-                parent->setBuffer(aap->getBufferPointer());
-                m_timer->startTimer(1000);
+                m_animation_timer->startInteractive();
             }
             
             m_record_button->setImages (true, true, true,
@@ -145,21 +138,20 @@ void AnimationComponent::buttonClicked (Button* buttonThatWasClicked)
         if (m_record_button->getButtonText() == "Start" &&
             m_play_button->getButtonText() == "Play" &&
             !aap->isWorking()) {
-            m_timer->stopTimer();
-            m_animation_timer->startTimer(1000.f / 48);
+            aap->stop();
+            m_animation_timer->startPlayback();
             m_play_button->setButtonText("Stop");
         }
         else if (m_play_button->getButtonText() == "Stop") {
             if (aap->isWorking())
                 return;
-            m_animation_timer->stopTimer();
+            m_animation_timer->startInteractive();
 
             aap->reset();
             aap->startInteractive();
             
             GuiComponent *parent = (GuiComponent *)this->getParentComponent();
             parent->setBuffer(aap->getBufferPointer());
-            m_timer->startTimer(1000);
             
             m_play_button->setButtonText("Start");
         }

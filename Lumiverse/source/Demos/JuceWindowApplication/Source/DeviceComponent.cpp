@@ -70,7 +70,7 @@ DeviceComponent::~DeviceComponent()
 
 //==============================================================================
 void DeviceComponent::refresh() {
-    
+    repaint();
 }
 
 void DeviceComponent::paint (Graphics& g)

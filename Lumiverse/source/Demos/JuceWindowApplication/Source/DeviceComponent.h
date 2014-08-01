@@ -75,7 +75,7 @@ private:
     
     Device *m_device;
     
-    const int m_padding = 7;
+    const int m_padding = 3;
     const int m_component_width = 150;
     const int m_component_height = 24;
     //==============================================================================

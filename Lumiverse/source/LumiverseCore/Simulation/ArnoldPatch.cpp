@@ -147,6 +147,7 @@ bool ArnoldPatch::isUpdateRequired(set<Device *> devices) {
 }
     
 void ArnoldPatch::updateLight(set<Device *> devices) {
+    m_interface.setSamples();
 	for (Device* d : devices) {
 		std::string name = d->getId();
 		if (m_lights.count(name) == 0)
@@ -185,6 +186,13 @@ void ArnoldPatch::onDeviceChanged(Device *d) {
         m_lights[d->getId()].rerender_req = true;
         Logger::log(LDEBUG, "Intensity changed...");
     }
+}
+    
+void ArnoldPatch::setSamples(int samples) {
+    // Given at least one light exists
+    if (m_lights.size() > 0)
+        m_lights.begin()->second.rerender_req = true;
+    m_interface.setSamples(samples);
 }
     
 void ArnoldPatch::update(set<Device *> devices) {

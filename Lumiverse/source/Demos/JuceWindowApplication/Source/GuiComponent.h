@@ -43,6 +43,54 @@ using namespace Lumiverse;
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
+class InterruptionComponent : public ButtonPropertyComponent
+{
+public:
+    InterruptionComponent (const String& propertyName, Rig *rig)
+    : ButtonPropertyComponent (propertyName, true), m_rig(rig)
+    {
+        refresh();
+    }
+    
+    void buttonClicked() override
+    {
+        ((ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch"))->interruptRender();
+    }
+    
+    String getButtonText() const override
+    {
+        return "Interrupt";
+    }
+    
+private:
+    Rig *m_rig;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (InterruptionComponent)
+};
+
+class SamplesComponent : public SliderPropertyComponent
+{
+public:
+    SamplesComponent (const String& propertyName, Rig *rig)
+    : SliderPropertyComponent (propertyName, -3, 8, 1), m_rig(rig)
+    {
+        int samples = ((ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch"))->getSamples();
+        setValue (samples);
+    }
+    
+    void setValue (double newValue) override
+    {
+        slider.setValue (newValue);
+    }
+    
+    void sliderValueChanged (Slider *slider) {
+        ((ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch"))->setSamples((int)slider->getValue());
+    }
+    
+private:
+    Rig *m_rig;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SamplesComponent)
+};
+
 class GuiComponent  : public Component,
                       public ButtonListener
 {
@@ -70,11 +118,13 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Button> m_abort_button;
+    InterruptionComponent *m_interrupt;
+    SamplesComponent *m_samples;
     ScopedPointer<LookAndFeel> m_lookandfeel;
     ScopedPointer<AnimationComponent> m_animation_pad;
     Array<PropertyComponent*> m_device_pads;
     
+    PropertyPanel m_interactive_panel;
     PropertyPanel m_devices_property_panel;
     ConcertinaPanel m_concertina_panel;
     
@@ -85,8 +135,6 @@ private:
     int m_upper_height;
     
     Rig *m_rig;
-    ScopedPointer<RepaintTimer> m_timer;
-    ScopedPointer<AnimationTimer> m_animation_timer;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GuiComponent)

@@ -33,10 +33,6 @@ GuiComponent::GuiComponent (float *buffer, Image::PixelFormat format,
 m_width(imageWidth), m_height(imageHeight), m_rig(rig)
 {
     setLookAndFeel(m_lookandfeel = new juce::LookAndFeel_V3());
-
-    addAndMakeVisible (m_abort_button = new TextButton (String::empty));
-    m_abort_button->setButtonText ("Abort");
-    m_abort_button->addListener (this);
     
     int height = addDevicePads();
     int dcwidth = 0;
@@ -47,9 +43,23 @@ m_width(imageWidth), m_height(imageHeight), m_rig(rig)
     m_upper_height = imageHeight;
     setSize (imageWidth + dcwidth, m_upper_height);
     
-    m_devices_property_panel.addSection("Devices", m_device_pads, true);
+    m_devices_property_panel.setName(TRANS("Devices Attributes"));
+    m_devices_property_panel.addSection("Devices", m_device_pads, false);
     m_devices_property_panel.setBounds(0, 0, m_width, height);
-    m_concertina_panel.addPanel(0, &m_devices_property_panel, true);
+    m_concertina_panel.addPanel(-1, &m_devices_property_panel, true);
+    
+    m_interactive_panel.setName(TRANS("Interactive Rendering"));
+    
+    m_interrupt = new InterruptionComponent("Interrupt the interactive rendering", rig);
+    m_samples = new SamplesComponent("Sampling Rate", rig);
+    Array<PropertyComponent*> interrupts;
+    interrupts.add(m_samples);
+    interrupts.add(m_interrupt);
+    m_interactive_panel.addSection("Interactive Rendering", interrupts, true);
+    m_concertina_panel.addPanel(-1, &m_interactive_panel, true);
+    
+    m_concertina_panel.expandPanelFully(&m_devices_property_panel, false);
+    
     addAndMakeVisible(m_concertina_panel);
     m_concertina_panel.setBounds(m_width, 0, dcwidth, m_upper_height);
     
@@ -62,13 +72,6 @@ m_width(imageWidth), m_height(imageHeight), m_rig(rig)
 
     //[Constructor] You can add your own custom stuff here..
     //[/Constructor]
-    
-    ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
-    m_animation_timer = new AnimationTimer(this, aap->getFrameManager());
-    aap->startInteractive();
-    
-    m_timer = new RepaintTimer(this);
-    //m_timer->startTimer(1000);
 }
 
 GuiComponent::~GuiComponent()
@@ -78,13 +81,9 @@ GuiComponent::~GuiComponent()
     ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
     aap->close();
     
-    m_animation_timer->stopTimer();
-    m_timer->stopTimer();
-    
-    m_animation_timer = nullptr;
-    m_timer = nullptr;
-    
-    m_abort_button = nullptr;
+    delete m_interrupt;
+    m_interrupt = nullptr;
+    m_animation_pad = nullptr;
     m_lookandfeel = nullptr;
 
     for (PropertyComponent *dc : m_device_pads) {
@@ -129,7 +128,7 @@ void GuiComponent::paint (Graphics& g)
 
 void GuiComponent::resized()
 {
-    m_abort_button->setBounds (getWidth() - 176, m_upper_height - 60, 120, 32);
+    //m_abort_button->setBounds (getWidth() - 176, m_upper_height - 60, 120, 32);
     
     int last_height = 0;
     for (PropertyComponent *dc : m_device_pads) {
@@ -140,51 +139,7 @@ void GuiComponent::resized()
 
 void GuiComponent::buttonClicked (Button* buttonThatWasClicked)
 {
-    //[UserbuttonClicked_Pre]
-    //[/UserbuttonClicked_Pre]
-    
-    if (buttonThatWasClicked == m_abort_button)
-    {
-        //[UserButtonCode_quitButton] -- add your button handler code here..
-        
-        ((ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch"))->interruptRender();
-        
-        //[/UserButtonCode_quitButton]
-    }
-    /*
-    else if (buttonThatWasClicked == m_switch_button) {
-        if (m_switch_button->getButtonText() == "Animation") {            
-            m_switch_button->setButtonText("Interactive Rendering");
-        }
-        else {
-            m_animation_timer->stopTimer();
-            ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
-            aap->reset();
-            aap->startInteractive();
-            
-            m_timer->startTimer(1000);
-            m_switch_button->setButtonText("Animation");
-        }
-    }
-    else if (buttonThatWasClicked == m_record_button &&
-             m_switch_button->getButtonText() == "Interactive Rendering") {
-        ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
-        if (m_record_button->getButtonText() == "Start") {
-            aap->reset();
-            aap->startRecording();
-            m_record_button->setButtonText("Stop");
-        }
-        else {
-            aap->stop();
-            m_timer->stopTimer();
-            m_animation_timer->startTimer(1000.f / 48);
-            m_record_button->setButtonText("Start");
-        }
-    }
-     */
-    
-    //[UserbuttonClicked_Post]
-    //[/UserbuttonClicked_Post]
+
 }
 
 //==============================================================================
