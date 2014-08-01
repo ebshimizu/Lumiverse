@@ -34,15 +34,6 @@ DeviceComponent::DeviceComponent (Device *d_ptr)
 {
     setLookAndFeel(m_lookandfeel = new juce::LookAndFeel_V3());
     
-    // Name
-    addAndMakeVisible (m_name_label = new Label ("name", TRANS(d_ptr->getId())));
-    m_name_label->setFont (Font (15.00f, Font::plain));
-    m_name_label->setJustificationType (Justification::centredLeft);
-    m_name_label->setEditable (false, false, false);
-    m_name_label->setColour (TextEditor::textColourId, Colours::black);
-    m_name_label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-    m_name_label->setBounds(m_padding, m_padding, m_component_width, m_component_height);
-    
     int height = parseParameters();
     
     //[UserPreSize]
@@ -160,7 +151,7 @@ void DeviceComponent::initSlider(Slider *slider, int y, string id, float val, fl
 }
 
 int DeviceComponent::parseParameters() {
-    int last_pos = m_padding + m_component_height;
+    int last_pos = m_padding;
     int counter = 1;
     
     for (auto param : m_device->getRawParameters()) {

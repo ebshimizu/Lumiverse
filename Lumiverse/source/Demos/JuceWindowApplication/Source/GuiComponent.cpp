@@ -44,17 +44,27 @@ m_width(imageWidth), m_height(imageHeight), m_rig(rig)
     setSize (imageWidth + dcwidth, m_upper_height);
     
     m_devices_property_panel.setName(TRANS("Devices Attributes"));
-    m_devices_property_panel.addSection("Devices", m_device_pads, false);
+    
+    for (PropertyComponent *pc : m_device_pads) {
+        Array<PropertyComponent*> devices;
+        devices.add(pc);
+        m_devices_property_panel.addSection(((DeviceComponent*)pc)->getDeviceName(), devices, false);
+    }
     m_devices_property_panel.setBounds(0, 0, m_width, height);
     m_concertina_panel.addPanel(-1, &m_devices_property_panel, true);
     
     m_interactive_panel.setName(TRANS("Interactive Rendering"));
     
     m_interrupt = new InterruptionComponent("Interrupt the interactive rendering", rig);
-    m_samples = new SamplesComponent("Sampling Rate", rig);
+    m_samples.add(new SamplesComponent("Preview Sampling Rate", rig, true));
+    m_samples.add(new SamplesComponent("Rendering Sampling Rate", rig, false));
     Array<PropertyComponent*> interrupts;
-    interrupts.add(m_samples);
+    
+    for (SamplesComponent *sc : m_samples) {
+        interrupts.add(sc);
+    }
     interrupts.add(m_interrupt);
+    
     m_interactive_panel.addSection("Interactive Rendering", interrupts, true);
     m_concertina_panel.addPanel(-1, &m_interactive_panel, true);
     
