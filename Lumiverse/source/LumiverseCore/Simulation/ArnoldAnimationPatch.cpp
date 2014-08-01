@@ -41,6 +41,12 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
 
     frame.time = chrono::duration_cast<chrono::milliseconds>(current - m_startPoint).count();
 
+    if (m_mode == ArnoldAnimationMode::RENDERING ||
+        m_mode == ArnoldAnimationMode::INTERACTIVE)
+        frame.mode = ArnoldAnimationMode::INTERACTIVE;
+    else if (m_mode == ArnoldAnimationMode::RECORDING)
+        frame.mode = ArnoldAnimationMode::RECORDING;
+    
     // Checks if an update is needed.
     bool rerender_req = isUpdateRequired(devices);
     clearUpdateFlags();
@@ -59,7 +65,7 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
     }
 
     std::stringstream ss;
-    ss << "Sent new frame: " << frame.time;
+    ss << "Sent new frame: " << frame.time << "(" << frame.mode << ")";
     Logger::log(LDEBUG, ss.str());
 
     if (m_mode == ArnoldAnimationMode::INTERACTIVE) {
@@ -79,7 +85,7 @@ void ArnoldAnimationPatch::close() {
     // Won't close immediately
     // Sends end signal to worker
     FrameDeviceInfo frame;
-    frame.devices.insert(NULL);
+    frame.mode = ArnoldAnimationMode::STOPPED;
 
     m_queue.lock();
     m_queuedFrameDeviceInfo.push_back(frame);
@@ -139,24 +145,13 @@ void ArnoldAnimationPatch::stop() {
 }
 
 void ArnoldAnimationPatch::endRecording() {
-    FrameDeviceInfo frame;
-    frame.devices.insert(NULL);
-    
-    m_queue.lock();
-    m_queuedFrameDeviceInfo.push_back(frame);
-    m_queue.unlock();
-    
     if (m_queuedFrameDeviceInfo.size() > 0)
         m_mode = ArnoldAnimationMode::RENDERING;
+    else
+        m_mode = ArnoldAnimationMode::INTERACTIVE;
 }
     
 //============================ Worker Code =========================
-
-bool ArnoldAnimationPatch::isEndInfo(const FrameDeviceInfo &data) const {
-    if (data.devices.size() == 1 && *(data.devices.begin()) == NULL)
-	return true;
-    return false;
-}
 
 void ArnoldAnimationPatch::workerLoop() {
     FrameDeviceInfo frame;
@@ -169,6 +164,13 @@ void ArnoldAnimationPatch::workerLoop() {
             if (m_mode == ArnoldAnimationMode::RECORDING ||
                 m_mode == ArnoldAnimationMode::RENDERING) {
                 // shallow copy
+                std::vector<FrameDeviceInfo>::iterator i;
+                for (i = m_queuedFrameDeviceInfo.begin();
+                     i != m_queuedFrameDeviceInfo.end() &&
+                     i->mode != ArnoldAnimationMode::RECORDING; i++) {
+                    i->clear();
+                }
+                m_queuedFrameDeviceInfo.erase(m_queuedFrameDeviceInfo.begin(), i);
                 frame = m_queuedFrameDeviceInfo[0];
                 m_queuedFrameDeviceInfo.erase(m_queuedFrameDeviceInfo.begin());
             }
@@ -183,15 +185,23 @@ void ArnoldAnimationPatch::workerLoop() {
         }
 	    m_queue.unlock();
 
-	    if (isEndInfo(frame)) {
-            m_mode = ArnoldAnimationMode::STOPPED;
-            Logger::log(INFO, "Worker finished...");
-            return ;
-	    }
+        if (frame.time >= 0) {
+            if (frame.mode == ArnoldAnimationMode::STOPPED) {
+                m_mode = ArnoldAnimationMode::STOPPED;
+                Logger::log(INFO, "Worker finished...");
+                return ;
+            }
+            // Finished recording work
+            else if (frame.mode == ArnoldAnimationMode::INTERACTIVE &&
+                     (m_mode == ArnoldAnimationMode::RECORDING ||
+                      m_mode == ArnoldAnimationMode::RENDERING)) {
+                m_mode = ArnoldAnimationMode::INTERACTIVE;
+            }
+        }
 	}
 
     std::stringstream ss;
-    ss << "Received new frame: " << frame.time;
+    ss << "Received new frame: " << frame.time << "(" << frame.mode << ")";
     Logger::log(LDEBUG, ss.str());
         
 	updateLight(frame.devices);

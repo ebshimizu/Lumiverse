@@ -119,6 +119,20 @@ namespace Lumiverse {
     float *getBufferPointer() { return m_interface.getBufferPointer(); }
       
     /*!
+    * \brief Gets the sample rate (n * n per pixel).
+    *
+    * \return The number of AA samples.
+    */
+    int getSamples() { return m_interface.getSamples(); }
+      
+    /*!
+    * \brief Sets the sample rate (n * n per pixel).
+    *
+    * \param samples The number of AA samples.
+    */
+    void setSamples(int samples);
+      
+    /*!
     * \brief Stops the working rendering procedure if Arnold is running.
     */
     virtual void interruptRender();

@@ -74,7 +74,6 @@ private:
     ScopedPointer<Image> m_play_image;
     
     Rig *m_rig;
-    ScopedPointer<RepaintTimer> m_timer;
     ScopedPointer<AnimationTimer> m_animation_timer;
     const int m_component_height = 50;
     const String m_record_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/Demos/JuceWindowApplication/Resource/record.png";
