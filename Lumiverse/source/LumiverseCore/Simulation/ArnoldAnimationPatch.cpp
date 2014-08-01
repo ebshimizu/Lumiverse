@@ -8,7 +8,8 @@ namespace Lumiverse {
 // Uses chrono::system_clock::from_time_t(0) as an invalid value.
 ArnoldAnimationPatch::ArnoldAnimationPatch(const JSONNode data)
 : m_worker(NULL), m_startPoint(chrono::system_clock::from_time_t(0)),
-    m_mode(ArnoldAnimationMode::INTERACTIVE) {
+    m_mode(ArnoldAnimationMode::INTERACTIVE), m_preview_samples(m_interface.getSamples()),
+    m_render_samples(m_interface.getSamples()) {
     m_frameManager = new ArnoldMemoryFrameManager();
     loadJSON(data);
 }
@@ -150,6 +151,16 @@ void ArnoldAnimationPatch::endRecording() {
     else
         m_mode = ArnoldAnimationMode::INTERACTIVE;
 }
+
+void ArnoldAnimationPatch::setPreviewSamples(int preview) {
+    m_preview_samples = preview;
+    if (m_mode == ArnoldAnimationMode::INTERACTIVE)
+        setSamples(m_preview_samples);
+}
+    
+void ArnoldAnimationPatch::setRenderSamples(int render) {
+    m_render_samples = render;
+}
     
 //============================ Worker Code =========================
 
@@ -161,16 +172,28 @@ void ArnoldAnimationPatch::workerLoop() {
 	while (frame.time < 0) {
 	    m_queue.lock();
         if (m_queuedFrameDeviceInfo.size() > 0) {
-            if (m_mode == ArnoldAnimationMode::RECORDING ||
-                m_mode == ArnoldAnimationMode::RENDERING) {
-                // shallow copy
+            if (m_mode == ArnoldAnimationMode::RECORDING) {
+                // Clears irrelated info
                 std::vector<FrameDeviceInfo>::iterator i;
                 for (i = m_queuedFrameDeviceInfo.begin();
                      i != m_queuedFrameDeviceInfo.end() &&
-                     i->mode != ArnoldAnimationMode::RECORDING; i++) {
+                     i->mode == ArnoldAnimationMode::INTERACTIVE; i++) {
                     i->clear();
                 }
                 m_queuedFrameDeviceInfo.erase(m_queuedFrameDeviceInfo.begin(), i);
+                
+                // Deep copy (since we're going to clear it)
+                for (i = m_queuedFrameDeviceInfo.begin();
+                     i != m_queuedFrameDeviceInfo.end(); i++) {
+                    // Copies the last recording info to do preview
+                    if (i->mode == ArnoldAnimationMode::RECORDING) {
+                        frame.copyByValue(*i);
+                        // Waits to be rendered with higher resolution
+                        i->mode = ArnoldAnimationMode::RENDERING;
+                    }
+                }
+            }
+            else if (m_mode == ArnoldAnimationMode::RENDERING) {
                 frame = m_queuedFrameDeviceInfo[0];
                 m_queuedFrameDeviceInfo.erase(m_queuedFrameDeviceInfo.begin());
             }
@@ -191,10 +214,15 @@ void ArnoldAnimationPatch::workerLoop() {
                 Logger::log(INFO, "Worker finished...");
                 return ;
             }
+            else if (frame.mode == ArnoldAnimationMode::RECORDING) {
+                setSamples(m_preview_samples);
+            }
+            else if (frame.mode == ArnoldAnimationMode::RENDERING) {
+                setSamples(m_render_samples);
+            }
             // Finished recording work
             else if (frame.mode == ArnoldAnimationMode::INTERACTIVE &&
-                     (m_mode == ArnoldAnimationMode::RECORDING ||
-                      m_mode == ArnoldAnimationMode::RENDERING)) {
+                     (m_mode == ArnoldAnimationMode::RENDERING)) {
                 m_mode = ArnoldAnimationMode::INTERACTIVE;
             }
         }
@@ -210,8 +238,7 @@ void ArnoldAnimationPatch::workerLoop() {
 	// Dumps only when the image was rendered successfully.
     // If the worker was reset while rendering, doesn't dump.
     if (code == AI_SUCCESS &&
-        (m_mode == ArnoldAnimationMode::RECORDING ||
-         m_mode == ArnoldAnimationMode::RENDERING)) {
+        (m_mode == ArnoldAnimationMode::RENDERING)) {
         m_frameManager->dump(frame.time, m_interface.getBufferPointer(),
                              m_interface.getWidth(), m_interface.getHeight());
     }

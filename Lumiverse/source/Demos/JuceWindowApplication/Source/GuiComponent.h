@@ -70,11 +70,13 @@ private:
 class SamplesComponent : public SliderPropertyComponent
 {
 public:
-    SamplesComponent (const String& propertyName, Rig *rig)
-    : SliderPropertyComponent (propertyName, -3, 8, 1), m_rig(rig)
+    SamplesComponent (const String& propertyName, Rig *rig, const bool is_preview)
+    : SliderPropertyComponent (propertyName, -3, 8, 1), m_rig(rig), m_is_preview(is_preview)
     {
-        int samples = ((ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch"))->getSamples();
-        setValue (samples);
+        ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+        int defaultVal = (m_is_preview) ? aap->getPreviewSamples() : aap->getRenderSamples();
+
+        setValue (defaultVal);
     }
     
     void setValue (double newValue) override
@@ -83,11 +85,17 @@ public:
     }
     
     void sliderValueChanged (Slider *slider) {
-        ((ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch"))->setSamples((int)slider->getValue());
+        ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+        int val = (int)slider->getValue();
+        if (m_is_preview)
+            aap->setPreviewSamples(val);
+        else
+            aap->setRenderSamples(val);
     }
     
 private:
     Rig *m_rig;
+    bool m_is_preview;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SamplesComponent)
 };
 
@@ -119,7 +127,7 @@ private:
 
     //==============================================================================
     InterruptionComponent *m_interrupt;
-    SamplesComponent *m_samples;
+    Array<SamplesComponent*> m_samples;
     ScopedPointer<LookAndFeel> m_lookandfeel;
     ScopedPointer<AnimationComponent> m_animation_pad;
     Array<PropertyComponent*> m_device_pads;

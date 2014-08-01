@@ -56,6 +56,8 @@ public:
     void resized();
     void sliderValueChanged (Slider* sliderThatWasMoved);
     
+    String getDeviceName() { return TRANS(m_device->getId()); }
+    
 private:
     int parseParameters();
     

@@ -41,8 +41,17 @@ namespace Lumiverse {
 	  for (Device *d : devices) {
 	      if (d != NULL)
 		  delete d;
+          d = NULL;
 	  }
 	  devices.clear();
+      }
+      
+      void copyByValue(const FrameDeviceInfo &other) {
+          time = other.time;
+          mode = other.mode;
+          for (Device *d : other.devices) {
+              devices.insert(new Device(d));
+          }
       }
   };
     
@@ -62,7 +71,9 @@ namespace Lumiverse {
     */
     ArnoldAnimationPatch() : m_worker(NULL), 
 	  m_startPoint(std::chrono::system_clock::from_time_t(0)),
-	  m_frameManager(NULL), m_mode(ArnoldAnimationMode::INTERACTIVE) { }
+	  m_frameManager(NULL), m_mode(ArnoldAnimationMode::INTERACTIVE),
+      m_preview_samples(m_interface.getSamples()),
+      m_render_samples(m_interface.getSamples()) { }
 
     /*!
     * \brief Construct ArnoldPatch from JSON data.
@@ -143,8 +154,10 @@ namespace Lumiverse {
       
     void stop();
       
-    void setPreviewSamples(int preview) { m_preview_samples = preview; }
-    void setRenderSamples(int render) { m_render_samples = render; }
+    void setPreviewSamples(int preview);
+    void setRenderSamples(int render);
+    int getPreviewSamples() { return m_preview_samples; }
+    int getRenderSamples() { return m_render_samples; }
 
   private:
     /*!
