@@ -189,9 +189,6 @@ void ArnoldPatch::onDeviceChanged(Device *d) {
 }
     
 void ArnoldPatch::setSamples(int samples) {
-    // Given at least one light exists
-    if (m_lights.size() > 0)
-        m_lights.begin()->second.rerender_req = true;
     m_interface.setSamples(samples);
 }
     
@@ -220,6 +217,13 @@ void ArnoldPatch::close() {
 
 JSONNode ArnoldPatch::toJSON() {
 	return JSONNode("test", 0);
+}
+    
+void ArnoldPatch::rerender() {
+    // Given at least one light exists
+    // This will triggle a rerender later.
+    if (m_lights.size() > 0)
+        m_lights.begin()->second.rerender_req = true;
 }
 
 }

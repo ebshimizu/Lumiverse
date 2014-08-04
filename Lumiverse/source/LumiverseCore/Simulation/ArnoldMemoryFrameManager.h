@@ -88,7 +88,11 @@ namespace Lumiverse {
 	 * \return If we have reached the end.
 	 */
 	virtual bool hasNext() const;
+        
+    virtual bool isEmpty() const { return m_bufferSet.size() == 0; }
 
+    virtual size_t getFrameNum() const { return m_bufferSet.size(); }
+        
 	/*!
 	 * \brief Clears the frame manager.
 	 * This function should be called before the object is destroyed.
