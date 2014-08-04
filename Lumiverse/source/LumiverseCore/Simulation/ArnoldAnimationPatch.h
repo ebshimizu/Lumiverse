@@ -97,7 +97,7 @@ namespace Lumiverse {
     * \brief Starts recording.
     * Main thread starts to send frame info to worker.
     */
-    void startRecording() { m_mode = ArnoldAnimationMode::RECORDING; }
+    void startRecording() { m_frameManager->clear(); m_mode = ArnoldAnimationMode::RECORDING; }
     
     void endRecording();
       
@@ -107,7 +107,7 @@ namespace Lumiverse {
     */
     void startInteractive() { m_mode = ArnoldAnimationMode::INTERACTIVE; }
       
-    bool isWorking() { return m_queuedFrameDeviceInfo.size() > 0; }
+    ArnoldAnimationMode getMode() { return m_mode; }
       
     /*!
     * \brief Gets the type of this object.
@@ -158,6 +158,30 @@ namespace Lumiverse {
     void setRenderSamples(int render);
     int getPreviewSamples() { return m_preview_samples; }
     int getRenderSamples() { return m_render_samples; }
+      
+    // Callbacks
+    typedef function<void()> FinishedCallbackFunction;
+      
+    /*!
+    * \brief Registers a callback function for parameter changed event.
+    *
+    * All registered functinos would be called when a parameter is changed
+    * by Device::setParam and Device::reset function.
+    * \param func The callback function.
+    * \return The int id for the registered function.
+    * \sa addMetadataChangedCallback(DeviceCallbackFunction func)
+    */
+    int addFinishedCallback(FinishedCallbackFunction func);
+      
+    /*!
+    * \brief Deletes a registered callback for parameter change
+    *
+    * \param id The id returned when the callback is registered
+    * \sa addParameterChangedCallback(DeviceCallbackFunction func)
+    */
+    void deleteFinishedCallback(int id);
+      
+    float getPercentage() const;
 
   private:
     /*!
@@ -167,6 +191,8 @@ namespace Lumiverse {
     * the frame buffer. The loop ends when an end info is received.
     */
     void workerLoop();
+      
+    void onWorkerFinished();
 
     // The worker thread.
     std::thread *m_worker;
@@ -191,6 +217,8 @@ namespace Lumiverse {
       
     int m_preview_samples;
     int m_render_samples;
+      
+    map<int, FinishedCallbackFunction> m_onFinishedFunctions;
   };
     
 }

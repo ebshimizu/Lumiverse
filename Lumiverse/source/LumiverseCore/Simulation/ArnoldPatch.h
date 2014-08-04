@@ -146,6 +146,8 @@ namespace Lumiverse {
     */
     void onDeviceChanged(Device *d);
       
+    void rerender();
+      
   protected:
     /*!
     * \brief Checks if any device connected with this patch has updated parameters or metadata.
