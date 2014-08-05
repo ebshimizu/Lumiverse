@@ -46,15 +46,15 @@ public:
         
         m_rig->run();
          */
-        m_rig = new Rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric_cue.json");
+        m_rig = new Rig("J:/Lumiverse/Lumiverse/data/arnold_photometric_cue.json");
         ArnoldAnimationPatch *app = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
         
-        m_rig->init();
-
-        m_rig->run();
-
-        m_renderingWindow = new RenderingWindow(app->getWidth(), app->getHeight(),
-                                                app->getBufferPointer(), m_rig);
+		if (app != NULL) {
+			m_rig->init();
+			m_rig->run();
+			m_renderingWindow = new RenderingWindow(app->getWidth(), app->getHeight(),
+				app->getBufferPointer(), m_rig);
+		}
     }
     
     void shutdown() override

@@ -83,10 +83,10 @@ private:
     Rig *m_rig;
     ScopedPointer<AnimationTimer> m_animation_timer;
     const int m_component_height = 50;
-    const String m_record_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/Demos/JuceWindowApplication/Resource/record.png";
-    const String m_stop_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/Demos/JuceWindowApplication/Resource/stop.png";
-    const String m_play_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/Demos/JuceWindowApplication/Resource/play.png";
-    const String m_play_stop_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/Demos/JuceWindowApplication/Resource/play_stop.png";
+	const String m_record_path = File::getCurrentWorkingDirectory().getFullPathName() + "/../../Resource/record.png";
+	const String m_stop_path = File::getCurrentWorkingDirectory().getFullPathName() + "/../../Resource/stop.png";
+	const String m_play_path = File::getCurrentWorkingDirectory().getFullPathName() + "/../../Resource/play.png";
+	const String m_play_stop_path = File::getCurrentWorkingDirectory().getFullPathName() + "/../../Resource/play_stop.png";
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AnimationComponent)
 };

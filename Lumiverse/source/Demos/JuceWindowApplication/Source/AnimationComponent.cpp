@@ -98,7 +98,7 @@ void AnimationComponent::paint (Graphics& g)
     g.fillPath (outline);
     
     // Draws time
-    Font f("Eurostile", 30.f, Font::bold);
+    Font f("Consolas", 30.f, Font::bold);
     if (m_animation_timer->isInteractive())
         g.setColour(baseColour.brighter(0.6f));
     else

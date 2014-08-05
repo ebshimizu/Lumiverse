@@ -6,8 +6,8 @@
             "channel" : 2,
             "type" : "photometric_light",
             "parameters" : {
-                "intensity" : { "type" : "float", "val" : 1, "default" : 0.0 },
-                "exposure" : { "type" : "float", "val" : 4, "default" : 0.0 },
+                "intensity" : { "type" : "float", "val" : 1, "default" : 0.0, "min" : 0, "max" : 10.0 },
+                "exposure" : { "type" : "float", "val" : 4, "default" : 0.0, "min" : 0, "max" : 10.0 },
                 "color" : {
                     "type" : "color",
                     "weight" : 1.0,
@@ -27,7 +27,7 @@
                 }
             },
             "metadata" : {
-                "filename" : "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/DSP7-P250I-FL.IES",
+                "filename" : "J:/Lumiverse/Lumiverse/data/DSP7-P250I-FL.IES",
                 "intensity" : "1.0",
                 "position" : "0.0, 0.0, 0.0",
                 "color" : "1, 0.831375659, 0.570970237",
@@ -40,9 +40,9 @@
     },
   "patches" : {
     "arnold" : {
-      "type" : "ArnoldPatch",
-        "sceneFile" : "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/fruits.ass",
-        "pluginDir" : "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/LumiverseCore/lib/arnold/plugin:~/solidangle/mtoa/2014/shaders/",
+      "type" : "ArnoldAnimationPatch",
+        "sceneFile" : "J:/Lumiverse/Lumiverse/data/fruits.ass",
+        "pluginDir" : "J:/Lumiverse/Lumiverse/source/LumiverseCore/lib/arnold/plugin;I:/solidangle/mtoadeploy/2014/shaders/",
         "gamma" : 2.2,
         "lights" : {
             "par1" : { "type" : "photometric_light" }

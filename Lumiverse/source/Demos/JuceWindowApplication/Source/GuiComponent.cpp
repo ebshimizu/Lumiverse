@@ -174,7 +174,7 @@ int GuiComponent::addDevicePads() {
 void GuiComponent::drawMode(Graphics& g) {
     Colour baseColour = Colour::fromFloatRGBA(0.95, 0.95, 0.95, 1.f);
     
-    Font f("Eurostile", 30.f, Font::bold);
+    Font f("Consolas", 30.f, Font::bold);
     g.setColour(baseColour.brighter(0.5f).withAlpha(0.8f));
     g.setFont(f);
     
@@ -191,7 +191,7 @@ void GuiComponent::drawMode(Graphics& g) {
             break;
         case ArnoldAnimationMode::RENDERING: {
             char percent[10];
-            snprintf(percent, 10, "%.2f%%", aap->getPercentage());
+            sprintf(percent, "%.2f%%", aap->getPercentage());
             
             mode_str = "Rendering: ";
             mode_str.append(percent);
@@ -199,7 +199,7 @@ void GuiComponent::drawMode(Graphics& g) {
             break;
         }
         case ArnoldAnimationMode::STOPPED:
-            mode_str = "Stopped";
+            mode_str = "Play";
             break;
         default:
             mode_str = "";
