@@ -56,7 +56,7 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 			JSONNode lights = *i;
 			JSONNode::const_iterator light = lights.begin();
 			while (light != lights.end()) {
-				std::string light_name = light->name();
+				std::string light_name = light->as_string();
                 
 				m_lights[light_name] = ArnoldLightRecord();
                 
@@ -160,7 +160,6 @@ bool ArnoldPatch::isUpdateRequired(set<Device *> devices) {
 }
     
 void ArnoldPatch::updateLight(set<Device *> devices) {
-    m_interface.setSamples();
 	for (Device* d : devices) {
 		std::string name = d->getId();
 		if (m_lights.count(name) == 0)
@@ -197,7 +196,7 @@ void ArnoldPatch::onDeviceChanged(Device *d) {
     // TODO : LOCK
     if (m_lights.count(d->getId()) > 0) {
         m_lights[d->getId()].rerender_req = true;
-        Logger::log(LDEBUG, "Intensity changed...");
+        Logger::log(LDEBUG, "Parameter changed...");
     }
 }
     
@@ -229,7 +228,24 @@ void ArnoldPatch::close() {
 }
 
 JSONNode ArnoldPatch::toJSON() {
-	return JSONNode("test", 0);
+	JSONNode root;
+
+	root.push_back(JSONNode("type", getType()));
+	root.push_back(JSONNode("sceneFile", m_interface.getAssFile()));
+	root.push_back(JSONNode("pluginDir", m_interface.getPluginDirectory()));
+	root.push_back(JSONNode("gamma", m_interface.getGamma()));
+	
+	JSONNode lights;
+	lights.set_name("lights");
+
+	for (auto light : m_lights) {
+		lights.push_back(JSONNode("light", light.first));
+	}
+	root.push_back(lights.as_array());
+
+	root.push_back(m_interface.arnoldParameterToJSON());
+
+	return root;
 }
     
 void ArnoldPatch::rerender() {

@@ -71,8 +71,17 @@ namespace Lumiverse {
     */
     virtual bool hasNext() const = 0;
       
+	/*!
+	* \brief Checks if there's no frame stored inside.
+	* \return If it's empty.
+	*/
     virtual bool isEmpty() const = 0;
       
+	/*!
+	* \brief Gets the number of frames stored.
+	*
+	* \return The number of frames stored.
+	*/
     virtual size_t getFrameNum() const = 0;
 
     /*!

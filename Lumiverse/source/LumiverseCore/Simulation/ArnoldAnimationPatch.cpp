@@ -30,6 +30,7 @@ void ArnoldAnimationPatch::init() {
 }
     
 void ArnoldAnimationPatch::update(set<Device *> devices) {
+	// Doesn't respond if it's stopped.
     if (m_mode == ArnoldAnimationMode::STOPPED)
         return ;
     
@@ -38,10 +39,12 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
 
     // Sets the start point to the moment when update is called for the first time
     if (m_startPoint == chrono::system_clock::from_time_t(0))
-	m_startPoint = current;
+		m_startPoint = current;
 
     frame.time = chrono::duration_cast<chrono::milliseconds>(current - m_startPoint).count();
 
+	// A new Interactive frame indicates the end of Rendering tasks.
+	// Note that all Rendering frames are created by the worker thread.
     if (m_mode == ArnoldAnimationMode::RENDERING ||
         m_mode == ArnoldAnimationMode::INTERACTIVE)
         frame.mode = ArnoldAnimationMode::INTERACTIVE;
@@ -57,18 +60,19 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
         return ;
     
     for (Device *d : devices) {
-	// Checks if the device is connect to this patch
-	if (m_lights.count(d->getId()) > 0) {
-	    // Makes copy of this device
-	    Device *d_copy = new Device(*d);
-	    frame.devices.insert(d_copy);
-	}
+		// Checks if the device is connect to this patch
+		if (m_lights.count(d->getId()) > 0) {
+			// Makes copy of this device
+			Device *d_copy = new Device(*d);
+			frame.devices.insert(d_copy);
+		}
     }
 
     std::stringstream ss;
     ss << "Sent new frame: " << frame.time << "(" << frame.mode << ")";
     Logger::log(LDEBUG, ss.str());
 
+	// TODO: debug
 	/*
     if (m_mode == ArnoldAnimationMode::INTERACTIVE) {
         m_interface.interrupt();
@@ -138,6 +142,7 @@ void ArnoldAnimationPatch::reset() {
         m_worker = new std::thread(&ArnoldAnimationPatch::workerLoop, this);
     }
     
+	// Resets the frame manager to the beginning of current video.
     m_frameManager->reset();
     
     m_queue.unlock();
@@ -145,6 +150,9 @@ void ArnoldAnimationPatch::reset() {
 
 void ArnoldAnimationPatch::stop() {
     m_mode = ArnoldAnimationMode::STOPPED;
+	if (m_worker != NULL)
+		m_worker->join();
+	m_worker = NULL;
 }
 
 void ArnoldAnimationPatch::endRecording() {
@@ -220,12 +228,13 @@ void ArnoldAnimationPatch::workerLoop() {
                     // Copies the last recording info to do preview
                     if (i->mode == ArnoldAnimationMode::RECORDING) {
                         frame.copyByValue(*i);
-                        // Waits to be rendered with higher resolution
+                        // Waits to be rendered with higher sampling rate
                         i->mode = ArnoldAnimationMode::RENDERING;
                     }
                 }
             }
             else if (m_mode == ArnoldAnimationMode::RENDERING) {
+				// No frame would be skipped.
                 frame = m_queuedFrameDeviceInfo[0];
                 m_queuedFrameDeviceInfo.erase(m_queuedFrameDeviceInfo.begin());
             }
@@ -247,6 +256,7 @@ void ArnoldAnimationPatch::workerLoop() {
         }
 	    m_queue.unlock();
 
+		// The frame is valid.
         if (frame.time >= 0) {
             if (frame.mode == ArnoldAnimationMode::STOPPED) {
                 m_mode = ArnoldAnimationMode::STOPPED;
@@ -277,7 +287,7 @@ void ArnoldAnimationPatch::workerLoop() {
 	updateLight(frame.devices);
     int code = m_interface.render();
             
-	// Dumps only when the image was rendered successfully.
+	// Dumps only when the image was rendered successfully for rendering.
     // If the worker was reset while rendering, doesn't dump.
     if (code == AI_SUCCESS &&
         (frame.mode == ArnoldAnimationMode::RENDERING)) {
