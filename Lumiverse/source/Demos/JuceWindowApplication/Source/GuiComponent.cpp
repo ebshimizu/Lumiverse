@@ -22,7 +22,6 @@
 
 #include "GuiComponent.h"
 
-
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 //[/MiscUserDefs]
 
@@ -132,8 +131,9 @@ void GuiComponent::paint (Graphics& g)
     }
     
     g.drawImageAt(m_panel, 0, 0);
-    //[UserPaint] Add your own custom painting code here..
-    //[/UserPaint]
+    
+    // Draws mode
+    drawMode(g);
 }
 
 void GuiComponent::resized()
@@ -171,6 +171,46 @@ int GuiComponent::addDevicePads() {
     return height;
 }
 
+void GuiComponent::drawMode(Graphics& g) {
+    Colour baseColour = Colour::fromFloatRGBA(0.95, 0.95, 0.95, 1.f);
+    
+    Font f("Eurostile", 30.f, Font::bold);
+    g.setColour(baseColour.brighter(0.5f).withAlpha(0.8f));
+    g.setFont(f);
+    
+    ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+    ArnoldAnimationMode mode = aap->getMode();
+    string mode_str;
+    
+    switch (mode) {
+        case ArnoldAnimationMode::INTERACTIVE:
+            mode_str = "Interactive";
+            break;
+        case ArnoldAnimationMode::RECORDING:
+            mode_str = "Recording";
+            break;
+        case ArnoldAnimationMode::RENDERING: {
+            char percent[10];
+            snprintf(percent, 10, "%.2f%%", aap->getPercentage());
+            
+            mode_str = "Rendering: ";
+            mode_str.append(percent);
+            
+            break;
+        }
+        case ArnoldAnimationMode::STOPPED:
+            mode_str = "Stopped";
+            break;
+        default:
+            mode_str = "";
+            break;
+    }
+    
+    
+    
+    g.drawFittedText(TRANS(mode_str), m_width - f.getHeight() * 6.f - 10, m_height - f.getHeight() * 1.5f - 10,
+                     f.getHeight() * 6.f, f.getHeight() * 1.5f, Justification(18), 1);
+}
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 //[/MiscUserCode]
 

@@ -57,14 +57,20 @@ public:
     void paint (Graphics& g);
     void resized();
     void buttonClicked (Button* buttonThatWasClicked);
+    
+    void onPlaybackFinished();
+    
+    void onRenderingFinished();
 
 private:
     void loadImages();
     
-    //[UserVariables]   -- You can add your own custom variables in this section.
-    //[/UserVariables]
-
-    //==============================================================================
+    void setActivatePlayButton();
+    void setUnactivatePlayButton();
+    void setStoppedPlayButton();
+    
+    void triggleFirstFrame() const;
+    
     ScopedPointer<ImageButton> m_play_button;
     ScopedPointer<ImageButton> m_record_button;
     ScopedPointer<LookAndFeel> m_lookandfeel;
@@ -72,6 +78,7 @@ private:
     ScopedPointer<Image> m_record_image;
     ScopedPointer<Image> m_stop_image;
     ScopedPointer<Image> m_play_image;
+    ScopedPointer<Image> m_play_stop_image;
     
     Rig *m_rig;
     ScopedPointer<AnimationTimer> m_animation_timer;
@@ -79,6 +86,7 @@ private:
     const String m_record_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/Demos/JuceWindowApplication/Resource/record.png";
     const String m_stop_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/Demos/JuceWindowApplication/Resource/stop.png";
     const String m_play_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/Demos/JuceWindowApplication/Resource/play.png";
+    const String m_play_stop_path = "/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/source/Demos/JuceWindowApplication/Resource/play_stop.png";
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AnimationComponent)
 };

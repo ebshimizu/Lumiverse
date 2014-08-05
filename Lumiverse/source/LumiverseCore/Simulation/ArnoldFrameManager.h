@@ -70,6 +70,10 @@ namespace Lumiverse {
     * \return If we have reached the end.
     */
     virtual bool hasNext() const = 0;
+      
+    virtual bool isEmpty() const = 0;
+      
+    virtual size_t getFrameNum() const = 0;
 
     /*!
     * \brief Resets the cursor to the beginning.

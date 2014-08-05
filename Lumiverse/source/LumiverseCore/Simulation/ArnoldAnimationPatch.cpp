@@ -135,8 +135,8 @@ void ArnoldAnimationPatch::reset() {
         // Reset() can set a closed ArnoldAnimationPatch to its initial state.
         m_worker = new std::thread(&ArnoldAnimationPatch::workerLoop, this);
     }
-
-    m_frameManager->clear();
+    
+    m_frameManager->reset();
     
     m_queue.unlock();
 }
@@ -161,9 +161,39 @@ void ArnoldAnimationPatch::setPreviewSamples(int preview) {
 void ArnoldAnimationPatch::setRenderSamples(int render) {
     m_render_samples = render;
 }
+
+int ArnoldAnimationPatch::addFinishedCallback(FinishedCallbackFunction func) {
+    size_t id = m_onFinishedFunctions.size();
+    m_onFinishedFunctions[id] = func;
+    
+    return id;
+}
+    
+void ArnoldAnimationPatch::deleteFinishedCallback(int id) {
+    if (m_onFinishedFunctions.count(id) > 0) {
+        m_onFinishedFunctions.erase(id);
+    }
+}
+    
+float ArnoldAnimationPatch::getPercentage() const {
+    // Rough number.
+    if (m_mode != ArnoldAnimationMode::RENDERING)
+        return 0.f;
+    size_t finished = m_frameManager->getFrameNum();
+    size_t sum = finished + m_queuedFrameDeviceInfo.size();
+    sum = (sum == 0) ? 1 : sum;
+    
+    return ((float)finished) / sum * 100.f;
+}
     
 //============================ Worker Code =========================
 
+void ArnoldAnimationPatch::onWorkerFinished(){
+    for (auto func : m_onFinishedFunctions) {
+        func.second();
+    }
+}
+    
 void ArnoldAnimationPatch::workerLoop() {
     FrameDeviceInfo frame;
 
@@ -206,12 +236,19 @@ void ArnoldAnimationPatch::workerLoop() {
                 m_queuedFrameDeviceInfo.clear();
             }
         }
+        // No more frames for rendering
+        else if (m_mode == ArnoldAnimationMode::RENDERING) {
+            setSamples(m_preview_samples);
+            m_mode = ArnoldAnimationMode::INTERACTIVE;
+            
+            onWorkerFinished();
+        }
 	    m_queue.unlock();
 
         if (frame.time >= 0) {
             if (frame.mode == ArnoldAnimationMode::STOPPED) {
                 m_mode = ArnoldAnimationMode::STOPPED;
-                Logger::log(INFO, "Worker finished...");
+                Logger::log(INFO, "Worker stopped...");
                 return ;
             }
             else if (frame.mode == ArnoldAnimationMode::RECORDING) {
@@ -223,7 +260,10 @@ void ArnoldAnimationPatch::workerLoop() {
             // Finished recording work
             else if (frame.mode == ArnoldAnimationMode::INTERACTIVE &&
                      (m_mode == ArnoldAnimationMode::RENDERING)) {
+                setSamples(m_preview_samples);
                 m_mode = ArnoldAnimationMode::INTERACTIVE;
+                
+                onWorkerFinished();
             }
         }
 	}
@@ -238,7 +278,7 @@ void ArnoldAnimationPatch::workerLoop() {
 	// Dumps only when the image was rendered successfully.
     // If the worker was reset while rendering, doesn't dump.
     if (code == AI_SUCCESS &&
-        (m_mode == ArnoldAnimationMode::RENDERING)) {
+        (frame.mode == ArnoldAnimationMode::RENDERING)) {
         m_frameManager->dump(frame.time, m_interface.getBufferPointer(),
                              m_interface.getWidth(), m_interface.getHeight());
     }

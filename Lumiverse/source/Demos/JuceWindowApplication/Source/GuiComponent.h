@@ -87,8 +87,10 @@ public:
     void sliderValueChanged (Slider *slider) {
         ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
         int val = (int)slider->getValue();
-        if (m_is_preview)
+        if (m_is_preview) {
             aap->setPreviewSamples(val);
+            aap->rerender();
+        }
         else
             aap->setRenderSamples(val);
     }
@@ -122,6 +124,8 @@ public:
     
 private:
     int addDevicePads();
+    
+    void drawMode(Graphics& g);
     //[UserVariables]   -- You can add your own custom variables in this section.
     //[/UserVariables]
 
