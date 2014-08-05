@@ -6,10 +6,25 @@
   <MAINGROUP id="H2c9BW" name="JuceWindowApplication">
     <GROUP id="{4086DF64-292D-389E-96C4-328C3F3AE86B}" name="Source">
       <FILE id="qJLLAZ" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="WKzFxb" name="RenderingComponent.cpp" compile="1" resource="0"
-            file="Source/RenderingComponent.cpp"/>
-      <FILE id="XfwkOq" name="RenderingComponent.h" compile="0" resource="0"
-            file="Source/RenderingComponent.h"/>
+      <FILE id="WKzFxb" name="AnimationComponent.cpp" compile="1" resource="0"
+            file="Source/AnimationComponent.cpp"/>
+      <FILE id="XfwkOq" name="AnimationComponent.h" compile="0" resource="0"
+            file="Source/AnimationComponent.h"/>
+      <FILE id="WKzFxb" name="AnimationTimer.cpp" compile="1" resource="0"
+            file="Source/AnimationTimer.cpp"/>
+      <FILE id="XfwkOq" name="AnimationTimer.h" compile="0" resource="0"
+            file="Source/AnimationTimer.h"/>
+      <FILE id="WKzFxb" name="DeviceComponent.cpp" compile="1" resource="0"
+            file="Source/DeviceComponent.cpp"/>
+      <FILE id="XfwkOq" name="DeviceComponent.h" compile="0" resource="0"
+            file="Source/DeviceComponent.h"/>
+      <FILE id="WKzFxb" name="RepaintTimer.cpp" compile="1" resource="0"
+            file="Source/RepaintTimer.cpp"/>
+      <FILE id="XfwkOq" name="RepaintTimer.h" compile="0" resource="0" file="Source/RepaintTimer.h"/>
+      <FILE id="XfwkOq" name="GuiConfig.h" compile="0" resource="0" file="Source/GuiConfig.h"/>
+      <FILE id="WKzFxb" name="GuiComponent.cpp" compile="1" resource="0"
+            file="Source/GuiComponent.cpp"/>
+      <FILE id="XfwkOq" name="GuiComponent.h" compile="0" resource="0" file="Source/GuiComponent.h"/>
       <FILE id="WoIwqS" name="RenderingWindow.cpp" compile="1" resource="0"
             file="Source/RenderingWindow.cpp"/>
       <FILE id="yTQiaL" name="RenderingWindow.h" compile="0" resource="0"
@@ -34,12 +49,35 @@
         <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../..//JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
+    <VS2013 targetFolder="Builds/VisualStudio2013">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="JuceWindowApplication"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="2" targetName="JuceWindowApplication"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2013>
   </EXPORTFORMATS>
   <MODULES>
     <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>

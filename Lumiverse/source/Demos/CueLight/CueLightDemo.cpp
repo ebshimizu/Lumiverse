@@ -89,7 +89,7 @@ void testArnoldAnimation() {
     
     this_thread::sleep_for(chrono::seconds(1));
 	rig.stop();
-	ArnoldAnimationPatch *ap = (ArnoldAnimationPatch*)rig.getSimulationPatch();
+	ArnoldAnimationPatch *ap = (ArnoldAnimationPatch*)rig.getSimulationPatch("ArnoldAnimationPatch");
 	ap->close();
     
     while (1) {
