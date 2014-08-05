@@ -17,6 +17,13 @@
 #include <iostream>
 
 namespace Lumiverse {
+	/*! \brief Four working modes of ArnoldAnimationPatch. 
+	* INTERACTIVE: Patch renders the latest sent frame with preview sampling rate (camera).
+	* RECORDING: Patch renders the preview scene with similar behavior as INTERACTIVE,
+	* and it also creates a duplicate for each frame, which is used later for rendering.
+	* RENDERING: Renders the frames with rendering sampling rate.
+	* STOPPED: Patch doesn't respond to any input. This state is usually used for playing video.
+	*/
   enum ArnoldAnimationMode {
       INTERACTIVE, RECORDING, RENDERING, STOPPED
   };
@@ -36,16 +43,17 @@ namespace Lumiverse {
 
       /*! \brief Releases the copies for devices. */
       void clear() {
-	  time = -1;
+		  time = -1;
 
-	  for (Device *d : devices) {
-	      if (d != NULL)
-		  delete d;
-          d = NULL;
-	  }
-	  devices.clear();
+		  for (Device *d : devices) {
+			  if (d != NULL)
+			  delete d;
+			  d = NULL;
+		  }
+		  devices.clear();
       }
       
+	  /*! \brief Deep copy. */
       void copyByValue(const FrameDeviceInfo &other) {
           time = other.time;
           mode = other.mode;
@@ -76,7 +84,7 @@ namespace Lumiverse {
       m_render_samples(m_interface.getSamples()) { }
 
     /*!
-    * \brief Construct ArnoldPatch from JSON data.
+    * \brief Constructs ArnoldPatch from JSON data.
     *
     * \param data JSONNode containing the ArnoldAnimationPatch object data.
     */
@@ -95,10 +103,15 @@ namespace Lumiverse {
 
     /*!
     * \brief Starts recording.
-    * Main thread starts to send frame info to worker.
+    * Main thread starts to send frame labeled as RECORDING info to worker.
     */
     void startRecording() { m_frameManager->clear(); m_mode = ArnoldAnimationMode::RECORDING; }
     
+	/*!
+	* \brief Ends recording.
+	* Main thread stops to send frame labeled as RECORDING info to worker.
+	* It starts to send INTERACTIVE frame instead.
+	*/
     void endRecording();
       
     /*!
@@ -107,6 +120,11 @@ namespace Lumiverse {
     */
     void startInteractive() { m_mode = ArnoldAnimationMode::INTERACTIVE; }
       
+	/*!
+	* \brief Returns the mode/state in which the patch is.
+	*
+	* \return The mode/state.
+	*/
     ArnoldAnimationMode getMode() { return m_mode; }
       
     /*!
@@ -152,11 +170,37 @@ namespace Lumiverse {
     */
     void reset();
       
+	/*!
+	* \brief Stops the patch.
+	*
+	* The main thread would stop responding to new requests and the worker thread would be joined.
+	*/
     void stop();
-      
+
+	/*!
+	* \brief Sets the camera sampling rate for preview.
+	*
+	* Although it's possible to set the rate to a large number. It's not recommended.
+	* \param preview The camera sampling rate for preview.
+	*/
     void setPreviewSamples(int preview);
+
+	/*!
+	* \brief Sets the camera sampling rate for rendering.
+	*
+	* Although it's possible to set the rate to a small number. It's not recommended.
+	* \param render The camera sampling rate for rendering.
+	*/
     void setRenderSamples(int render);
+
+	/*!
+	* \brief Returns the camera sampling rate for preview.
+	*/
     int getPreviewSamples() { return m_preview_samples; }
+
+	/*!
+	* \brief Returns the camera sampling rate for render.
+	*/
     int getRenderSamples() { return m_render_samples; }
       
     // Callbacks
@@ -181,6 +225,13 @@ namespace Lumiverse {
     */
     void deleteFinishedCallback(int id);
       
+	/*!
+	* \brief Gets the current rendering progress as percentage.
+	*
+	* The value returned may not be the accurate number due to concurrency.
+	* Also the accuracy is limited to number of frame.
+	* \return The current rendering progress as percentage
+	*/
     float getPercentage() const;
 
   private:
@@ -192,6 +243,9 @@ namespace Lumiverse {
     */
     void workerLoop();
       
+	/*!
+	* \brief Helper to call all the registered callbacks for rendering finished event.
+	*/
     void onWorkerFinished();
 
     // The worker thread.
@@ -215,9 +269,16 @@ namespace Lumiverse {
     */
     ArnoldAnimationMode m_mode;
       
+	/*! \brief The camera sampling rate for preview.
+	*/
     int m_preview_samples;
+
+	/*! \brief The camera sampling rate for rendering.
+	*/
     int m_render_samples;
       
+	/*! \brief The list for callback functions.
+	*/
     map<int, FinishedCallbackFunction> m_onFinishedFunctions;
   };
     

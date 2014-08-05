@@ -91,8 +91,17 @@ namespace Lumiverse {
 	 */
 	virtual bool hasNext() const;
         
+	/*!
+	* \brief Checks if there's no frame stored inside.
+	* \return If it's empty.
+	*/
     virtual bool isEmpty() const { return m_bufferSet.size() == 0; }
 
+	/*!
+	* \brief Gets the number of frames stored.
+	*
+	* \return The number of frames stored.
+	*/
     virtual size_t getFrameNum() const { return m_bufferSet.size(); }
         
 	/*!

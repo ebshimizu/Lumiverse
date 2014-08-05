@@ -73,12 +73,6 @@ namespace Lumiverse {
     void close();
 
     /*!
-    * \brief Returns the JSON representation of the interface
-    * \return JSON node containing the data for this ArnoldInterface
-    */
-    virtual JSONNode toJSON();
-
-    /*!
     * \brief Gets the type of this object.
     *
     * \return String containing "ArnoldInterface"
@@ -177,9 +171,21 @@ namespace Lumiverse {
     * \return The gamma.
     */
     float getGamma() { return m_gamma; }
-      
+    
+	/*!
+	* \brief Sets the camera sampling rate used for current rendering.
+	*
+	* Although the system may have multiple camera sampling rates (e.g. for interactive mode and for real rendering),
+	* this rate will be used for the current rendering.
+	* \param samples The sampling rate.
+	*/
     void setSamples(int samples) { m_samples = samples; }
       
+	/*!
+	* \brief Gets the sampling rate.
+	*
+	* \return The sampling rate.
+	*/
     int getSamples() { return m_samples; }
       
     /*!
@@ -193,8 +199,12 @@ namespace Lumiverse {
     * \brief Interrupts current rendering.
     */
     void interrupt();
-      
-    void setSamples();
+
+	/*!
+	* \brief Parses the arnold parameter map to a JSON node.
+	* \return The Json node.
+	*/
+	JSONNode arnoldParameterToJSON();
       
   private:
     /*!
@@ -241,6 +251,11 @@ namespace Lumiverse {
     * \param buffer_output The output command (typically using a driver_buffer node).
     */
     void appendToOutputs(const std::string buffer_output);
+
+	/*!
+	* \brief Appends the new output command to the outputs attribute of options.
+	*/
+	void setSamplesOption();
       
     /*!
     * \brief The list containing the mappings between metadata to Arnold parameter.

@@ -270,7 +270,7 @@ void ArnoldInterface::appendToOutputs(const std::string buffer_output) {
     AiNodeSetArray(options, "outputs", outputs_array);
 }
 
-void ArnoldInterface::setSamples() {
+void ArnoldInterface::setSamplesOption() {
     AtNode *options = AiUniverseGetOptions();
     AiNodeSetInt(options, "AA_samples", m_samples);
 }
@@ -290,7 +290,6 @@ void ArnoldInterface::init() {
     AtNode *options = AiUniverseGetOptions();
     m_width = AiNodeGetInt(options, "xres");
     m_height = AiNodeGetInt(options, "yres");
-    setSamples();
     
     // Set a driver to output result into a float buffer
     AtNode *driver = AiNode("driver_buffer");
@@ -325,15 +324,13 @@ void ArnoldInterface::init() {
 void ArnoldInterface::close() {
     AiEnd();
 }
-
-// TODO:
-JSONNode ArnoldInterface::toJSON() {
-	return JSONNode("test", 0);
-}
     
 int ArnoldInterface::render() {
     int code;
-    
+
+	// Sets the sampling rate with the current rate
+	setSamplesOption();
+
     Logger::log(INFO, "Rendering...");
     code = AiRender(AI_RENDER_MODE_CAMERA);
 	std::stringstream ss;
@@ -348,6 +345,20 @@ void ArnoldInterface::interrupt() {
         AiRenderInterrupt();
         Logger::log(INFO, "Aborted rendering to restart.");
     }
+}
+
+JSONNode ArnoldInterface::arnoldParameterToJSON() {
+	JSONNode map;
+	map.set_name("arnoldParamMaps");
+
+	for (auto aparam : m_arnold_params) {
+		JSONNode param;
+		param.set_name(aparam.first);
+		param.push_back(JSONNode("dimension", (int)aparam.second.dimension));
+		param.push_back(JSONNode("arnoldType", aparam.second.arnoldTypeName));
+	}
+
+	return map;
 }
 
 }

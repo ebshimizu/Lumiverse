@@ -146,6 +146,11 @@ namespace Lumiverse {
     */
     void onDeviceChanged(Device *d);
       
+	/*!
+	* \brief Manually schedule a re-rendering.
+	*
+	* This new rendering task may not be done immediately. This function just sets on the flag for rendering.
+	*/
     void rerender();
       
   protected:

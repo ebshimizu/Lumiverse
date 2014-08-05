@@ -10,7 +10,7 @@ using namespace std;
 using namespace Lumiverse;
 
 void simulation() {
-    Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric_cue.json");
+    Rig rig("J:/Lumiverse/Lumiverse/data/arnold_photometric_cue.json");
     
     shared_ptr<CueList> list1(new CueList("list1"));
     shared_ptr<Layer> layer1(new Layer(&rig, "layer1", 1));
@@ -54,8 +54,7 @@ void simulation() {
     // Test keyframe overwrite
     //chan1.setParam("intensity", 0.0f);
     //list1.getCue(1)->insertKeyframe(4.5f, chan1);
-    pb.save("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric_cue.pb.json",
-            true);
+    //pb.save("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric_cue.pb.json", true);
     pb.start();
     rig.run();
     
