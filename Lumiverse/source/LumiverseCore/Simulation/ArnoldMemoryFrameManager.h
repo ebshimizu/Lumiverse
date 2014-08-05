@@ -11,6 +11,8 @@
 #include "../lib/libjson/libjson.h"
 #include "ArnoldFrameManager.h"
 
+#include <mutex>
+#include <functional>
 #include <set>
 #include <chrono>
 #include <iostream>
