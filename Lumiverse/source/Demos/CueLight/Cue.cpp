@@ -83,6 +83,9 @@ Cue::Cue(JSONNode node) {
 
     it++;
   }
+
+  m_lengthIsUpdated = false;
+  m_type = "";
 }
 
 Cue::Cue(Cue& other) {
@@ -456,6 +459,14 @@ string Cue::getType() {
   }
 
   return m_type;
+}
+
+Keyframe Cue::getLastKeyframe(string device, string param) {
+  return Keyframe(*m_cueData[device][param].rbegin());
+}
+
+Keyframe Cue::getFirstKeyframe(string device, string param) {
+  return Keyframe(*m_cueData[device][param].begin());
 }
 
 }

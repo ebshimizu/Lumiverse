@@ -79,9 +79,11 @@ namespace Lumiverse {
     }
   }
 
-  void Layer::setCueList(shared_ptr<CueList> list) {
+  void Layer::setCueList(shared_ptr<CueList> list, bool resetCurrentCue) {
     m_cueList = list;
-    m_currentCue = -1;
+
+    if (resetCurrentCue)
+      m_currentCue = -1;
   }
 
   void Layer::removeCueList() {
@@ -128,17 +130,22 @@ namespace Lumiverse {
 
   void Layer::go() {
     if (hasCueList()) {
-      Cue* firstCue = m_cueList->getCue(m_currentCue);
-      Cue* nextCue = m_cueList->getNextCue(m_currentCue);
+      if (m_currentCue >= 0) {
+        Cue* firstCue = m_cueList->getCue(m_currentCue);
+        Cue* nextCue = m_cueList->getNextCue(m_currentCue);
 
-      if (firstCue != nullptr && nextCue != nullptr) {
-        m_currentCue = m_cueList->getNextCueNum(m_currentCue);
-        goToCue(*firstCue, *nextCue, false);
+        if (firstCue != nullptr && nextCue != nullptr) {
+          m_currentCue = m_cueList->getNextCueNum(m_currentCue);
+          goToCue(*firstCue, *nextCue, false);
+        }
+        else {
+          stringstream ss;
+          ss << "Layer " << m_name << "Cannot go to next cue from cue " << m_currentCue;
+          Logger::log(ERR, ss.str());
+        }
       }
-      else {
-        stringstream ss;
-        ss << "Layer " << m_name << "Cannot go to next cue from cue " << m_currentCue;
-        Logger::log(ERR, ss.str());
+      else if (m_currentCue < 0) {
+        goToCue(m_cueList->getFirstCueNum());
       }
     }
     else {
@@ -159,7 +166,7 @@ namespace Lumiverse {
       }
       else {
         stringstream ss;
-        ss << "Layer " << m_name << "Cannot go to previous cue from cue " << m_currentCue;
+        ss << "Layer " << m_name << " cannot go to previous cue from cue " << m_currentCue;
         Logger::log(ERR, ss.str());
       }
     }

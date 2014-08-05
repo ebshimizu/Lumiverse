@@ -227,6 +227,16 @@ public:
   */
   string getType();
 
+  /*!
+  \brief Returns a copy of the first keyframe for the specified device and parameter.
+  */
+  Keyframe getFirstKeyframe(string device, string param);
+
+  /*!
+  \brief Returns a copy of the last keyframe for the specified device and parameter
+  */
+  Keyframe getLastKeyframe(string device, string param);
+
 private:
   // Upfade time
   float m_upfade;
