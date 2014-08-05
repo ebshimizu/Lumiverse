@@ -1,5 +1,5 @@
 
-#include "SDLDriver.h"
+#include "BufferDriver.h"
 
 namespace {
 
@@ -51,7 +51,6 @@ node_parameters
 {
     AiParameterInt("width", 600);
     AiParameterInt("height", 800);
-    AiParameterSTR("title", "Arnold Simulation");
     AiParameterPTR("buffer_pointer", NULL);
     AiParameterFlt("gamma", 2.2);
 }

@@ -5,6 +5,15 @@
 
 namespace Lumiverse {
 
+#ifndef _WIN32
+	void convertPlugin(std::string &dir) {
+		for (size_t i = 0; i < dir.size(); i++) {
+			if (dir.at(i) == ';')
+				dir[i] = ':';
+		}
+	}
+#endif
+
 ArnoldPatch::ArnoldPatch(const JSONNode data) :
 m_renderloop(NULL) {
 	loadJSON(data);
@@ -26,7 +35,11 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
         
         if (nodeName == "pluginDir") {
             JSONNode dir = *i;
-            m_interface.setPluginDirectory(dir.as_string());
+			std::string plugin = dir.as_string();
+#ifndef _WIN32
+			convertPlugin(plugin);
+#endif
+			m_interface.setPluginDirectory(plugin);
 		}
         
         if (nodeName == "gamma") {

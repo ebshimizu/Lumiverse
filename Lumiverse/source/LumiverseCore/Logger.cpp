@@ -1,5 +1,9 @@
 #include "Logger.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 namespace Lumiverse {
 namespace Logger {
   mutex logMutex;
@@ -48,7 +52,13 @@ namespace Logger {
         logFile << "[" << printLevel(level) << "]\t" << printTime() << " " << message << "\n";
       }
       else {
+#ifndef _WIN32
         cout << "[" << printLevel(level) << "]\t" << printTime() << " " << message << "\n";
+#else
+		stringstream buf;
+		buf << "[" << printLevel(level) << "]\t" << printTime() << " " << message << "\n";
+		OutputDebugString(buf.str().c_str());
+#endif
       }
       logMutex.unlock();
     }

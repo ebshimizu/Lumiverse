@@ -69,9 +69,11 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
     ss << "Sent new frame: " << frame.time << "(" << frame.mode << ")";
     Logger::log(LDEBUG, ss.str());
 
+	/*
     if (m_mode == ArnoldAnimationMode::INTERACTIVE) {
         m_interface.interrupt();
     }
+	*/
     
     // Since there aren't many competitions (worker runs slowly),
     // it's okay to just use a coarse lock.

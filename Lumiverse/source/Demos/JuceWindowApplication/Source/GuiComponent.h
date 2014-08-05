@@ -24,6 +24,7 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include <vector>
+#include <cstdio>
 #include "JuceHeader.h"
 #include "GuiConfig.h"
 #include "DeviceComponent.h"

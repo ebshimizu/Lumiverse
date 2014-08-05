@@ -281,7 +281,7 @@ void ArnoldInterface::init() {
     
     // Starts a arnold session
     AiBegin();
-    
+
     AiLoadPlugins(m_plugin_dir.c_str());
     
     // Doesn't read light node and filter node from the ass file
@@ -336,7 +336,9 @@ int ArnoldInterface::render() {
     
     Logger::log(INFO, "Rendering...");
     code = AiRender(AI_RENDER_MODE_CAMERA);
-    Logger::log(INFO, "Done.");
+	std::stringstream ss;
+	ss << "Done: " << code;
+    Logger::log(INFO, ss.str().c_str());
     
     return code;
 }
