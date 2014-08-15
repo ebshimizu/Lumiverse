@@ -66,6 +66,8 @@ set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
 	types/LumiverseEnum.cpp
 	types/LumiverseColor.h
 	types/LumiverseColor.cpp
+	types/LumiverseOrientation.h
+	types/LumiverseOrientation.cpp
 	types/LumiverseTypeUtils.h
 	types/LumiverseTypeUtils.cpp
     DMX/DMXPatch.h

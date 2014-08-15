@@ -10,8 +10,17 @@ using namespace std;
 using namespace Lumiverse;
 
 void simulation() {
-    Rig rig("J:/Lumiverse/Lumiverse/data/arnold_photometric_cue.json");
-    
+    Rig rig("J:/Lumiverse/Lumiverse/data/movingLights_box.rig.json");
+	rig.init();
+
+	ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)rig.getSimulationPatch("ArnoldAnimationPatch");
+	aap->reset();
+
+	rig.run();
+	while (1) { }
+
+	return;
+
     shared_ptr<CueList> list1(new CueList("list1"));
     shared_ptr<Layer> layer1(new Layer(&rig, "layer1", 1));
     
@@ -63,11 +72,13 @@ void simulation() {
     
     time_t t = 0;
     while (1) {
+		/*
         float val;
         rig["par1"]->getParam("intensity", val);
         cout << "par1 Intensity: " << val << "\t" << t << "\n";
         this_thread::sleep_for(chrono::milliseconds(500));
         t += 500;
+		*/
     }
 }
 

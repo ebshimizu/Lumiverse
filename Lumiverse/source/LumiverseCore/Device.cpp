@@ -99,14 +99,18 @@ bool Device::setParam(string param, float val) {
   }
 
   // Checks param type
-  if (m_parameters[param]->getTypeName() != "float") {
+  if (m_parameters[param]->getTypeName() != "float" &&
+	  m_parameters[param]->getTypeName() != "orientation") {
       Logger::log(WARN, "Trying to assign float value to a non-float type.");
       
       return false;
   }
     
-  *((LumiverseFloat *)m_parameters[param]) = val;
-   
+  if (m_parameters[param]->getTypeName() == "float")
+	*((LumiverseFloat *)m_parameters[param]) = val;
+  else 
+	*((LumiverseOrientation *)m_parameters[param]) = val;
+
   // callback
   onParameterChanged();
     
@@ -216,7 +220,9 @@ bool Device::setColorRGB(string param, double r, double g, double b, double weig
 void Device::copyParamByValue(string param, LumiverseType* source) {
     LumiverseType *target = getParam(param);
     
-    if (!LumiverseTypeUtils::areSameType(source, target))
+	// Skips this copy if the target value equals the current value
+    if (!LumiverseTypeUtils::areSameType(source, target) ||
+		LumiverseTypeUtils::equals(target, source))
         return;
     
     if (source->getTypeName() == "float") {
@@ -228,6 +234,9 @@ void Device::copyParamByValue(string param, LumiverseType* source) {
     else if (source->getTypeName() == "color") {
         *((LumiverseColor*)target) = *((LumiverseColor*)source);
     }
+	else if (source->getTypeName() == "orientation") {
+		*((LumiverseOrientation*)target) = *((LumiverseOrientation*)source);
+	}
     else {
         return;
     }
