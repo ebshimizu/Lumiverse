@@ -52,6 +52,7 @@ node_parameters
     AiParameterInt("width", 600);
     AiParameterInt("height", 800);
     AiParameterPTR("buffer_pointer", NULL);
+	AiParameterPTR("progress_pointer", NULL);
     AiParameterFlt("gamma", 2.2);
 }
     
@@ -99,11 +100,24 @@ driver_needs_bucket
 driver_prepare_bucket
 {
     // Could add interactive features here.
+	int *progresses = (int *)AiNodeGetPtr(node, "progress_pointer");
+	int *self_progress = progresses + 4 * tid;
+	self_progress[0] = bucket_xo;
+	self_progress[1] = bucket_yo;
+	self_progress[2] = bucket_size_x;
+	self_progress[3] = bucket_size_y;
 }
     
 driver_process_bucket
 {
+	int *progresses = (int *)AiNodeGetPtr(node, "progress_pointer");
+	int *self_progress = progresses + 4 * tid;
 
+	// Clean up the current bucket (ow, we don't know when the last group finishes)
+	self_progress[0] = -1;
+	self_progress[1] = -1;
+	self_progress[2] = -1;
+	self_progress[3] = -1;
 }
     
 driver_write_bucket
@@ -148,7 +162,6 @@ driver_write_bucket
         }
 
     }
-    
 }
     
 driver_close

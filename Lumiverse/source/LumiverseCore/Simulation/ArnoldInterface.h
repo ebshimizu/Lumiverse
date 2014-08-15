@@ -205,6 +205,7 @@ namespace Lumiverse {
 	* \return The Json node.
 	*/
 	JSONNode arnoldParameterToJSON();
+
       
   private:
     /*!
@@ -235,16 +236,7 @@ namespace Lumiverse {
     template<size_t D, typename T, class C>
     void setArrayParameter(AtNode *node, const std::string &paramName, const std::string &value,
                            bool (*AiArraySet) (AtArray*, AtUInt32, C, const char*, int), const int AiType) const;
-      
-    /*!
-    * \brief Parses a formatted string into a ArnoldParameterVector instance.
-    *
-    * \param value A formatted string.
-    * \param vector The returned vector.
-    */
-    template<size_t D, typename T>
-    void parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) const;
-      
+            
     /*!
     * \brief Appends the new output command to the outputs attribute of options.
     *
@@ -298,6 +290,37 @@ namespace Lumiverse {
     */
     int m_samples;
   };
+
+  /*!
+  * \brief Parses a formatted string into a ArnoldParameterVector instance.
+  *
+  * \param value A formatted string.
+  * \param vector The returned vector.
+  */
+  template<size_t D, typename T>
+  static void parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) {
+	  T element;
+	  std::string value_spaceless = value;
+
+	  // Removes spaces when the input type is not string
+	  if (typeid(std::string) != typeid(T))
+		  std::remove_if(value_spaceless.begin(), value_spaceless.end(),
+		  [](char x){return std::isspace(x); });
+
+	  // Format: "v1, v2, ..."
+	  size_t offset = 0;
+	  for (size_t i = 0; i < D; i++) {
+		  std::istringstream iss(value_spaceless.substr(offset));
+		  iss >> element;
+		  vector[i] = element;
+
+		  offset = value_spaceless.find(",", offset);
+
+		  if (offset == std::string::npos)
+			  break;
+		  offset++;
+	  }
+  }
 }
 
 #endif

@@ -8,7 +8,7 @@ namespace Lumiverse {
 // Uses chrono::system_clock::from_time_t(0) as an invalid value.
 ArnoldAnimationPatch::ArnoldAnimationPatch(const JSONNode data)
 : m_worker(NULL), m_startPoint(chrono::system_clock::from_time_t(0)),
-    m_mode(ArnoldAnimationMode::INTERACTIVE), m_preview_samples(m_interface.getSamples()),
+    m_mode(ArnoldAnimationMode::STOPPED), m_preview_samples(m_interface.getSamples()),
     m_render_samples(m_interface.getSamples()) {
     m_frameManager = new ArnoldMemoryFrameManager();
     loadJSON(data);
@@ -25,8 +25,10 @@ ArnoldAnimationPatch::~ArnoldAnimationPatch() {
 void ArnoldAnimationPatch::init() {
     ArnoldPatch::init();
 
+	/*
     // Starts a worker thread.
     m_worker = new std::thread(&ArnoldAnimationPatch::workerLoop, this);
+	*/
 }
     
 void ArnoldAnimationPatch::update(set<Device *> devices) {
@@ -72,12 +74,11 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
     ss << "Sent new frame: " << frame.time << "(" << frame.mode << ")";
     Logger::log(LDEBUG, ss.str());
 
-	// TODO: debug
-	/*
-    if (m_mode == ArnoldAnimationMode::INTERACTIVE) {
+	// Interrupts the current rendering if in the interactive mode.
+    if (m_mode == ArnoldAnimationMode::INTERACTIVE ||
+		m_mode == ArnoldAnimationMode::RECORDING) {
         m_interface.interrupt();
     }
-	*/
     
     // Since there aren't many competitions (worker runs slowly),
     // it's okay to just use a coarse lock.
@@ -150,9 +151,6 @@ void ArnoldAnimationPatch::reset() {
 
 void ArnoldAnimationPatch::stop() {
     m_mode = ArnoldAnimationMode::STOPPED;
-	if (m_worker != NULL)
-		m_worker->join();
-	m_worker = NULL;
 }
 
 void ArnoldAnimationPatch::endRecording() {
@@ -210,6 +208,9 @@ void ArnoldAnimationPatch::workerLoop() {
     while(1) {
 	// Releases the lock immediately if the queue is still empty.
 	while (frame.time < 0) {
+		if (m_mode == ArnoldAnimationMode::STOPPED)
+			continue;
+
 	    m_queue.lock();
         if (m_queuedFrameDeviceInfo.size() > 0) {
             if (m_mode == ArnoldAnimationMode::RECORDING) {
@@ -261,6 +262,8 @@ void ArnoldAnimationPatch::workerLoop() {
             if (frame.mode == ArnoldAnimationMode::STOPPED) {
                 m_mode = ArnoldAnimationMode::STOPPED;
                 Logger::log(INFO, "Worker stopped...");
+				onWorkerFinished();
+
                 return ;
             }
             else if (frame.mode == ArnoldAnimationMode::RECORDING) {

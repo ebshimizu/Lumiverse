@@ -79,7 +79,7 @@ namespace Lumiverse {
     */
     ArnoldAnimationPatch() : m_worker(NULL), 
 	  m_startPoint(std::chrono::system_clock::from_time_t(0)),
-	  m_frameManager(NULL), m_mode(ArnoldAnimationMode::INTERACTIVE),
+	  m_frameManager(NULL), m_mode(ArnoldAnimationMode::STOPPED),
       m_preview_samples(m_interface.getSamples()),
       m_render_samples(m_interface.getSamples()) { }
 
@@ -99,7 +99,7 @@ namespace Lumiverse {
     * \brief Initializes Arnold with function of its parent class and
     * starts a worker thread.
     */
-    virtual void init();
+    virtual void init() override;
 
     /*!
     * \brief Starts recording.
@@ -142,7 +142,7 @@ namespace Lumiverse {
     * there is any parameter or metadata changed during last update
     * interval. It only adds a new request when it's truly necessary.
     */
-    virtual void update(set<Device *> devices);
+	virtual void update(set<Device *> devices) override;
 
     /*!
     * \brief Waits for the worker thread and closes the Arnold session.
@@ -152,7 +152,7 @@ namespace Lumiverse {
     * Then the thread would wait to join the worker thread. After all
     * there are done, closes the arnold session as the parent class.
     */
-    virtual void close();
+	virtual void close() override;
 
     /*!
     * \brief Returns the ArnoldFrameManager to reconstruction the 

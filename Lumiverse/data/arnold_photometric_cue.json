@@ -44,7 +44,9 @@
         "sceneFile" : "J:/Lumiverse/Lumiverse/data/fruits.ass",
         "pluginDir" : "J:/Lumiverse/Lumiverse/source/LumiverseCore/lib/arnold/plugin;I:/solidangle/mtoadeploy/2014/shaders/",
         "gamma" : 2.2,
-        "lights" : ["par1"],
+        "lights" : {
+            "par1" : { "type" : "photometric_light" }
+        },
         "arnoldParamMaps" : {
             "filename" : { "dimension" : 1, "arnoldType" : "string" },
             "intensity" : { "dimension" : 1, "arnoldType" : "float" },
