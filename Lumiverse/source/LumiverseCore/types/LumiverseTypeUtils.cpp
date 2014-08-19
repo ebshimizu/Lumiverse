@@ -12,6 +12,8 @@ LumiverseType* LumiverseTypeUtils::copy(LumiverseType* data) {
     return (LumiverseType*)(new LumiverseEnum(data));
   else if (data->getTypeName() == "color")
     return (LumiverseType*)(new LumiverseColor(data));
+  else if (data->getTypeName() == "orientation")
+	  return (LumiverseType*)(new LumiverseOrientation(data));
   else
     return nullptr;
 }
@@ -29,6 +31,9 @@ void LumiverseTypeUtils::copyByVal(LumiverseType* source, LumiverseType* target)
   else if (source->getTypeName() == "color") {
     *((LumiverseColor*)target) = *((LumiverseColor*)source);
   }
+  else if (source->getTypeName() == "orientation") {
+	  *((LumiverseOrientation*)target) = *((LumiverseOrientation*)source);
+  }
   else {
     return;
   }
@@ -45,6 +50,8 @@ bool LumiverseTypeUtils::equals(LumiverseType* lhs, LumiverseType* rhs) {
     return (*((LumiverseEnum*)lhs) == *((LumiverseEnum*)rhs));
   else if (lhs->getTypeName() == "color")
     return (*((LumiverseColor*)lhs) == *((LumiverseColor*)rhs));
+  else if (lhs->getTypeName() == "orientation")
+	  return (*((LumiverseOrientation*)lhs) == *((LumiverseOrientation*)rhs));
   else
     return false;
 }
@@ -74,6 +81,15 @@ int LumiverseTypeUtils::cmp(LumiverseType* lhs, LumiverseType* rhs) {
   else if (lhs->getTypeName() == "color") {
     return (*((LumiverseColor*)lhs)).cmpHue(*((LumiverseColor*)rhs));
   }
+  else if (lhs->getTypeName() == "orientation")
+  {
+	  if (*((LumiverseOrientation*)lhs) == *((LumiverseOrientation*)rhs))
+		  return 0;
+	  else if (*((LumiverseOrientation*)lhs) < *((LumiverseOrientation*)rhs))
+		  return -1;
+	  else
+		  return 1;
+  }
   else
     return -2;
 }
@@ -97,6 +113,11 @@ shared_ptr<LumiverseType> LumiverseTypeUtils::lerp(LumiverseType* lhs, Lumiverse
     // Redirect to lerp function within LumiverseColor
     return ((LumiverseColor*)lhs)->lerp((LumiverseColor*)rhs, t);
   }
+  else if (lhs->getTypeName() == "orientation") {
+	  LumiverseOrientation* ret = new LumiverseOrientation();
+	  *ret = ((*(LumiverseOrientation*)lhs) * (1 - t)) + ((*(LumiverseOrientation*)rhs) * t);
+	  return shared_ptr<LumiverseType>((LumiverseType *)ret);
+  }
   else
     return nullptr;
 }
@@ -108,6 +129,40 @@ inline bool LumiverseTypeUtils::areSameType(LumiverseType* lhs, LumiverseType* r
     return false;
 
   return true;
+}
+
+Eigen::Matrix3f LumiverseTypeUtils::getRotationMatrix(Eigen::Vector3f lookat, Eigen::Vector3f up, 
+	LumiverseOrientation pan, LumiverseOrientation tilt) {
+	Eigen::Matrix3f ret;
+
+	lookat.normalize();
+	up.normalize();
+
+	// Gets axis for tilt
+	Eigen::Vector3f tilt_axis = up.cross(lookat);
+	tilt_axis.normalize();
+
+	// Rotates to lookat (zero position)
+	// By default, the light looks at -y.
+	Eigen::Vector3f def_lookat(0.0f, -1.0f, 0.0f);
+	Eigen::Vector3f def_axis = lookat.cross(def_lookat);
+	def_axis.normalize();
+	Eigen::AngleAxisf reset_rot = Eigen::AngleAxisf(std::acosf(def_lookat.dot(lookat)), def_axis);
+
+	// Pan
+	Eigen::Vector3f pan_reset_axis = up.cross(lookat);
+	pan_reset_axis.normalize();
+	Eigen::AngleAxisf pan_reset_rot = Eigen::AngleAxisf(std::acosf(up.dot(lookat)), pan_reset_axis);
+	up = reset_rot * up;
+	Eigen::AngleAxisf pan_rot = Eigen::AngleAxisf(pan.asUnit("radian"), up);
+
+	// Tilt
+	tilt_axis = reset_rot * tilt_axis;
+	Eigen::AngleAxisf tilt_rot = Eigen::AngleAxisf(tilt.asUnit("radian"), tilt_axis);
+
+	ret = tilt_rot * pan_rot * reset_rot;
+
+	return ret;
 }
 
 bool LumiverseTypeUtils::lessThan(LumiverseType* lhs, LumiverseType* rhs) {
@@ -224,6 +279,28 @@ LumiverseType* LumiverseTypeUtils::loadFromJSON(JSONNode node) {
         err = true;
       }
     }
+	else if (type->as_string() == "orientation") {
+		auto valNode = node.find("val");
+		auto unitNode = node.find("unit");
+		auto defNode = node.find("default");
+		auto maxNode = node.find("max");
+		auto minNode = node.find("min");
+
+		if (valNode != node.end() && defNode != node.end()) {
+			LumiverseOrientation* param;
+
+			if (maxNode != node.end() && minNode != node.end()) {
+				param = new LumiverseOrientation(valNode->as_float(), unitNode->as_string(), defNode->as_float(), maxNode->as_float(), minNode->as_float());
+			}
+			else {
+				param = new LumiverseOrientation(valNode->as_float(), unitNode->as_string(), defNode->as_float());
+			}
+			return  (LumiverseType*)param;
+		}
+		else {
+			err = true;
+		}
+	}
     else {
       stringstream ss;
       ss << "Unsupported type " << type->as_string() << " found when trying to load data.";

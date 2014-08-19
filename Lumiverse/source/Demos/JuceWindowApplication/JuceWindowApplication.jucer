@@ -18,9 +18,6 @@
             file="Source/DeviceComponent.cpp"/>
       <FILE id="XfwkOq" name="DeviceComponent.h" compile="0" resource="0"
             file="Source/DeviceComponent.h"/>
-      <FILE id="WKzFxb" name="RepaintTimer.cpp" compile="1" resource="0"
-            file="Source/RepaintTimer.cpp"/>
-      <FILE id="XfwkOq" name="RepaintTimer.h" compile="0" resource="0" file="Source/RepaintTimer.h"/>
       <FILE id="XfwkOq" name="GuiConfig.h" compile="0" resource="0" file="Source/GuiConfig.h"/>
       <FILE id="WKzFxb" name="GuiComponent.cpp" compile="1" resource="0"
             file="Source/GuiComponent.cpp"/>

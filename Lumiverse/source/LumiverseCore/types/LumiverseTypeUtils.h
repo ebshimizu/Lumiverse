@@ -9,6 +9,8 @@
 #include "LumiverseFloat.h"
 #include "LumiverseEnum.h"
 #include "LumiverseColor.h"
+#include "LumiverseOrientation.h"
+#include <math.h>
 
 namespace Lumiverse {
   /*! 
@@ -70,6 +72,8 @@ namespace Lumiverse {
     * \return True if lhs and rhs are not null and both the same type
     */
     inline bool areSameType(LumiverseType* lhs, LumiverseType* rhs);
+
+	Eigen::Matrix3f getRotationMatrix(Eigen::Vector3f lookat, Eigen::Vector3f up, LumiverseOrientation pan, LumiverseOrientation tilt);
 
     /*!
     * \brief Compares two LumiverseTypes with <

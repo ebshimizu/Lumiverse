@@ -27,10 +27,11 @@ namespace Lumiverse {
    */    
   struct ArnoldLightRecord {
       ArnoldLightRecord()
-      : rerender_req(true), light(NULL) { }
+		  : arnold_type(""), rerender_req(true), light(NULL) { }
       ArnoldLightRecord(AtNode *node)
-      : rerender_req(true), light(node) { }
+		  : arnold_type(AiNodeGetName(node)), rerender_req(true), light(node) { }
       
+	  std::string arnold_type;
       bool rerender_req;
       AtNode *light;
   };

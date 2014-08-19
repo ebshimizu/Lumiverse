@@ -51,20 +51,21 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
             JSONNode samples = *i;
             m_interface.setSamples(samples.as_int());
 		}
-        
-        if (nodeName == "lights") {
+
+		if (nodeName == "lights") {
 			JSONNode lights = *i;
 			JSONNode::const_iterator light = lights.begin();
 			while (light != lights.end()) {
-				std::string light_name = light->as_string();
-                
+				std::string light_name = light->name();
+
 				m_lights[light_name] = ArnoldLightRecord();
-                
-                std::stringstream sstm;
-                sstm << "Added light " << light_name;
+				m_lights[light_name].arnold_type = light->find("type")->as_string();
+
+				std::stringstream sstm;
+				sstm << "Added light " << light_name << ": " << m_lights[light_name].arnold_type;
 
 				Logger::log(INFO, sstm.str());
-                
+
 				light++;
 			}
 		}
@@ -93,11 +94,11 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
     
 void ArnoldPatch::loadLight(Device *d_ptr) {
     std::string light_name = d_ptr->getId();
-    std::string type = d_ptr->getType();
     AtNode *light_ptr;
     
     if (m_lights.count(light_name) == 0)
         return ;
+	std::string type = m_lights[light_name].arnold_type;
     
     if (m_lights[light_name].light == NULL) {
         light_ptr = AiNode(type.c_str());
@@ -130,6 +131,45 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
             ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
             m_interface.setParameter(light_ptr, param, ss.str());
         }
+		// Assume pan and tilt are named as "pan" and "tilt"
+		else if (raw->getTypeName() == "orientation" &&
+				param == "tilt") {
+			LumiverseOrientation *tilt = (LumiverseOrientation*)raw;
+			LumiverseOrientation *pan = (LumiverseOrientation*)d_ptr->getParam("pan");
+
+			if (pan == NULL)
+				continue;
+
+			std::string lookat_str;
+			std::string up_str;
+			std::string pos;
+			if (!d_ptr->getMetadata("lookat", lookat_str) ||
+				!d_ptr->getMetadata("up", up_str) ||
+				!d_ptr->getMetadata("position", pos)) {
+				continue;
+			}
+
+			ArnoldParameterVector<3, float> lookat_vec;
+			parseArnoldParameter<3, float>(lookat_str, lookat_vec);
+			ArnoldParameterVector<3, float> up_vec;
+			parseArnoldParameter<3, float>(up_str, up_vec);
+
+			Eigen::Vector3f lookat(lookat_vec[0], lookat_vec[1], lookat_vec[2]);
+			Eigen::Vector3f up(up_vec[0], up_vec[1], up_vec[2]);
+
+			Eigen::Matrix3f rotation = LumiverseTypeUtils::getRotationMatrix(lookat, up, pan, tilt);
+
+			std::stringstream ss;
+			ss << rotation(0, 0) << "," << rotation(0, 1) << "," << rotation(0, 2) << ",0,"
+				<< rotation(1, 0) << "," << rotation(1, 1) << "," << rotation(1, 2) << ",0,"
+				<< rotation(2, 0) << "," << rotation(2, 1) << "," << rotation(2, 2) << ",0,"
+				<< pos << ",1";
+
+			Logger::log(LDEBUG, light_name);
+			Logger::log(LDEBUG, ss.str());
+
+			m_interface.setParameter(light_ptr, "matrix", ss.str());
+		}
     }
 
     m_lights[light_name].light = light_ptr;
@@ -196,7 +236,6 @@ void ArnoldPatch::onDeviceChanged(Device *d) {
     // TODO : LOCK
     if (m_lights.count(d->getId()) > 0) {
         m_lights[d->getId()].rerender_req = true;
-        Logger::log(LDEBUG, "Parameter changed...");
     }
 }
     

@@ -29,40 +29,6 @@ void ArnoldInterface::loadArnoldParam(const JSONNode data) {
     m_arnold_params[data.name()] = arnold_param;
 }
 
-// TODO: handle illegal formats
-template<size_t D, typename T>
-void ArnoldInterface::parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) const {
-    T element;
-    std::string value_spaceless = value;
-    std::string pattern;
-    
-    // Removes spaces when the input type is not string
-    if (typeid(std::string) != typeid(T))
-        std::remove_if(value_spaceless.begin(), value_spaceless.end(),
-                                                   [](char x){return std::isspace(x);});
-    
-    // Reads two different types
-    if (typeid(T) == typeid(int) || typeid(T) == typeid(bool)) {
-        pattern = "%d";
-    }
-    else if (typeid(T) == typeid(float)) {
-        pattern = "%f";
-    }
-    
-    // Format: "v1, v2, ..."
-    size_t offset = 0;
-    for (size_t i = 0; i < D; i++) {
-        sscanf(value_spaceless.c_str() + offset, pattern.c_str(), &element);
-        vector[i] = element;
-        
-        offset = value_spaceless.find(",", offset);
-        
-        if (offset == std::string::npos)
-            break;
-        offset++;
-    }
-}
-
 template<size_t D, typename T>
     void ArnoldInterface::setSingleParameter(AtNode *node, const std::string &paramName, const std::string &value,
                                          union AiNodeSetter<T> aiNodeSetter) const {
