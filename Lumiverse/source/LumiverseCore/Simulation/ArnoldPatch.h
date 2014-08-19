@@ -154,6 +154,12 @@ namespace Lumiverse {
 	*/
     void rerender();
       
+	virtual float getPercentage() const { return m_interface.getPercentage(); }
+
+	virtual BucketPositionInfo *getBucketPositionInfo() const { return m_interface.getBucketPositionInfo(); }
+
+	virtual size_t getBucketNumber() const { return m_interface.getBucketNumber(); }
+
   protected:
     /*!
     * \brief Checks if any device connected with this patch has updated parameters or metadata.

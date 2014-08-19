@@ -12,11 +12,8 @@ static float clamp(float f, float min, float max) {
     
 static void drawToBuffer(float *buffer, const float gamma, const size_t width,
                          const size_t x, const size_t y,
-                         const AtRGBA &rgba) {
-    //unsigned char bytes[4];
-        
+                         const AtRGBA &rgba) {      
     for (size_t i = 0; i < 4; i++) {
-        //sRGBValueToByte(rgba[i], bytes[i]);
         if (i != 3)
             buffer[(y * width + x) * 4 + i] = clamp(std::powf(rgba[i], 1 / gamma), 0.f, 1.f);
         else
@@ -52,6 +49,7 @@ node_parameters
     AiParameterInt("width", 600);
     AiParameterInt("height", 800);
     AiParameterPTR("buffer_pointer", NULL);
+	AiParameterPTR("bucket_pos_pointer", NULL);
 	AiParameterPTR("progress_pointer", NULL);
     AiParameterFlt("gamma", 2.2);
 }
@@ -84,7 +82,15 @@ driver_supports_pixel_type
     
 driver_open
 {
+	int *progress = (int *)AiNodeGetPtr(node, "progress_pointer");
+	int data_width = data_window.maxx - data_window.minx;
+	int data_height = data_window.maxy - data_window.miny;
 
+	int num_buckets = ((data_width + bucket_size - 1) / bucket_size) * (
+		(data_height + bucket_size - 1) / bucket_size);
+	progress[0] = num_buckets;
+	progress[1] = 0;
+	printf("@@@: %d\n", num_buckets);
 }
     
 driver_extension
@@ -100,24 +106,24 @@ driver_needs_bucket
 driver_prepare_bucket
 {
     // Could add interactive features here.
-	int *progresses = (int *)AiNodeGetPtr(node, "progress_pointer");
-	int *self_progress = progresses + 4 * tid;
-	self_progress[0] = bucket_xo;
-	self_progress[1] = bucket_yo;
-	self_progress[2] = bucket_size_x;
-	self_progress[3] = bucket_size_y;
+	int *bucket_pos = (int *)AiNodeGetPtr(node, "bucket_pos_pointer");
+	int *self_pos = bucket_pos + 4 * tid;
+	self_pos[0] = bucket_xo;
+	self_pos[1] = bucket_yo;
+	self_pos[2] = bucket_size_x;
+	self_pos[3] = bucket_size_y;
 }
     
 driver_process_bucket
 {
-	int *progresses = (int *)AiNodeGetPtr(node, "progress_pointer");
-	int *self_progress = progresses + 4 * tid;
+	int *bucket_pos = (int *)AiNodeGetPtr(node, "bucket_pos_pointer");
+	int *self_pos = bucket_pos + 4 * tid;
 
 	// Clean up the current bucket (ow, we don't know when the last group finishes)
-	self_progress[0] = -1;
-	self_progress[1] = -1;
-	self_progress[2] = -1;
-	self_progress[3] = -1;
+	self_pos[0] = -1;
+	self_pos[1] = -1;
+	self_pos[2] = -1;
+	self_pos[3] = -1;
 }
     
 driver_write_bucket
@@ -131,6 +137,7 @@ driver_write_bucket
     const void* bucket_data;
     const char* aov_name;
     
+	// Writes to the frame buffer
     while (AiOutputIteratorGetNext(iterator, &aov_name, &pixel_type, &bucket_data))
     {
         size_t x, y;
@@ -162,6 +169,16 @@ driver_write_bucket
         }
 
     }
+
+	// Counts the processed buckets
+	int *progress = (int *)AiNodeGetPtr(node, "progress_pointer");
+
+	AtCritSec mycs;
+	AiCritSecInit(&mycs);
+	AiCritSecEnter(&mycs);
+		progress[1]++;
+	AiCritSecLeave(&mycs);
+	AiCritSecClose(&mycs);
 }
     
 driver_close

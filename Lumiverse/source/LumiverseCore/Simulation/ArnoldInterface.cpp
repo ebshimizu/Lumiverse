@@ -223,7 +223,6 @@ void ArnoldInterface::appendToOutputs(const std::string buffer_output) {
     // Append the new output to options (using the new filter)
     AtNode *options = AiUniverseGetOptions();
     AtArray *original = AiNodeGetArray(options, "outputs");
-    
     size_t num_options = original->nelements + 1;
     
     AtArray *outputs_array = AiArrayAllocate(num_options, 1, AI_TYPE_STRING);
@@ -256,7 +255,7 @@ void ArnoldInterface::init() {
     AtNode *options = AiUniverseGetOptions();
     m_width = AiNodeGetInt(options, "xres");
     m_height = AiNodeGetInt(options, "yres");
-    
+   
     // Set a driver to output result into a float buffer
     AtNode *driver = AiNode("driver_buffer");
     
@@ -273,8 +272,14 @@ void ArnoldInterface::init() {
     
     // Assume we are using RGBA
     m_buffer = new float[m_width * m_height * 4];
-
     AiNodeSetPtr(driver, "buffer_pointer", m_buffer);
+
+	// TODO: num of threads
+	m_bucket_num = 8;
+	m_bucket_pos = new BucketPositionInfo[m_bucket_num];
+	AiNodeSetPtr(driver, "bucket_pos_pointer", m_bucket_pos);
+
+	AiNodeSetPtr(driver, "progress_pointer", &m_progress);
     
     // Create a filter
     AtNode *filter = AiNode("gaussian_filter");
@@ -299,6 +304,7 @@ int ArnoldInterface::render() {
 
     Logger::log(INFO, "Rendering...");
     code = AiRender(AI_RENDER_MODE_CAMERA);
+
 	std::stringstream ss;
 	ss << "Done: " << code;
     Logger::log(INFO, ss.str().c_str());
