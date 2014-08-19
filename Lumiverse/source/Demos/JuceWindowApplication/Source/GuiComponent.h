@@ -127,6 +127,8 @@ private:
     int addDevicePads();
     
     void drawMode(Graphics& g);
+
+	void drawBuckets(Graphics& g);
     //[UserVariables]   -- You can add your own custom variables in this section.
     //[/UserVariables]
 
