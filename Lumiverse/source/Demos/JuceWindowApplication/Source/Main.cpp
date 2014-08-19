@@ -46,11 +46,12 @@ public:
         
         m_rig->run();
          */
-        m_rig = new Rig("J:/Lumiverse/Lumiverse/data/arnold_photometric_cue.json");
+        m_rig = new Rig("J:/Lumiverse/Lumiverse/data/movingLights_box.rig.json");
         ArnoldAnimationPatch *app = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
         
 		if (app != NULL) {
 			m_rig->init();
+			app->reset();
 			m_rig->run();
 			m_renderingWindow = new RenderingWindow(app->getWidth(), app->getHeight(),
 				app->getBufferPointer(), m_rig);

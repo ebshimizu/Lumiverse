@@ -29,7 +29,7 @@ namespace Lumiverse {
     *
     * Sets the cursor to the beginning.
     */
-    ArnoldFrameManager() : m_current(0) { }
+    ArnoldFrameManager(size_t fps) : m_current(0) { }
 
     /*!
     * \brief Destroys the object.
@@ -108,9 +108,13 @@ namespace Lumiverse {
         reset();
     }
 
+	virtual void setFps(int fps) { m_fps = fps; }
+	virtual int getFps() { return m_fps; }
+
   protected:
     // An atomic counter to implement the cursor.
     std::atomic<unsigned int> m_current;
+	size_t m_fps;
   };
     
 }

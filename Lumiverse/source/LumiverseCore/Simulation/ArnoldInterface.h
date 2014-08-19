@@ -37,6 +37,24 @@ namespace Lumiverse {
     void (*AiNodeSetter4D)(AtNode *, const char *, T, T, T, T);
   };
     
+  struct BucketPositionInfo {
+	  int bucket_xo;
+	  int bucket_yo;
+	  int bucket_size_x;
+	  int bucket_size_y;
+
+	  BucketPositionInfo() :
+		  bucket_xo(-1), bucket_yo(-1), bucket_size_x(-1), bucket_size_y(-1) { }
+  };
+
+  struct ProgressInfo {
+	  int bucket_sum;
+	  int bucket_cur;
+
+	  ProgressInfo() : bucket_sum(-1), bucket_cur(-1) { }
+
+  };
+
   /*!
   * \brief Interface between ArnoldPatch and arnold. Almost all arnold APIs are called from this class.
   *
@@ -53,12 +71,13 @@ namespace Lumiverse {
     * The frame buffer point is set to NULL. The buffer will be initialized after getting the size of output.
     * The default gamma is 2.2.
     */
-    ArnoldInterface() : m_buffer(NULL), m_gamma(2.2), m_samples(-3) { }
+	ArnoldInterface() : m_buffer(NULL), m_gamma(2.2), m_samples(-3), 
+		  m_bucket_pos(NULL), m_bucket_num(0) { }
       
     /*!
     * \brief Destroys the object.
     */
-    virtual ~ArnoldInterface() { delete[] m_buffer; }
+	virtual ~ArnoldInterface() { delete[] m_buffer; delete[] m_bucket_pos; m_bucket_num = 0; }
       
     /*!
     * \brief Initializes the Arnold renderer.
@@ -206,6 +225,15 @@ namespace Lumiverse {
 	*/
 	JSONNode arnoldParameterToJSON();
 
+	float getPercentage() const { 
+		if (m_progress.bucket_sum < 0)
+			return 0.f;
+		return (0.f + m_progress.bucket_cur) / m_progress.bucket_sum * 100.f; 
+	}
+
+	BucketPositionInfo *getBucketPositionInfo() const { return m_bucket_pos; }
+
+	size_t getBucketNumber() const { return m_bucket_num; }
       
   private:
     /*!
@@ -289,6 +317,10 @@ namespace Lumiverse {
     * \brief Arnold AA samples
     */
     int m_samples;
+
+	BucketPositionInfo *m_bucket_pos;
+	size_t m_bucket_num;
+	ProgressInfo m_progress;
   };
 
   /*!
