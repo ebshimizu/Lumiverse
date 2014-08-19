@@ -22,7 +22,6 @@
 
 #include "GuiComponent.h"
 
-
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 //[/MiscUserDefs]
 
@@ -34,28 +33,51 @@ m_width(imageWidth), m_height(imageHeight), m_rig(rig)
 {
     setLookAndFeel(m_lookandfeel = new juce::LookAndFeel_V3());
     
-    addAndMakeVisible (m_intensity_label = new Label ("new label",
-                                          TRANS("Intensity")));
-    m_intensity_label->setFont (Font (15.00f, Font::plain));
-    m_intensity_label->setJustificationType (Justification::centredLeft);
-    m_intensity_label->setEditable (false, false, false);
-    m_intensity_label->setColour (TextEditor::textColourId, Colours::black);
-    m_intensity_label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    int height = addDevicePads();
+    int dcwidth = 0;
     
-    addAndMakeVisible (m_intensity_slider = new Slider ("new slider"));
-    m_intensity_slider->setRange (0, 10, 0);
-    m_intensity_slider->setSliderStyle (Slider::LinearHorizontal);
-    m_intensity_slider->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
-    m_intensity_slider->addListener (this);
-
-    addAndMakeVisible (m_abort_button = new TextButton (String::empty));
-    m_abort_button->setButtonText ("Abort");
-    m_abort_button->addListener (this);
+    if (m_device_pads.size() > 0)
+        dcwidth = m_device_pads[0]->getWidth();
+    
+    m_upper_height = imageHeight;
+    setSize (imageWidth + dcwidth, m_upper_height);
+    
+    m_devices_property_panel.setName(TRANS("Devices Attributes"));
+    
+    for (PropertyComponent *pc : m_device_pads) {
+        Array<PropertyComponent*> devices;
+        devices.add(pc);
+        m_devices_property_panel.addSection(((DeviceComponent*)pc)->getDeviceName(), devices, false);
+    }
+    m_devices_property_panel.setBounds(0, 0, m_width, height);
+    m_concertina_panel.addPanel(-1, &m_devices_property_panel, true);
+    
+    m_interactive_panel.setName(TRANS("Interactive Rendering"));
+    
+    m_interrupt = new InterruptionComponent("Interrupt the interactive rendering", rig);
+    m_samples.add(new SamplesComponent("Preview Sampling Rate", rig, true));
+    m_samples.add(new SamplesComponent("Rendering Sampling Rate", rig, false));
+    Array<PropertyComponent*> interrupts;
+    
+    for (SamplesComponent *sc : m_samples) {
+        interrupts.add(sc);
+    }
+    interrupts.add(m_interrupt);
+    
+    m_interactive_panel.addSection("Interactive Rendering", interrupts, true);
+    m_concertina_panel.addPanel(-1, &m_interactive_panel, true);
+    
+    m_concertina_panel.expandPanelFully(&m_devices_property_panel, false);
+    
+    addAndMakeVisible(m_concertina_panel);
+    m_concertina_panel.setBounds(m_width, 0, dcwidth, m_upper_height);
+    
+    addAndMakeVisible(m_animation_pad = new AnimationComponent(rig, this));
+    m_animation_pad->setTopLeftPosition(0, imageHeight);
     
     //[UserPreSize]
     //[/UserPreSize]
-    setSize (imageWidth + 200, imageHeight);
-
+    setSize (imageWidth + dcwidth, m_upper_height + m_animation_pad->getHeight());
 
     //[Constructor] You can add your own custom stuff here..
     //[/Constructor]
@@ -65,11 +87,18 @@ GuiComponent::~GuiComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
-
-    m_intensity_label = nullptr;
-    m_intensity_slider = nullptr;
+    ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+    aap->close();
+    
+    delete m_interrupt;
+    m_interrupt = nullptr;
+    m_animation_pad = nullptr;
     m_lookandfeel = nullptr;
 
+    for (PropertyComponent *dc : m_device_pads) {
+        delete dc;
+    }
+    
     //[Destructor]. You can add your own custom destruction code here..
     //[/Destructor]
 }
@@ -80,7 +109,7 @@ void GuiComponent::paint (Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
     Path outline;
-    outline.addRectangle (m_width, 0, m_width, m_height);
+    outline.addRectangle (m_width, 0, m_width, m_upper_height);
     Colour baseColour = Colour::fromFloatRGBA(0.95, 0.95, 0.95, 1.f);
     
     g.setGradientFill (ColourGradient (baseColour, 0.0f, 0.0f,
@@ -102,62 +131,86 @@ void GuiComponent::paint (Graphics& g)
     }
     
     g.drawImageAt(m_panel, 0, 0);
-    //[UserPaint] Add your own custom painting code here..
-    //[/UserPaint]
+    
+    // Draws mode
+    drawMode(g);
 }
 
 void GuiComponent::resized()
 {
-    m_abort_button->setBounds (getWidth() - 176, getHeight() - 60, 120, 32);
+    //m_abort_button->setBounds (getWidth() - 176, m_upper_height - 60, 120, 32);
     
-    m_intensity_label->setBounds (16, 16, 150, 24);
-    m_intensity_slider->setBounds (24, 48, 150, 24);
-    m_intensity_label->setTopLeftPosition(m_width + 10, 10);
-    m_intensity_slider->setTopLeftPosition(m_width + 10, 10 + 30);
-    //[UserResized] Add your own custom resize handling here..
-    //[/UserResized]
-}
-
-void GuiComponent::sliderValueChanged (Slider* sliderThatWasMoved)
-{
-    //[UsersliderValueChanged_Pre]
-    //[/UsersliderValueChanged_Pre]
-
-    if (sliderThatWasMoved == m_intensity_slider)
-    {
-        //[UserSliderCode_slider] -- add your slider handling code here..
-        //[/UserSliderCode_slider]
-        /*
-        m_intensity_label->setText(m_intensity_slider->getTextFromValue(m_intensity_slider->getValue()),
-                                   juce::NotificationType::dontSendNotification);
-         */
-        m_rig->getDevice("mylight")->setMetadata("intensity",
-                        m_intensity_slider->getTextFromValue(m_intensity_slider->getValue()).toStdString());
-        //((ArnoldPatch*)m_rig->getSimulationPatch())->onDeviceChanged("mylight");
+    int last_height = 0;
+    for (PropertyComponent *dc : m_device_pads) {
+        dc->setBounds(m_width, last_height, dc->getWidth(), dc->getHeight());
+        last_height += dc->getHeight();
     }
-
-    //[UsersliderValueChanged_Post]
-    //[/UsersliderValueChanged_Post]
 }
 
 void GuiComponent::buttonClicked (Button* buttonThatWasClicked)
 {
-    //[UserbuttonClicked_Pre]
-    //[/UserbuttonClicked_Pre]
-    
-    if (buttonThatWasClicked == m_abort_button)
-    {
-        //[UserButtonCode_quitButton] -- add your button handler code here..
-        
-        ((ArnoldPatch*)m_rig->getSimulationPatch())->interruptRender();
-        
-        //[/UserButtonCode_quitButton]
-    }
-    
-    //[UserbuttonClicked_Post]
-    //[/UserbuttonClicked_Post]
+
 }
 
+//==============================================================================
+
+int GuiComponent::addDevicePads() {
+    if (m_rig == NULL)
+        return 0;
+    
+    int height = 0;
+    
+    for (Device *device : m_rig->getDeviceRaw()) {
+        DeviceComponent *dc = new DeviceComponent(device);
+        //addAndMakeVisible(dc);
+        m_device_pads.add(dc);
+        
+        height += dc->getHeight();
+    }
+    
+    return height;
+}
+
+void GuiComponent::drawMode(Graphics& g) {
+    Colour baseColour = Colour::fromFloatRGBA(0.95, 0.95, 0.95, 1.f);
+    
+    Font f("Consolas", 30.f, Font::bold);
+    g.setColour(baseColour.brighter(0.5f).withAlpha(0.8f));
+    g.setFont(f);
+    
+    ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+    ArnoldAnimationMode mode = aap->getMode();
+    string mode_str;
+    
+    switch (mode) {
+        case ArnoldAnimationMode::INTERACTIVE:
+            mode_str = "Interactive";
+            break;
+        case ArnoldAnimationMode::RECORDING:
+            mode_str = "Recording";
+            break;
+        case ArnoldAnimationMode::RENDERING: {
+            char percent[10];
+            sprintf(percent, "%.2f%%", aap->getPercentage());
+            
+            mode_str = "Rendering: ";
+            mode_str.append(percent);
+            
+            break;
+        }
+        case ArnoldAnimationMode::STOPPED:
+            mode_str = "Play";
+            break;
+        default:
+            mode_str = "";
+            break;
+    }
+    
+    
+    
+    g.drawFittedText(TRANS(mode_str), m_width - f.getHeight() * 6.f - 10, m_height - f.getHeight() * 1.5f - 10,
+                     f.getHeight() * 6.f, f.getHeight() * 1.5f, Justification(18), 1);
+}
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 //[/MiscUserCode]
 

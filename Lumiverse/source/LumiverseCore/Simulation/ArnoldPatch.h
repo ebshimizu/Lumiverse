@@ -13,10 +13,6 @@
 #include <algorithm>
 #include <cstdio>
 
-#ifdef USE_ARNOLD
-#include <ai.h>
-#endif
-
 #include "../Patch.h"
 #include "../lib/libjson/libjson.h"
 #include "ArnoldParameterVector.h"
@@ -45,7 +41,7 @@ namespace Lumiverse {
   * of communication is done with help of an ArnoldInterface object.
   * ArnoldPatch handles parsing Json and passing info to ArnoldInterface.
   *  
-  * \sa ArnoldInterface
+  * \sa ArnoldInterface, ArnoldAnimationPatch
   */
   class ArnoldPatch : public Patch
   {
@@ -123,44 +119,78 @@ namespace Lumiverse {
     float *getBufferPointer() { return m_interface.getBufferPointer(); }
       
     /*!
+    * \brief Gets the sample rate (n * n per pixel).
+    *
+    * \return The number of AA samples.
+    */
+    int getSamples() { return m_interface.getSamples(); }
+      
+    /*!
+    * \brief Sets the sample rate (n * n per pixel).
+    *
+    * \param samples The number of AA samples.
+    */
+    void setSamples(int samples);
+      
+    /*!
     * \brief Stops the working rendering procedure if Arnold is running.
     */
-    void interruptRender();
+    virtual void interruptRender();
     
-  private:
     /*!
     * \brief Callback function for devices.
-    * 
+    *
+    * This function is registered to all devices by the rig. Only devices in the list
+    * will change the state of patch.
     * \param d The device which calls this function.
     */
     void onDeviceChanged(Device *d);
-
+      
+	/*!
+	* \brief Manually schedule a re-rendering.
+	*
+	* This new rendering task may not be done immediately. This function just sets on the flag for rendering.
+	*/
+    void rerender();
+      
+  protected:
     /*!
-    * \brief Calls Arnold render function.
-    * This function runs in a separate thread.
+    * \brief Checks if any device connected with this patch has updated parameters or metadata.
+    * \param devices The device list.
+    * \return If there is any update.
     */
-    void renderLoop();
-    
+    bool isUpdateRequired(set<Device *> devices);
+      
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.
-    * This function would return if there is any light having new parameter. This indicates the scene should be re-rendered.
+    * This function updates light node for renderer.
     * \param devices The device list.
-    * \return If the scene needs to be rendered again.
     */
-    bool updateLight(set<Device *> devices);
-
+    void updateLight(set<Device *> devices);
+    
+    /*!
+    * \brief Resets the update flags for lights.
+    */
+    void clearUpdateFlags();
+    
     /*!
     * \brief Loads data from a parsed JSON object
     * \param data JSON data to load
     */
     void loadJSON(const JSONNode data);
-
+      
     /*!
     * \brief Loads a arnold light node.
     * This function is also used to update a light node.
     * \param d_ptr The device with updated parameters.
     */
     void loadLight(Device *d_ptr);
+
+	/*!
+    * \brief Calls Arnold render function.
+    * This function runs in a separate thread.
+    */
+    void renderLoop();
 
     /*!
     * \brief A list contains infos about if a light is updated.
@@ -171,6 +201,8 @@ namespace Lumiverse {
     * \brief Arnold Interface
     */
     ArnoldInterface m_interface;
+
+  private:
 	
     /*!
     * \brief The separate thread running the render loop.

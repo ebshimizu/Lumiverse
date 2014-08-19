@@ -5,7 +5,17 @@
 
 namespace Lumiverse {
 
-ArnoldPatch::ArnoldPatch(const JSONNode data) {
+#ifndef _WIN32
+	void convertPlugin(std::string &dir) {
+		for (size_t i = 0; i < dir.size(); i++) {
+			if (dir.at(i) == ';')
+				dir[i] = ':';
+		}
+	}
+#endif
+
+ArnoldPatch::ArnoldPatch(const JSONNode data) :
+m_renderloop(NULL) {
 	loadJSON(data);
 }
 
@@ -25,7 +35,11 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
         
         if (nodeName == "pluginDir") {
             JSONNode dir = *i;
-            m_interface.setPluginDirectory(dir.as_string());
+			std::string plugin = dir.as_string();
+#ifndef _WIN32
+			convertPlugin(plugin);
+#endif
+			m_interface.setPluginDirectory(plugin);
 		}
         
         if (nodeName == "gamma") {
@@ -33,12 +47,16 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
             m_interface.setGamma(gamma.as_float());
 		}
         
+        if (nodeName == "samples") {
+            JSONNode samples = *i;
+            m_interface.setSamples(samples.as_int());
+		}
         
         if (nodeName == "lights") {
 			JSONNode lights = *i;
 			JSONNode::const_iterator light = lights.begin();
 			while (light != lights.end()) {
-				std::string light_name = light->name();
+				std::string light_name = light->as_string();
                 
 				m_lights[light_name] = ArnoldLightRecord();
                 
@@ -95,6 +113,24 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
         d_ptr->getMetadata(meta, value);
         m_interface.setParameter(light_ptr, meta, value);
     }
+    
+    // Sets arnold params with device params
+    // This process is after parsing metadata, so parameters here can overwrite values from metadata
+    for (std::string param : d_ptr->getParamNames()) {
+        LumiverseType *raw = d_ptr->getParam(param);
+        
+        // First parse lumiverse type into string. So we can reuse the function for metadata.
+        // It's obviously inefficient.
+        if (raw->getTypeName() == "float") {
+            m_interface.setParameter(light_ptr, param, ((LumiverseFloat*)raw)->asString());
+        }
+        else if (raw->getTypeName() == "color") {
+            Eigen::Vector3d rgb = ((LumiverseColor*)raw)->getRGB();
+            std::stringstream ss;
+            ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
+            m_interface.setParameter(light_ptr, param, ss.str());
+        }
+    }
 
     m_lights[light_name].light = light_ptr;
 }
@@ -106,44 +142,52 @@ ArnoldPatch::~ArnoldPatch() {
 
 }
 
-bool ArnoldPatch::updateLight(set<Device *> devices) {
-    bool rerender_rep = false;
+bool ArnoldPatch::isUpdateRequired(set<Device *> devices) {
+    bool req = false;
     
-	for (Device* d : devices) {
+    for (Device* d : devices) {
 		std::string name = d->getId();
 		if (m_lights.count(name) == 0)
 			continue;
 		
         if (m_lights[d->getId()].rerender_req) {
-            if (m_lights[d->getId()].light == NULL) {
-                Device::DeviceCallbackFunction callback = std::bind(&ArnoldPatch::onDeviceChanged, this,
-                                                                    std::placeholders::_1);
-                d->addMetadataChangedCallback(callback);
-            }
-            
-            rerender_rep = true;
-            loadLight(d);
+            req = true;
+            break;
         }
 	}
     
-    return rerender_rep;
+    return req;
+}
+    
+void ArnoldPatch::updateLight(set<Device *> devices) {
+	for (Device* d : devices) {
+		std::string name = d->getId();
+		if (m_lights.count(name) == 0)
+			continue;
+		loadLight(d);
+	}
 }
 
+void ArnoldPatch::clearUpdateFlags() {
+    for (auto& record : m_lights) {
+        record.second.rerender_req = false;
+    }
+}
+    
 void ArnoldPatch::renderLoop() {
-    Logger::log(INFO, "Rendering...");
-    AiRender(AI_RENDER_MODE_CAMERA);
-    Logger::log(INFO, "Done.");
+    m_interface.render();
 }
 
 void ArnoldPatch::interruptRender() {
+    m_interface.interrupt();
+    
     if (m_renderloop != NULL) {
-        if (AiRendering()) {
-            AiRenderInterrupt();
-            Logger::log(INFO, "Aborted rendering to restart.");
+        try {
+            m_renderloop->join();
         }
-        
-        // TODO : no such process error
-        m_renderloop->join();
+        catch (const std::system_error& e) {
+            Logger::log(ERR, "Thread doesn't exist.");
+        }
         m_renderloop = NULL;
     }
 }
@@ -152,28 +196,26 @@ void ArnoldPatch::onDeviceChanged(Device *d) {
     // TODO : LOCK
     if (m_lights.count(d->getId()) > 0) {
         m_lights[d->getId()].rerender_req = true;
+        Logger::log(LDEBUG, "Parameter changed...");
     }
 }
     
+void ArnoldPatch::setSamples(int samples) {
+    m_interface.setSamples(samples);
+}
+    
 void ArnoldPatch::update(set<Device *> devices) {
-	bool render_req = updateLight(devices);
+	bool render_req = isUpdateRequired(devices);
 
     if (!render_req) {
         return ;
     }
+    updateLight(devices);
+    clearUpdateFlags();
     
     interruptRender();
     
     m_renderloop = new std::thread(&ArnoldPatch::renderLoop, this);
-    
-    // TODO : LOCK
-    for (Device* d : devices) {
-		std::string name = d->getId();
-		if (m_lights.count(name) == 0)
-			continue;
-		m_lights[name].rerender_req = false;
-	}
-
 }
 
 void ArnoldPatch::init() {
@@ -186,7 +228,31 @@ void ArnoldPatch::close() {
 }
 
 JSONNode ArnoldPatch::toJSON() {
-	return JSONNode("test", 0);
+	JSONNode root;
+
+	root.push_back(JSONNode("type", getType()));
+	root.push_back(JSONNode("sceneFile", m_interface.getAssFile()));
+	root.push_back(JSONNode("pluginDir", m_interface.getPluginDirectory()));
+	root.push_back(JSONNode("gamma", m_interface.getGamma()));
+	
+	JSONNode lights;
+	lights.set_name("lights");
+
+	for (auto light : m_lights) {
+		lights.push_back(JSONNode("light", light.first));
+	}
+	root.push_back(lights.as_array());
+
+	root.push_back(m_interface.arnoldParameterToJSON());
+
+	return root;
+}
+    
+void ArnoldPatch::rerender() {
+    // Given at least one light exists
+    // This will triggle a rerender later.
+    if (m_lights.size() > 0)
+        m_lights.begin()->second.rerender_req = true;
 }
 
 }

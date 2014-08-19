@@ -10,7 +10,7 @@
 
 #include <algorithm>
 #include <cstdio>
-#include <ai.h>
+#include "../lib/arnold/include/ai.h"
 #include "../Patch.h"
 #include "../lib/libjson/libjson.h"
 #include "ArnoldParameterVector.h"
@@ -53,12 +53,12 @@ namespace Lumiverse {
     * The frame buffer point is set to NULL. The buffer will be initialized after getting the size of output.
     * The default gamma is 2.2.
     */
-    ArnoldInterface() : m_buffer(NULL), m_gamma(2.2) { }
+    ArnoldInterface() : m_buffer(NULL), m_gamma(2.2), m_samples(-3) { }
       
     /*!
     * \brief Destroys the object.
     */
-    ~ArnoldInterface() { delete[] m_buffer; }
+    virtual ~ArnoldInterface() { delete[] m_buffer; }
       
     /*!
     * \brief Initializes the Arnold renderer.
@@ -71,12 +71,6 @@ namespace Lumiverse {
     * \brief Closes the Arnold session.
     */
     void close();
-
-    /*!
-    * \brief Returns the JSON representation of the interface
-    * \return JSON node containing the data for this ArnoldInterface
-    */
-    virtual JSONNode toJSON();
 
     /*!
     * \brief Gets the type of this object.
@@ -177,6 +171,40 @@ namespace Lumiverse {
     * \return The gamma.
     */
     float getGamma() { return m_gamma; }
+    
+	/*!
+	* \brief Sets the camera sampling rate used for current rendering.
+	*
+	* Although the system may have multiple camera sampling rates (e.g. for interactive mode and for real rendering),
+	* this rate will be used for the current rendering.
+	* \param samples The sampling rate.
+	*/
+    void setSamples(int samples) { m_samples = samples; }
+      
+	/*!
+	* \brief Gets the sampling rate.
+	*
+	* \return The sampling rate.
+	*/
+    int getSamples() { return m_samples; }
+      
+    /*!
+    * \brief Starts rendering with Arnold.
+    * Returns the error code of AiRender, so the caller can know if the renderer was interrupted.
+    * \return Error code of arnold.
+    */
+    int render();
+      
+    /*!
+    * \brief Interrupts current rendering.
+    */
+    void interrupt();
+
+	/*!
+	* \brief Parses the arnold parameter map to a JSON node.
+	* \return The Json node.
+	*/
+	JSONNode arnoldParameterToJSON();
       
   private:
     /*!
@@ -218,6 +246,18 @@ namespace Lumiverse {
     void parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) const;
       
     /*!
+    * \brief Appends the new output command to the outputs attribute of options.
+    *
+    * \param buffer_output The output command (typically using a driver_buffer node).
+    */
+    void appendToOutputs(const std::string buffer_output);
+
+	/*!
+	* \brief Appends the new output command to the outputs attribute of options.
+	*/
+	void setSamplesOption();
+      
+    /*!
     * \brief The list containing the mappings between metadata to Arnold parameter.
     * \sa ArnoldParam
     */
@@ -252,6 +292,11 @@ namespace Lumiverse {
     * \brief The gamma for gamma correction.
     */
     float m_gamma;
+      
+    /*!
+    * \brief Arnold AA samples
+    */
+    int m_samples;
   };
 }
 

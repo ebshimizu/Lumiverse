@@ -197,7 +197,7 @@ namespace Lumiverse {
     /*!
     \brief Sets the layer state to the state at the specified time in a cue.
 
-    This seeks to a position in a timeline. If time is grater than the length of the cue,
+    This seeks to a position in a timeline. If time is greater than the length of the cue,
     it will be clamped to the beginning of the next cue (if one exists).
     \param num Cue number
     \param time Location to seek to

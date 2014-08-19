@@ -224,8 +224,15 @@ Lumiverse/docs
 # Mac
 **/._*
 
-# Simulation and visualization librariesdriver/*
+# Simulation and visualization libraries
+Driver/source/lib/
 Lumiverse/source/Demos/JuceWindowApplication/JuceLibraryCode/*
 Arnold-4.1.3.3-darwin/*
+
+# Juce App builds
+Lumiverse/source/Demos/JuceWindowApplication/Builds/
+
 Lumiverse/source/LumiverseCore/lib/clp/ClpConfig.h
 Lumiverse/source/LumiverseCore/LumiverseCoreConfig.h
+
+*.psd

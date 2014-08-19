@@ -83,7 +83,7 @@ namespace Lumiverse {
     // Resets the color channels to 0.
     m_weight = 1;
 
-    for (auto& it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+    for (map<string, double>::iterator it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
       it->second = 0;
     }
   }
@@ -281,7 +281,9 @@ namespace Lumiverse {
 
   bool LumiverseColor::setColorChannel(string name, double val) {
     if (m_deviceChannels.count(name) > 0) {
-      m_deviceChannels[name] = clamp(val, 0, 1);
+      // ??
+      //m_deviceChannels[name] = clamp(val, 0, 1);
+      m_deviceChannels[name] = val;
       return true;
     }
     else {
