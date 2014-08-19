@@ -243,7 +243,8 @@ void ArnoldInterface::setSamplesOption() {
 void ArnoldInterface::init() {
     // TODO : to use env var (different apis for linux and win)
     AiLicenseSetServer("pike.graphics.cs.cmu.edu", 5053);
-    
+    AiMsgSetLogFileName("C:/Users/Evan/Documents/Programming/lumiverseboard/LumiverseBoard/Builds/VisualStudio2013/arnoldLog.txt");
+    AiMsgSetLogFileFlags(AI_LOG_ALL);
     // Starts a arnold session
     AiBegin();
 

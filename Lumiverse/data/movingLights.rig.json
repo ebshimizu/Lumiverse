@@ -137,7 +137,7 @@
 				}
 			},
 			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/DSP7-P250I-FL.IES",
+                "filename" : "C:/Users/Evan/Documents/Programming/Lumiverse/Lumiverse/data/DSP7-P250I-FL.IES",
 				"location" : "floor right",
                 "samples" : "3",
                 "volume_samples" : "3",
@@ -330,7 +330,7 @@
 				}
 			},
 			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/DSP7-P250I-FL.IES",
+                "filename" : "C:/Users/Evan/Documents/Programming/Lumiverse/Lumiverse/data/DSP7-P250I-FL.IES",
 				"location" : "floor right",
                 "samples" : "3",
                 "volume_samples" : "3",
@@ -519,8 +519,8 @@
 		},
         "arnold" : {
           "type" : "ArnoldAnimationPatch",
-            "sceneFile" : "J:/Lumiverse/Lumiverse/data/fruits.ass",
-            "pluginDir" : "J:/Lumiverse/Lumiverse/source/LumiverseCore/lib/arnold/plugin;I:/solidangle/mtoadeploy/2014/shaders/",
+            "sceneFile" : "C:/Users/Evan/Documents/Programming/Lumiverse/Lumiverse/data/cornell.ass",
+            "pluginDir" : "C:/Users/Evan/Documents/Programming/Lumiverse/Lumiverse/source/LumiverseCore/lib/arnold/plugin",
             "gamma" : 2.2,
             "lights" : {
                 "inno" : { "type" : "photometric_light" }, 

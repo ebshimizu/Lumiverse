@@ -93,8 +93,8 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
 	Simulation/ArnoldAnimationPatch.h Simulation/ArnoldAnimationPatch.cpp
 	Simulation/ArnoldFrameManager.h
 	Simulation/ArnoldMemoryFrameManager.h Simulation/ArnoldMemoryFrameManager.cpp
-	Simulation/ArnoldFileFrameManager.h Simulation/ArnoldFileFrameManager.cpp
-	Simulation/imageio.hpp Simulation/imageio.cpp
+	# Simulation/ArnoldFileFrameManager.h Simulation/ArnoldFileFrameManager.cpp
+	# Simulation/imageio.hpp Simulation/imageio.cpp
     Simulation/ArnoldParameterVector.h)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
@@ -133,10 +133,10 @@ ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 # Build with Arnold SDK (ai)
 IF (LumiverseCore_INCLUDE_ARNOLD)
 	# Png output
-	FIND_PACKAGE(PNG REQUIRED)
-	include_directories(
-		${PNG_INCLUDE_DIRS}
-	)
+	# FIND_PACKAGE(PNG REQUIRED)
+	#include_directories(
+	#	${PNG_INCLUDE_DIRS}
+	#)
     IF(WIN32)
         add_library(ai STATIC IMPORTED)
         set_property(TARGET ai PROPERTY IMPORTED_LOCATION

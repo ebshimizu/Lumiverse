@@ -45,7 +45,7 @@ namespace Lumiverse {
 	 * \brief Constructs a ArnoldMemoryFrameManager object.
 	 */
     ArnoldMemoryFrameManager() :
-        	m_bufferSet([] (FrameData l, FrameData r) { return l < r; }) { }
+        	ArnoldFrameManager(24), m_bufferSet([] (FrameData l, FrameData r) { return l < r; }) { }
 
 	/*!
 	 * \brief Destroys the object.
