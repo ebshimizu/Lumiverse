@@ -187,6 +187,9 @@ INSTALL(FILES ${typefiles} DESTINATION include/types)
 FILE(GLOB dmxfiles ${CMAKE_CURRENT_SOURCE_DIR}/DMX/*.h)
 INSTALL(FILES ${dmxfiles} DESTINATION include/DMX)
 
+FILE(GLOB simulationfiles ${CMAKE_CURRENT_SOURCE_DIR}/Simulation/*.h)
+INSTALL(FILES ${simulationfiles} DESTINATION include/Simulation)
+
 FILE(GLOB jsonfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/*.h)
 INSTALL(FILES ${jsonfiles} DESTINATION include/lib/libjson)
 
@@ -205,7 +208,7 @@ FILE(GLOB clpfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.hpp ${CMAKE_CURRENT_SOU
 INSTALL(FILES ${clpfiles} DESTINATION include/lib/clp)
 
 FILE(GLOB arnoldfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/arnold/include/*.h)
-INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold)
+INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold/include)
 
 INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
 INSTALL(TARGETS LumiverseCoreShared DESTINATION lib)
