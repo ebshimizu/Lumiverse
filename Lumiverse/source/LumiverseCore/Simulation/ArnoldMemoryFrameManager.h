@@ -7,6 +7,7 @@
 #pragma once
 
 #include "LumiverseCoreConfig.h"
+#ifdef USE_ARNOLD
 
 #include "../lib/libjson/libjson.h"
 #include "ArnoldFrameManager.h"
@@ -119,5 +120,7 @@ namespace Lumiverse {
     };
     
 }
+
+#endif
 
 #endif

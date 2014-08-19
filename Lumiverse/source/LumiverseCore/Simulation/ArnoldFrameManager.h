@@ -9,6 +9,8 @@
 
 #include "LumiverseCoreConfig.h"
 
+#ifdef USE_ARNOLD
+
 #include <atomic>
 #include <iostream>
 
@@ -118,5 +120,6 @@ namespace Lumiverse {
   };
     
 }
+#endif
 
 #endif

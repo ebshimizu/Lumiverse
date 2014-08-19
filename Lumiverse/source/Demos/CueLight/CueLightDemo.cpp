@@ -4,7 +4,7 @@
 #include "CueList.h"
 #include "Layer.h"
 #include "Playback.h"
-#include "Simulation/ArnoldAnimationPatch.h"
+//#include "Simulation/ArnoldAnimationPatch.h"
 
 using namespace std;
 using namespace Lumiverse;
@@ -13,8 +13,8 @@ void simulation() {
     Rig rig("J:/Lumiverse/Lumiverse/data/movingLights_box.rig.json");
 	rig.init();
 
-	ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)rig.getSimulationPatch("ArnoldAnimationPatch");
-	aap->reset();
+	//ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)rig.getSimulationPatch("ArnoldAnimationPatch");
+	//aap->reset();
 
 	rig.run();
 	while (1) { }
@@ -99,8 +99,8 @@ void testArnoldAnimation() {
     
     this_thread::sleep_for(chrono::seconds(1));
 	rig.stop();
-	ArnoldAnimationPatch *ap = (ArnoldAnimationPatch*)rig.getSimulationPatch("ArnoldAnimationPatch");
-	ap->close();
+//	ArnoldAnimationPatch *ap = (ArnoldAnimationPatch*)rig.getSimulationPatch("ArnoldAnimationPatch");
+//	ap->close();
     
     while (1) {
         
@@ -109,10 +109,10 @@ void testArnoldAnimation() {
 }
 
 int main(int argc, char**argv) {
-    simulation();
-    
-    return 0;
-  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.rig.json");
+//    simulation();  
+//    return 0;
+
+  Rig rig("C:/Users/Evan/Documents/Programming/Lumiverse/Lumiverse/data/movingLights.rig.json");
   shared_ptr<CueList> list1(new CueList("list1"));
   shared_ptr<Layer> layer1(new Layer(&rig, "layer1", 1));
   shared_ptr<CueList> list2(new CueList("list2"));

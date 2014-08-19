@@ -235,7 +235,7 @@ namespace Lumiverse {
         if (nextCue == nullptr) {
           // If there is no next cue, we stick to the one that does exist if the cue is
           // not a standalone cue.
-          if (nextCue->getType() != "Standalone") {
+          if (m_cueList->getCue(num)->getType() != "Standalone") {
             goToCue(num, 0.01f, 0.01f, 0);
             return;
           }

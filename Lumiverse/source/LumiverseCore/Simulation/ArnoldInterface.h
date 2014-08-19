@@ -8,6 +8,8 @@
 
 #include "LumiverseCoreConfig.h"
 
+#ifdef USE_ARNOLD
+
 #include <algorithm>
 #include <cstdio>
 #include "../lib/arnold/include/ai.h"
@@ -354,5 +356,7 @@ namespace Lumiverse {
 	  }
   }
 }
+
+#endif
 
 #endif
