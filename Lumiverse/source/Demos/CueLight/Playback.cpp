@@ -163,9 +163,9 @@ namespace Lumiverse {
     }
   }
 
-  bool Playback::addCueListToLayer(string cueListId, string layerName) {
+  bool Playback::addCueListToLayer(string cueListId, string layerName, bool resetCurrentCue) {
     if (m_layers.count(layerName) > 0 && m_cueLists.count(cueListId) > 0) {
-      m_layers[layerName]->setCueList(m_cueLists[cueListId]);
+      m_layers[layerName]->setCueList(m_cueLists[cueListId], resetCurrentCue);
       return true;
     }
 
@@ -234,6 +234,26 @@ namespace Lumiverse {
     return root;
   }
 
+  vector<string> Playback::getCueListNames() {
+    vector<string> names;
+
+    for (const auto& kvp : m_cueLists) {
+      names.push_back(kvp.first);
+    }
+
+    return names;
+  }
+
+  vector<string> Playback::getLayerNames() {
+    vector<string> names;
+
+    for (const auto& kvp : m_layers) {
+      names.push_back(kvp.first);
+    }
+
+    return names;
+  }
+
   bool Playback::load(string filename) {
     ifstream data;
     data.open(filename, ios::in | ios::binary | ios::ate);
@@ -295,7 +315,7 @@ namespace Lumiverse {
         auto cueList = it->find("cueList");
         if (cueList != it->end()) {
           // Got a cue list to assign
-          addCueListToLayer(cueList->as_string(), it->name());
+          addCueListToLayer(cueList->as_string(), it->name(), false);
         }
 
         it++;

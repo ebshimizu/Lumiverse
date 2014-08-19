@@ -9,19 +9,21 @@
 #ifndef __JuceWindowApp__RepaintTimer__
 #define __JuceWindowApp__RepaintTimer__
 
+#pragma once
+
 #include <iostream>
 #include "../JuceLibraryCode/JuceHeader.h"
 
 class RepaintTimer : public Timer {
 public:
-    RepaintTimer(ScopedPointer<Component> refresh_ptr)
+    RepaintTimer(Component *refresh_ptr)
     : m_refreshPointer(refresh_ptr) { }
     ~RepaintTimer() { }
     
     virtual void timerCallback();
     
 private:
-    ScopedPointer<Component> m_refreshPointer;
+    Component *m_refreshPointer;
 };
 
-#endif /* defined(__JuceWindowApp__RefreshTimer__) */
+#endif /* defined(__JuceWindowApp__RepaintTimer__) */

@@ -28,6 +28,8 @@ namespace Lumiverse {
 
       if (name == "name")
         m_name = it->as_string();
+      else if (name == "currentCue")
+        m_currentCue = it->as_float();
       else if (name == "priority")
         m_priority = it->as_int();
       else if (name == "invertFilter")
@@ -67,6 +69,7 @@ namespace Lumiverse {
 
     m_active = false;
     m_invertFilter = false;
+    m_currentCue = -1;  // Generally people won't have negative cue numbers, so we'll use -1 to mean no active cue.
   }
 
   Layer::~Layer() {
@@ -76,12 +79,16 @@ namespace Lumiverse {
     }
   }
 
-  void Layer::setCueList(shared_ptr<CueList> list) {
+  void Layer::setCueList(shared_ptr<CueList> list, bool resetCurrentCue) {
     m_cueList = list;
+
+    if (resetCurrentCue)
+      m_currentCue = -1;
   }
 
   void Layer::removeCueList() {
     m_cueList = nullptr;
+    m_currentCue = -1;
   }
 
   void Layer::setOpacity(float val) {
@@ -123,18 +130,22 @@ namespace Lumiverse {
 
   void Layer::go() {
     if (hasCueList()) {
-      float currentCue = m_cueList->getCurrentCue();
-      Cue* firstCue = m_cueList->getCue(currentCue);
-      Cue* nextCue = m_cueList->getNextCue(currentCue);
+      if (m_currentCue >= 0) {
+        Cue* firstCue = m_cueList->getCue(m_currentCue);
+        Cue* nextCue = m_cueList->getNextCue(m_currentCue);
 
-      if (firstCue != nullptr && nextCue != nullptr) {
-        m_cueList->setCurrentCue(m_cueList->getNextCueNum(currentCue));
-        goToCue(*firstCue, *nextCue, false);
+        if (firstCue != nullptr && nextCue != nullptr) {
+          m_currentCue = m_cueList->getNextCueNum(m_currentCue);
+          goToCue(*firstCue, *nextCue, false);
+        }
+        else {
+          stringstream ss;
+          ss << "Layer " << m_name << "Cannot go to next cue from cue " << m_currentCue;
+          Logger::log(ERR, ss.str());
+        }
       }
-      else {
-        stringstream ss;
-        ss << "Layer " << m_name << "Cannot go to next cue from cue " << currentCue;
-        Logger::log(ERR, ss.str());
+      else if (m_currentCue < 0) {
+        goToCue(m_cueList->getFirstCueNum());
       }
     }
     else {
@@ -146,17 +157,16 @@ namespace Lumiverse {
 
   void Layer::back() {
     if (hasCueList()) {
-      float currentCue = m_cueList->getCurrentCue();
-      Cue* firstCue = m_cueList->getCue(currentCue);
-      Cue* nextCue = m_cueList->getPrevCue(currentCue);
+      Cue* firstCue = m_cueList->getCue(m_currentCue);
+      Cue* nextCue = m_cueList->getPrevCue(m_currentCue);
 
       if (firstCue != nullptr && nextCue != nullptr) {
-        m_cueList->setCurrentCue(m_cueList->getPrevCueNum(currentCue));
+        m_currentCue = m_cueList->getPrevCueNum(m_currentCue);
         goToCue(*firstCue, *nextCue, false);
       }
       else {
         stringstream ss;
-        ss << "Layer " << m_name << "Cannot go to previous cue from cue " << currentCue;
+        ss << "Layer " << m_name << " cannot go to previous cue from cue " << m_currentCue;
         Logger::log(ERR, ss.str());
       }
     }
@@ -167,13 +177,13 @@ namespace Lumiverse {
     }
   }
 
-  void Layer::goToCue(float num, float time) {
+  void Layer::goToCue(float num, float up, float down, float delay) {
     if (hasCueList()) {
       Cue* nextCue = m_cueList->getCue(num);
       
       if (nextCue != nullptr) {
-        Cue tempCue(m_layerState, time);
-        m_cueList->setCurrentCue(num);
+        Cue tempCue(m_layerState, up, down, delay);
+        m_currentCue = num;
         goToCue(tempCue, *nextCue, true);
       }
       else {
@@ -198,6 +208,7 @@ namespace Lumiverse {
     pbData.activeKeyframes = diff(first, next, assert);
 
     pbData.start = chrono::high_resolution_clock::now();
+    pbData.delay = first.getDelay();
 
     stringstream ss;
     ss << "Layer " << m_name << " began a cue playback at " << chrono::duration_cast<chrono::seconds>(pbData.start.time_since_epoch()).count();
@@ -211,12 +222,23 @@ namespace Lumiverse {
     if (hasCueList()) {
       Cue* currentCue = m_cueList->getCue(num);
 
+      if (time > currentCue->getLength()) {
+        stringstream ss;
+        ss << "Cannot seek to time " << time << " in cue " << num << " (length: " << currentCue->getLength() << ")";
+        Logger::log(WARN, ss.str());
+        return;
+      }
+
       if (currentCue != nullptr) {
+        m_currentCue = num;
         Cue* nextCue = m_cueList->getNextCue(num);
         if (nextCue == nullptr) {
-          // If there is no next cue, we stick to the one that does exist.
-          goToCue(num, 0.01f);
-          return;
+          // If there is no next cue, we stick to the one that does exist if the cue is
+          // not a standalone cue.
+          if (nextCue->getType() != "Standalone") {
+            goToCue(num, 0.01f, 0.01f, 0);
+            return;
+          }
         }
 
         // Interpolation time. For the seek function, we just pull all the relevant values,
@@ -284,8 +306,13 @@ namespace Lumiverse {
 
       while (pb != m_playbackData.end()) {
         float cueTime = chrono::duration_cast<chrono::milliseconds>(updateStart - pb->start).count() / 1000.0f;
-        // clamp cueTime at 0
-        cueTime = (cueTime < 0) ? 0 : cueTime;
+        cueTime -= pb->delay;
+
+        // If we have a delay on the cue, don't do anything while the cue time is negative
+        if (cueTime < 0) {
+          pb++; 
+          continue;
+        }
 
         auto devices = pb->activeKeyframes.begin();
 
@@ -481,6 +508,7 @@ namespace Lumiverse {
     layer.push_back(JSONNode("active", m_active));
     layer.push_back(JSONNode("mode", BlendModeToString[m_mode]));
     layer.push_back(JSONNode("opacity", m_opacity));
+    layer.push_back(JSONNode("currentCue", m_currentCue));
     
     if (hasCueList()) {
       layer.push_back(JSONNode("cueList", m_cueList->getName()));

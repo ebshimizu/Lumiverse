@@ -120,8 +120,9 @@ namespace Lumiverse {
     function will return false.
     \param cueListId Cue list identifier
     \param layerName Name of the layer to assign the cue list to.
+    \param resetCurrenCue Set to true to reset the current cue of the layer (resets to -1)
     */
-    bool addCueListToLayer(string cueListId, string layerName);
+    bool addCueListToLayer(string cueListId, string layerName, bool resetCurrentCue = true);
 
     /*!
     \brief Removes a cue list assigned to a particular layer.
@@ -168,6 +169,15 @@ namespace Lumiverse {
 
     /*! \brief Returns a pointer to the rig. */
     Rig* getRig() { return m_rig; }
+
+    /*! \brief Returns a list of the cue list names contained in the Playback. */
+    vector<string> getCueListNames();
+
+    /*! \brief Returns a list of the layer names contained in the Playback. */
+    vector<string> getLayerNames();
+
+    /*! \brief Returns a reference to the layers in the Playback. */
+    const map<string, shared_ptr<Layer> >& getLayers() { return m_layers; }
 
   private:
     /*! \brief Map of layer names to layers. */

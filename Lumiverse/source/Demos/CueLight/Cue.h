@@ -105,7 +105,7 @@ public:
   \param devices Map of devices to store. 
   \param time Default cue timing to use
   */
-  Cue(map<string, Device*> devices, float time);
+  Cue(map<string, Device*> devices, float up, float down, float delay);
 
   // Creates a cue with different up and down fades.
   Cue(Rig* rig, float up, float down);
@@ -149,22 +149,25 @@ public:
   // is when you'd stop tracking the changes through.
   void trackedUpdate(changedParams& oldVals, Rig* rig);
 
-  // TODO
-  // Delay has a few scenarios that need to be addressed.
-  // 1. Delay was previously 0 going to non-zero
-  //    -Move all other keyframes forwards by delay
-  //    -Add a keyframe with the same value as the first keyframe at time t=delay
-  // 2. Delay was previously non-zero
-  //    -Move all keyframes except the first by newDelay - oldDelay. May need to traverse in forwards or backwards
-  //     order depending on if the diff is positive or negative
-  // If at any point a keyframe would go below t=0, return false and print an error message.
-  // Should probably test that before doing the actual operation
-  // bool setDelay(float delay)
+  /*!
+  \brief Sets the delay for a cue
+  
+  The delay tells the cue how long to wait before actually animating anything.
+  \param delay Delay in seconds.
+  */
+  void setDelay(float delay);
 
-  // Sets the time for the cue.
+  /*!
+  \brief Sets the upfade and downfade to the specified value.
+  \param time Upfade/downfade in seconds.
+  */
   void setTime(float time);
 
-  // Sets a time with an up and down fade that are different
+  /*!
+  \brief Sets a time with an up and down fade that are different.
+  \param up Upfade in seconds
+  \param down Downfade in seconds
+  */
   void setTime(float up, float down);
 
   // Keyframe modifiers
@@ -197,11 +200,42 @@ public:
   // Gets the downfade
   float getDownfade() { return m_downfade; }
 
+  /*! \brief Gets the delay from a cue. */
+  float getDelay() { return m_delay; }
+
   // Returns the cue data for a device's parameter
   set<Keyframe>& getParamData(string deviceId, string param) { return m_cueData[deviceId][param]; }
 
   /*! \brief Returns the JSON representation of the cue. */
   JSONNode toJSON();
+
+  /*!
+  \brief Returns the length of the cue.
+  
+  If the length hasn't been updated recently, this will calculate it.
+  Otherwise it'll return the m_length value calculated at an earlier time.
+  */
+  float getLength();
+
+  /*!
+  \brief Returns a one word description of the keyframe characteristics
+
+  Returns one of three values at the moment:
+  Standalone - Cue contains no null keyframes (does not cross fade between cues)
+  Hybrid - Cue contains null keyframes (some parameters cross fade between cues)
+  Linked - All parameters have null keyframes (all parameters cross fade between cues)
+  */
+  string getType();
+
+  /*!
+  \brief Returns a copy of the first keyframe for the specified device and parameter.
+  */
+  Keyframe getFirstKeyframe(string device, string param);
+
+  /*!
+  \brief Returns a copy of the last keyframe for the specified device and parameter
+  */
+  Keyframe getLastKeyframe(string device, string param);
 
 private:
   // Upfade time
@@ -212,6 +246,19 @@ private:
 
   // Delay before doing any fades, default timing.
   float m_delay;
+
+  /*! \brief Stores the length of the cue in seconds. */
+  float m_length;
+
+  /*! \brief Indicates if the length stored in m_length is up to date. */
+  bool m_lengthIsUpdated;
+
+  /*!
+  \brief Cue type.
+  
+  If equal to "" then getType() will recheck the type of the cue;
+  */
+  string m_type;
 
   /*!
   \brief Data for this particular cue.

@@ -9,10 +9,10 @@
  */
 
 #pragma once
-#include <ai_nodes.h>
-#include <ai_api.h>
-#include <ai_bbox.h>
-#include <ai_types.h>
+#include "ai_nodes.h"
+#include "ai_api.h"
+#include "ai_bbox.h"
+#include "ai_types.h"
 
 // forward declaration
 struct AtOutputIterator;

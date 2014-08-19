@@ -10,7 +10,7 @@
 
 #include <algorithm>
 #include <cstdio>
-#include <ai.h>
+#include "../lib/arnold/include/ai.h"
 #include "../Patch.h"
 #include "../lib/libjson/libjson.h"
 #include "ArnoldParameterVector.h"
@@ -53,12 +53,12 @@ namespace Lumiverse {
     * The frame buffer point is set to NULL. The buffer will be initialized after getting the size of output.
     * The default gamma is 2.2.
     */
-    ArnoldInterface() : m_buffer(NULL), m_gamma(2.2) { }
+    ArnoldInterface() : m_buffer(NULL), m_gamma(2.2), m_samples(-3) { }
       
     /*!
     * \brief Destroys the object.
     */
-    ~ArnoldInterface() { delete[] m_buffer; }
+    virtual ~ArnoldInterface() { delete[] m_buffer; }
       
     /*!
     * \brief Initializes the Arnold renderer.
@@ -71,12 +71,6 @@ namespace Lumiverse {
     * \brief Closes the Arnold session.
     */
     void close();
-
-    /*!
-    * \brief Returns the JSON representation of the interface
-    * \return JSON node containing the data for this ArnoldInterface
-    */
-    virtual JSONNode toJSON();
 
     /*!
     * \brief Gets the type of this object.
@@ -177,6 +171,41 @@ namespace Lumiverse {
     * \return The gamma.
     */
     float getGamma() { return m_gamma; }
+    
+	/*!
+	* \brief Sets the camera sampling rate used for current rendering.
+	*
+	* Although the system may have multiple camera sampling rates (e.g. for interactive mode and for real rendering),
+	* this rate will be used for the current rendering.
+	* \param samples The sampling rate.
+	*/
+    void setSamples(int samples) { m_samples = samples; }
+      
+	/*!
+	* \brief Gets the sampling rate.
+	*
+	* \return The sampling rate.
+	*/
+    int getSamples() { return m_samples; }
+      
+    /*!
+    * \brief Starts rendering with Arnold.
+    * Returns the error code of AiRender, so the caller can know if the renderer was interrupted.
+    * \return Error code of arnold.
+    */
+    int render();
+      
+    /*!
+    * \brief Interrupts current rendering.
+    */
+    void interrupt();
+
+	/*!
+	* \brief Parses the arnold parameter map to a JSON node.
+	* \return The Json node.
+	*/
+	JSONNode arnoldParameterToJSON();
+
       
   private:
     /*!
@@ -207,15 +236,18 @@ namespace Lumiverse {
     template<size_t D, typename T, class C>
     void setArrayParameter(AtNode *node, const std::string &paramName, const std::string &value,
                            bool (*AiArraySet) (AtArray*, AtUInt32, C, const char*, int), const int AiType) const;
-      
+            
     /*!
-    * \brief Parses a formatted string into a ArnoldParameterVector instance.
+    * \brief Appends the new output command to the outputs attribute of options.
     *
-    * \param value A formatted string.
-    * \param vector The returned vector.
+    * \param buffer_output The output command (typically using a driver_buffer node).
     */
-    template<size_t D, typename T>
-    void parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) const;
+    void appendToOutputs(const std::string buffer_output);
+
+	/*!
+	* \brief Appends the new output command to the outputs attribute of options.
+	*/
+	void setSamplesOption();
       
     /*!
     * \brief The list containing the mappings between metadata to Arnold parameter.
@@ -252,7 +284,43 @@ namespace Lumiverse {
     * \brief The gamma for gamma correction.
     */
     float m_gamma;
+      
+    /*!
+    * \brief Arnold AA samples
+    */
+    int m_samples;
   };
+
+  /*!
+  * \brief Parses a formatted string into a ArnoldParameterVector instance.
+  *
+  * \param value A formatted string.
+  * \param vector The returned vector.
+  */
+  template<size_t D, typename T>
+  static void parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) {
+	  T element;
+	  std::string value_spaceless = value;
+
+	  // Removes spaces when the input type is not string
+	  if (typeid(std::string) != typeid(T))
+		  std::remove_if(value_spaceless.begin(), value_spaceless.end(),
+		  [](char x){return std::isspace(x); });
+
+	  // Format: "v1, v2, ..."
+	  size_t offset = 0;
+	  for (size_t i = 0; i < D; i++) {
+		  std::istringstream iss(value_spaceless.substr(offset));
+		  iss >> element;
+		  vector[i] = element;
+
+		  offset = value_spaceless.find(",", offset);
+
+		  if (offset == std::string::npos)
+			  break;
+		  offset++;
+	  }
+  }
 }
 
 #endif

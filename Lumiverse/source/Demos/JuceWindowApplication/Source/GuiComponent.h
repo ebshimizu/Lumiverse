@@ -20,9 +20,18 @@
 #ifndef __JUCE_HEADER_F1E5D9BB3E654E28__
 #define __JUCE_HEADER_F1E5D9BB3E654E28__
 
+#pragma once
+
 //[Headers]     -- You can add your own extra header files here --
+#include <vector>
+#include <cstdio>
 #include "JuceHeader.h"
+#include "GuiConfig.h"
+#include "DeviceComponent.h"
+#include "AnimationComponent.h"
 #include "../../../LumiverseCore/LumiverseCore.h"
+#include "RepaintTimer.h"
+#include "AnimationTimer.h"
 //[/Headers]
 
 using namespace Lumiverse;
@@ -35,8 +44,65 @@ using namespace Lumiverse;
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
+class InterruptionComponent : public ButtonPropertyComponent
+{
+public:
+    InterruptionComponent (const String& propertyName, Rig *rig)
+    : ButtonPropertyComponent (propertyName, true), m_rig(rig)
+    {
+        refresh();
+    }
+    
+    void buttonClicked() override
+    {
+        ((ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch"))->interruptRender();
+    }
+    
+    String getButtonText() const override
+    {
+        return "Interrupt";
+    }
+    
+private:
+    Rig *m_rig;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (InterruptionComponent)
+};
+
+class SamplesComponent : public SliderPropertyComponent
+{
+public:
+    SamplesComponent (const String& propertyName, Rig *rig, const bool is_preview)
+    : SliderPropertyComponent (propertyName, -3, 8, 1), m_rig(rig), m_is_preview(is_preview)
+    {
+        ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+        int defaultVal = (m_is_preview) ? aap->getPreviewSamples() : aap->getRenderSamples();
+
+        setValue (defaultVal);
+    }
+    
+    void setValue (double newValue) override
+    {
+        slider.setValue (newValue);
+    }
+    
+    void sliderValueChanged (Slider *slider) {
+        ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+        int val = (int)slider->getValue();
+        if (m_is_preview) {
+            aap->setPreviewSamples(val);
+            aap->rerender();
+        }
+        else
+            aap->setRenderSamples(val);
+    }
+    
+private:
+    Rig *m_rig;
+    bool m_is_preview;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SamplesComponent)
+};
+
 class GuiComponent  : public Component,
-                      public SliderListener,
                       public ButtonListener
 {
 public:
@@ -51,26 +117,38 @@ public:
 
     void paint (Graphics& g);
     void resized();
-    void sliderValueChanged (Slider* sliderThatWasMoved);
     void buttonClicked (Button* buttonThatWasClicked);
     
+    void setBuffer(float *buffer) {
+        m_color_buffer = buffer;
+    }
+    
 private:
+    int addDevicePads();
+    
+    void drawMode(Graphics& g);
     //[UserVariables]   -- You can add your own custom variables in this section.
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Label> m_intensity_label;
-    ScopedPointer<Slider> m_intensity_slider;
-    ScopedPointer<Button> m_abort_button;
+    InterruptionComponent *m_interrupt;
+    Array<SamplesComponent*> m_samples;
     ScopedPointer<LookAndFeel> m_lookandfeel;
+    ScopedPointer<AnimationComponent> m_animation_pad;
+    Array<PropertyComponent*> m_device_pads;
+    
+    PropertyPanel m_interactive_panel;
+    PropertyPanel m_devices_property_panel;
+    ConcertinaPanel m_concertina_panel;
     
     Image m_panel;
     float *m_color_buffer;
     
     int m_width, m_height;
+    int m_upper_height;
     
     Rig *m_rig;
-
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GuiComponent)
 };

@@ -143,9 +143,11 @@ public:
   /*!
   \brief Creates a cue from the programmer's state.
 
-  \param time Cue time in seconds. Default is 3.
+  \param upfade Upfade time in seconds
+  \param downfade Downfade time in seconds
+  \param delay Delay in seconds
   */
-  Cue getCue(float time = 3);
+  Cue getCue(float upfade = 3, float downfade = 3, float delay = 0);
 
   /*!
   \brief Captures the selected devices and copies their current values from the rig.

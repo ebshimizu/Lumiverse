@@ -241,8 +241,28 @@ namespace Lumiverse {
     */
     bool setColorRGB(string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
 
-    // Will need additional overloads for each new type. Which kinda sucks.
+    /*! \brief Sets the value of a LumiverseColor parameter
+    *
+    * Proxy for LumiverseColor::setColorChannel().
+    * \param param Parameter name.
+    * \param channel Channel name.
+    * \param val Channel value.
+    * \return False if parameter changed does not exist prior to set or channel doesn't exist.
+    * \sa LumiverseColor::setColorChannel(), LumiverseColor, LumiverseType
+    */
+    bool setColorChannel(string param, string channel, double val);
 
+      
+    // Will need additional overloads for each new type. Which kinda sucks.
+      
+    /*!
+    * \brief Copies the data from source into target parameter.
+    *
+    * \param param Id of the target parameter
+    * \param source Pointer to the data source
+    */
+    void copyParamByValue(string param, LumiverseType* source);
+      
     /*! 
     * \brief Checks for the existance of a parameter
     *

@@ -1,6 +1,4 @@
 #include "Rig.h"
-// TODO : config
-#include "Simulation/ArnoldPatch.h"
 
 namespace Lumiverse {
 
@@ -119,9 +117,28 @@ void Rig::loadPatches(JSONNode root) {
       addPatch(nodeName, patch);
     }
 #ifdef USE_ARNOLD
+    else if (patchType == "ArnoldAnimationPatch") {
+      patch = (Patch*) new ArnoldAnimationPatch(*i);
+      addPatch(nodeName, patch);
+      Device::DeviceCallbackFunction callback = std::bind(&ArnoldAnimationPatch::onDeviceChanged,
+                                                            (ArnoldAnimationPatch*)patch,
+                                                            std::placeholders::_1);
+      for (Device *d : getDeviceRaw()) {
+          d->addParameterChangedCallback(callback);
+          d->addMetadataChangedCallback(callback);
+      }
+    }
     else if (patchType == "ArnoldPatch") {
       patch = (Patch*) new ArnoldPatch(*i);
       addPatch(nodeName, patch);
+        
+        Device::DeviceCallbackFunction callback = std::bind(&ArnoldPatch::onDeviceChanged,
+                                                            (ArnoldPatch*)patch,
+                                                            std::placeholders::_1);
+        for (Device *d : getDeviceRaw()) {
+            d->addParameterChangedCallback(callback);
+            d->addMetadataChangedCallback(callback);
+        }
     }
 #endif
     else {
@@ -201,8 +218,9 @@ bool Rig::load(string filename) {
   if (data.is_open()) {
     reset();
 
+    // "+ 1" for the ending
     streamoff size = data.tellg();
-    char* memblock = new char[(unsigned int)size];
+    char* memblock = new char[(unsigned int)size + 1];
 
     data.seekg(0, ios::beg);
 
@@ -213,6 +231,10 @@ bool Rig::load(string filename) {
     data.read(memblock, size);
     data.close();
 
+    // It's not guaranteed that the following memory after memblock is blank.
+    // C-style string needs an end.
+    memblock[size] = '\0';
+      
     JSONNode n = libjson::parse(memblock);
 
     // This could get to be a large function, so let's break off into a helper.
@@ -358,7 +380,8 @@ void Rig::setAllDevices(map<string, Device*> devices) {
       for (auto& param : params) {
         // We want to copy instead of assign since we don't know where that LumiverseType data
         // is going to end up. Maybe it'd be better if devices did a copy instead...
-        LumiverseTypeUtils::copyByVal(param.second, m_devicesById[kvp.first]->getParam(param.first));
+        //LumiverseTypeUtils::copyByVal(param.second, m_devicesById[kvp.first]->getParam(param.first));
+        m_devicesById[kvp.first]->copyParamByValue(param.first, param.second);
       }
     }
     else {
@@ -456,9 +479,11 @@ JSONNode Rig::toJSON() {
   return root;
 }
     
-Patch* Rig::getSimulationPatch() {
+Patch* Rig::getSimulationPatch(string type) {
     for (pair<string, Patch*> patch : m_patches) {
-        if (patch.second->getType() == "ArnoldPatch") {
+        if ((patch.second->getType() == "ArnoldPatch" ||
+            patch.second->getType() == "ArnoldAnimationPatch") &&
+            patch.second->getType() == type) {
             return patch.second;
         }
     }

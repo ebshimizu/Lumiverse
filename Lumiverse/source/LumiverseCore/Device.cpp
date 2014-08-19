@@ -66,7 +66,9 @@ LumiverseType* Device::getParam(string param) {
 
 LumiverseColor* Device::getColor(string param) {
   if (m_parameters.count(param) > 0) {
-    return dynamic_cast<LumiverseColor*>(m_parameters[param]);
+      if (m_parameters[param]->getTypeName() == "color") {
+          return (LumiverseColor*)(m_parameters[param]);
+      }
   }
 
   return nullptr;
@@ -96,8 +98,19 @@ bool Device::setParam(string param, float val) {
     m_parameters[param] = (LumiverseType*) new LumiverseFloat();
   }
 
-  *((LumiverseFloat *)m_parameters[param]) = val;
-   
+  // Checks param type
+  if (m_parameters[param]->getTypeName() != "float" &&
+	  m_parameters[param]->getTypeName() != "orientation") {
+      Logger::log(WARN, "Trying to assign float value to a non-float type.");
+      
+      return false;
+  }
+    
+  if (m_parameters[param]->getTypeName() == "float")
+	*((LumiverseFloat *)m_parameters[param]) = val;
+  else 
+	*((LumiverseOrientation *)m_parameters[param]) = val;
+
   // callback
   onParameterChanged();
     
@@ -109,6 +122,13 @@ bool Device::setParam(string param, string val, float val2) {
     return false;
   }
 
+  // Checks param type
+  if (m_parameters[param]->getTypeName() != "enum") {
+    Logger::log(WARN, "Trying to assign enum value to a non-enum type.");
+        
+    return false;
+  }
+    
   LumiverseEnum* data = (LumiverseEnum *)m_parameters[param];
   data->setVal(val);
 
@@ -123,60 +143,107 @@ bool Device::setParam(string param, string val, float val2) {
 }
 
 bool Device::setParam(string param, string val, float val2, LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode) {
-  if (m_parameters.count(param) == 0) {
+  if (m_parameters.count(param) == 0 ||
+      m_parameters[param]->getTypeName() != "enum") {
     return false;
   }
-
+    
   LumiverseEnum* data = (LumiverseEnum *)m_parameters[param];
   data->setVal(val, val2, mode, interpMode);
 
+  // callback
+  onParameterChanged();
+    
   return true;
 }
 
 bool Device::setParam(string param, string channel, double val) {
-  if (m_parameters.count(param) == 0) {
+  if (m_parameters.count(param) == 0 ||
+      m_parameters[param]->getTypeName() != "color") {
     return false;
   }
 
   LumiverseColor* data = (LumiverseColor*)m_parameters[param];
-  data->setColorChannel(channel, val);
-
-  return true;
+  bool ret;
+  if ((ret = data->setColorChannel(channel, val)))
+      // callback
+      onParameterChanged();
+    
+  return ret;
 }
 
 bool Device::setParam(string param, double x, double y, double weight) {
-  if (m_parameters.count(param) == 0) {
+  if (m_parameters.count(param) == 0 ||
+        m_parameters[param]->getTypeName() != "color") {
     return false;
   }
 
   LumiverseColor* data = (LumiverseColor*)m_parameters[param];
   data->setxy(x, y, weight);
 
+  // callback
+  onParameterChanged();
+    
   return true;
 }
 
 bool Device::setColorRGBRaw(string param, double r, double g, double b, double weight) {
-  if (m_parameters.count(param) == 0) {
+  if (m_parameters.count(param) == 0 ||
+        m_parameters[param]->getTypeName() != "color") {
     return false;
   }
 
   LumiverseColor* data = (LumiverseColor*)m_parameters[param];
   data->setRGBRaw(r, g, b, weight);
 
+  // callback
+  onParameterChanged();
+    
   return true;
 }
 
 bool Device::setColorRGB(string param, double r, double g, double b, double weight, RGBColorSpace cs) {
-  if (m_parameters.count(param) == 0) {
+  if (m_parameters.count(param) == 0 ||
+        m_parameters[param]->getTypeName() != "color") {
     return false;
   }
 
   LumiverseColor* data = (LumiverseColor*)m_parameters[param];
   data->setRGB(r, g, b, weight, cs);
 
+  // callback
+  onParameterChanged();
+    
   return true;
 }
-
+    
+void Device::copyParamByValue(string param, LumiverseType* source) {
+    LumiverseType *target = getParam(param);
+    
+	// Skips this copy if the target value equals the current value
+    if (!LumiverseTypeUtils::areSameType(source, target) ||
+		LumiverseTypeUtils::equals(target, source))
+        return;
+    
+    if (source->getTypeName() == "float") {
+        *((LumiverseFloat*)target) = *((LumiverseFloat*)source);
+    }
+    else if (source->getTypeName() == "enum") {
+        *((LumiverseEnum*)target) = *((LumiverseEnum*)source);
+    }
+    else if (source->getTypeName() == "color") {
+        *((LumiverseColor*)target) = *((LumiverseColor*)source);
+    }
+	else if (source->getTypeName() == "orientation") {
+		*((LumiverseOrientation*)target) = *((LumiverseOrientation*)source);
+	}
+    else {
+        return;
+    }
+    
+    onParameterChanged();
+}
+    
 bool Device::paramExists(string param) {
   return (m_parameters.count(param) > 0);
 }
@@ -380,14 +447,15 @@ void Device::loadParams(const JSONNode data) {
   JSONNode::const_iterator i = data.begin();
 
   while (i != data.end()){
-    bool err = false;
-
     // get the node name and value as a string
     std::string paramName = i->name();
 
     // Go into the child node that has all the param data
     JSONNode paramData = *i;
-    setParam(paramName, LumiverseTypeUtils::loadFromJSON(paramData));
+    LumiverseType *val = LumiverseTypeUtils::loadFromJSON(paramData);
+      
+    if (val != nullptr)
+        setParam(paramName, val);
 
     //increment the iterator
     ++i;

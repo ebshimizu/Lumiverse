@@ -4,12 +4,115 @@
 #include "CueList.h"
 #include "Layer.h"
 #include "Playback.h"
+#include "Simulation/ArnoldAnimationPatch.h"
 
 using namespace std;
 using namespace Lumiverse;
 
+void simulation() {
+    Rig rig("J:/Lumiverse/Lumiverse/data/movingLights_box.rig.json");
+	rig.init();
+
+	ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)rig.getSimulationPatch("ArnoldAnimationPatch");
+	aap->reset();
+
+	rig.run();
+	while (1) { }
+
+	return;
+
+    shared_ptr<CueList> list1(new CueList("list1"));
+    shared_ptr<Layer> layer1(new Layer(&rig, "layer1", 1));
+    
+    layer1->setMode(Layer::BLEND_OPAQUE);
+    layer1->activate();
+    
+    Playback pb(&rig);
+    pb.attachToRig();
+    
+    rig.init();
+    
+    DeviceSet par = rig.query("par1");
+    
+    par.setParam("intensity", 0.8f);
+    
+    Cue cue1(&rig, 1.0f, 1.0f);
+    list1->storeCue(1, cue1);
+    
+    pb.addCueList(list1);
+    pb.addLayer(layer1);
+    pb.addCueListToLayer("list1", "layer1");
+    
+    // Test keyframe insertion
+    //DeviceSet chan1 = rig.query("#1");
+    //chan1.setParam("intensity", 0.0f);
+    par.setParam("intensity", 0.5f);
+
+    list1->getCue(1)->insertKeyframe(4, par);
+    
+    par.setParam("intensity", 0.3f);
+    Cue cue2(&rig);
+    list1->storeCue(2, cue2);
+    
+    //par.reset();
+    //list1->getCue(1)->insertKeyframe(5, par);
+    
+    //chan1.setParam("intensity", 1.0f);
+    //list1.getCue(1)->insertKeyframe(4.5f, chan1);
+    
+    // Test keyframe overwrite
+    //chan1.setParam("intensity", 0.0f);
+    //list1.getCue(1)->insertKeyframe(4.5f, chan1);
+    //pb.save("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric_cue.pb.json", true);
+    pb.start();
+    rig.run();
+    
+    layer1->go();
+    layer1->go();
+    
+    time_t t = 0;
+    while (1) {
+		/*
+        float val;
+        rig["par1"]->getParam("intensity", val);
+        cout << "par1 Intensity: " << val << "\t" << t << "\n";
+        this_thread::sleep_for(chrono::milliseconds(500));
+        t += 500;
+		*/
+    }
+}
+
+void testArnoldAnimation() {
+	Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric_cue.json");
+	DeviceSet par1 = rig.query("par1");
+    
+	rig.init();
+	rig.run();
+
+	this_thread::sleep_for(chrono::seconds(2));
+
+	par1.setParam("intensity", 0.5);
+
+	this_thread::sleep_for(chrono::seconds(6));
+
+	par1.setParam("intensity", 1.8);
+    
+    this_thread::sleep_for(chrono::seconds(1));
+	rig.stop();
+	ArnoldAnimationPatch *ap = (ArnoldAnimationPatch*)rig.getSimulationPatch("ArnoldAnimationPatch");
+	ap->close();
+    
+    while (1) {
+        
+    }
+    
+}
+
 int main(int argc, char**argv) {
-  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.json");
+    simulation();
+    
+    return 0;
+  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.rig.json");
   shared_ptr<CueList> list1(new CueList("list1"));
   shared_ptr<Layer> layer1(new Layer(&rig, "layer1", 1));
   shared_ptr<CueList> list2(new CueList("list2"));
@@ -33,11 +136,11 @@ int main(int argc, char**argv) {
   color->setxy(0.4, 0.4);
 
   inno.setParam("intensity", 0.0f);
-  inno.setParam("shutter", 0.95f);
+  inno.setParam("shutter", "OPEN");
   inno.setParam("tilt", 0.5f);
   inno.setParam("pan", 0.75f);
 
-  Cue cue1(&rig, 5.0f, 1.0f);
+  Cue cue1(&rig, 5.0f, 1.0f, 5.0f);
   list1->storeCue(1, cue1);
 
   color->setxy(0.2, 0.3);
