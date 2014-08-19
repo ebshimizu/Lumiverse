@@ -134,6 +134,9 @@ void GuiComponent::paint (Graphics& g)
     
     // Draws mode
     drawMode(g);
+
+	// Draws bucket positions
+	drawBuckets(g);
 }
 
 void GuiComponent::resized()
@@ -171,6 +174,19 @@ int GuiComponent::addDevicePads() {
     return height;
 }
 
+void GuiComponent::drawBuckets(Graphics& g) {
+	ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_rig->getSimulationPatch("ArnoldAnimationPatch");
+	BucketPositionInfo *buckets = aap->getBucketPositionInfo();
+	size_t num = aap->getBucketNumber();
+	Colour baseColour = Colours::orange;
+
+	for (size_t i = 0; i < num && buckets[i].bucket_size_x > 0; i++) {
+		g.setColour(baseColour.brighter(0.5f).withAlpha(0.8f));
+		g.drawRect((float)buckets[i].bucket_xo, (float)buckets[i].bucket_yo,
+			(float)buckets[i].bucket_size_x, (float)buckets[i].bucket_size_y, 0.5f);
+	}
+}
+
 void GuiComponent::drawMode(Graphics& g) {
     Colour baseColour = Colour::fromFloatRGBA(0.95, 0.95, 0.95, 1.f);
     
@@ -184,7 +200,11 @@ void GuiComponent::drawMode(Graphics& g) {
     
     switch (mode) {
         case ArnoldAnimationMode::INTERACTIVE:
-            mode_str = "Interactive";
+			char percent[10];
+			sprintf(percent, "%.2f%%", aap->getPercentage());
+            mode_str = "Interactive: ";
+			mode_str.append(percent);
+
             break;
         case ArnoldAnimationMode::RECORDING:
             mode_str = "Recording";
@@ -206,10 +226,8 @@ void GuiComponent::drawMode(Graphics& g) {
             break;
     }
     
-    
-    
-    g.drawFittedText(TRANS(mode_str), m_width - f.getHeight() * 6.f - 10, m_height - f.getHeight() * 1.5f - 10,
-                     f.getHeight() * 6.f, f.getHeight() * 1.5f, Justification(18), 1);
+    g.drawFittedText(TRANS(mode_str), m_width - f.getHeight() * 8.f - 10, m_height - f.getHeight() * 1.5f - 10,
+                     f.getHeight() * 8.f, f.getHeight() * 1.5f, Justification(18), 1);
 }
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 //[/MiscUserCode]

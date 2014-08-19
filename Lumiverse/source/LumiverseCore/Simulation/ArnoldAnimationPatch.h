@@ -232,7 +232,7 @@ namespace Lumiverse {
 	* Also the accuracy is limited to number of frame.
 	* \return The current rendering progress as percentage
 	*/
-    float getPercentage() const;
+    virtual float getPercentage() const override;
 
   private:
     /*!

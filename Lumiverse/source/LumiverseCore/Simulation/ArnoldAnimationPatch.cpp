@@ -185,13 +185,15 @@ void ArnoldAnimationPatch::deleteFinishedCallback(int id) {
     
 float ArnoldAnimationPatch::getPercentage() const {
     // Rough number.
-    if (m_mode != ArnoldAnimationMode::RENDERING)
-        return 0.f;
-    size_t finished = m_frameManager->getFrameNum();
-    size_t sum = finished + m_queuedFrameDeviceInfo.size();
-    sum = (sum == 0) ? 1 : sum;
-    
-    return ((float)finished) / sum * 100.f;
+    if (m_mode == ArnoldAnimationMode::INTERACTIVE)
+		return ArnoldPatch::getPercentage();
+	else if (m_mode == ArnoldAnimationMode::RENDERING) {
+		size_t finished = m_frameManager->getFrameNum();
+		size_t sum = finished + m_queuedFrameDeviceInfo.size();
+		sum = (sum == 0) ? 1 : sum;
+
+		return ((float)finished * 100.f + m_interface.getPercentage()) / sum;
+	}
 }
     
 //============================ Worker Code =========================
