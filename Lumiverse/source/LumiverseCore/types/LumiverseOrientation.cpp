@@ -45,9 +45,15 @@ JSONNode LumiverseOrientation::toJSON(string name) {
 string LumiverseOrientation::asString() {
   char buf[32];
 #ifndef _MSC_VER
-  snprintf(buf, 31, "%.2f (%s)", m_val, m_unit.c_str());
+  if (m_unit == DEGREE)
+    snprintf(buf, 31, "%.2f deg", m_val);
+  else if (m_unit == RADIAN)
+    snprintf(buf, 31, "%.2f rad", m_val);
 #else
-  _snprintf_s(buf, 31, "%.2f (%s)", m_val, oriToString[m_unit].c_str());
+  if (m_unit == DEGREE)
+    _snprintf_s(buf, 31, "%.2f deg", m_val);
+  else if (m_unit == RADIAN)
+    _snprintf_s(buf, 31, "%.2f rad", m_val);
 #endif
   return string(buf);
 }
