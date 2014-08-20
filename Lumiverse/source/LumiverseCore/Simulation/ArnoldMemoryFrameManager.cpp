@@ -21,7 +21,7 @@ void ArnoldMemoryFrameManager::dump(time_t time, float *frame, size_t width, siz
     m_buffer.unlock();
 }
 
-float *ArnoldMemoryFrameManager::getCurrentFrameBuffer() const {
+float *ArnoldMemoryFrameManager::getCurrentFrameBuffer() {
     // moves to the current position
     // potentially inefficient
     size_t count = 0;

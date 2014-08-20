@@ -16,10 +16,10 @@ SET(CMAKE_SHARED_LINKER_FLAGS "")
 
 configure_file (
   "LumiverseDemoConfig.h.in"
-  "${PROJECT_BINARY_DIR}/Demos/LumiverseDemo/LumiverseDemoConfig.h"
+  "Demos/LumiverseDemo/LumiverseDemoConfig.h"
 )
 
-include_directories("${PROJECT_BINARY_DIR}/Demos/LumiverseDemo")
+include_directories("Demos/LumiverseDemo")
 
 add_executable (Demo test.cpp)
 target_link_libraries(Demo LumiverseCore)

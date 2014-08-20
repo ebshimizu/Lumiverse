@@ -66,7 +66,7 @@ namespace Lumiverse {
 	 * every time.
 	 * \return The current frame buffer.
 	 */
-	virtual float *getCurrentFrameBuffer() const;
+	virtual float *getCurrentFrameBuffer();
 
 	/*!
 	 * \brief Returns the time of current frame  pointed by the current cursor.

@@ -1,5 +1,5 @@
 #include <string>
-#include "LumiverseDemoConfig.h"
+#include "LumiverseCoreConfig.h"
 #include "LumiverseCore.h"
 
 using namespace std;

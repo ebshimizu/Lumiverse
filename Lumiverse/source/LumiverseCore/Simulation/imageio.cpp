@@ -24,7 +24,7 @@
 *            this source code.
 */
 
-#include "Simulation/imageio.hpp"
+#include "Simulation/imageio.h"
 #include <iostream>
 #include <png.h>
 #include <cassert>

@@ -11,7 +11,7 @@ ArnoldAnimationPatch::ArnoldAnimationPatch(const JSONNode data)
     m_mode(ArnoldAnimationMode::STOPPED), m_preview_samples(m_interface.getSamples()),
     m_render_samples(m_interface.getSamples()) {
     // TODO: type for frame manager
-	m_frameManager = new ArnoldFileFrameManager(".");
+	m_frameManager = new ArnoldMemoryFrameManager();
     loadJSON(data);
 }
     
@@ -68,6 +68,12 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
 			// Makes copy of this device
 			Device *d_copy = new Device(*d);
 			frame.devices.insert(d_copy);
+			if (d_copy->getId() == "vizi") {
+				std::stringstream ss;
+				LumiverseOrientation *ori = (LumiverseOrientation *)d_copy->getParam("pan");
+				ss << "vizi: " << ori->getVal();
+				Logger::log(LDEBUG, ss.str());
+			}
 		}
     }
 
@@ -190,10 +196,11 @@ float ArnoldAnimationPatch::getPercentage() const {
 		return ArnoldPatch::getPercentage();
 	else if (m_mode == ArnoldAnimationMode::RENDERING) {
 		size_t finished = m_frameManager->getFrameNum();
-		size_t sum = finished + m_queuedFrameDeviceInfo.size();
+		size_t sum = finished + m_queuedFrameDeviceInfo.size() + 1;
+		float renderingPer = m_interface.getPercentage();
 		sum = (sum == 0) ? 1 : sum;
 
-		return ((float)finished * 100.f + m_interface.getPercentage()) / sum;
+		return ((float)finished * 100.f + renderingPer) / sum;
 	}
 }
     

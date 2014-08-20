@@ -99,7 +99,7 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
 	Simulation/ArnoldFrameManager.h
 	Simulation/ArnoldMemoryFrameManager.h Simulation/ArnoldMemoryFrameManager.cpp
 	Simulation/ArnoldFileFrameManager.h Simulation/ArnoldFileFrameManager.cpp
-	Simulation/imageio.hpp Simulation/imageio.cpp
+	Simulation/imageio.h Simulation/imageio.cpp
     Simulation/ArnoldParameterVector.h)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
@@ -236,20 +236,8 @@ INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Dependencies/mem
 FILE(GLOB clpfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.h)
 INSTALL(FILES ${clpfiles} DESTINATION include/lib/clp)
 
-IF (LumiverseCore_INCLUDE_ARNOLD)
-	FILE(GLOB arnoldfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/arnold/include/*.h)
-	INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold/include)
-
-	IF (WIN32)
-		FILE(GLOB arnoldlib ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/arnold/bin/ai.lib ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/arnold/bin/ai.dll)
-		INSTALL(FILES ${arnoldlib} DESTINATION lib)
-	ENDIF (WIN32)
-
-	IF (APPLE)
-		FILE(GLOB arnoldlib ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/arnold/bin/libai.dylib)
-		INSTALL(FILES ${arnoldlib} DESTINATION lib)
-	ENDIF(APPLE)
-ENDIF (LumiverseCore_INCLUDE_ARNOLD)
+FILE(GLOB pngbinfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/libpng/*.lib)
+INSTALL(FILES ${pngbinfiles} DESTINATION lib)
 
 FILE(GLOB pngfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/libpng/*.h)
 INSTALL(FILES ${pngfiles} DESTINATION include/lib/libpng)
@@ -257,21 +245,15 @@ INSTALL(FILES ${pngfiles} DESTINATION include/lib/libpng)
 FILE(GLOB arnoldfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/arnold/include/*.h)
 INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold/include)
 
+FILE(GLOB arnoldbinfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/arnold/bin/*)
+INSTALL(FILES ${arnoldbinfiles} DESTINATION lib)
+
 INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
 INSTALL(TARGETS LumiverseCoreShared DESTINATION lib)
 
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
     FILE(GLOB pro2files ${CMAKE_CURRENT_SOURCE_DIR}/lib/ftd2xx/*.H)
     INSTALL(FILES ${pro2files} DESTINATION include/lib/ftd2xx)
-
-	IF (WIN32)
-		FILE(GLOB pro2lib ${CMAKE_CURRENT_SOURCE_DIR}/lib/ftd2xx/ftd2xx.lib)
-		INSTALL(FILES ${pro2lib} DESTINATION lib)
-	ENDIF(WIN32)
-
     # You'll have to copy over the right file for ftd2xx to use it properly until I
     # can get this library replaced.
 ENDIF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
-
-INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
-INSTALL(TARGETS LumiverseCoreShared DESTINATION lib)

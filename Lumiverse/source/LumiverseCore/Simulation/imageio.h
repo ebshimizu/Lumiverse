@@ -50,13 +50,30 @@ namespace Lumiverse {
 	{
 		for (int j = 0; j < height; j++) {
 			for (int i = 0; i < width; i++) {
-				int offset = j * width + i;
+				int offset = (j * width + i) * 4;
+				int inv_offset = ((height - 1 - j) * width + i) * 4;
 
-				// convert to ints
-				arr[offset] = static_cast<unsigned char>(rgba[offset] * 0xff);
-				arr[offset + 1] = static_cast<unsigned char>(rgba[offset + 1] * 0xff);
-				arr[offset + 2] = static_cast<unsigned char>(rgba[offset + 2] * 0xff);
-				arr[offset + 3] = static_cast<unsigned char>(rgba[offset + 3] * 0xff);
+				// convert to bytes
+				arr[offset] = static_cast<unsigned char>(rgba[inv_offset] * 0xff);
+				arr[offset + 1] = static_cast<unsigned char>(rgba[inv_offset + 1] * 0xff);
+				arr[offset + 2] = static_cast<unsigned char>(rgba[inv_offset + 2] * 0xff);
+				arr[offset + 3] = static_cast<unsigned char>(rgba[inv_offset + 3] * 0xff);
+			}
+		}
+	}
+
+	inline void bytes_to_floats(float *rgba, unsigned char *arr, int width, int height)
+	{
+		for (int j = 0; j < height; j++) {
+			for (int i = 0; i < width; i++) {
+				int offset = (j * width + i) * 4;
+				int inv_offset = ((height - 1 - j) * width + i) * 4;
+
+				// convert to float
+				rgba[offset] = static_cast<float>(arr[inv_offset]) / 0xff;
+				rgba[offset + 1] = static_cast<float>(arr[inv_offset + 1]) / 0xff;
+				rgba[offset + 2] = static_cast<float>(arr[inv_offset + 2]) / 0xff;
+				rgba[offset + 3] = static_cast<float>(arr[inv_offset + 3]) / 0xff;
 			}
 		}
 	}

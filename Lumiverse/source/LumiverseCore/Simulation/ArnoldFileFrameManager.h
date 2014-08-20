@@ -11,7 +11,7 @@
 #include "../lib/libjson/libjson.h"
 #include "Logger.h"
 #include "ArnoldFrameManager.h"
-#include "imageio.hpp"
+#include "imageio.h"
 
 #include <mutex>
 #include <functional>
@@ -36,7 +36,7 @@ namespace Lumiverse {
 		 * \brief Constructs a ArnoldFileFrameManager object.
 		 */
 		  ArnoldFileFrameManager(std::string frame_path, size_t fps = 24) :
-			  m_frame_path(frame_path), m_prev_time(-1.5 * 1000 / fps), m_current(0), 
+			  m_frame_path(frame_path), m_prev_time(-1.5 * 1000 / fps), m_current(0), m_buffer(NULL),
 			  ArnoldFrameManager(fps) { }
 
 		/*!
@@ -57,7 +57,7 @@ namespace Lumiverse {
 		 * every time.
 		 * \return The current frame buffer.
 		 */
-		virtual float *getCurrentFrameBuffer() const;
+		virtual float *getCurrentFrameBuffer();
 
 		/*!
 		 * \brief Returns the time of current frame  pointed by the current cursor.
@@ -104,6 +104,8 @@ namespace Lumiverse {
 		virtual void clear();
 
       private:
+		bool fileExists(std::string fileName) const;
+		float *m_buffer;
 		std::string m_frame_path;
 		time_t m_prev_time;
 		size_t m_current;
