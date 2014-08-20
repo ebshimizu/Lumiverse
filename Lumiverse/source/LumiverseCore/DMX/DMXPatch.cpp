@@ -256,7 +256,7 @@ JSONNode DMXPatch::deviceMapToJSON(string id, map<string, patchData> data) {
     JSONNode mapping;
     mapping.set_name(d.first);
     mapping.push_back(JSONNode("start", d.second.startAddress));
-    mapping.push_back(JSONNode("ctype", conversionTypeToString(d.second.type)));
+    mapping.push_back(JSONNode("ctype", convTypeToString[d.second.type]));
     root.push_back(mapping.as_array());
   }
 
@@ -362,19 +362,4 @@ bool DMXPatch::setRawData(unsigned int universe, vector<unsigned char> univData)
   return true;
 }
 
-string DMXPatch::conversionTypeToString(conversionType t) {
-  if (t == FLOAT_TO_SINGLE) return "FLOAT_TO_SINGLE";
-  else if (t == FLOAT_TO_FINE) return "FLOAT_TO_FINE";
-  else if (t == ENUM) return "ENUM";
-  else if (t == RGB_REPEAT2) return "RGB_REPEAT2";
-  else if (t == RGB_REPEAT3) return "RGB_REPEAT3";
-  else if (t == RGB_REPEAT4) return "RGB_REPEAT4";
-  else if (t == COLOR_RGB) return "COLOR_RGB";
-  else if (t == COLOR_RGBW) return "COLOR_RGBW";
-  else if (t == ORI_TO_FINE) return "ORI_TO_FINE";
-  else {
-    Logger::log(WARN, "Unknown converstion type. Defaulting to float to single.");
-    return "FLOAT_TO_SINGLE";
-  }
-}
 }

@@ -7,6 +7,7 @@
 #pragma once
 #include "../Device.h"
 #include <sstream>
+#include <unordered_map>
 
 namespace Lumiverse {
   /*!
@@ -23,6 +24,20 @@ namespace Lumiverse {
     COLOR_RGB,        /*!< Converts a color with RGB parameters to single-byte (0-255) DMX parameters. */
     COLOR_RGBW,       /*!< Converts a color with RGBW parameters to singly-byte (0-255) DMX parameters. */
     ORI_TO_FINE       /*!< Converts an orientation to a double-byte DMX value (0-65535) */
+  };
+
+  static unordered_map<conversionType, string> convTypeToString = {
+    { FLOAT_TO_SINGLE, "FLOAT_TO_SINGLE" }, { FLOAT_TO_FINE, "FLOAT_TO_FINE" },
+    { ENUM, "ENUM" }, { RGB_REPEAT2, "RGB_REPEAT2" }, { RGB_REPEAT3, "RGB_REPEAT3" },
+    { RGB_REPEAT4, "RGB_REPEAT4" }, { COLOR_RGB, "COLOR_RGB" }, { COLOR_RGBW, "COLOR_RGBW" },
+    { ORI_TO_FINE, "ORI_TO_FINE" }
+  };
+
+  static unordered_map<string, conversionType> stringToConvType = {
+    { "FLOAT_TO_SINGLE", FLOAT_TO_SINGLE }, { "FLOAT_TO_FINE", FLOAT_TO_FINE },
+    { "ENUM", ENUM }, { "RGB_REPEAT2", RGB_REPEAT2 }, { "RGB_REPEAT3", RGB_REPEAT3 },
+    { "RGB_REPEAT4", RGB_REPEAT4 }, { "COLOR_RGB", COLOR_RGB }, { "COLOR_RGBW", COLOR_RGBW },
+    { "ORI_TO_FINE", ORI_TO_FINE }
   };
 
   /*!
@@ -65,20 +80,7 @@ namespace Lumiverse {
     * \param t Conversion method as a string.
     */
     patchData(unsigned int addr, string t) : startAddress(addr) {
-      // Note to self: make a static dictionary with this instead.
-      if (t == "FLOAT_TO_SINGLE") { type = FLOAT_TO_SINGLE; }
-      else if (t == "FLOAT_TO_FINE") { type = FLOAT_TO_FINE; }
-      else if (t == "ENUM") { type = ENUM; }
-      else if (t == "RGB_REPEAT2") { type = RGB_REPEAT2; }
-      else if (t == "RGB_REPEAT3") { type = RGB_REPEAT3; }
-      else if (t == "RGB_REPEAT4") { type = RGB_REPEAT4; }
-      else if (t == "COLOR_RGB") { type = COLOR_RGB; }
-      else if (t == "COLOR_RGBW") { type = COLOR_RGBW; }
-      else if (t == "ORI_TO_FINE") { type = ORI_TO_FINE; }
-      else {
-        Logger::log(WARN, "Unknown conversion type. Defaulting to float to single.");
-        type = FLOAT_TO_SINGLE;
-      }
+      type = stringToConvType[t];
     }
   };
 

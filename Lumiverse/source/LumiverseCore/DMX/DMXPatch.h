@@ -245,13 +245,6 @@ namespace Lumiverse {
     JSONNode deviceMapToJSON(string id, map<string, patchData> data);
 
     /*!
-    * \brief Converts a converstionType to a string
-    * \param t Type to convert
-    * \return String representation of the conversion type
-    */
-    string conversionTypeToString(conversionType t);
-
-    /*!
     * \brief Stores the state of the DMX universes.
     *
     * Note that DMX Universe 1 is index 0 here due to one-indexing.
