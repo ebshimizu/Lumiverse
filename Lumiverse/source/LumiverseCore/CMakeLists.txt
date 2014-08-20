@@ -125,6 +125,8 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
         # Note that this does copy over the libftd2xx library to the proper location to run on OS X
         # It's really not that much fun to do so I'm looking for a better way of doing it.
         # For some reason it didn't like linking to libusb and ftd2xx normally.
+		# Not sure if this is actually necessary at this point as you should install ftd2xx with
+		# their provided installer.
         execute_process(COMMAND cp ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/ftd2xx/libftd2xx.1.2.2.dylib 
             /usr/local/lib/libftd2xx.1.2.2.dylib)
     ENDIF(APPLE)
@@ -214,15 +216,33 @@ INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Dependencies/mem
 FILE(GLOB clpfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.h)
 INSTALL(FILES ${clpfiles} DESTINATION include/lib/clp)
 
-FILE(GLOB arnoldfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/arnold/include/*.h)
-INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold/include)
+IF (LumiverseCore_INCLUDE_ARNOLD)
+	FILE(GLOB arnoldfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/arnold/include/*.h)
+	INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold/include)
 
-INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
-INSTALL(TARGETS LumiverseCoreShared DESTINATION lib)
+	IF (WIN32)
+		FILE(GLOB arnoldlib ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/arnold/bin/ai.lib ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/arnold/bin/ai.dll)
+		INSTALL(FILES ${arnoldlib} DESTINATION lib)
+	ENDIF (WIN32)
+
+	IF (APPLE)
+		FILE(GLOB arnoldlib ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/arnold/bin/libai.dylib)
+		INSTALL(FILES ${arnoldlib} DESTINATION lib)
+	ENDIF(APPLE)
+ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
     FILE(GLOB pro2files ${CMAKE_CURRENT_SOURCE_DIR}/lib/ftd2xx/*.H)
     INSTALL(FILES ${pro2files} DESTINATION include/lib/ftd2xx)
+
+	IF (WIN32)
+		FILE(GLOB pro2lib ${CMAKE_CURRENT_SOURCE_DIR}/lib/ftd2xx/ftd2xx.lib)
+		INSTALL(FILES ${pro2lib} DESTINATION lib)
+	ENDIF(WIN32)
+
     # You'll have to copy over the right file for ftd2xx to use it properly until I
     # can get this library replaced.
 ENDIF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+
+INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
+INSTALL(TARGETS LumiverseCoreShared DESTINATION lib)
