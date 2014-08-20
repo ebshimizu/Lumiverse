@@ -75,7 +75,7 @@ void simulation() {
 		/*
         float val;
         rig["par1"]->getParam("intensity", val);
-        cout << "par1 Intensity: " << val << "\t" << t << "\n";
+        cout << "par1 Intensity: " << val << "/t" << t << "/n";
         this_thread::sleep_for(chrono::milliseconds(500));
         t += 500;
 		*/
@@ -112,11 +112,13 @@ int main(int argc, char**argv) {
 //    simulation();  
 //    return 0;
 
-  Rig rig("C:/Users/Evan/Documents/Programming/Lumiverse/Lumiverse/data/movingLights.rig.json");
+  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.rig.json");
   shared_ptr<CueList> list1(new CueList("list1"));
   shared_ptr<Layer> layer1(new Layer(&rig, "layer1", 1));
   shared_ptr<CueList> list2(new CueList("list2"));
   shared_ptr<Layer> layer2(new Layer(&rig, "layer2", 2));
+
+  rig.save("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights2.rig.json", true);
 
   layer1->setMode(Layer::BLEND_OPAQUE);
   layer1->activate();
@@ -200,7 +202,7 @@ int main(int argc, char**argv) {
   while (1) {
     float val;
     rig["inno"]->getParam("intensity", val);
-    cout << "inno Intensity: " << val << "\n";
+    cout << "inno Intensity: " << val << "/n";
     this_thread::sleep_for(chrono::milliseconds(100));
   }
 }

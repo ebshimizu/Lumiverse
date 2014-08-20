@@ -35,7 +35,7 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
       case (FLOAT_TO_FINE):
       {
         LumiverseFloat* val = (LumiverseFloat*)device->getParam(instr.first);
-        floatToFine(data, instr.second.startAddress, val);
+        floatToFine(data, instr.second.startAddress, val->asPercent());
         break;
       }
       case (ENUM) :
@@ -74,6 +74,12 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
         ColorToRGBW(data, instr.second.startAddress, val);
         break;
       }
+      case (ORI_TO_FINE) :
+      {
+        LumiverseOrientation* val = (LumiverseOrientation*)device->getParam(instr.first);
+        floatToFine(data, instr.second.startAddress, val->asPercent());
+        break;
+      }
       default:
       {
         // Unsupported conversion. We're going to demand that the user fix this before
@@ -94,8 +100,8 @@ void DMXDevicePatch::floatToSingle(unsigned char* data, unsigned int address, Lu
   setDMXVal(data, address, cvt);
 }
 
-void DMXDevicePatch::floatToFine(unsigned char* data, unsigned int address, LumiverseFloat* val) {
-  unsigned short cvt = (unsigned short)(65535 * val->asPercent());
+void DMXDevicePatch::floatToFine(unsigned char* data, unsigned int address, float val) {
+  unsigned short cvt = (unsigned short)(65535 * val);
   unsigned char coarse = (unsigned char)(cvt >> 8);
   unsigned char fine = (unsigned char) cvt;
   setDMXVal(data, address, coarse);

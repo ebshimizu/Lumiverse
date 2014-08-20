@@ -21,7 +21,8 @@ namespace Lumiverse {
     RGB_REPEAT3,      /*!< Converts a floating point value to a single-byte DMX value and outputs it three times offset by 3. */
     RGB_REPEAT4,      /*!< Converts a floating point value to a single-byte DMX value and outputs it four times offset by 3. */
     COLOR_RGB,        /*!< Converts a color with RGB parameters to single-byte (0-255) DMX parameters. */
-    COLOR_RGBW        /*!< Converts a color with RGBW parameters to singly-byte (0-255) DMX parameters. */
+    COLOR_RGBW,       /*!< Converts a color with RGBW parameters to singly-byte (0-255) DMX parameters. */
+    ORI_TO_FINE       /*!< Converts an orientation to a double-byte DMX value (0-65535) */
   };
 
   /*!
@@ -73,6 +74,7 @@ namespace Lumiverse {
       else if (t == "RGB_REPEAT4") { type = RGB_REPEAT4; }
       else if (t == "COLOR_RGB") { type = COLOR_RGB; }
       else if (t == "COLOR_RGBW") { type = COLOR_RGBW; }
+      else if (t == "ORI_TO_FINE") { type = ORI_TO_FINE; }
       else {
         Logger::log(WARN, "Unknown conversion type. Defaulting to float to single.");
         type = FLOAT_TO_SINGLE;
@@ -183,13 +185,14 @@ namespace Lumiverse {
     /*!
     * \brief Converts a float value to two DMX channels of data. min-max -> 0 - 65535
     *
-    * Corresponds to the FLOAT_TO_FINE value of conversionType
+    * Corresponds to the FLOAT_TO_FINE and ORI_TO_FINE values of conversionType
     * The first channel is the upper bits (coarse) and the second channel is the lower (fine)
+    * The given float must be between 0 and 1 otherwise overflow will occur.
     * \param data DMX Universe buffer
     * \param address First address to write the value to (the coarse bits)
-    * \param val The LumiverseFloat value to convert
+    * \param val The float value to convert. Must be in the range [0, 1].
     */
-    void floatToFine(unsigned char* data, unsigned int address, LumiverseFloat* val);
+    void floatToFine(unsigned char* data, unsigned int address, float val);
 
     /*!
     * \brief Converts an enum to a single DMX channel of data

@@ -100,16 +100,16 @@ bool Device::setParam(string param, float val) {
 
   // Checks param type
   if (m_parameters[param]->getTypeName() != "float" &&
-	  m_parameters[param]->getTypeName() != "orientation") {
+      m_parameters[param]->getTypeName() != "orientation") {
       Logger::log(WARN, "Trying to assign float value to a non-float type.");
       
       return false;
   }
     
   if (m_parameters[param]->getTypeName() == "float")
-	*((LumiverseFloat *)m_parameters[param]) = val;
+    *((LumiverseFloat *)m_parameters[param]) = val;
   else 
-	*((LumiverseOrientation *)m_parameters[param]) = val;
+    *((LumiverseOrientation *)m_parameters[param]) = val;
 
   // callback
   onParameterChanged();
