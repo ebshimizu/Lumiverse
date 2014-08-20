@@ -4,15 +4,25 @@ Lumiverse can support any interface if there's a driver for it, and can output t
 multiple interfaces at the same time.
 
 ## Build instructions
-* Install CMake (> 2.8 suggested)
+Note that the latest stable version is v1.1 (find it in the tags)
+
+* Install CMake (>=2.8 suggested, >=2.6 required)
 * Install build dependencies for specific modules:
-    * DMX USB PRO MK2 driver: ftd2xx
-    * Bindings for other languages: SWIG (>= 3.0.0)
+    * DMX USB PRO MK2 driver: [ftd2xx](http://www.ftdichip.com/Drivers/D2XX.htm)
+    * Bindings for other languages: [SWIG](http://www.swig.org/) (>= 3.0.0)
     	* Python: Python
     	* C#: .NET (any version that works with SWIG)
 * Make a folder to contain all of your build files
 * Inside of the folder you made, run `cmake ../source`
 * Build
+
+There are a few options for including or excluding features in the CMake build settings.
+See the CMakeLists file in LumiverseCore for details or take a look at the options in the
+CMake GUI.
+
+### Notes for building with the Arnold Renderer
+This feature is currently experimental. You will need a license from [SolidAngle](https://www.solidangle.com/) to render images
+without a watermark.
 
 ## Documentation
 Documentation for the project is generated from source with [Doxygen](http://www.stack.nl/~dimitri/doxygen/)
@@ -31,19 +41,6 @@ and has only been tested using one connected DMX PRO device at a time. iOS
 supports none of the USB interfaces. It should support Art-Net and other
 DMX over IP protocols at some point in the future, but I've run it with
 a Socket.IO interface just fine.
-
-## Project Roadmap
-* Write up documentation for current code base
-* Linux Support
-* Move USB drivers from FTD2XX to libftdi
-* Clean up build output locations for other language bindings
-* Write Interfaces
-	* Art-Net
-	* KiNet
-	* ENTTEC DMX PRO (Mk 1)
-	* Generic FTDI device
-	* Philips Hue
-	* ACN
 
 This project was supported in part by funding from the [Carnegie Mellon
 University Frank-Ratchye Fund for Art @ the Frontier](http://studioforcreativeinquiry.org/)
