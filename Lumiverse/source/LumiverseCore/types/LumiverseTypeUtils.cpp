@@ -154,11 +154,11 @@ Eigen::Matrix3f LumiverseTypeUtils::getRotationMatrix(Eigen::Vector3f lookat, Ei
 	pan_reset_axis.normalize();
 	Eigen::AngleAxisf pan_reset_rot = Eigen::AngleAxisf(std::acosf(up.dot(lookat)), pan_reset_axis);
 	up = reset_rot * up;
-	Eigen::AngleAxisf pan_rot = Eigen::AngleAxisf(pan.asUnit("radian"), up);
+	Eigen::AngleAxisf pan_rot = Eigen::AngleAxisf(pan.valAsUnit(RADIAN), up);
 
 	// Tilt
 	tilt_axis = reset_rot * tilt_axis;
-	Eigen::AngleAxisf tilt_rot = Eigen::AngleAxisf(tilt.asUnit("radian"), tilt_axis);
+	Eigen::AngleAxisf tilt_rot = Eigen::AngleAxisf(tilt.valAsUnit(RADIAN), tilt_axis);
 
 	ret = tilt_rot * pan_rot * reset_rot;
 
@@ -290,10 +290,10 @@ LumiverseType* LumiverseTypeUtils::loadFromJSON(JSONNode node) {
 			LumiverseOrientation* param;
 
 			if (maxNode != node.end() && minNode != node.end()) {
-				param = new LumiverseOrientation(valNode->as_float(), unitNode->as_string(), defNode->as_float(), maxNode->as_float(), minNode->as_float());
+				param = new LumiverseOrientation(valNode->as_float(), (ORIENTATION_UNIT)stringToOri[unitNode->as_string()], defNode->as_float(), maxNode->as_float(), minNode->as_float());
 			}
 			else {
-				param = new LumiverseOrientation(valNode->as_float(), unitNode->as_string(), defNode->as_float());
+				param = new LumiverseOrientation(valNode->as_float(), (ORIENTATION_UNIT)stringToOri[unitNode->as_string()], defNode->as_float());
 			}
 			return  (LumiverseType*)param;
 		}

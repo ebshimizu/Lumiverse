@@ -8,23 +8,41 @@
 #include "../LumiverseType.h"
 #include <string>
 #include <stdio.h>
+#include <unordered_map>
 #define _USE_MATH_DEFINES
 #include <math.h>
 
 namespace Lumiverse {
+  /*! \brief Enumeration indicating the type of angular unit stored. */
+  enum ORIENTATION_UNIT {
+    DEGREE, RADIAN
+  };
+
+  /*! \brief Converts orientation to string */
+  static unordered_map<int, string> oriToString = {
+    { DEGREE, "degree" }, { RADIAN, "radian" }
+  };
+
+  /*! \biref Converts string to orientation. */
+  static unordered_map<string, int> stringToOri = {
+    { "degree", DEGREE }, { "radian", RADIAN }
+  };
+
   /*!
-  * \brief Defines a float in Lumiverse
+  * \brief Defines an orientation in Lumiverse
   *
   * This class allows limits to be set on the minimum and maximum values for
   * the variable in question.
   * Overloads for comparison ops and arithmetic ops are located in Lumiverse namespace.
+  * Orientations are essentially special LumiverseFloat objects that have a few built in
+  * functions for getting rotation specfic data.
   * \sa Lumiverse
   */
   class LumiverseOrientation : LumiverseType
   {
   public:
     /*!
-    * \brief Constructs a float, default value is 0.
+    * \brief Constructs an orientation, default value is 0.
     * 
     * \param val Initial value
     * \param def Default value. When reset() is called, `val` will be set to `def`.
@@ -32,30 +50,30 @@ namespace Lumiverse {
     * \param min Minimum allowed value
     * \sa reset()
     */
-	  LumiverseOrientation(float val = 0.0f, string unit = "degree", float def = 0.0f, float max = 0.0f, float min = 360.0f);
+	  LumiverseOrientation(float val = 0.0f, ORIENTATION_UNIT unit = DEGREE, float def = 0.0f, float max = 0.0f, float min = 360.0f);
 
     /*!
-    * \brief Constructs a float with the contents of a different float
+    * \brief Constructs an orientation with the contents of a different orientation
     * \param other The other object to copy from
     */
     LumiverseOrientation(LumiverseOrientation* other);
 
     /*!
-    * \brief Constructs a float by copying from a generic LumiverseType
+    * \brief Constructs an orientation by copying from a generic LumiverseType
     *
-    * If the other object isn't actually a float, this function will initialize with default values.
+    * If the other object isn't actually an orientation, this function will initialize with default values.
     * \param other The other object to copy from.
     */
     LumiverseOrientation(LumiverseType* other);
 
     /*!
-    * \brief Destroys the float.
+    * \brief Destroys the orientation.
     */
     ~LumiverseOrientation();
 
     /*!
-    * \brief Says that this object is a float.
-    * \return String with contents: `"float"`
+    * \brief Says that this object is an orientation.
+    * \return String with contents: `"orientation"`
     */
     virtual string getTypeName() { return "orientation"; }
 
@@ -76,28 +94,28 @@ namespace Lumiverse {
     LumiverseOrientation& operator/=(float val);
     LumiverseOrientation& operator/=(LumiverseOrientation& val);
 
-    /*! \brief Gets the value of the float 
+    /*! \brief Gets the value of the orientation 
     * \return Value of the object
     */
     float getVal() { return m_val; }
 
     /*!
-    * \brief Sets the value of the float
+    * \brief Sets the value of the orientation
     * \param val New value
     */
     void setVal(float val) { m_val = val; }
 
-	/*!
-	* \brief Set unit
-	* \param val New unit name
-	*/
-	void setUnit(string unit) { m_unit = unit; }
+    /*!
+    * \brief Set unit
+    * \param val New unit
+    */
+    void setUnit(ORIENTATION_UNIT unit);
 
-	/*!
-	* \brief Get the unit
-	* \return Name of unit
-	*/
-	string getUnit() { return m_unit; }
+    /*!
+    * \brief Get the unit
+    * \return Name of unit
+    */
+    ORIENTATION_UNIT getUnit() { return m_unit; }
 
     /*!
     * \brief Set maximum value
@@ -141,12 +159,25 @@ namespace Lumiverse {
     virtual void reset() { m_val = m_default; }
 
     /*!
-    * \brief Returns the value of this float as a percentage
+    * \brief Returns the value of this orientation as a percentage
     * \return Returns the value: `m_val / (m_max - m_min)`
     */
     float asPercent();
 
-	float asUnit(string unit);
+    /*!
+    * \brief Returns the value of this orientation with the specified units.
+    */
+    float valAsUnit(ORIENTATION_UNIT unit) { return asUnit(unit, m_val); }
+
+    /*!
+    * \brief Returns the max value of the orientation with the specified units.
+    */
+    float maxAsUnit(ORIENTATION_UNIT unit) { return asUnit(unit, m_max); }
+
+    /*!
+    * \brief Returns the min value of the orientation with the specified units.
+    */
+    float minAsUnit(ORIENTATION_UNIT unit) { return asUnit(unit, m_min); }
 
     // Converts a float to a JSON object with specified name.
     virtual JSONNode toJSON(string name);
@@ -167,20 +198,30 @@ namespace Lumiverse {
     inline void clamp();
 
     /*!
+    * \brief Returns the specified value as the specified unit.
+    *
+    * In the event that the orientation is already using the specified units,
+    * the same value as getVal() will be returned.
+    * \param unit Unit to get the value as
+    */
+    float asUnit(ORIENTATION_UNIT unit, float val);
+
+    /*!
     * \brief the value of this object
     */
     float m_val;
 
-    /*! \brief Default value for this float. */
+    /*! \brief Default value for this orientation. */
     float m_default;
 
-    /*! \brief Maximum value for the float (default 1.0) */
+    /*! \brief Maximum value for the orientation (default 1.0) */
     float m_max;
 
-    /*! Minimum value for the float (default 0.0) */
+    /*! \brief Minimum value for the orientation (default 0.0) */
     float m_min;
 
-	string m_unit;
+    /*! \brief Indicates the type of angle measurement used in the object. */
+    ORIENTATION_UNIT m_unit;
   };
 
   // Ops ops ops all overloaded woo
@@ -190,9 +231,8 @@ namespace Lumiverse {
     if (a.getTypeName() != "orientation" || b.getTypeName() != "orientation")
       return false;
 
-	if (a.getUnit() == b.getUnit())
-		return a.getVal() == b.getVal();
-	return a.getVal() == b.asUnit(a.getUnit());
+    // Equality/inequality shouldn't change based on a unit conversion.
+    return a.getVal() == b.valAsUnit(a.getUnit());
   }
 
   inline bool operator!=(LumiverseOrientation& a, LumiverseOrientation& b) {
@@ -204,9 +244,8 @@ namespace Lumiverse {
     if (a.getTypeName() != "orientation" || b.getTypeName() != "orientation")
       return false;
 
-	if (a.getUnit() == b.getUnit())
-		return a.getVal() < b.getVal();
-	return a.getVal() < b.asUnit(a.getUnit());
+    // Equality/inequality shouldn't change based on a unit conversion.
+    return a.getVal() < b.valAsUnit(a.getUnit());
   }
 
   inline bool operator>(LumiverseOrientation& a, LumiverseOrientation& b) {
