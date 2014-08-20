@@ -65,6 +65,11 @@
 #include "DMX/DMXInterface.h"
 #include "lib/libjson/libjson.h"
 
+// includes png.h for windows
+#ifdef _WIN32
+#include "lib/libpng/png.h"
+#endif
+
 #ifdef USE_DMXPRO2
 #include "DMX/DMXPro2Interface.h"
 #endif

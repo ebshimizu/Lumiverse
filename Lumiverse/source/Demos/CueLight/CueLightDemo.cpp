@@ -4,19 +4,22 @@
 #include "CueList.h"
 #include "Layer.h"
 #include "Playback.h"
-//#include "Simulation/ArnoldAnimationPatch.h"
+#include "Simulation/ArnoldAnimationPatch.h"
 
 using namespace std;
 using namespace Lumiverse;
 
 void simulation() {
     Rig rig("J:/Lumiverse/Lumiverse/data/movingLights_box.rig.json");
+
 	rig.init();
 
-	//ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)rig.getSimulationPatch("ArnoldAnimationPatch");
-	//aap->reset();
-
+	ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)rig.getSimulationPatch("ArnoldAnimationPatch");
+	aap->reset();
+	aap->startRecording();
 	rig.run();
+	this_thread::sleep_for(chrono::seconds(2));
+	aap->endRecording();
 	while (1) { }
 
 	return;
@@ -109,8 +112,8 @@ void testArnoldAnimation() {
 }
 
 int main(int argc, char**argv) {
-//    simulation();  
-//    return 0;
+  simulation();  
+    return 0;
 
   Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights_noArnold.rig.json");
   shared_ptr<CueList> list1(new CueList("list1"));

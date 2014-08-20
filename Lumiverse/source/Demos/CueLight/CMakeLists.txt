@@ -11,6 +11,11 @@ IF(UNIX)
     MESSAGE("Adding -std=c++11 to g++ flags for CueLight")
 ENDIF(UNIX)
 
+# TODO: Bug with machine:x86 linker option
+SET(CMAKE_EXE_LINKER_FLAGS "")
+SET(CMAKE_MODULE_LINKER_FLAGS "")
+SET(CMAKE_SHARED_LINKER_FLAGS "")
+
 add_library (CueLight
 	Cue.h
 	CueList.h

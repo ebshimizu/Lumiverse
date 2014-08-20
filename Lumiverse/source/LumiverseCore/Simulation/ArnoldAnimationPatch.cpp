@@ -10,7 +10,8 @@ ArnoldAnimationPatch::ArnoldAnimationPatch(const JSONNode data)
 : m_worker(NULL), m_startPoint(chrono::system_clock::from_time_t(0)),
     m_mode(ArnoldAnimationMode::STOPPED), m_preview_samples(m_interface.getSamples()),
     m_render_samples(m_interface.getSamples()) {
-    m_frameManager = new ArnoldMemoryFrameManager();
+    // TODO: type for frame manager
+	m_frameManager = new ArnoldFileFrameManager(".");
     loadJSON(data);
 }
     

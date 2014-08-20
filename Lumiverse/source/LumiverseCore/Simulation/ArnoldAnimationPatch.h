@@ -12,6 +12,7 @@
 #include "../lib/libjson/libjson.h"
 #include "ArnoldPatch.h"
 #include "ArnoldMemoryFrameManager.h"
+#include "ArnoldFileFrameManager.h"
 
 #include <thread>
 #include <chrono>

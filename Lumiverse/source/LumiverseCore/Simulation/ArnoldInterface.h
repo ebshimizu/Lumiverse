@@ -54,7 +54,6 @@ namespace Lumiverse {
 	  int bucket_cur;
 
 	  ProgressInfo() : bucket_sum(-1), bucket_cur(-1) { }
-
   };
 
   /*!

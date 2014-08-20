@@ -47,6 +47,11 @@ IF(UNIX)
     MESSAGE("Adding -std=c++11 to g++ flags")
 ENDIF(UNIX)
 
+# TODO: Bug with machine:x86 linker option
+SET(CMAKE_EXE_LINKER_FLAGS "")
+SET(CMAKE_MODULE_LINKER_FLAGS "")
+SET(CMAKE_SHARED_LINKER_FLAGS "")
+
 # Set source files
 set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
     LumiverseCore.h
@@ -93,8 +98,8 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
 	Simulation/ArnoldAnimationPatch.h Simulation/ArnoldAnimationPatch.cpp
 	Simulation/ArnoldFrameManager.h
 	Simulation/ArnoldMemoryFrameManager.h Simulation/ArnoldMemoryFrameManager.cpp
-	# Simulation/ArnoldFileFrameManager.h Simulation/ArnoldFileFrameManager.cpp
-	# Simulation/imageio.hpp Simulation/imageio.cpp
+	Simulation/ArnoldFileFrameManager.h Simulation/ArnoldFileFrameManager.cpp
+	Simulation/imageio.hpp Simulation/imageio.cpp
     Simulation/ArnoldParameterVector.h)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
@@ -132,13 +137,28 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
     ENDIF(APPLE)
 ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 
-# Build with Arnold SDK (ai)
+# Simulation module needs libpng to output png
 IF (LumiverseCore_INCLUDE_ARNOLD)
 	# Png output
-	# FIND_PACKAGE(PNG REQUIRED)
-	#include_directories(
-	#	${PNG_INCLUDE_DIRS}
-	#)
+	IF(WIN32)
+		# Sets the dir for libpng on windows
+		set(PNG_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/lib/libpng")
+		set(PNG_LIBRARIES "${CMAKE_CURRENT_LIST_DIR}/lib/libpng/libpng.lib" "${CMAKE_CURRENT_LIST_DIR}/lib/libpng/zlib.lib")
+	ELSE(WIN32)
+		FIND_PACKAGE(PNG REQUIRED)
+		
+	ENDIF(WIN32)	
+
+	include_directories(
+			${PNG_INCLUDE_DIRS}
+	)
+	MESSAGE(${PNG_LIBRARIES})
+	target_link_libraries( LumiverseCore ${PNG_LIBRARIES} )
+	target_link_libraries( LumiverseCoreShared ${PNG_LIBRARIES} )
+ENDIF (LumiverseCore_INCLUDE_ARNOLD)
+
+# Build with Arnold SDK (ai)
+IF (LumiverseCore_INCLUDE_ARNOLD)
     IF(WIN32)
         add_library(ai STATIC IMPORTED)
         set_property(TARGET ai PROPERTY IMPORTED_LOCATION
@@ -230,6 +250,15 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
 		INSTALL(FILES ${arnoldlib} DESTINATION lib)
 	ENDIF(APPLE)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
+
+FILE(GLOB pngfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/libpng/*.h)
+INSTALL(FILES ${pngfiles} DESTINATION include/lib/libpng)
+
+FILE(GLOB arnoldfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/arnold/include/*.h)
+INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold/include)
+
+INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
+INSTALL(TARGETS LumiverseCoreShared DESTINATION lib)
 
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
     FILE(GLOB pro2files ${CMAKE_CURRENT_SOURCE_DIR}/lib/ftd2xx/*.H)
