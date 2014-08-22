@@ -1,5 +1,6 @@
 #include "LumiverseOrientation.h"
 namespace Lumiverse {
+// This is really not interesting huh.
 
 LumiverseOrientation::LumiverseOrientation(float val, ORIENTATION_UNIT unit, float def, float max, float min) :
   m_val(val), m_default(def), m_max(max), m_min(min), m_unit(unit) { }
@@ -90,10 +91,10 @@ float LumiverseOrientation::asPercent() {
 }
 
 float LumiverseOrientation::asUnit(ORIENTATION_UNIT unit, float val) {
-	if (m_unit == unit)
-		return val;
-	else if (m_unit == DEGREE)
-		return val * M_PI / 180.0f;
+  if (m_unit == unit)
+    return val;
+  else if (m_unit == DEGREE)
+    return val * M_PI / 180.0f;
   else if (m_unit == RADIAN)
     return val * 180.0f / M_PI;
   else {

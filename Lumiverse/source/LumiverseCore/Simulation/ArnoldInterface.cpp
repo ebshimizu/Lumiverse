@@ -240,6 +240,11 @@ void ArnoldInterface::setSamplesOption() {
     AiNodeSetInt(options, "AA_samples", m_samples);
 }
 
+void ArnoldInterface::updateSurfaceColor(Eigen::Vector3d white) {
+	Eigen::Matrix3d toxyz = RGBToXYZ[sRGB];
+
+}
+
 void ArnoldInterface::init() {
     // TODO : to use env var (different apis for linux and win)
     AiLicenseSetServer("pike.graphics.cs.cmu.edu", 5053);

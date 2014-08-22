@@ -115,7 +115,18 @@ shared_ptr<LumiverseType> LumiverseTypeUtils::lerp(LumiverseType* lhs, Lumiverse
   }
   else if (lhs->getTypeName() == "orientation") {
 	  LumiverseOrientation* ret = new LumiverseOrientation();
-	  *ret = ((*(LumiverseOrientation*)lhs) * (1 - t)) + ((*(LumiverseOrientation*)rhs) * t);
+	  LumiverseOrientation ori_l(lhs);
+	  LumiverseOrientation ori_r(rhs);
+
+	  if (ori_r.asUnit("degree") > 180 &&
+		  ori_l.asUnit("degree") < 180)
+		  ori_l.setValAs(360, "degree");
+	  else if (ori_r.asUnit("degree") < 180 &&
+		  ori_l.asUnit("degree") > 180) {
+		  ori_r.setValAs(360, "degree");
+	  }
+
+	  *ret = (ori_l * (1 - t)) + (ori_r * t);
 	  return shared_ptr<LumiverseType>((LumiverseType *)ret);
   }
   else

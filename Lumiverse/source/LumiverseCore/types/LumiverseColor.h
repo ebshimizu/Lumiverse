@@ -43,7 +43,8 @@ namespace Lumiverse {
 
   /*! \brief Selects a RGB color space to use in color conversion functions. */
   enum RGBColorSpace {
-    sRGB        /*!< sRGB color space. D65 reference white. See http://en.wikipedia.org/wiki/SRGB */
+    sRGB,        /*!< sRGB color space. D65 reference white. See http://en.wikipedia.org/wiki/SRGB */
+	sharpRGB	 /* Picture Perfect RGB Rendering Using Spectral Prefiltering */
   };
 
   enum ReferenceWhite {
@@ -56,7 +57,10 @@ namespace Lumiverse {
   {
     { sRGB, (Eigen::Matrix3d() << 0.4124564, 0.3575761, 0.1804375,
                                   0.2126729, 0.7151522, 0.0721750,
-                                  0.0193339, 0.1191920, 0.9503041).finished() }
+                                  0.0193339, 0.1191920, 0.9503041).finished() },
+	{ sharpRGB, (Eigen::Matrix3d() << 1.2694, -0.0988, -0.1706,
+								  -0.8364, 1.8006, 0.0357,
+								  0.0297, -0.0315, 1.0018).finished().inverse() }
   };
 
   /*! \brief Maps Color space to the Reference White it uses */
@@ -212,6 +216,7 @@ namespace Lumiverse {
     * \return Eigen::Vector3d containing the RGB components of the color.
     */
     Eigen::Vector3d getRGB(RGBColorSpace cs = sRGB);
+
 
     /*!
     * \brief Sets the color to match the specified xy coordinate (xyY color space)

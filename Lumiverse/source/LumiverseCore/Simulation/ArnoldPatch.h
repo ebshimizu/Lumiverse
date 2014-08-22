@@ -175,6 +175,13 @@ namespace Lumiverse {
     * \param devices The device list.
     */
     void updateLight(set<Device *> devices);
+
+	/*!
+	* \brief Resets the arnold light node and surface with updated parameters of deices.
+	* Experiment with methods from Picture Perfect RGB rendering.
+	* \param devices The device list.
+	*/
+	void updateLightPredictive(set<Device *> devices);
     
     /*!
     * \brief Resets the update flags for lights.
@@ -211,7 +218,9 @@ namespace Lumiverse {
     ArnoldInterface m_interface;
 
   private:
-	
+	void modifyLightColor(Device *d, Eigen::Vector3d white);
+
+	AtNode *getLightNode(Device *d);
     /*!
     * \brief The separate thread running the render loop.
     */

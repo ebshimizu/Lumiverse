@@ -91,22 +91,32 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 	}
 
 }
-    
+
+AtNode *ArnoldPatch::getLightNode(Device *d) {
+	std::string light_name = d->getId();
+	AtNode *light_ptr;
+
+	if (m_lights.count(light_name) == 0)
+		return NULL;
+	std::string type = m_lights[light_name].arnold_type;
+
+	if (m_lights[light_name].light == NULL) {
+		light_ptr = AiNode(type.c_str());
+		AiNodeSetStr(light_ptr, "name", light_name.c_str());
+	}
+	else {
+		light_ptr = m_lights[light_name].light;
+	}
+
+	return light_ptr;
+}
+
 void ArnoldPatch::loadLight(Device *d_ptr) {
     std::string light_name = d_ptr->getId();
-    AtNode *light_ptr;
+    AtNode *light_ptr = getLightNode(d_ptr);
     
-    if (m_lights.count(light_name) == 0)
+	if (!light_ptr)
         return ;
-	std::string type = m_lights[light_name].arnold_type;
-    
-    if (m_lights[light_name].light == NULL) {
-        light_ptr = AiNode(type.c_str());
-        AiNodeSetStr(light_ptr, "name", light_name.c_str());
-    }
-    else {
-        light_ptr = m_lights[light_name].light;
-    }
 
     // TODO: mesh_light
     for (std::string meta : d_ptr->getMetadataKeyNames()) {
@@ -198,6 +208,20 @@ bool ArnoldPatch::isUpdateRequired(set<Device *> devices) {
     
     return req;
 }
+
+void ArnoldPatch::modifyLightColor(Device *d, Eigen::Vector3d white) {
+	AtNode *light_ptr = getLightNode(d);
+
+	if (!light_ptr)
+		return;
+
+	Eigen::Vector3d rgb = d->getColor()->getRGB();
+	rgb *= Eigen::Vector3d(1 / white[0], 1 / white[1], 1 / white[2]);
+
+	std::stringstream ss;
+	ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
+	m_interface.setParameter(light_ptr, "color", ss.str());
+}
     
 void ArnoldPatch::updateLight(set<Device *> devices) {
 	for (Device* d : devices) {
@@ -205,6 +229,45 @@ void ArnoldPatch::updateLight(set<Device *> devices) {
 		if (m_lights.count(name) == 0)
 			continue;
 		loadLight(d);
+	}
+}
+
+void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
+	Device *dominant = NULL;
+	float max_luminant = -1;
+
+	for (Device* d : devices) {
+		std::string name = d->getId();
+		if (m_lights.count(name) == 0)
+			continue;
+		float intensity = ((LumiverseFloat*)d->getParam("intensity"))->getVal();
+		std::string exp_str = "";
+		float exposure = 0.f;
+
+		if (d->getMetadata("exposure", exp_str)) {
+			std::istringstream iss(exp_str);
+			iss >> exposure;
+		}
+
+		float luminant = d->getColor()->getY() * intensity * powf(2, exposure);
+		if (luminant > max_luminant) {
+			max_luminant = luminant;
+			dominant = d;
+		}
+
+		loadLight(d);
+	}
+
+	if (!dominant)
+		return;
+
+	Eigen::Vector3d rgb_w = dominant->getColor()->getRGB(sharpRGB);
+
+	for (Device* d : devices) {
+		std::string name = d->getId();
+		if (m_lights.count(name) == 0)
+			continue;
+		modifyLightColor(d, rgb_w);
 	}
 }
 

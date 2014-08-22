@@ -235,6 +235,8 @@ namespace Lumiverse {
 	BucketPositionInfo *getBucketPositionInfo() const { return m_bucket_pos; }
 
 	size_t getBucketNumber() const { return m_bucket_num; }
+
+	void updateSurfaceColor(Eigen::Vector3d white);
       
   private:
     /*!

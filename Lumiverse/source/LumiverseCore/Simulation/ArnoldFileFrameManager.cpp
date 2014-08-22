@@ -7,14 +7,13 @@ ArnoldFileFrameManager::~ArnoldFileFrameManager() {
 }
 
 void ArnoldFileFrameManager::dump(time_t time, float *frame, size_t width, size_t height) {
-	size_t num_frames = (time - m_prev_time) * m_fps / 1000;
-	size_t offset = (m_prev_time < 0) ? 0 : m_prev_time * m_fps / 1000;
+	size_t floor_frame = (float)time * m_fps / 1000;
 	unsigned char *bytes = new unsigned char[width * height * 4];
 	floats_to_bytes(bytes, frame, width, height);
 	char digits[7];
 
-	for (size_t i = 0; i < num_frames; i++) {
-		sprintf(digits, "%06d", offset + i);
+	for (size_t i = m_prev_frame + 1; i <= floor_frame; i++) {
+		sprintf(digits, "%06d", i);
 
 		std::stringstream ss;
 		ss << "\\" << digits << ".png";
@@ -28,7 +27,7 @@ void ArnoldFileFrameManager::dump(time_t time, float *frame, size_t width, size_
 		}
 	}
 
-	m_prev_time = (time - m_prev_time) * m_fps / m_fps;
+	m_prev_frame = floor_frame;
 }
 
 bool ArnoldFileFrameManager::fileExists(std::string fileName) const {

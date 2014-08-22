@@ -25,6 +25,7 @@
 */
 
 #include "Simulation/imageio.h"
+#include "Logger.h"
 #include <iostream>
 #include <png.h>
 #include <cassert>

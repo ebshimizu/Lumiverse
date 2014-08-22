@@ -10,19 +10,13 @@ using namespace std;
 using namespace Lumiverse;
 
 void simulation() {
-    Rig rig("J:/Lumiverse/Lumiverse/data/movingLights_box.rig.json");
+    Rig rig("J:/Lumiverse/Lumiverse/data/movingLights_box2.rig.json");
 
 	rig.init();
 
 	ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)rig.getSimulationPatch("ArnoldAnimationPatch");
-	aap->reset();
-	aap->startRecording();
-	rig.run();
-	this_thread::sleep_for(chrono::seconds(2));
-	aap->endRecording();
-	while (1) { }
 
-	return;
+	rig.run();
 
     shared_ptr<CueList> list1(new CueList("list1"));
     shared_ptr<Layer> layer1(new Layer(&rig, "layer1", 1));
@@ -34,28 +28,130 @@ void simulation() {
     pb.attachToRig();
     
     rig.init();
-    
-    DeviceSet par = rig.query("par1");
-    
-    par.setParam("intensity", 0.8f);
-    
-    Cue cue1(&rig, 1.0f, 1.0f);
-    list1->storeCue(1, cue1);
-    
-    pb.addCueList(list1);
-    pb.addLayer(layer1);
-    pb.addCueListToLayer("list1", "layer1");
-    
-    // Test keyframe insertion
-    //DeviceSet chan1 = rig.query("#1");
-    //chan1.setParam("intensity", 0.0f);
-    par.setParam("intensity", 0.5f);
 
-    list1->getCue(1)->insertKeyframe(4, par);
-    
-    par.setParam("intensity", 0.3f);
+	DeviceSet vizi = rig.query("vizi");
+	vizi.setParam("intensity", 0.02f);
+
+	DeviceSet inno1 = rig.query("inno1");
+
+	LumiverseColor* color = (LumiverseColor*)rig.getDevice("inno1")->getParam("color");
+	color->setColorChannel("Blue", 0.8);
+	color->setColorChannel("Red", 0.2);
+	color->setColorChannel("White", 0.02);
+
+	inno1.setParam("intensity", 1.f);
+	inno1.setParam("shutter", "OPEN");
+	inno1.setParam("tilt", 0.f);
+	inno1.setParam("pan", 0.f);
+
+	//
+	DeviceSet inno2 = rig.query("inno2");
+
+	color = (LumiverseColor*)rig.getDevice("inno2")->getParam("color");
+	color->setColorChannel("Blue", 0.8);
+	color->setColorChannel("Green", 0.2);
+	color->setColorChannel("White", 0.02);
+
+	inno2.setParam("intensity", 1.f);
+	inno2.setParam("shutter", "OPEN");
+	inno2.setParam("tilt", 0.f);
+	inno2.setParam("pan", 0.f);
+
+	//
+	DeviceSet inno3 = rig.query("inno3");
+
+	color = (LumiverseColor*)rig.getDevice("inno3")->getParam("color");
+	color->setColorChannel("Blue", 0.8);
+	color->setColorChannel("Red", 0.2);
+	color->setColorChannel("White", 0.02);
+
+	inno3.setParam("intensity", 1.f);
+	inno3.setParam("shutter", "OPEN");
+	inno3.setParam("tilt", 0.f);
+	inno3.setParam("pan", 0.f);
+
+	Cue cue1(&rig, 1.0f, 1.0f, 1.0f);
+	list1->storeCue(1, cue1);
+
+	////////////////////
+
+	color = (LumiverseColor*)rig.getDevice("inno1")->getParam("color");
+	color->setColorChannel("Blue", 0.8);
+	color->setColorChannel("Green", 0.2);
+	color->setColorChannel("White", 0.02);
+
+	inno1.setParam("intensity", 1.f);
+	inno1.setParam("shutter", "OPEN");
+	inno1.setParam("pan", 270.f);
+	inno1.setParam("tilt", 20.f);
+
+	//
+
+	color = (LumiverseColor*)rig.getDevice("inno2")->getParam("color");
+	color->setColorChannel("Blue", 0.8);
+	color->setColorChannel("Green", 0);
+	color->setColorChannel("Red", 0.2);
+	color->setColorChannel("White", 0.02);
+
+	inno2.setParam("intensity", 1.f);
+	inno2.setParam("shutter", "OPEN");
+	inno2.setParam("tilt", 0.f);
+	inno2.setParam("pan", 0.f);
+
+	//
+
+	color = (LumiverseColor*)rig.getDevice("inno3")->getParam("color");
+	color->setColorChannel("Blue", 0.8);
+	color->setColorChannel("Green", 0.2);
+	color->setColorChannel("White", 0.02);
+
+	inno3.setParam("intensity", 1.f);
+	inno3.setParam("shutter", "OPEN");
+	inno3.setParam("pan", 90.f);
+	inno3.setParam("tilt", 20.f);
+
     Cue cue2(&rig);
     list1->storeCue(2, cue2);
+
+	////////////////////
+
+	color = (LumiverseColor*)rig.getDevice("inno1")->getParam("color");
+	color->setColorChannel("Blue", 0.8);
+	color->setColorChannel("Green", 0.2);
+	color->setColorChannel("Red", 0.4);
+	color->setColorChannel("White", 0.1);
+
+	inno1.setParam("pan", 0.f);
+	inno1.setParam("tilt", 45.f);
+
+	//
+
+	color = (LumiverseColor*)rig.getDevice("inno2")->getParam("color");
+	color->setColorChannel("Blue", 0.8);
+	color->setColorChannel("Green", 0);
+	color->setColorChannel("Red", 0.2);
+	color->setColorChannel("White", 0.2);
+
+	inno2.setParam("tilt", 45.f);
+	inno2.setParam("pan", 0.f);
+
+	//
+
+	color = (LumiverseColor*)rig.getDevice("inno3")->getParam("color");
+	color->setColorChannel("Blue", 0.8);
+	color->setColorChannel("Green", 0.2);
+	color->setColorChannel("Red", 0.4);
+	color->setColorChannel("White", 0.2);
+
+	inno3.setParam("pan", 0.f);
+	inno3.setParam("tilt", 45.f);
+
+	Cue cue3(&rig);
+	list1->storeCue(3, cue3);
+
+	pb.addCueList(list1);
+	pb.addLayer(layer1);
+	pb.addCueListToLayer("list1", "layer1");
     
     //par.reset();
     //list1->getCue(1)->insertKeyframe(5, par);
@@ -66,13 +162,15 @@ void simulation() {
     // Test keyframe overwrite
     //chan1.setParam("intensity", 0.0f);
     //list1.getCue(1)->insertKeyframe(4.5f, chan1);
-    //pb.save("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric_cue.pb.json", true);
+	pb.save("J:/Lumiverse/Lumiverse/data/movingLights_box2.pb.json", true);
     pb.start();
     rig.run();
     
     layer1->go();
     layer1->go();
     
+	return;
+
     time_t t = 0;
     while (1) {
 		/*

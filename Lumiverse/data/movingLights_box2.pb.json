@@ -1,0 +1,3556 @@
+{
+	"playback" : {
+		"cueLists" : {
+			"list1" : {
+				"cues" : {
+					"1" : {
+						"upfade" : 1,
+						"downfade" : 1,
+						"delay" : 1,
+						"cueData" : {
+							"inno1" : {
+								"color" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "color",
+											"channels" : {
+												"Blue" : 0.8,
+												"Green" : 0,
+												"Red" : 0.2,
+												"White" : 0.02
+											},
+											"basis" : {
+												"Blue" : [
+													4.30497,
+													3.859103,
+													29.365243
+												],
+												"Green" : [
+													5.59857,
+													25.901501,
+													4.084567
+												],
+												"Red" : [
+													13.16544,
+													5.868346,
+													0.000025
+												],
+												"White" : [
+													81.33195,
+													79.590576,
+													47.302138
+												]
+											},
+											"weight" : 1,
+											"mode" : "ADDITIVE"
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"control" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NORMAL",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NORMAL",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NORMAL" : 0,
+												"ALL MOTOR RESET" : 80,
+												"NO FUNCTION" : 85,
+												"INTERNAL PROGRAM 1" : 100,
+												"INTERNAL PROGRAM 2" : 120,
+												"INTERNAL PROGRAM 3" : 140,
+												"INTERNAL PROGRAM 4" : 160,
+												"INTERNAL PROGRAM 5" : 180,
+												"INTERNAL PROGRAM 6" : 200,
+												"INTERNAL PROGRAM 7" : 220,
+												"SOUND ACTIVE PROGRAM" : 240
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"intensity" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "float",
+											"val" : 1,
+											"default" : 0,
+											"max" : 1,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"moveSpeed" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "MAX - MIN MOVEMENT SPEED",
+											"tweak" : 0,
+											"mode" : "FIRST",
+											"default" : "MAX - MIN MOVEMENT SPEED",
+											"rangeMax" : 255,
+											"interpMode" : "SNAP",
+											"keys" : {
+												"MAX - MIN MOVEMENT SPEED" : 0,
+												"BLACKOUT BY MOVEMENT" : 226,
+												"NO FUNCTION" : 236
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"pan" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 360,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"rainbow" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NO FUNCTION",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NO FUNCTION",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NO FUNCTION" : 0,
+												"RAINBOW 1" : 10,
+												"RAINBOW 2" : 40,
+												"RAINBOW 3" : 72,
+												"RAINBOW 4" : 104,
+												"RAINBOW 5" : 136,
+												"RAINBOW 6" : 168,
+												"RAINBOW 7" : 200,
+												"CROSSFADING COLORS" : 232
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"shutter" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "SHUTTER CLOSED",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"SHUTTER CLOSED" : 0,
+												"OPEN" : 32,
+												"STROBE" : 64,
+												"OPEN 2" : 96,
+												"SLOW OPEN - FAST CLOSE" : 128,
+												"OPEN 3" : 160,
+												"RANDOM STROBE" : 192,
+												"OPEN 4" : 224
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"tilt" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 90,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								}
+							},
+							"inno2" : {
+								"color" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "color",
+											"channels" : {
+												"Blue" : 0.8,
+												"Green" : 0.2,
+												"Red" : 0,
+												"White" : 0.02
+											},
+											"basis" : {
+												"Blue" : [
+													4.30497,
+													3.859103,
+													29.365243
+												],
+												"Green" : [
+													5.59857,
+													25.901501,
+													4.084567
+												],
+												"Red" : [
+													13.16544,
+													5.868346,
+													0.000025
+												],
+												"White" : [
+													81.33195,
+													79.590576,
+													47.302138
+												]
+											},
+											"weight" : 1,
+											"mode" : "ADDITIVE"
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"control" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NORMAL",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NORMAL",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NORMAL" : 0,
+												"ALL MOTOR RESET" : 80,
+												"NO FUNCTION" : 85,
+												"INTERNAL PROGRAM 1" : 100,
+												"INTERNAL PROGRAM 2" : 120,
+												"INTERNAL PROGRAM 3" : 140,
+												"INTERNAL PROGRAM 4" : 160,
+												"INTERNAL PROGRAM 5" : 180,
+												"INTERNAL PROGRAM 6" : 200,
+												"INTERNAL PROGRAM 7" : 220,
+												"SOUND ACTIVE PROGRAM" : 240
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"intensity" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "float",
+											"val" : 1,
+											"default" : 0,
+											"max" : 1,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"moveSpeed" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "MAX - MIN MOVEMENT SPEED",
+											"tweak" : 0,
+											"mode" : "FIRST",
+											"default" : "MAX - MIN MOVEMENT SPEED",
+											"rangeMax" : 255,
+											"interpMode" : "SNAP",
+											"keys" : {
+												"MAX - MIN MOVEMENT SPEED" : 0,
+												"BLACKOUT BY MOVEMENT" : 226,
+												"NO FUNCTION" : 236
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"pan" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 360,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"rainbow" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NO FUNCTION",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NO FUNCTION",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NO FUNCTION" : 0,
+												"RAINBOW 1" : 10,
+												"RAINBOW 2" : 40,
+												"RAINBOW 3" : 72,
+												"RAINBOW 4" : 104,
+												"RAINBOW 5" : 136,
+												"RAINBOW 6" : 168,
+												"RAINBOW 7" : 200,
+												"CROSSFADING COLORS" : 232
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"shutter" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "SHUTTER CLOSED",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"SHUTTER CLOSED" : 0,
+												"OPEN" : 32,
+												"STROBE" : 64,
+												"OPEN 2" : 96,
+												"SLOW OPEN - FAST CLOSE" : 128,
+												"OPEN 3" : 160,
+												"RANDOM STROBE" : 192,
+												"OPEN 4" : 224
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"tilt" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 90,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								}
+							},
+							"inno3" : {
+								"color" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "color",
+											"channels" : {
+												"Blue" : 0.8,
+												"Green" : 0,
+												"Red" : 0.2,
+												"White" : 0.02
+											},
+											"basis" : {
+												"Blue" : [
+													4.30497,
+													3.859103,
+													29.365243
+												],
+												"Green" : [
+													5.59857,
+													25.901501,
+													4.084567
+												],
+												"Red" : [
+													13.16544,
+													5.868346,
+													0.000025
+												],
+												"White" : [
+													81.33195,
+													79.590576,
+													47.302138
+												]
+											},
+											"weight" : 1,
+											"mode" : "ADDITIVE"
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"control" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NORMAL",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NORMAL",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NORMAL" : 0,
+												"ALL MOTOR RESET" : 80,
+												"NO FUNCTION" : 85,
+												"INTERNAL PROGRAM 1" : 100,
+												"INTERNAL PROGRAM 2" : 120,
+												"INTERNAL PROGRAM 3" : 140,
+												"INTERNAL PROGRAM 4" : 160,
+												"INTERNAL PROGRAM 5" : 180,
+												"INTERNAL PROGRAM 6" : 200,
+												"INTERNAL PROGRAM 7" : 220,
+												"SOUND ACTIVE PROGRAM" : 240
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"intensity" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "float",
+											"val" : 1,
+											"default" : 0,
+											"max" : 1,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"moveSpeed" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "MAX - MIN MOVEMENT SPEED",
+											"tweak" : 0,
+											"mode" : "FIRST",
+											"default" : "MAX - MIN MOVEMENT SPEED",
+											"rangeMax" : 255,
+											"interpMode" : "SNAP",
+											"keys" : {
+												"MAX - MIN MOVEMENT SPEED" : 0,
+												"BLACKOUT BY MOVEMENT" : 226,
+												"NO FUNCTION" : 236
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"pan" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 360,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"rainbow" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NO FUNCTION",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NO FUNCTION",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NO FUNCTION" : 0,
+												"RAINBOW 1" : 10,
+												"RAINBOW 2" : 40,
+												"RAINBOW 3" : 72,
+												"RAINBOW 4" : 104,
+												"RAINBOW 5" : 136,
+												"RAINBOW 6" : 168,
+												"RAINBOW 7" : 200,
+												"CROSSFADING COLORS" : 232
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"shutter" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "SHUTTER CLOSED",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"SHUTTER CLOSED" : 0,
+												"OPEN" : 32,
+												"STROBE" : 64,
+												"OPEN 2" : 96,
+												"SLOW OPEN - FAST CLOSE" : 128,
+												"OPEN 3" : 160,
+												"RANDOM STROBE" : 192,
+												"OPEN 4" : 224
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"tilt" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 90,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								}
+							},
+							"vizi" : {
+								"colorWheel" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "OPEN",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"OPEN" : 0,
+												"COLOR 1" : 15,
+												"COLOR 2" : 30,
+												"COLOR 3" : 45,
+												"COLOR 4" : 60,
+												"COLOR 5" : 75,
+												"COLOR 6" : 90,
+												"COLOR 7" : 105,
+												"COLOR 8" : 120,
+												"FORWARD RAINBOW" : 128,
+												"NO ROTATION" : 190,
+												"BACKWARDS RAINBOW" : 194
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"control" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "COLOR CHANGE NORMAL",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "COLOR CHANGE NORMAL",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"COLOR CHANGE NORMAL" : 0,
+												"COLOR CHANGE TO ANY POSITION" : 20,
+												"NO FUNCTION" : 40,
+												"ALL MOTOR RESET" : 80,
+												"SCAN MOTOR RESET" : 85,
+												"COLOR MOTOR RESET" : 88,
+												"GOBO MOTOR RESET" : 91,
+												"NO FUNCTION 2" : 94,
+												"OTHER MOTOR RESET" : 97,
+												"INTERNAL PROGRAM 1" : 100,
+												"INTERNAL PROGRAM 2" : 120,
+												"INTERNAL PROGRAM 3" : 140,
+												"INTERNAL PROGRAM 4" : 160,
+												"INTERNAL PROGRAM 5" : 180,
+												"INTERNAL PROGRAM 6" : 200,
+												"INTERNAL PROGRAM 7" : 220,
+												"SOUND ACTIVE PROGRAM" : 240
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"gobo" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "OPEN",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"OPEN" : 0,
+												"GOBO 1" : 10,
+												"GOBO 2" : 20,
+												"GOBO 3" : 30,
+												"GOBO 4" : 40,
+												"GOBO 5" : 50,
+												"GOBO 6" : 60,
+												"GOBO 7" : 70,
+												"GOBO 1 SHAKE" : 80,
+												"GOBO 2 SHAKE" : 96,
+												"GOBO 3 SHAKE" : 112,
+												"GOBO 4 SHAKE" : 128,
+												"GOBO 5 SHAKE" : 144,
+												"GOBO 6 SHAKE" : 160,
+												"GOBO 7 SHAKE" : 176,
+												"CONTINUOUS ROTATION" : 192
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"goboRot" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "INDEXING",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "INDEXING",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"INDEXING" : 0,
+												"FORWARDS ROTATION" : 128,
+												"NO ROTATION" : 190,
+												"BACKWARDS ROTATION" : 194
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"intensity" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "float",
+											"val" : 0.02,
+											"default" : 0,
+											"max" : 1,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"moveSpeed" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "SPEED",
+											"tweak" : 0,
+											"mode" : "FIRST",
+											"default" : "SPEED",
+											"rangeMax" : 255,
+											"interpMode" : "SNAP",
+											"keys" : {
+												"SPEED" : 0,
+												"BLACKOUT MOVEMENT" : 226,
+												"BLACKOUT WHEEL" : 236,
+												"NO FUNCTION" : 246
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"pan" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 180,
+											"default" : 0,
+											"max" : 360,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"prism" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "OPEN",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"OPEN" : 0,
+												"3 FACET" : 32,
+												"5 FACET" : 64,
+												"TRAPEZOID" : 96,
+												"MACRO 1" : 128,
+												"MACRO 2" : 136,
+												"MACRO 3" : 144,
+												"MACRO 4" : 152,
+												"MACRO 5" : 160,
+												"MACRO 6" : 168,
+												"MACRO 7" : 176,
+												"MACRO 8" : 184,
+												"MACRO 9" : 192,
+												"MACRO 10" : 200,
+												"MACRO 11" : 208,
+												"MACRO 12" : 216,
+												"MACRO 13" : 224,
+												"MACRO 14" : 232,
+												"MACRO 15" : 240,
+												"MACRO 16" : 248
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"shutter" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OFF",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "OFF",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"OFF" : 0,
+												"ON" : 32,
+												"STROBE" : 64,
+												"ON 2" : 96,
+												"PULSE" : 128,
+												"ON 3" : 160,
+												"RANDOM STROBE" : 192,
+												"ON 4" : 224
+											}
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"tilt" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 90,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"1" : {
+										"time" : 1,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								}
+							}
+						}
+					},
+					"2" : {
+						"upfade" : 3,
+						"downfade" : 3,
+						"delay" : 0,
+						"cueData" : {
+							"inno1" : {
+								"color" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "color",
+											"channels" : {
+												"Blue" : 0.8,
+												"Green" : 0.2,
+												"Red" : 0.2,
+												"White" : 0.02
+											},
+											"basis" : {
+												"Blue" : [
+													4.30497,
+													3.859103,
+													29.365243
+												],
+												"Green" : [
+													5.59857,
+													25.901501,
+													4.084567
+												],
+												"Red" : [
+													13.16544,
+													5.868346,
+													0.000025
+												],
+												"White" : [
+													81.33195,
+													79.590576,
+													47.302138
+												]
+											},
+											"weight" : 1,
+											"mode" : "ADDITIVE"
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"control" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NORMAL",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NORMAL",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NORMAL" : 0,
+												"ALL MOTOR RESET" : 80,
+												"NO FUNCTION" : 85,
+												"INTERNAL PROGRAM 1" : 100,
+												"INTERNAL PROGRAM 2" : 120,
+												"INTERNAL PROGRAM 3" : 140,
+												"INTERNAL PROGRAM 4" : 160,
+												"INTERNAL PROGRAM 5" : 180,
+												"INTERNAL PROGRAM 6" : 200,
+												"INTERNAL PROGRAM 7" : 220,
+												"SOUND ACTIVE PROGRAM" : 240
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"intensity" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "float",
+											"val" : 1,
+											"default" : 0,
+											"max" : 1,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"moveSpeed" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "MAX - MIN MOVEMENT SPEED",
+											"tweak" : 0,
+											"mode" : "FIRST",
+											"default" : "MAX - MIN MOVEMENT SPEED",
+											"rangeMax" : 255,
+											"interpMode" : "SNAP",
+											"keys" : {
+												"MAX - MIN MOVEMENT SPEED" : 0,
+												"BLACKOUT BY MOVEMENT" : 226,
+												"NO FUNCTION" : 236
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"pan" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 270,
+											"default" : 0,
+											"max" : 360,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"rainbow" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NO FUNCTION",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NO FUNCTION",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NO FUNCTION" : 0,
+												"RAINBOW 1" : 10,
+												"RAINBOW 2" : 40,
+												"RAINBOW 3" : 72,
+												"RAINBOW 4" : 104,
+												"RAINBOW 5" : 136,
+												"RAINBOW 6" : 168,
+												"RAINBOW 7" : 200,
+												"CROSSFADING COLORS" : 232
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"shutter" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "SHUTTER CLOSED",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"SHUTTER CLOSED" : 0,
+												"OPEN" : 32,
+												"STROBE" : 64,
+												"OPEN 2" : 96,
+												"SLOW OPEN - FAST CLOSE" : 128,
+												"OPEN 3" : 160,
+												"RANDOM STROBE" : 192,
+												"OPEN 4" : 224
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"tilt" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 20,
+											"default" : 0,
+											"max" : 90,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								}
+							},
+							"inno2" : {
+								"color" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "color",
+											"channels" : {
+												"Blue" : 0.8,
+												"Green" : 0,
+												"Red" : 0.2,
+												"White" : 0.02
+											},
+											"basis" : {
+												"Blue" : [
+													4.30497,
+													3.859103,
+													29.365243
+												],
+												"Green" : [
+													5.59857,
+													25.901501,
+													4.084567
+												],
+												"Red" : [
+													13.16544,
+													5.868346,
+													0.000025
+												],
+												"White" : [
+													81.33195,
+													79.590576,
+													47.302138
+												]
+											},
+											"weight" : 1,
+											"mode" : "ADDITIVE"
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"control" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NORMAL",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NORMAL",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NORMAL" : 0,
+												"ALL MOTOR RESET" : 80,
+												"NO FUNCTION" : 85,
+												"INTERNAL PROGRAM 1" : 100,
+												"INTERNAL PROGRAM 2" : 120,
+												"INTERNAL PROGRAM 3" : 140,
+												"INTERNAL PROGRAM 4" : 160,
+												"INTERNAL PROGRAM 5" : 180,
+												"INTERNAL PROGRAM 6" : 200,
+												"INTERNAL PROGRAM 7" : 220,
+												"SOUND ACTIVE PROGRAM" : 240
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"intensity" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "float",
+											"val" : 1,
+											"default" : 0,
+											"max" : 1,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"moveSpeed" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "MAX - MIN MOVEMENT SPEED",
+											"tweak" : 0,
+											"mode" : "FIRST",
+											"default" : "MAX - MIN MOVEMENT SPEED",
+											"rangeMax" : 255,
+											"interpMode" : "SNAP",
+											"keys" : {
+												"MAX - MIN MOVEMENT SPEED" : 0,
+												"BLACKOUT BY MOVEMENT" : 226,
+												"NO FUNCTION" : 236
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"pan" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 360,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"rainbow" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NO FUNCTION",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NO FUNCTION",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NO FUNCTION" : 0,
+												"RAINBOW 1" : 10,
+												"RAINBOW 2" : 40,
+												"RAINBOW 3" : 72,
+												"RAINBOW 4" : 104,
+												"RAINBOW 5" : 136,
+												"RAINBOW 6" : 168,
+												"RAINBOW 7" : 200,
+												"CROSSFADING COLORS" : 232
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"shutter" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "SHUTTER CLOSED",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"SHUTTER CLOSED" : 0,
+												"OPEN" : 32,
+												"STROBE" : 64,
+												"OPEN 2" : 96,
+												"SLOW OPEN - FAST CLOSE" : 128,
+												"OPEN 3" : 160,
+												"RANDOM STROBE" : 192,
+												"OPEN 4" : 224
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"tilt" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 90,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								}
+							},
+							"inno3" : {
+								"color" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "color",
+											"channels" : {
+												"Blue" : 0.8,
+												"Green" : 0.2,
+												"Red" : 0.2,
+												"White" : 0.02
+											},
+											"basis" : {
+												"Blue" : [
+													4.30497,
+													3.859103,
+													29.365243
+												],
+												"Green" : [
+													5.59857,
+													25.901501,
+													4.084567
+												],
+												"Red" : [
+													13.16544,
+													5.868346,
+													0.000025
+												],
+												"White" : [
+													81.33195,
+													79.590576,
+													47.302138
+												]
+											},
+											"weight" : 1,
+											"mode" : "ADDITIVE"
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"control" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NORMAL",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NORMAL",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NORMAL" : 0,
+												"ALL MOTOR RESET" : 80,
+												"NO FUNCTION" : 85,
+												"INTERNAL PROGRAM 1" : 100,
+												"INTERNAL PROGRAM 2" : 120,
+												"INTERNAL PROGRAM 3" : 140,
+												"INTERNAL PROGRAM 4" : 160,
+												"INTERNAL PROGRAM 5" : 180,
+												"INTERNAL PROGRAM 6" : 200,
+												"INTERNAL PROGRAM 7" : 220,
+												"SOUND ACTIVE PROGRAM" : 240
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"intensity" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "float",
+											"val" : 1,
+											"default" : 0,
+											"max" : 1,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"moveSpeed" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "MAX - MIN MOVEMENT SPEED",
+											"tweak" : 0,
+											"mode" : "FIRST",
+											"default" : "MAX - MIN MOVEMENT SPEED",
+											"rangeMax" : 255,
+											"interpMode" : "SNAP",
+											"keys" : {
+												"MAX - MIN MOVEMENT SPEED" : 0,
+												"BLACKOUT BY MOVEMENT" : 226,
+												"NO FUNCTION" : 236
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"pan" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 90,
+											"default" : 0,
+											"max" : 360,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"rainbow" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NO FUNCTION",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NO FUNCTION",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NO FUNCTION" : 0,
+												"RAINBOW 1" : 10,
+												"RAINBOW 2" : 40,
+												"RAINBOW 3" : 72,
+												"RAINBOW 4" : 104,
+												"RAINBOW 5" : 136,
+												"RAINBOW 6" : 168,
+												"RAINBOW 7" : 200,
+												"CROSSFADING COLORS" : 232
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"shutter" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "SHUTTER CLOSED",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"SHUTTER CLOSED" : 0,
+												"OPEN" : 32,
+												"STROBE" : 64,
+												"OPEN 2" : 96,
+												"SLOW OPEN - FAST CLOSE" : 128,
+												"OPEN 3" : 160,
+												"RANDOM STROBE" : 192,
+												"OPEN 4" : 224
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"tilt" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 20,
+											"default" : 0,
+											"max" : 90,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								}
+							},
+							"vizi" : {
+								"colorWheel" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "OPEN",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"OPEN" : 0,
+												"COLOR 1" : 15,
+												"COLOR 2" : 30,
+												"COLOR 3" : 45,
+												"COLOR 4" : 60,
+												"COLOR 5" : 75,
+												"COLOR 6" : 90,
+												"COLOR 7" : 105,
+												"COLOR 8" : 120,
+												"FORWARD RAINBOW" : 128,
+												"NO ROTATION" : 190,
+												"BACKWARDS RAINBOW" : 194
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"control" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "COLOR CHANGE NORMAL",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "COLOR CHANGE NORMAL",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"COLOR CHANGE NORMAL" : 0,
+												"COLOR CHANGE TO ANY POSITION" : 20,
+												"NO FUNCTION" : 40,
+												"ALL MOTOR RESET" : 80,
+												"SCAN MOTOR RESET" : 85,
+												"COLOR MOTOR RESET" : 88,
+												"GOBO MOTOR RESET" : 91,
+												"NO FUNCTION 2" : 94,
+												"OTHER MOTOR RESET" : 97,
+												"INTERNAL PROGRAM 1" : 100,
+												"INTERNAL PROGRAM 2" : 120,
+												"INTERNAL PROGRAM 3" : 140,
+												"INTERNAL PROGRAM 4" : 160,
+												"INTERNAL PROGRAM 5" : 180,
+												"INTERNAL PROGRAM 6" : 200,
+												"INTERNAL PROGRAM 7" : 220,
+												"SOUND ACTIVE PROGRAM" : 240
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"gobo" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "OPEN",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"OPEN" : 0,
+												"GOBO 1" : 10,
+												"GOBO 2" : 20,
+												"GOBO 3" : 30,
+												"GOBO 4" : 40,
+												"GOBO 5" : 50,
+												"GOBO 6" : 60,
+												"GOBO 7" : 70,
+												"GOBO 1 SHAKE" : 80,
+												"GOBO 2 SHAKE" : 96,
+												"GOBO 3 SHAKE" : 112,
+												"GOBO 4 SHAKE" : 128,
+												"GOBO 5 SHAKE" : 144,
+												"GOBO 6 SHAKE" : 160,
+												"GOBO 7 SHAKE" : 176,
+												"CONTINUOUS ROTATION" : 192
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"goboRot" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "INDEXING",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "INDEXING",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"INDEXING" : 0,
+												"FORWARDS ROTATION" : 128,
+												"NO ROTATION" : 190,
+												"BACKWARDS ROTATION" : 194
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"intensity" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "float",
+											"val" : 0.02,
+											"default" : 0,
+											"max" : 1,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"moveSpeed" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "SPEED",
+											"tweak" : 0,
+											"mode" : "FIRST",
+											"default" : "SPEED",
+											"rangeMax" : 255,
+											"interpMode" : "SNAP",
+											"keys" : {
+												"SPEED" : 0,
+												"BLACKOUT MOVEMENT" : 226,
+												"BLACKOUT WHEEL" : 236,
+												"NO FUNCTION" : 246
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"pan" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 180,
+											"default" : 0,
+											"max" : 360,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"prism" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "OPEN",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"OPEN" : 0,
+												"3 FACET" : 32,
+												"5 FACET" : 64,
+												"TRAPEZOID" : 96,
+												"MACRO 1" : 128,
+												"MACRO 2" : 136,
+												"MACRO 3" : 144,
+												"MACRO 4" : 152,
+												"MACRO 5" : 160,
+												"MACRO 6" : 168,
+												"MACRO 7" : 176,
+												"MACRO 8" : 184,
+												"MACRO 9" : 192,
+												"MACRO 10" : 200,
+												"MACRO 11" : 208,
+												"MACRO 12" : 216,
+												"MACRO 13" : 224,
+												"MACRO 14" : 232,
+												"MACRO 15" : 240,
+												"MACRO 16" : 248
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"shutter" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OFF",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "OFF",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"OFF" : 0,
+												"ON" : 32,
+												"STROBE" : 64,
+												"ON 2" : 96,
+												"PULSE" : 128,
+												"ON 3" : 160,
+												"RANDOM STROBE" : 192,
+												"ON 4" : 224
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"tilt" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 90,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								}
+							}
+						}
+					},
+					"3" : {
+						"upfade" : 3,
+						"downfade" : 3,
+						"delay" : 0,
+						"cueData" : {
+							"inno1" : {
+								"color" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "color",
+											"channels" : {
+												"Blue" : 0.8,
+												"Green" : 0.2,
+												"Red" : 0.4,
+												"White" : 0.1
+											},
+											"basis" : {
+												"Blue" : [
+													4.30497,
+													3.859103,
+													29.365243
+												],
+												"Green" : [
+													5.59857,
+													25.901501,
+													4.084567
+												],
+												"Red" : [
+													13.16544,
+													5.868346,
+													0.000025
+												],
+												"White" : [
+													81.33195,
+													79.590576,
+													47.302138
+												]
+											},
+											"weight" : 1,
+											"mode" : "ADDITIVE"
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"control" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NORMAL",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NORMAL",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NORMAL" : 0,
+												"ALL MOTOR RESET" : 80,
+												"NO FUNCTION" : 85,
+												"INTERNAL PROGRAM 1" : 100,
+												"INTERNAL PROGRAM 2" : 120,
+												"INTERNAL PROGRAM 3" : 140,
+												"INTERNAL PROGRAM 4" : 160,
+												"INTERNAL PROGRAM 5" : 180,
+												"INTERNAL PROGRAM 6" : 200,
+												"INTERNAL PROGRAM 7" : 220,
+												"SOUND ACTIVE PROGRAM" : 240
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"intensity" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "float",
+											"val" : 1,
+											"default" : 0,
+											"max" : 1,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"moveSpeed" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "MAX - MIN MOVEMENT SPEED",
+											"tweak" : 0,
+											"mode" : "FIRST",
+											"default" : "MAX - MIN MOVEMENT SPEED",
+											"rangeMax" : 255,
+											"interpMode" : "SNAP",
+											"keys" : {
+												"MAX - MIN MOVEMENT SPEED" : 0,
+												"BLACKOUT BY MOVEMENT" : 226,
+												"NO FUNCTION" : 236
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"pan" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 360,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"rainbow" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NO FUNCTION",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NO FUNCTION",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NO FUNCTION" : 0,
+												"RAINBOW 1" : 10,
+												"RAINBOW 2" : 40,
+												"RAINBOW 3" : 72,
+												"RAINBOW 4" : 104,
+												"RAINBOW 5" : 136,
+												"RAINBOW 6" : 168,
+												"RAINBOW 7" : 200,
+												"CROSSFADING COLORS" : 232
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"shutter" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "SHUTTER CLOSED",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"SHUTTER CLOSED" : 0,
+												"OPEN" : 32,
+												"STROBE" : 64,
+												"OPEN 2" : 96,
+												"SLOW OPEN - FAST CLOSE" : 128,
+												"OPEN 3" : 160,
+												"RANDOM STROBE" : 192,
+												"OPEN 4" : 224
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"tilt" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 45,
+											"default" : 0,
+											"max" : 90,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								}
+							},
+							"inno2" : {
+								"color" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "color",
+											"channels" : {
+												"Blue" : 0.8,
+												"Green" : 0,
+												"Red" : 0.2,
+												"White" : 0.2
+											},
+											"basis" : {
+												"Blue" : [
+													4.30497,
+													3.859103,
+													29.365243
+												],
+												"Green" : [
+													5.59857,
+													25.901501,
+													4.084567
+												],
+												"Red" : [
+													13.16544,
+													5.868346,
+													0.000025
+												],
+												"White" : [
+													81.33195,
+													79.590576,
+													47.302138
+												]
+											},
+											"weight" : 1,
+											"mode" : "ADDITIVE"
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"control" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NORMAL",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NORMAL",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NORMAL" : 0,
+												"ALL MOTOR RESET" : 80,
+												"NO FUNCTION" : 85,
+												"INTERNAL PROGRAM 1" : 100,
+												"INTERNAL PROGRAM 2" : 120,
+												"INTERNAL PROGRAM 3" : 140,
+												"INTERNAL PROGRAM 4" : 160,
+												"INTERNAL PROGRAM 5" : 180,
+												"INTERNAL PROGRAM 6" : 200,
+												"INTERNAL PROGRAM 7" : 220,
+												"SOUND ACTIVE PROGRAM" : 240
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"intensity" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "float",
+											"val" : 1,
+											"default" : 0,
+											"max" : 1,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"moveSpeed" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "MAX - MIN MOVEMENT SPEED",
+											"tweak" : 0,
+											"mode" : "FIRST",
+											"default" : "MAX - MIN MOVEMENT SPEED",
+											"rangeMax" : 255,
+											"interpMode" : "SNAP",
+											"keys" : {
+												"MAX - MIN MOVEMENT SPEED" : 0,
+												"BLACKOUT BY MOVEMENT" : 226,
+												"NO FUNCTION" : 236
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"pan" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 360,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"rainbow" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NO FUNCTION",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NO FUNCTION",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NO FUNCTION" : 0,
+												"RAINBOW 1" : 10,
+												"RAINBOW 2" : 40,
+												"RAINBOW 3" : 72,
+												"RAINBOW 4" : 104,
+												"RAINBOW 5" : 136,
+												"RAINBOW 6" : 168,
+												"RAINBOW 7" : 200,
+												"CROSSFADING COLORS" : 232
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"shutter" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "SHUTTER CLOSED",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"SHUTTER CLOSED" : 0,
+												"OPEN" : 32,
+												"STROBE" : 64,
+												"OPEN 2" : 96,
+												"SLOW OPEN - FAST CLOSE" : 128,
+												"OPEN 3" : 160,
+												"RANDOM STROBE" : 192,
+												"OPEN 4" : 224
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"tilt" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 45,
+											"default" : 0,
+											"max" : 90,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								}
+							},
+							"inno3" : {
+								"color" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "color",
+											"channels" : {
+												"Blue" : 0.8,
+												"Green" : 0.2,
+												"Red" : 0.4,
+												"White" : 0.2
+											},
+											"basis" : {
+												"Blue" : [
+													4.30497,
+													3.859103,
+													29.365243
+												],
+												"Green" : [
+													5.59857,
+													25.901501,
+													4.084567
+												],
+												"Red" : [
+													13.16544,
+													5.868346,
+													0.000025
+												],
+												"White" : [
+													81.33195,
+													79.590576,
+													47.302138
+												]
+											},
+											"weight" : 1,
+											"mode" : "ADDITIVE"
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"control" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NORMAL",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NORMAL",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NORMAL" : 0,
+												"ALL MOTOR RESET" : 80,
+												"NO FUNCTION" : 85,
+												"INTERNAL PROGRAM 1" : 100,
+												"INTERNAL PROGRAM 2" : 120,
+												"INTERNAL PROGRAM 3" : 140,
+												"INTERNAL PROGRAM 4" : 160,
+												"INTERNAL PROGRAM 5" : 180,
+												"INTERNAL PROGRAM 6" : 200,
+												"INTERNAL PROGRAM 7" : 220,
+												"SOUND ACTIVE PROGRAM" : 240
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"intensity" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "float",
+											"val" : 1,
+											"default" : 0,
+											"max" : 1,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"moveSpeed" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "MAX - MIN MOVEMENT SPEED",
+											"tweak" : 0,
+											"mode" : "FIRST",
+											"default" : "MAX - MIN MOVEMENT SPEED",
+											"rangeMax" : 255,
+											"interpMode" : "SNAP",
+											"keys" : {
+												"MAX - MIN MOVEMENT SPEED" : 0,
+												"BLACKOUT BY MOVEMENT" : 226,
+												"NO FUNCTION" : 236
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"pan" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 360,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"rainbow" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "NO FUNCTION",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "NO FUNCTION",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"NO FUNCTION" : 0,
+												"RAINBOW 1" : 10,
+												"RAINBOW 2" : 40,
+												"RAINBOW 3" : 72,
+												"RAINBOW 4" : 104,
+												"RAINBOW 5" : 136,
+												"RAINBOW 6" : 168,
+												"RAINBOW 7" : 200,
+												"CROSSFADING COLORS" : 232
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"shutter" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "SHUTTER CLOSED",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"SHUTTER CLOSED" : 0,
+												"OPEN" : 32,
+												"STROBE" : 64,
+												"OPEN 2" : 96,
+												"SLOW OPEN - FAST CLOSE" : 128,
+												"OPEN 3" : 160,
+												"RANDOM STROBE" : 192,
+												"OPEN 4" : 224
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"tilt" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 45,
+											"default" : 0,
+											"max" : 90,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								}
+							},
+							"vizi" : {
+								"colorWheel" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "OPEN",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"OPEN" : 0,
+												"COLOR 1" : 15,
+												"COLOR 2" : 30,
+												"COLOR 3" : 45,
+												"COLOR 4" : 60,
+												"COLOR 5" : 75,
+												"COLOR 6" : 90,
+												"COLOR 7" : 105,
+												"COLOR 8" : 120,
+												"FORWARD RAINBOW" : 128,
+												"NO ROTATION" : 190,
+												"BACKWARDS RAINBOW" : 194
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"control" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "COLOR CHANGE NORMAL",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "COLOR CHANGE NORMAL",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"COLOR CHANGE NORMAL" : 0,
+												"COLOR CHANGE TO ANY POSITION" : 20,
+												"NO FUNCTION" : 40,
+												"ALL MOTOR RESET" : 80,
+												"SCAN MOTOR RESET" : 85,
+												"COLOR MOTOR RESET" : 88,
+												"GOBO MOTOR RESET" : 91,
+												"NO FUNCTION 2" : 94,
+												"OTHER MOTOR RESET" : 97,
+												"INTERNAL PROGRAM 1" : 100,
+												"INTERNAL PROGRAM 2" : 120,
+												"INTERNAL PROGRAM 3" : 140,
+												"INTERNAL PROGRAM 4" : 160,
+												"INTERNAL PROGRAM 5" : 180,
+												"INTERNAL PROGRAM 6" : 200,
+												"INTERNAL PROGRAM 7" : 220,
+												"SOUND ACTIVE PROGRAM" : 240
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"gobo" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "OPEN",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"OPEN" : 0,
+												"GOBO 1" : 10,
+												"GOBO 2" : 20,
+												"GOBO 3" : 30,
+												"GOBO 4" : 40,
+												"GOBO 5" : 50,
+												"GOBO 6" : 60,
+												"GOBO 7" : 70,
+												"GOBO 1 SHAKE" : 80,
+												"GOBO 2 SHAKE" : 96,
+												"GOBO 3 SHAKE" : 112,
+												"GOBO 4 SHAKE" : 128,
+												"GOBO 5 SHAKE" : 144,
+												"GOBO 6 SHAKE" : 160,
+												"GOBO 7 SHAKE" : 176,
+												"CONTINUOUS ROTATION" : 192
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"goboRot" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "INDEXING",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "INDEXING",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"INDEXING" : 0,
+												"FORWARDS ROTATION" : 128,
+												"NO ROTATION" : 190,
+												"BACKWARDS ROTATION" : 194
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"intensity" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "float",
+											"val" : 0.02,
+											"default" : 0,
+											"max" : 1,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"moveSpeed" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "SPEED",
+											"tweak" : 0,
+											"mode" : "FIRST",
+											"default" : "SPEED",
+											"rangeMax" : 255,
+											"interpMode" : "SNAP",
+											"keys" : {
+												"SPEED" : 0,
+												"BLACKOUT MOVEMENT" : 226,
+												"BLACKOUT WHEEL" : 236,
+												"NO FUNCTION" : 246
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"pan" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 180,
+											"default" : 0,
+											"max" : 360,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"prism" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OPEN",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "OPEN",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"OPEN" : 0,
+												"3 FACET" : 32,
+												"5 FACET" : 64,
+												"TRAPEZOID" : 96,
+												"MACRO 1" : 128,
+												"MACRO 2" : 136,
+												"MACRO 3" : 144,
+												"MACRO 4" : 152,
+												"MACRO 5" : 160,
+												"MACRO 6" : 168,
+												"MACRO 7" : 176,
+												"MACRO 8" : 184,
+												"MACRO 9" : 192,
+												"MACRO 10" : 200,
+												"MACRO 11" : 208,
+												"MACRO 12" : 216,
+												"MACRO 13" : 224,
+												"MACRO 14" : 232,
+												"MACRO 15" : 240,
+												"MACRO 16" : 248
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"shutter" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "enum",
+											"active" : "OFF",
+											"tweak" : 0.5,
+											"mode" : "CENTER",
+											"default" : "OFF",
+											"rangeMax" : 255,
+											"interpMode" : "SMOOTH_WITHIN_OPTION",
+											"keys" : {
+												"OFF" : 0,
+												"ON" : 32,
+												"STROBE" : 64,
+												"ON 2" : 96,
+												"PULSE" : 128,
+												"ON 3" : 160,
+												"RANDOM STROBE" : 192,
+												"ON 4" : 224
+											}
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								},
+								"tilt" : {
+									"0" : {
+										"time" : 0,
+										"val" : {
+											"type" : "orientation",
+											"unit" : "degree",
+											"val" : 0,
+											"default" : 0,
+											"max" : 90,
+											"min" : 0
+										},
+										"useCueTiming" : false
+									},
+									"3" : {
+										"time" : 3,
+										"val" : "null",
+										"useCueTiming" : true
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"layers" : {
+			"layer1" : {
+				"name" : "layer1",
+				"priority" : 1,
+				"invertFilter" : false,
+				"active" : true,
+				"mode" : "BLEND_OPAQUE",
+				"opacity" : 1,
+				"currentCue" : -1,
+				"cueList" : "list1",
+				"state" : {
+					"inno1" : {
+						"channel" : 2,
+						"type" : "Inno Color Beam LED",
+						"parameters" : {
+							"color" : {
+								"type" : "color",
+								"channels" : {
+									"Blue" : 0,
+									"Green" : 0,
+									"Red" : 0,
+									"White" : 0
+								},
+								"basis" : {
+									"Blue" : [
+										4.30497,
+										3.859103,
+										29.365243
+									],
+									"Green" : [
+										5.59857,
+										25.901501,
+										4.084567
+									],
+									"Red" : [
+										13.16544,
+										5.868346,
+										0.000025
+									],
+									"White" : [
+										81.33195,
+										79.590576,
+										47.302138
+									]
+								},
+								"weight" : 1,
+								"mode" : "ADDITIVE"
+							},
+							"control" : {
+								"type" : "enum",
+								"active" : "NORMAL",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "NORMAL",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"NORMAL" : 0,
+									"ALL MOTOR RESET" : 80,
+									"NO FUNCTION" : 85,
+									"INTERNAL PROGRAM 1" : 100,
+									"INTERNAL PROGRAM 2" : 120,
+									"INTERNAL PROGRAM 3" : 140,
+									"INTERNAL PROGRAM 4" : 160,
+									"INTERNAL PROGRAM 5" : 180,
+									"INTERNAL PROGRAM 6" : 200,
+									"INTERNAL PROGRAM 7" : 220,
+									"SOUND ACTIVE PROGRAM" : 240
+								}
+							},
+							"intensity" : {
+								"type" : "float",
+								"val" : 0,
+								"default" : 0,
+								"max" : 1,
+								"min" : 0
+							},
+							"moveSpeed" : {
+								"type" : "enum",
+								"active" : "MAX - MIN MOVEMENT SPEED",
+								"tweak" : 0,
+								"mode" : "FIRST",
+								"default" : "MAX - MIN MOVEMENT SPEED",
+								"rangeMax" : 255,
+								"interpMode" : "SNAP",
+								"keys" : {
+									"MAX - MIN MOVEMENT SPEED" : 0,
+									"BLACKOUT BY MOVEMENT" : 226,
+									"NO FUNCTION" : 236
+								}
+							},
+							"pan" : {
+								"type" : "orientation",
+								"unit" : "degree",
+								"val" : 0,
+								"default" : 0,
+								"max" : 360,
+								"min" : 0
+							},
+							"rainbow" : {
+								"type" : "enum",
+								"active" : "NO FUNCTION",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "NO FUNCTION",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"NO FUNCTION" : 0,
+									"RAINBOW 1" : 10,
+									"RAINBOW 2" : 40,
+									"RAINBOW 3" : 72,
+									"RAINBOW 4" : 104,
+									"RAINBOW 5" : 136,
+									"RAINBOW 6" : 168,
+									"RAINBOW 7" : 200,
+									"CROSSFADING COLORS" : 232
+								}
+							},
+							"shutter" : {
+								"type" : "enum",
+								"active" : "SHUTTER CLOSED",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "SHUTTER CLOSED",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"SHUTTER CLOSED" : 0,
+									"OPEN" : 32,
+									"STROBE" : 64,
+									"OPEN 2" : 96,
+									"SLOW OPEN - FAST CLOSE" : 128,
+									"OPEN 3" : 160,
+									"RANDOM STROBE" : 192,
+									"OPEN 4" : 224
+								}
+							},
+							"tilt" : {
+								"type" : "orientation",
+								"unit" : "degree",
+								"val" : 0,
+								"default" : 0,
+								"max" : 90,
+								"min" : 0
+							}
+						},
+						"metadata" : {
+							"exposure" : "3.0",
+							"filename" : "J:\/Lumiverse\/Lumiverse\/data\/led.IES",
+							"location" : "floor right",
+							"lookat" : "0, -1, 0.01",
+							"matrix" : "1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -1.0, 1.5, 0, 1",
+							"position" : "-1.5, 1.8, 0",
+							"samples" : "3",
+							"up" : "0, -1, 0",
+							"volume_samples" : "3"
+						}
+					},
+					"inno2" : {
+						"channel" : 2,
+						"type" : "Inno Color Beam LED",
+						"parameters" : {
+							"color" : {
+								"type" : "color",
+								"channels" : {
+									"Blue" : 0,
+									"Green" : 0,
+									"Red" : 0,
+									"White" : 0
+								},
+								"basis" : {
+									"Blue" : [
+										4.30497,
+										3.859103,
+										29.365243
+									],
+									"Green" : [
+										5.59857,
+										25.901501,
+										4.084567
+									],
+									"Red" : [
+										13.16544,
+										5.868346,
+										0.000025
+									],
+									"White" : [
+										81.33195,
+										79.590576,
+										47.302138
+									]
+								},
+								"weight" : 1,
+								"mode" : "ADDITIVE"
+							},
+							"control" : {
+								"type" : "enum",
+								"active" : "NORMAL",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "NORMAL",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"NORMAL" : 0,
+									"ALL MOTOR RESET" : 80,
+									"NO FUNCTION" : 85,
+									"INTERNAL PROGRAM 1" : 100,
+									"INTERNAL PROGRAM 2" : 120,
+									"INTERNAL PROGRAM 3" : 140,
+									"INTERNAL PROGRAM 4" : 160,
+									"INTERNAL PROGRAM 5" : 180,
+									"INTERNAL PROGRAM 6" : 200,
+									"INTERNAL PROGRAM 7" : 220,
+									"SOUND ACTIVE PROGRAM" : 240
+								}
+							},
+							"intensity" : {
+								"type" : "float",
+								"val" : 0,
+								"default" : 0,
+								"max" : 1,
+								"min" : 0
+							},
+							"moveSpeed" : {
+								"type" : "enum",
+								"active" : "MAX - MIN MOVEMENT SPEED",
+								"tweak" : 0,
+								"mode" : "FIRST",
+								"default" : "MAX - MIN MOVEMENT SPEED",
+								"rangeMax" : 255,
+								"interpMode" : "SNAP",
+								"keys" : {
+									"MAX - MIN MOVEMENT SPEED" : 0,
+									"BLACKOUT BY MOVEMENT" : 226,
+									"NO FUNCTION" : 236
+								}
+							},
+							"pan" : {
+								"type" : "orientation",
+								"unit" : "degree",
+								"val" : 0,
+								"default" : 0,
+								"max" : 360,
+								"min" : 0
+							},
+							"rainbow" : {
+								"type" : "enum",
+								"active" : "NO FUNCTION",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "NO FUNCTION",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"NO FUNCTION" : 0,
+									"RAINBOW 1" : 10,
+									"RAINBOW 2" : 40,
+									"RAINBOW 3" : 72,
+									"RAINBOW 4" : 104,
+									"RAINBOW 5" : 136,
+									"RAINBOW 6" : 168,
+									"RAINBOW 7" : 200,
+									"CROSSFADING COLORS" : 232
+								}
+							},
+							"shutter" : {
+								"type" : "enum",
+								"active" : "SHUTTER CLOSED",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "SHUTTER CLOSED",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"SHUTTER CLOSED" : 0,
+									"OPEN" : 32,
+									"STROBE" : 64,
+									"OPEN 2" : 96,
+									"SLOW OPEN - FAST CLOSE" : 128,
+									"OPEN 3" : 160,
+									"RANDOM STROBE" : 192,
+									"OPEN 4" : 224
+								}
+							},
+							"tilt" : {
+								"type" : "orientation",
+								"unit" : "degree",
+								"val" : 0,
+								"default" : 0,
+								"max" : 90,
+								"min" : 0
+							}
+						},
+						"metadata" : {
+							"exposure" : "3.0",
+							"filename" : "J:\/Lumiverse\/Lumiverse\/data\/led.IES",
+							"location" : "floor right",
+							"lookat" : "0, -1, 0.01",
+							"matrix" : "1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -1.0, 1.5, 0, 1",
+							"position" : "0, 1.8, 0",
+							"samples" : "3",
+							"up" : "0, -1, 0",
+							"volume_samples" : "3"
+						}
+					},
+					"inno3" : {
+						"channel" : 2,
+						"type" : "Inno Color Beam LED",
+						"parameters" : {
+							"color" : {
+								"type" : "color",
+								"channels" : {
+									"Blue" : 0,
+									"Green" : 0,
+									"Red" : 0,
+									"White" : 0
+								},
+								"basis" : {
+									"Blue" : [
+										4.30497,
+										3.859103,
+										29.365243
+									],
+									"Green" : [
+										5.59857,
+										25.901501,
+										4.084567
+									],
+									"Red" : [
+										13.16544,
+										5.868346,
+										0.000025
+									],
+									"White" : [
+										81.33195,
+										79.590576,
+										47.302138
+									]
+								},
+								"weight" : 1,
+								"mode" : "ADDITIVE"
+							},
+							"control" : {
+								"type" : "enum",
+								"active" : "NORMAL",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "NORMAL",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"NORMAL" : 0,
+									"ALL MOTOR RESET" : 80,
+									"NO FUNCTION" : 85,
+									"INTERNAL PROGRAM 1" : 100,
+									"INTERNAL PROGRAM 2" : 120,
+									"INTERNAL PROGRAM 3" : 140,
+									"INTERNAL PROGRAM 4" : 160,
+									"INTERNAL PROGRAM 5" : 180,
+									"INTERNAL PROGRAM 6" : 200,
+									"INTERNAL PROGRAM 7" : 220,
+									"SOUND ACTIVE PROGRAM" : 240
+								}
+							},
+							"intensity" : {
+								"type" : "float",
+								"val" : 0,
+								"default" : 0,
+								"max" : 1,
+								"min" : 0
+							},
+							"moveSpeed" : {
+								"type" : "enum",
+								"active" : "MAX - MIN MOVEMENT SPEED",
+								"tweak" : 0,
+								"mode" : "FIRST",
+								"default" : "MAX - MIN MOVEMENT SPEED",
+								"rangeMax" : 255,
+								"interpMode" : "SNAP",
+								"keys" : {
+									"MAX - MIN MOVEMENT SPEED" : 0,
+									"BLACKOUT BY MOVEMENT" : 226,
+									"NO FUNCTION" : 236
+								}
+							},
+							"pan" : {
+								"type" : "orientation",
+								"unit" : "degree",
+								"val" : 0,
+								"default" : 0,
+								"max" : 360,
+								"min" : 0
+							},
+							"rainbow" : {
+								"type" : "enum",
+								"active" : "NO FUNCTION",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "NO FUNCTION",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"NO FUNCTION" : 0,
+									"RAINBOW 1" : 10,
+									"RAINBOW 2" : 40,
+									"RAINBOW 3" : 72,
+									"RAINBOW 4" : 104,
+									"RAINBOW 5" : 136,
+									"RAINBOW 6" : 168,
+									"RAINBOW 7" : 200,
+									"CROSSFADING COLORS" : 232
+								}
+							},
+							"shutter" : {
+								"type" : "enum",
+								"active" : "SHUTTER CLOSED",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "SHUTTER CLOSED",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"SHUTTER CLOSED" : 0,
+									"OPEN" : 32,
+									"STROBE" : 64,
+									"OPEN 2" : 96,
+									"SLOW OPEN - FAST CLOSE" : 128,
+									"OPEN 3" : 160,
+									"RANDOM STROBE" : 192,
+									"OPEN 4" : 224
+								}
+							},
+							"tilt" : {
+								"type" : "orientation",
+								"unit" : "degree",
+								"val" : 0,
+								"default" : 0,
+								"max" : 90,
+								"min" : 0
+							}
+						},
+						"metadata" : {
+							"exposure" : "3.0",
+							"filename" : "J:\/Lumiverse\/Lumiverse\/data\/led.IES",
+							"location" : "floor right",
+							"lookat" : "0, -1, 0.01",
+							"matrix" : "1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -1.0, 1.5, 0, 1",
+							"position" : "1.5, 1.8, 0",
+							"samples" : "3",
+							"up" : "0, -1, 0",
+							"volume_samples" : "3"
+						}
+					},
+					"vizi" : {
+						"channel" : 1,
+						"type" : "Vizi LED Spot",
+						"parameters" : {
+							"colorWheel" : {
+								"type" : "enum",
+								"active" : "OPEN",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "OPEN",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"OPEN" : 0,
+									"COLOR 1" : 15,
+									"COLOR 2" : 30,
+									"COLOR 3" : 45,
+									"COLOR 4" : 60,
+									"COLOR 5" : 75,
+									"COLOR 6" : 90,
+									"COLOR 7" : 105,
+									"COLOR 8" : 120,
+									"FORWARD RAINBOW" : 128,
+									"NO ROTATION" : 190,
+									"BACKWARDS RAINBOW" : 194
+								}
+							},
+							"control" : {
+								"type" : "enum",
+								"active" : "COLOR CHANGE NORMAL",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "COLOR CHANGE NORMAL",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"COLOR CHANGE NORMAL" : 0,
+									"COLOR CHANGE TO ANY POSITION" : 20,
+									"NO FUNCTION" : 40,
+									"ALL MOTOR RESET" : 80,
+									"SCAN MOTOR RESET" : 85,
+									"COLOR MOTOR RESET" : 88,
+									"GOBO MOTOR RESET" : 91,
+									"NO FUNCTION 2" : 94,
+									"OTHER MOTOR RESET" : 97,
+									"INTERNAL PROGRAM 1" : 100,
+									"INTERNAL PROGRAM 2" : 120,
+									"INTERNAL PROGRAM 3" : 140,
+									"INTERNAL PROGRAM 4" : 160,
+									"INTERNAL PROGRAM 5" : 180,
+									"INTERNAL PROGRAM 6" : 200,
+									"INTERNAL PROGRAM 7" : 220,
+									"SOUND ACTIVE PROGRAM" : 240
+								}
+							},
+							"gobo" : {
+								"type" : "enum",
+								"active" : "OPEN",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "OPEN",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"OPEN" : 0,
+									"GOBO 1" : 10,
+									"GOBO 2" : 20,
+									"GOBO 3" : 30,
+									"GOBO 4" : 40,
+									"GOBO 5" : 50,
+									"GOBO 6" : 60,
+									"GOBO 7" : 70,
+									"GOBO 1 SHAKE" : 80,
+									"GOBO 2 SHAKE" : 96,
+									"GOBO 3 SHAKE" : 112,
+									"GOBO 4 SHAKE" : 128,
+									"GOBO 5 SHAKE" : 144,
+									"GOBO 6 SHAKE" : 160,
+									"GOBO 7 SHAKE" : 176,
+									"CONTINUOUS ROTATION" : 192
+								}
+							},
+							"goboRot" : {
+								"type" : "enum",
+								"active" : "INDEXING",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "INDEXING",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"INDEXING" : 0,
+									"FORWARDS ROTATION" : 128,
+									"NO ROTATION" : 190,
+									"BACKWARDS ROTATION" : 194
+								}
+							},
+							"intensity" : {
+								"type" : "float",
+								"val" : 0,
+								"default" : 0,
+								"max" : 1,
+								"min" : 0
+							},
+							"moveSpeed" : {
+								"type" : "enum",
+								"active" : "SPEED",
+								"tweak" : 0,
+								"mode" : "FIRST",
+								"default" : "SPEED",
+								"rangeMax" : 255,
+								"interpMode" : "SNAP",
+								"keys" : {
+									"SPEED" : 0,
+									"BLACKOUT MOVEMENT" : 226,
+									"BLACKOUT WHEEL" : 236,
+									"NO FUNCTION" : 246
+								}
+							},
+							"pan" : {
+								"type" : "orientation",
+								"unit" : "degree",
+								"val" : 0,
+								"default" : 0,
+								"max" : 360,
+								"min" : 0
+							},
+							"prism" : {
+								"type" : "enum",
+								"active" : "OPEN",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "OPEN",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"OPEN" : 0,
+									"3 FACET" : 32,
+									"5 FACET" : 64,
+									"TRAPEZOID" : 96,
+									"MACRO 1" : 128,
+									"MACRO 2" : 136,
+									"MACRO 3" : 144,
+									"MACRO 4" : 152,
+									"MACRO 5" : 160,
+									"MACRO 6" : 168,
+									"MACRO 7" : 176,
+									"MACRO 8" : 184,
+									"MACRO 9" : 192,
+									"MACRO 10" : 200,
+									"MACRO 11" : 208,
+									"MACRO 12" : 216,
+									"MACRO 13" : 224,
+									"MACRO 14" : 232,
+									"MACRO 15" : 240,
+									"MACRO 16" : 248
+								}
+							},
+							"shutter" : {
+								"type" : "enum",
+								"active" : "OFF",
+								"tweak" : 0.5,
+								"mode" : "CENTER",
+								"default" : "OFF",
+								"rangeMax" : 255,
+								"interpMode" : "SMOOTH_WITHIN_OPTION",
+								"keys" : {
+									"OFF" : 0,
+									"ON" : 32,
+									"STROBE" : 64,
+									"ON 2" : 96,
+									"PULSE" : 128,
+									"ON 3" : 160,
+									"RANDOM STROBE" : 192,
+									"ON 4" : 224
+								}
+							},
+							"tilt" : {
+								"type" : "orientation",
+								"unit" : "degree",
+								"val" : 0,
+								"default" : 0,
+								"max" : 90,
+								"min" : 0
+							}
+						},
+						"metadata" : {
+							"exposure" : "2.0",
+							"filename" : "J:\/Lumiverse\/Lumiverse\/data\/wash.ies",
+							"location" : "floor right",
+							"lookat" : "0, -1, 0.01",
+							"matrix" : "1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -1.0, 2, 0, 1",
+							"position" : "0, 1.9, 0",
+							"samples" : "3",
+							"up" : "0, -1, 0",
+							"volume_samples" : "3"
+						}
+					}
+				},
+				"paramFilter" : []
+			}
+		}
+	}
+}
