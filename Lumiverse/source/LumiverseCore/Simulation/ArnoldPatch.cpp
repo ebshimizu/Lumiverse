@@ -46,6 +46,11 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
             JSONNode gamma = *i;
             m_interface.setGamma(gamma.as_float());
 		}
+
+		if (nodeName == "predictive") {
+			JSONNode predictive = *i;
+			m_interface.setPredictive(predictive.as_bool());
+		}
         
         if (nodeName == "samples") {
             JSONNode samples = *i;
@@ -215,8 +220,18 @@ void ArnoldPatch::modifyLightColor(Device *d, Eigen::Vector3d white) {
 	if (!light_ptr)
 		return;
 
-	Eigen::Vector3d rgb = d->getColor()->getRGB();
-	rgb *= Eigen::Vector3d(1 / white[0], 1 / white[1], 1 / white[2]);
+	Eigen::Vector3d rgb;
+	if (d->getColor() != NULL) 
+		rgb = d->getColor()->getRGB();
+	else {
+		LumiverseColor white(BASIC_RGB);
+		white.setColorChannel("Red", 1);
+		white.setColorChannel("Green", 1);
+		white.setColorChannel("Blue", 1);
+		rgb = white.getRGB();
+	}
+
+	//rgb = Eigen::Vector3d(rgb[0] / white[0], rgb[1] / white[1], rgb[2] / white[2]);
 
 	std::stringstream ss;
 	ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
@@ -224,6 +239,11 @@ void ArnoldPatch::modifyLightColor(Device *d, Eigen::Vector3d white) {
 }
     
 void ArnoldPatch::updateLight(set<Device *> devices) {
+	if (m_interface.getPredictive()) {
+		updateLightPredictive(devices);
+		return;
+	}
+
 	for (Device* d : devices) {
 		std::string name = d->getId();
 		if (m_lights.count(name) == 0)
@@ -235,6 +255,10 @@ void ArnoldPatch::updateLight(set<Device *> devices) {
 void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
 	Device *dominant = NULL;
 	float max_luminant = -1;
+	LumiverseColor white(BASIC_RGB);
+	white.setColorChannel("Red", 1);
+	white.setColorChannel("Green", 1);
+	white.setColorChannel("Blue", 1);
 
 	for (Device* d : devices) {
 		std::string name = d->getId();
@@ -249,7 +273,16 @@ void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
 			iss >> exposure;
 		}
 
-		float luminant = d->getColor()->getY() * intensity * powf(2, exposure);
+		float luminant;
+		float color_intensity;
+		if (d->getColor() != NULL)
+			color_intensity = d->getColor()->getY();
+		else {
+			color_intensity = 100;// white.getY();
+		}
+
+		luminant = color_intensity * intensity * powf(2, exposure);
+
 		if (luminant > max_luminant) {
 			max_luminant = luminant;
 			dominant = d;
@@ -261,7 +294,12 @@ void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
 	if (!dominant)
 		return;
 
-	Eigen::Vector3d rgb_w = dominant->getColor()->getRGB(sharpRGB);
+	Eigen::Vector3d rgb_w;
+	if (dominant->getColor() != NULL)
+		rgb_w = dominant->getColor()->getRGB(sharpRGB);
+	else {
+		rgb_w = white.getRGB(sharpRGB);
+	}
 
 	for (Device* d : devices) {
 		std::string name = d->getId();
@@ -269,6 +307,8 @@ void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
 			continue;
 		modifyLightColor(d, rgb_w);
 	}
+
+	m_interface.updateSurfaceColor(rgb_w);
 }
 
 void ArnoldPatch::clearUpdateFlags() {

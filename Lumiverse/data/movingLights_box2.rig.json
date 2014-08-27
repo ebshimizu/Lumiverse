@@ -829,12 +829,13 @@
         "arnold" : {
           "type" : "ArnoldAnimationPatch",
             "sceneFile" : "J:/Lumiverse/Lumiverse/data/cornell2.ass",
-            "pluginDir" : "J:/Lumiverse/Lumiverse/source/LumiverseCore/lib/arnold/plugin;I:/solidangle/mtoadeploy/2014/shaders/",
+            "pluginDir" : "J:/LumiverseInstall/plugin;I:/solidangle/mtoadeploy/2014/shaders/",
             "gamma" : 2.2,
+            "predictive" : 0,
             "lights" : {
                 "inno1" : { "type" : "photometric_light" }, 
                 "inno2" : { "type" : "photometric_light" }, 
-                "inno3" : { "type" : "photometric_light" }, 
+                "inno3" : { "type" : "photometric_light" },
                 "vizi" : { "type" : "photometric_light" }
             },
             "arnoldParamMaps" : {

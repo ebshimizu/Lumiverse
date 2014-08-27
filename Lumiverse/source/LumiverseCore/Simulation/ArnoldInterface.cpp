@@ -242,14 +242,30 @@ void ArnoldInterface::setSamplesOption() {
 
 void ArnoldInterface::updateSurfaceColor(Eigen::Vector3d white) {
 	Eigen::Matrix3d toxyz = RGBToXYZ[sRGB];
+	// TODO: To query names of existing surface
+	std::string names[] = {"left_srf", "right_srf", "bottom_srf", "top_srf", "back_srf", "character"};
 
+	for (std::string srf : names) {
+		AtNode *node = AiNodeLookUpByName(srf.c_str());
+		AtRGBA rgba = AiNodeGetRGBA(node, "Kd_color");
+
+		// To xyz
+		Eigen::Vector3d xyz = RGBToXYZ[sRGB] * Eigen::Vector3d(rgba.r, rgba.g, rgba.b);
+
+		// Multiplies by M_sharp
+		Eigen::Vector3d sharp_rgb = RGBToXYZ[sharpRGB].inverse() * xyz;
+
+		// White balance
+		//sharp_rgb = Eigen::Vector3d(sharp_rgb[0] / white[0], sharp_rgb[1] / white[1], sharp_rgb[2] / white[2]);
+
+		AiNodeSetRGBA(node, "Kd_color", sharp_rgb[0], sharp_rgb[1], sharp_rgb[2], rgba.a);
+	}
 }
 
 void ArnoldInterface::init() {
     // TODO : to use env var (different apis for linux and win)
     AiLicenseSetServer("pike.graphics.cs.cmu.edu", 5053);
-    AiMsgSetLogFileName("C:/Users/Evan/Documents/Programming/lumiverseboard/LumiverseBoard/Builds/VisualStudio2013/arnoldLog.txt");
-    AiMsgSetLogFileFlags(AI_LOG_ALL);
+
     // Starts a arnold session
     AiBegin();
 
@@ -275,6 +291,7 @@ void ArnoldInterface::init() {
     AiNodeSetInt(driver, "width", m_width);
     AiNodeSetInt(driver, "height", m_height);
     AiNodeSetFlt(driver, "gamma", m_gamma);
+	AiNodeSetBool(driver, "predictive", m_predictive);
     
     // Assume we are using RGBA
     m_buffer = new float[m_width * m_height * 4];

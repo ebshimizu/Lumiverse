@@ -303,24 +303,24 @@ aHr8v8]kOIaKe()aE0;k8]V<NaKfoCaCI`G8]\4@aGZitaK:xp8^1lnaKjB9aITD/8]w_+aOb^baHN(6
  0 0.3 0 0
  0 0 -0.3 0
  0 -2.0 0 1
- shader "aiStandard1SG"
+ shader "characterSG"
  opaque on
  id 1028103074
  declare mtoa_shading_groups constant ARRAY NODE
- mtoa_shading_groups "aiStandard1SG"
+ mtoa_shading_groups "characterSG"
 }
 
 MayaShadingEngine
 {
- name aiStandard1SG
- beauty aiStandard1
+ name characterSG
+ beauty character
  enable_matte off
  matte_color 0 0 0 0
 }
 
 standard
 {
- name aiStandard1
+ name character
  Kd 0.699999988
  Kd_color 1 1 1
  diffuse_roughness 0

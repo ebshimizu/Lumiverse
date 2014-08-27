@@ -10,20 +10,62 @@ static float clamp(float f, float min, float max) {
     return f;
 }
     
+AtMatrix sharp_inv = { 0.8156, 0.0472, 0.1372, 0,
+0.3791, 0.5769, 0.0440, 0,
+-0.0123, 0.0167, 0.9955, 0,
+0, 0, 0, 1 };
+
+AtMatrix display = { 3.2410, -1.5374, -0.4986, 0,
+-0.9692, 1.8760, 0.0416, 0,
+0.0556, -0.2040, 1.0570, 0,
+0, 0, 0, 1};
+
+AtMatrix tone = { 2.0667, - 0.7423, - 0.1193,         0,
+- 0.0798,    1.0372, - 0.0090,         0,
+- 0.0450, - 0.0974,    1.0509,         0,
+0,         0,         0,    1.0000 };
+
+static AtRGBA tone_map(const AtRGBA &rgba, const float gamma, const bool predictive) {
+	AtRGBA result = AiRGBACreate(rgba.r, rgba.g, rgba.b, rgba.a);
+
+	if (predictive) {
+		AtVector sharp;
+		AtVector out;
+
+		sharp.x = result.r;
+		sharp.y = result.g;
+		sharp.z = result.b;
+
+		AiM4VectorByMatrixMult(&out, tone, &sharp);
+
+		result = AiRGBACreate(out.x, out.y, out.z, rgba.a);
+	}
+
+	AiRGBAGamma(&result, gamma);
+
+	return result;
+}
+
 static void drawToBuffer(float *buffer, const float gamma, const size_t width,
                          const size_t x, const size_t y,
-                         const AtRGBA &rgba) {      
+                         const AtRGBA &rgba, const bool predictive) { 
+	/*
     for (size_t i = 0; i < 4; i++) {
         if (i != 3)
             buffer[(y * width + x) * 4 + i] = clamp(std::powf(rgba[i], 1 / gamma), 0.f, 1.f);
         else
             buffer[(y * width + x) * 4 + i] = rgba[i];
     }
-    /*
+    
     if (x == 0 && y < 10)
         printf("@@@  %zu, %zu: %f, %f, %f, %f\n", x, y, buffer[(y * width + x) * 4 + 0], buffer[(y * width + x) * 4 + 1],
                buffer[(y * width + x) * 4 + 2], buffer[(y * width + x) * 4 + 3]);
      */
+	AtRGBA mapped = tone_map(rgba, gamma, predictive);
+
+	for (size_t i = 0; i < 4; i++) {
+		buffer[(y * width + x) * 4 + i] = mapped[i];
+	}
 }
     
 /////////////////////////////////
@@ -52,6 +94,7 @@ node_parameters
 	AiParameterPTR("bucket_pos_pointer", NULL);
 	AiParameterPTR("progress_pointer", NULL);
     AiParameterFlt("gamma", 2.2);
+	AiParameterBool("predictive", 0);
 }
     
     
@@ -132,6 +175,7 @@ driver_write_bucket
     int height = AiNodeGetInt(node, "height");
     float *buffer = (float *)AiNodeGetPtr(node, "buffer_pointer");
     float gamma = AiNodeGetFlt(node, "gamma");
+	bool predictive = AiNodeGetBool(node, "predictive");
     
     int         pixel_type;
     const void* bucket_data;
@@ -164,7 +208,7 @@ driver_write_bucket
                     rgba.a = 1.f;
                 }
 
-                drawToBuffer(buffer, gamma, width, x, y, rgba);
+				drawToBuffer(buffer, gamma, width, x, y, rgba, predictive);
             }
         }
 

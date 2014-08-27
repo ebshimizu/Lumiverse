@@ -72,7 +72,7 @@ namespace Lumiverse {
     * The frame buffer point is set to NULL. The buffer will be initialized after getting the size of output.
     * The default gamma is 2.2.
     */
-	ArnoldInterface() : m_buffer(NULL), m_gamma(2.2), m_samples(-3), 
+	 ArnoldInterface() : m_buffer(NULL), m_gamma(2.2), m_samples(-3), m_predictive(false),
 		  m_bucket_pos(NULL), m_bucket_num(0) { }
       
     /*!
@@ -191,6 +191,15 @@ namespace Lumiverse {
     * \return The gamma.
     */
     float getGamma() { return m_gamma; }
+
+	void setPredictive(bool predictive) { m_predictive = predictive; }
+
+	/*!
+	* \brief Gets the gamma.
+	*
+	* \return The gamma.
+	*/
+	bool getPredictive() { return m_predictive; }
     
 	/*!
 	* \brief Sets the camera sampling rate used for current rendering.
@@ -320,6 +329,8 @@ namespace Lumiverse {
     * \brief Arnold AA samples
     */
     int m_samples;
+
+	bool m_predictive;
 
 	BucketPositionInfo *m_bucket_pos;
 	size_t m_bucket_num;
