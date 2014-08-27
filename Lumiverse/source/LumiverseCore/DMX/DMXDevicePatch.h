@@ -26,14 +26,14 @@ namespace Lumiverse {
     ORI_TO_FINE       /*!< Converts an orientation to a double-byte DMX value (0-65535) */
   };
 
-  static unordered_map<conversionType, string> convTypeToString = {
+  static unordered_map<int, string> convTypeToString = {
     { FLOAT_TO_SINGLE, "FLOAT_TO_SINGLE" }, { FLOAT_TO_FINE, "FLOAT_TO_FINE" },
     { ENUM, "ENUM" }, { RGB_REPEAT2, "RGB_REPEAT2" }, { RGB_REPEAT3, "RGB_REPEAT3" },
     { RGB_REPEAT4, "RGB_REPEAT4" }, { COLOR_RGB, "COLOR_RGB" }, { COLOR_RGBW, "COLOR_RGBW" },
     { ORI_TO_FINE, "ORI_TO_FINE" }
   };
 
-  static unordered_map<string, conversionType> stringToConvType = {
+  static unordered_map<string, int> stringToConvType = {
     { "FLOAT_TO_SINGLE", FLOAT_TO_SINGLE }, { "FLOAT_TO_FINE", FLOAT_TO_FINE },
     { "ENUM", ENUM }, { "RGB_REPEAT2", RGB_REPEAT2 }, { "RGB_REPEAT3", RGB_REPEAT3 },
     { "RGB_REPEAT4", RGB_REPEAT4 }, { "COLOR_RGB", COLOR_RGB }, { "COLOR_RGBW", COLOR_RGBW },
@@ -80,7 +80,7 @@ namespace Lumiverse {
     * \param t Conversion method as a string.
     */
     patchData(unsigned int addr, string t) : startAddress(addr) {
-      type = stringToConvType[t];
+      type = (conversionType) stringToConvType[t];
     }
   };
 
