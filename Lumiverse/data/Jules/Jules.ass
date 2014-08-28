@@ -10,7 +10,7 @@ options
  light_gamma 2.2
  texture_gamma 2.2
  camera persp
- atmosphere "aiVolumeScattering"
+ ### atmosphere "aiVolumeScattering"
 }
 
 gaussian_filter
@@ -21,10 +21,10 @@ gaussian_filter
 persp_camera
 {
   name persp
-  position 0 0 8
-  look_at 0 0 0
+  position 1.68 -1.0 6
+  look_at 1.68 -1.0 0
   up 0 1 0
-  fov 45
+  fov 60
 }
 
 volume_scattering
@@ -45,13 +45,13 @@ volume_scattering
 standard
 {  
   name left_srf
-  Kd_color 0 0 1
+  Kd_color 1 1 1
 }
 
 standard 
 {
   name right_srf
-  Kd_color 1 0 0
+  Kd_color 1 1 1
 }
 
 standard 
@@ -81,35 +81,134 @@ standard
 
 polymesh
 {
-  name left
+  name left0
   nsides 1 1 BYTE 4
   vidxs 4 1 LONG 0 1 2 3
   nidxs 4 1 LONG 0 0 0 0
-  vlist 12 1 FLOAT -2.0 -2.0 8.0   -2.0 2.0 8.0   -2.0 2.0 -2.0  -2.0 -2.0 -2.0
+  vlist 12 1 FLOAT -1.34 -2.0 -1.521   -1.34 2.0 -1.521   -1.34 2.0 -1.802  -1.34 -2.0 -1.802
   nlist 3 1 FLOAT 1.0 0 0 
   shader left_srf
 }
 
 polymesh
 {
-  name right
-  nsides 3 1 BYTE 4
-  vidxs 12 1 LONG 0 1 2 3 1 4 5 2 4 6 7 5
-  nidxs 12 1 LONG 0 0 0 0 1 1 1 1 0 0 0 0
-  vlist 24 1 FLOAT 4.821 -2.0 -1.451   4.821 -2.0 1.747   4.821 2.0 1.747  4.821 2.0 -1.451  5.347 -2.0 1.747   5.347 2.0 1.747 5.347 -2.0 4.188   5.347 2.0 4.188 
-  nlist 6 1 FLOAT -1.0 0 0 0.0 0 1 
+  name left1
+  nsides 1 1 BYTE 4
+  vidxs 4 1 LONG 0 1 2 3
+  nidxs 4 1 LONG 0 0 0 0
+  vlist 12 1 FLOAT -1.34 -2.0 -1.521   -1.34 2.0 -1.521   -1.46 2.0 -1.521  -1.46 -2.0 -1.521
+  nlist 3 1 FLOAT  0 0 1.0
+  shader left_srf
+}
+
+polymesh
+{
+  name left2
+  nsides 1 1 BYTE 4
+  vidxs 4 1 LONG 0 1 2 3
+  nidxs 4 1 LONG 0 0 0 0
+  vlist 12 1 FLOAT -1.46 2.0 -1.521  -1.46 -2.0 -1.521  -1.46 -2.0 2.285   -1.46 2.0 2.285
+  nlist 3 1 FLOAT 1.0 0 0 
+  shader left_srf
+}
+
+polymesh
+{
+  name left3
+  nsides 1 1 BYTE 4
+  vidxs 4 1 LONG 0 1 2 3
+  nidxs 4 1 LONG 0 0 0 0
+  vlist 12 1 FLOAT -1.34 -2.0 2.285   -1.34 2.0 2.285   -1.46 2.0 2.285  -1.46 -2.0 2.285
+  nlist 3 1 FLOAT  0 0 -1.0
+  shader left_srf
+}
+
+polymesh
+{
+  name left4
+  nsides 1 1 BYTE 4
+  vidxs 4 1 LONG 0 1 2 3
+  nidxs 4 1 LONG 0 0 0 0
+  vlist 12 1 FLOAT -1.34 -2.0 2.712   -1.34 2.0 2.712   -1.34 2.0 2.285  -1.34 -2.0 2.285
+  nlist 3 1 FLOAT 1.0 0 0 
+  shader left_srf
+}
+
+polymesh
+{
+  name left5
+  nsides 1 1 BYTE 4
+  vidxs 4 1 LONG 0 1 2 3
+  nidxs 4 1 LONG 0 0 0 0
+  vlist 12 1 FLOAT -1.34 -2.0 2.712   -1.34 2.0 2.712   -1.46 2.0 2.712  -1.46 -2.0 2.712
+  nlist 3 1 FLOAT  0 0 1.0
+  shader left_srf
+}
+
+polymesh
+{
+  name left6
+  nsides 1 1 BYTE 4
+  vidxs 4 1 LONG 0 1 2 3
+  nidxs 4 1 LONG 0 0 0 0
+  vlist 12 1 FLOAT -1.46 2.0 2.712  -1.46 -2.0 2.712  -1.46 -2.0 3.91   -1.46 2.0 3.91
+  nlist 3 1 FLOAT 1.0 0 0 
+  shader left_srf
+}
+
+polymesh
+{
+  name left7
+  nsides 1 1 BYTE 4
+  vidxs 4 1 LONG 0 1 2 3
+  nidxs 4 1 LONG 0 0 0 0
+  vlist 12 1 FLOAT -0.494 -2.0 3.91   -0.494 2.0 3.91   -1.46 2.0 3.91  -1.46 -2.0 3.91
+  nlist 3 1 FLOAT  0 0 -1.0
+  shader left_srf
+}
+
+polymesh
+{
+  name left8
+  nsides 1 1 BYTE 4
+  vidxs 4 1 LONG 0 1 2 3
+  nidxs 4 1 LONG 0 0 0 0
+  vlist 12 1 FLOAT -0.494 -2.0 4.188   -0.494 2.0 4.188   -0.494 2.0 3.91  -0.494 -2.0 3.91
+  nlist 3 1 FLOAT 1.0 0 0 
+  shader left_srf
+}
+
+polymesh
+{
+  name right0
+  nsides 1 1 BYTE 4
+  vidxs 4 1 LONG 0 1 2 3
+  nidxs 4 1 LONG 0 0 0 0
+  vlist 12 1 FLOAT 4.821 -2.0 -1.802   4.821 -2.0 1.747   4.821 2.0 1.747  4.821 2.0 -1.802
+  nlist 3 1 FLOAT -1.0 0 0
   shader right_srf
 }
 
 polymesh
 {
-  name top
+  name right1
   nsides 1 1 BYTE 4
   vidxs 4 1 LONG 0 1 2 3
   nidxs 4 1 LONG 0 0 0 0
-  vlist 12 1 FLOAT -2.0 2.0 8.0   2.0 2.0 8.0   2.0 2.0 -2.0  -2.0 2.0 -2.0
-  nlist 3 1 FLOAT 0.0 -1 0 
-  shader top_srf
+  vlist 12 1 FLOAT 4.821 -2.0 1.747   5.347 -2.0 1.747   5.347 2.0 1.747 4.821 2.0 1.747 
+  nlist 3 1 FLOAT 0.0 0 1 
+  shader right_srf
+}
+
+polymesh
+{
+  name right2
+  nsides 1 1 BYTE 4
+  vidxs 4 1 LONG 0 1 2 3
+  nidxs 4 1 LONG 0 0 0 0
+  vlist 12 1 FLOAT 5.347 -2.0 1.747  5.347 -2.0 4.188  5.347 2.0 4.188   5.347 2.0 1.747  
+  nlist 3 1 FLOAT -1.0 0 0
+  shader right_srf
 }
 
 polymesh
@@ -118,7 +217,7 @@ polymesh
   nsides 1 1 BYTE 4
   vidxs 4 1 LONG 0 1 2 3
   nidxs 4 1 LONG 0 0 0 0
-  vlist 12 1 FLOAT -2.0 -2.0 8.0   2.0 -2.0 8.0   2.0 -2.0 -2.0  -2.0 -2.0 -2.0
+  vlist 12 1 FLOAT -1.46 -2.0 4.188   5.347 -2.0 4.188   5.347 -2.0 -1.802  -1.46 -2.0 -1.802
   nlist 3 1 FLOAT 0.0 1 0 
   shader bottom_srf
 }
@@ -137,8 +236,8 @@ polymesh
 sphere
 {
  shader pimp
- radius 1
- center 0 -1 0
+ radius 0.2
+ center 0 -1.8 0
 }
 
 quad_light
@@ -149,7 +248,7 @@ quad_light
   intensity 1
   exposure 6
   samples 3
-  normalize on
+  normalize off
 }
 
 

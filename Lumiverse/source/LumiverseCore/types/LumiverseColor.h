@@ -58,9 +58,9 @@ namespace Lumiverse {
     { sRGB, (Eigen::Matrix3d() << 0.4124564, 0.3575761, 0.1804375,
                                   0.2126729, 0.7151522, 0.0721750,
                                   0.0193339, 0.1191920, 0.9503041).finished() },
-	{ sharpRGB, (Eigen::Matrix3d() << 1.2694, -0.0988, -0.1706,
-								  -0.8364, 1.8006, 0.0357,
-								  0.0297, -0.0315, 1.0018).finished().inverse() }
+	{ sharpRGB, (Eigen::Matrix3d() << 0.8156, 0.0472, 0.1372,
+								  0.3791, 0.5769, 0.0440,
+								  -0.0123, 0.0167, 0.9955).finished() }
   };
 
   /*! \brief Maps Color space to the Reference White it uses */

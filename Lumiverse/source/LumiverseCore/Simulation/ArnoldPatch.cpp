@@ -222,16 +222,18 @@ void ArnoldPatch::modifyLightColor(Device *d, Eigen::Vector3d white) {
 
 	Eigen::Vector3d rgb;
 	if (d->getColor() != NULL) 
-		rgb = d->getColor()->getRGB();
+		rgb = d->getColor()->getRGB(sharpRGB);
 	else {
-		LumiverseColor white(BASIC_RGB);
-		white.setColorChannel("Red", 1);
-		white.setColorChannel("Green", 1);
-		white.setColorChannel("Blue", 1);
-		rgb = white.getRGB();
+		map<string, Eigen::Vector3d> basis;
+		basis["White"] = refWhites[D65];
+		map<string, double> channels;
+		channels["White"] = 1;
+		LumiverseColor white(channels, basis, ColorMode::ADDITIVE, 1);
+		white.setColorChannel("White", 1);
+		rgb = white.getRGB(sharpRGB);
 	}
 
-	//rgb = Eigen::Vector3d(rgb[0] / white[0], rgb[1] / white[1], rgb[2] / white[2]);
+	rgb = Eigen::Vector3d(rgb[0] / white[0], rgb[1] / white[1], rgb[2] / white[2]);
 
 	std::stringstream ss;
 	ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
@@ -294,12 +296,14 @@ void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
 	if (!dominant)
 		return;
 
-	Eigen::Vector3d rgb_w;
+	Eigen::Vector3d rgb_w (0.9220, 1.0446, 1.0878);
+	/*
 	if (dominant->getColor() != NULL)
 		rgb_w = dominant->getColor()->getRGB(sharpRGB);
 	else {
 		rgb_w = white.getRGB(sharpRGB);
 	}
+	*/
 
 	for (Device* d : devices) {
 		std::string name = d->getId();

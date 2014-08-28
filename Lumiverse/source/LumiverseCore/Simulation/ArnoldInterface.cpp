@@ -256,7 +256,7 @@ void ArnoldInterface::updateSurfaceColor(Eigen::Vector3d white) {
 		Eigen::Vector3d sharp_rgb = RGBToXYZ[sharpRGB].inverse() * xyz;
 
 		// White balance
-		//sharp_rgb = Eigen::Vector3d(sharp_rgb[0] / white[0], sharp_rgb[1] / white[1], sharp_rgb[2] / white[2]);
+		sharp_rgb = Eigen::Vector3d(sharp_rgb[0] / white[0], sharp_rgb[1] / white[1], sharp_rgb[2] / white[2]);
 
 		AiNodeSetRGBA(node, "Kd_color", sharp_rgb[0], sharp_rgb[1], sharp_rgb[2], rgba.a);
 	}
@@ -268,6 +268,9 @@ void ArnoldInterface::init() {
 
     // Starts a arnold session
     AiBegin();
+
+	AiMsgSetLogFileName("J:/Lumiverse/Lumiverse/data/Jules/log");
+	AiMsgSetLogFileFlags(AI_LOG_ALL);
 
     AiLoadPlugins(m_plugin_dir.c_str());
     
