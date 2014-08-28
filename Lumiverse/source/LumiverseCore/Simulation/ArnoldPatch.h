@@ -155,10 +155,24 @@ namespace Lumiverse {
 	*/
     void rerender();
       
+	/*!
+	* \brief Gets the progress of current frame in percentage.
+	*
+	* \return The percent.
+	*/
 	virtual float getPercentage() const { return m_interface.getPercentage(); }
 
+	/*!
+	* \brief Gets the current bucket for each worker thread.
+	* \return An array of current buckets.
+	*/
 	virtual BucketPositionInfo *getBucketPositionInfo() const { return m_interface.getBucketPositionInfo(); }
 
+	/*!
+	* \brief Gets number of buckets rendered simultanously.
+	* This is usually the number of threads supported by hardware.
+	* \return The number of buckets rendered simultanously.
+	*/
 	virtual size_t getBucketNumber() const { return m_interface.getBucketNumber(); }
 
   protected:
@@ -218,9 +232,20 @@ namespace Lumiverse {
     ArnoldInterface m_interface;
 
   private:
+	/*!
+    * \brief Modifies light color according to Picture Perfect RGB Rendering Using Spectral Prefiltering and Sharp Color Primaries.
+	* \param d The device representing the light.
+	* \param white The white spot in sharp RGB. (currently not used)
+    */
 	void modifyLightColor(Device *d, Eigen::Vector3d white);
 
+	/*!
+	* \brief Gets a light node.
+	* \param d The device representing the light.
+	* \return The light node.
+	*/
 	AtNode *getLightNode(Device *d);
+
     /*!
     * \brief The separate thread running the render loop.
     */

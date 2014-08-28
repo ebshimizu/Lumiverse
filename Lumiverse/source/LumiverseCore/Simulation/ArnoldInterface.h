@@ -16,7 +16,7 @@
 #include "../Patch.h"
 #include "../lib/libjson/libjson.h"
 #include "ArnoldParameterVector.h"
-
+#include <thread>
 #include <iostream>
 
 namespace Lumiverse {
@@ -39,6 +39,7 @@ namespace Lumiverse {
     void (*AiNodeSetter4D)(AtNode *, const char *, T, T, T, T);
   };
     
+  /*! \brief Wrapper for unit (bucket) being rendered. */
   struct BucketPositionInfo {
 	  int bucket_xo;
 	  int bucket_yo;
@@ -49,6 +50,7 @@ namespace Lumiverse {
 		  bucket_xo(-1), bucket_yo(-1), bucket_size_x(-1), bucket_size_y(-1) { }
   };
 
+  /*! \brief Wrapper for progress information computed based on number of buckets. */
   struct ProgressInfo {
 	  int bucket_sum;
 	  int bucket_cur;
@@ -235,16 +237,33 @@ namespace Lumiverse {
 	*/
 	JSONNode arnoldParameterToJSON();
 
+	/*!
+	* \brief Gets the progress of current frame as a percentage.
+	* \return The percent.
+	*/
 	float getPercentage() const { 
 		if (m_progress.bucket_sum < 0)
 			return 0.f;
 		return (0.f + m_progress.bucket_cur) / m_progress.bucket_sum * 100.f; 
 	}
 
+	/*!
+	* \brief Gets the current bucket for each worker thread.
+	* \return An array of current buckets.
+	*/
 	BucketPositionInfo *getBucketPositionInfo() const { return m_bucket_pos; }
 
+	/*!
+	* \brief Gets number of buckets rendered simultanously.
+	* This is usually the number of threads supported by hardware.
+	* \return The number of buckets rendered simultanously.
+	*/
 	size_t getBucketNumber() const { return m_bucket_num; }
 
+	/*!
+	* \brief Modifies the surface color according to Picture Perfect RGB Rendering Using Spectral Prefiltering and Sharp Color Primaries.
+	* Currently only converts sRGB to sharp RGB.
+	*/
 	void updateSurfaceColor(Eigen::Vector3d white);
       
   private:
@@ -330,10 +349,18 @@ namespace Lumiverse {
     */
     int m_samples;
 
+	/*!
+	* \brief If turn on (so-called) predictive rendering
+	*/
 	bool m_predictive;
 
+	// An array for worker threads.
 	BucketPositionInfo *m_bucket_pos;
+
+	// The size of buckets array.
 	size_t m_bucket_num;
+
+	// The progress info of the current frame.
 	ProgressInfo m_progress;
   };
 

@@ -46,6 +46,7 @@ namespace Lumiverse {
 	// puts a default filename in name, up to len characters
 	void imageio_gen_name(char* filename, size_t len);
 
+	// Converts from float image to byte image.
 	inline void floats_to_bytes(unsigned char *arr, float *rgba, int width, int height)
 	{
 		for (int j = 0; j < height; j++) {
@@ -62,6 +63,7 @@ namespace Lumiverse {
 		}
 	}
 
+	// Converts from byte image to float image.
 	inline void bytes_to_floats(float *rgba, unsigned char *arr, int width, int height)
 	{
 		for (int j = 0; j < height; j++) {

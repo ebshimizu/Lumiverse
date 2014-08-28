@@ -297,8 +297,8 @@ void ArnoldInterface::init() {
     m_buffer = new float[m_width * m_height * 4];
     AiNodeSetPtr(driver, "buffer_pointer", m_buffer);
 
-	// TODO: num of threads
-	m_bucket_num = 8;
+	// Swapping threads more than hardware supports may cause problem.
+	m_bucket_num = std::thread::hardware_concurrency();
 	m_bucket_pos = new BucketPositionInfo[m_bucket_num];
 	AiNodeSetPtr(driver, "bucket_pos_pointer", m_bucket_pos);
 

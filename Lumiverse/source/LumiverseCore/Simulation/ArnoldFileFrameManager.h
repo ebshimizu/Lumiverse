@@ -104,10 +104,23 @@ namespace Lumiverse {
 		virtual void clear();
 
       private:
+		 /*!
+		 * \brief Checks if a given file exists.
+		 *
+		 * \return If the file exists.
+		 */
 		bool fileExists(std::string fileName) const;
+
+		// A frame buffer of current frame. This buffer is only used to display.
 		float *m_buffer;
+
+		// The path to the directory containing all frames.
 		std::string m_frame_path;
+
+		// The index of the last frame from the previous call.
 		int m_prev_frame;
+
+		// The index of current frame.
 		size_t m_current;
     };
     

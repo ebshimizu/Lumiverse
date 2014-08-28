@@ -195,6 +195,7 @@ float ArnoldAnimationPatch::getPercentage() const {
     if (m_mode == ArnoldAnimationMode::INTERACTIVE)
 		return ArnoldPatch::getPercentage();
 	else if (m_mode == ArnoldAnimationMode::RENDERING) {
+		// Don't forget the frame being processed
 		size_t finished = m_frameManager->getFrameNum();
 		size_t sum = finished + m_queuedFrameDeviceInfo.size() + 1;
 		float renderingPer = m_interface.getPercentage();
