@@ -12,25 +12,29 @@
 
 namespace Lumiverse {
 
+/*!
+\brief A Keyframe stores the value of a parameter at the specified time.
+ 
+Keyframes can be set to use the previous cue value in a transition. This is useful in the
+event that you want to run timlines back to back that pick up automatically from where
+the last timeline left off, so if you update any cue in the sequence, the changes propagate correctly.
+For this to be used effectively, the cue transition time is recommended to be 0.
+*/
 struct Keyframe {
   /*! \brief Time at which this keyframe is located. t=0 is start of timeline. */
   float t;
 
   /*!
-  \brief Value of the keyframe at time t
-  
-  If this is nullptr, the keyframe is at the end of a cue and should take its value
-  from the next cue in the sequence.
+  \brief Value of the keyframe at time t.
   */
   shared_ptr<Lumiverse::LumiverseType> val;
 
   /*!
-  \brief If true, t will be set to [previous keyframe time] + up/down fade time at runtime.
-
-  If set to false, it will use the time specified in t.
-  Has no effect if val is not-null.
+  \brief If true, the value of this keyframe will be pulled from the previous cue in the transition.
+  
+  Note that the keyframe will still have a value, but it won't be used unless there is no previous cue.
   */
-  bool useCueTiming;
+  bool usePreviousValue;
 
   // Planned interpolation mode selection here. Additional parameters probably needed
   // once this thing gets activated
@@ -49,30 +53,48 @@ struct Keyframe {
   \param v Value at specified time
   \param uct Use Cue Timing (see useCueTiming member variable)
   */
-  Keyframe(float time, shared_ptr<Lumiverse::LumiverseType> v, bool uct) :
-    t(time), val(v), useCueTiming(uct) { }
+  Keyframe(float time, shared_ptr<Lumiverse::LumiverseType> v, bool upv) :
+    t(time), val(v), usePreviousValue(upv) { }
 
-  /*! \brief */
+  /*! \brief Creates a keyframe from a JSON node. */
   Keyframe(JSONNode node);
 };
 
 /*!
 \brief A cue stores data for a particular look (called a cue)
 
-Cues in Lumiverse can be thought of as little mini-timelines.
-Each cue is able to store keyframes for every device parameter
-placed at arbitrary times in the cue. Cues can be run as stand-alone
-timelines or can be chained together in a cue list. In that mode, the last
-keyframe of each cue pulls its data from the destination cue.
-
-Cues can be transitioned between, typically as a crossfade.
-This class currently stores just a set look and transitions with upfade
-and downfade time.
-
-Note that the fade time applies when going from the current cue to the
-next cue. So if you have two Cues, cue 1 with time 3, and cue 2 with time 5,
-if you go from cue 1 to cue 2 the transition will happen in 3 seconds (assuming
-there are no additional keyframes added).
+In the traditional theatrical sense, cues are preset configurations of lighting device parameters.
+Cues are placed into cue lists and are then transitioned between with a simple cross fade
+when a user presses a button (typically labeled "GO").
+ 
+Cues in Lumiverse are timelines, where each parameter can be assigned a 
+value at an arbitrary time. Cue transitions are handled by doing an linear interpolation between
+the last keyframe of the previous cue, and the first keyframe of the current cue.
+ 
+There are two ways to program Lumiverse Cues. You can use them as you would a normal theatrical
+lighting board, with each cue being a static snapshot, or you can program them as animation timelines.
+ 
+Since Lumiverse Cues are essentially animation timelines, transitioning between them in the
+theatrical sense is a little more complicated than normal. The timing rules for two cues A and B
+are as follows:
+- Upfade time acts on a parameter that is increasing from cue A to cue B.
+- Downfade time acts on a parameter that is decreasing from cue A to cue B.
+- Delay indicates that the cue will wait for the specified number of seconds before transitioning.
+- When transitioning from an aribtrary cue A to a cue B, cue B's timing will be used.
+  So if cue B has an upfade time of 3, and a downfade time of 5, the transition will take 
+  5 seconds total.
+- The time it takes for the transition to complete is called the transition time.
+- If a Cue has more than one Keyframe for a parameter, the end of the Cue is the time of the
+  last keyframe over all parameters. For example, if cue B has upfade and downfade set to 3, and 
+  a parameter with a keyframe set at time 10, cue B will end after 13s.
+- If a Cue has keyframes set after time 0, they will begin execution once the transition for the
+  parameter has completed. Note that if you have different up and down fade times, the beginning of
+  cue keyframe execution will be different for each affected parameter. It is recommended for
+  complex transitions to not use a transition time and instead set the first keyframe in the Cue
+  to use the previous Cue values and manually handle the transition.
+ 
+Lumiverse Cues can also have various triggers that activate at a specified time.
+By default, a Cue provides a trigger at the beginning of a cue transition and end of the cue.
 */
 class Cue {
 public:
@@ -216,6 +238,13 @@ public:
   Otherwise it'll return the m_length value calculated at an earlier time.
   */
   float getLength();
+  
+  /*!
+  \brief Returns the transition time of the cue.
+   
+  \return `max(upfade, downfade) + delay`
+  */
+  float getTransitionTime() { return max(m_upfade, m_downfade) + m_delay; }
 
   /*!
   \brief Returns a one word description of the keyframe characteristics
@@ -236,6 +265,31 @@ public:
   \brief Returns a copy of the last keyframe for the specified device and parameter
   */
   Keyframe getLastKeyframe(string device, string param);
+  
+  /*!
+  \brief Gets the value of the cue at the specified time including the transition time.
+   
+  Note that this function includes the transition time in its index. So if you have a manual
+  keyframe at time 0, and a transition time of 5, the manual keyframe value will be found at
+  `t = 5`.
+  \param previousCue The cue to draw values from if a keyframe has no data. Typically this is the previous cue in a list.
+  \param device Device id
+  \param param Parameter name
+  \param t Time to access the cue value.
+  */
+  shared_ptr<LumiverseType> getValueAtTime(Cue* previousCue, string device, string param, float t);
+
+  /*!
+  \brief Gets the value of the cue at the specified time excluding the transition time.
+
+  Note that this function DOES NOT include the transition time in its index.
+  This function will also skip uneven or manual transition times added by the user and start at time 0.
+  \param previousCue The cue to draw values from if a Keyframe has no data. Typically this is the previous cue in a list.
+  \param device Device id
+  \param param Parameter name
+  \param t Time to access the cue value.
+  */
+  shared_ptr<LumiverseType> getValueAtCueTime(Cue* previousCue, string device, string param, float t);
 
 private:
   // Upfade time

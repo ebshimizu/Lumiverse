@@ -9,8 +9,8 @@ Keyframe::Keyframe(JSONNode node) {
 
     if (name == "time")
       t = it->as_float();
-    else if (name == "useCueTiming")
-      useCueTiming = it->as_bool();
+    else if (name == "usePreviousValue")
+      usePreviousValue = it->as_bool();
     else if (name == "val") {
       if (it->type() == 's') {
         val = nullptr;
@@ -229,14 +229,14 @@ void Cue::setTime(float up, float down) {
   m_lengthIsUpdated = false;
 }
 
-void Cue::insertKeyframe(string id, string param, Lumiverse::LumiverseType* data, float time, bool uct) {
+void Cue::insertKeyframe(string id, string param, Lumiverse::LumiverseType* data, float time, bool upv) {
   Keyframe end = *prev(m_cueData[id][param].end());
 
   Keyframe k(time, shared_ptr<Lumiverse::LumiverseType>(LumiverseTypeUtils::copy(data)), false);
 
-  // If we're inserting past or at the end, use cue timing as directed.
+  // If the user wants to use the previous cue value in the transition, we do that here.
   if (time >= end.t)
-    k.useCueTiming = uct;
+    k.usePreviousValue = upv;
 
   auto old = m_cueData[id][param].insert(k);
 
@@ -384,7 +384,7 @@ JSONNode Cue::toJSON() {
         else {
           kf.push_back(JSONNode("val", "null"));
         }
-        kf.push_back(JSONNode("useCueTiming", keyframe.useCueTiming));
+        kf.push_back(JSONNode("usePreviousValue", keyframe.usePreviousValue));
 
         paramData.push_back(kf);
       }
@@ -413,18 +413,18 @@ float Cue::getLength() {
 
     for (const auto& id : m_cueData) {
       for (const auto& param : id.second) {
+        // Get the last keyframe, this is sorted.
         auto lastKeyframe = param.second.rbegin();
-        if (lastKeyframe->useCueTiming) {
-          float keyframeTime = next(lastKeyframe)->t + cueTiming;
-          time = (keyframeTime > time) ? keyframeTime : time;
-        }
-        else {
-          time = (lastKeyframe->t > time) ? lastKeyframe->t : time;
-        }
+        
+        // Time is equal to transition time + largest keyframe time.
+        time = (lastKeyframe->t > time) ? lastKeyframe->t : time;
       }
     }
 
+    // Lenght is the cue time + delay.
     m_length = time + m_delay;
+    
+    // Cache it.
     m_lengthIsUpdated = true;
     return m_length;
   }
@@ -469,4 +469,31 @@ Keyframe Cue::getFirstKeyframe(string device, string param) {
   return Keyframe(*m_cueData[device][param].begin());
 }
 
+shared_ptr<LumiverseType> Cue::getValueAtTime(Cue* previousCue, string device, string param, float t)
+{
+  // Determine if we're using an upfade or downfade.
+  Keyframe prevKeyframe = previousCue->getLastKeyframe(device, param);
+  Keyframe firstKeyframe = getFirstKeyframe(device, param);
+  
+  float fadeTime = (LumiverseTypeUtils::cmp(prevKeyframe.val.get(), firstKeyframe.val.get()) == -1) ? m_upfade : m_downfade;
+  fadeTime += m_delay;
+  
+  // Still in the transition
+  if (t < fadeTime) {
+    // If we're not done delaying, return the previous value.
+    // Also, if we're set to use the previous value for the first keyframe, also automatically return the previous value.
+    if (t < m_delay || firstKeyframe.usePreviousValue)
+      return prevKeyframe.val;
+    
+    // If we are done, do a lerp between previous and next keyframe.
+    float a = (t - m_delay) / (fadeTime - m_delay);
+    return LumiverseTypeUtils::lerp(prevKeyframe.val.get(), firstKeyframe.val.get(), a);
+  }
+  else {
+    // If we're out of the transition, it's the same as requesting the value at cue time (t - fade)
+    t -= fadeTime;
+    return getValueAtCueTime(previousCue, device, param, t);
+  }
+}
+  
 }

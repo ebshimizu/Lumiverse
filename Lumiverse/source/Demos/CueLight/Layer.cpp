@@ -304,6 +304,8 @@ namespace Lumiverse {
     if (m_playbackData.size() > 0) {
       auto pb = m_playbackData.begin();
 
+      // Here's how this works.
+      // - it's complicated and being reworked. waiting on cue to have some functions completed.
       while (pb != m_playbackData.end()) {
         float cueTime = chrono::duration_cast<chrono::milliseconds>(updateStart - pb->start).count() / 1000.0f;
         cueTime -= pb->delay;
