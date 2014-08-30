@@ -112,13 +112,11 @@ int main(int argc, char**argv) {
 //    simulation();  
 //    return 0;
 
-  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.rig.json");
+  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights_noArnold.rig.json");
   shared_ptr<CueList> list1(new CueList("list1"));
   shared_ptr<Layer> layer1(new Layer(&rig, "layer1", 1));
   shared_ptr<CueList> list2(new CueList("list2"));
   shared_ptr<Layer> layer2(new Layer(&rig, "layer2", 2));
-
-  rig.save("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights2.rig.json", true);
 
   layer1->setMode(Layer::BLEND_OPAQUE);
   layer1->activate();
@@ -142,13 +140,13 @@ int main(int argc, char**argv) {
   inno.setParam("tilt", 0.5f);
   inno.setParam("pan", 0.75f);
 
-  Cue cue1(&rig, 5.0f, 1.0f, 5.0f);
+  Cue cue1(&rig, 5);
   list1->storeCue(1, cue1);
 
   color->setxy(0.2, 0.3);
   inno.setParam("intensity", 1.0f);
 
-  Cue cue2(&rig);
+  Cue cue2(&rig, 3);
   list1->storeCue(2, cue2);
 
   inno.reset();
@@ -195,14 +193,16 @@ int main(int argc, char**argv) {
 
   this_thread::sleep_for(chrono::seconds(5));
 
+  cout << "Layers ready.";
+  getchar();
   layer1->go();
 
-  this_thread::sleep_for(chrono::seconds(5));
+  //this_thread::sleep_for(chrono::seconds(5));
 
   while (1) {
     float val;
     rig["inno"]->getParam("intensity", val);
-    cout << "inno Intensity: " << val << "/n";
-    this_thread::sleep_for(chrono::milliseconds(100));
+    cout << "inno Intensity: " << val << "\n";
+    this_thread::sleep_for(chrono::milliseconds(10));
   }
 }

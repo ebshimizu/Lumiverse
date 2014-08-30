@@ -14,9 +14,10 @@
 namespace Lumiverse {
   /*! \brief Data that tracks the progress of a cue and stores the data used in the cue transition. */
   struct PlaybackData {
-    float delay;
     chrono::time_point<chrono::high_resolution_clock> start;    // Cue start time. More accurate to take difference between now and start instead of summing.
-    map<string, map<string, set<Keyframe> > > activeKeyframes;
+    map<string, set<string> > activeParams;
+    Cue targetCue;
+    Cue previousCue;
   };
 
   /*!
@@ -282,17 +283,16 @@ namespace Lumiverse {
     \param next Cue to end up in at the end.
     \param assert Asserts that at the end of the transition, the Rig state is exactly Next
     */
-    void goToCue(Cue& first, Cue& next, bool assert);
+    void goToCue(Cue* first, Cue* next, bool assert);
 
     /*!
-    \brief Returns the set of parameters to animate along with their keyframes
-    in going from cue A to cue B
+    \brief Returns the set of parameters to animate.
 
     \param a Starting Cue.
     \param b Ending Cue.
     \param assert Make sure that the Rig state at cue B is exactly cue B
     */
-    map<string, map<string, set<Keyframe> > > diff(Cue& a, Cue& b, bool assert = false);
+    map<string, set<string> > diff(Cue* a, Cue* b, bool assert = false);
 
     /*! \brief Stores the data used during playback. */
     vector<PlaybackData> m_playbackData;

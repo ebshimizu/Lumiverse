@@ -136,7 +136,7 @@ namespace Lumiverse {
 
         if (firstCue != nullptr && nextCue != nullptr) {
           m_currentCue = m_cueList->getNextCueNum(m_currentCue);
-          goToCue(*firstCue, *nextCue, false);
+          goToCue(firstCue, nextCue, false);
         }
         else {
           stringstream ss;
@@ -162,7 +162,7 @@ namespace Lumiverse {
 
       if (firstCue != nullptr && nextCue != nullptr) {
         m_currentCue = m_cueList->getPrevCueNum(m_currentCue);
-        goToCue(*firstCue, *nextCue, false);
+        goToCue(firstCue, nextCue, false);
       }
       else {
         stringstream ss;
@@ -184,7 +184,7 @@ namespace Lumiverse {
       if (nextCue != nullptr) {
         Cue tempCue(m_layerState, up, down, delay);
         m_currentCue = num;
-        goToCue(tempCue, *nextCue, true);
+        goToCue(&tempCue, nextCue, true);
       }
       else {
         stringstream ss;
@@ -199,16 +199,20 @@ namespace Lumiverse {
     }
   }
 
-  void Layer::goToCue(Cue& first, Cue& next, bool assert) {
+  void Layer::goToCue(Cue* first, Cue* next, bool assert) {
     PlaybackData pbData;
 
     // Running a cue is as simple as running the keyframes in it
-    // Of course, simple is relative as we have to populate the list of active
-    // keyframes with keyframes that actually do a change to the device during the cue.
-    pbData.activeKeyframes = diff(first, next, assert);
+    // We do this by tracking which parameters actually need to be animated, then asking the
+    // cue for their values at the right time.
+    pbData.activeParams = diff(first, next, assert);
 
+    // This should copy the cue data over into the playback object.
+    // This is slow, however if something changes while the cue is running, playback won't be affected.
+    // Later versions of this library may attempt to optimize/compress this part.
+    pbData.targetCue = *next;
+    pbData.previousCue = *first;
     pbData.start = chrono::high_resolution_clock::now();
-    pbData.delay = first.getDelay();
 
     stringstream ss;
     ss << "Layer " << m_name << " began a cue playback at " << chrono::duration_cast<chrono::seconds>(pbData.start.time_since_epoch()).count();
@@ -241,6 +245,7 @@ namespace Lumiverse {
           }
         }
 
+        // TODO: This section needs to be updated to use the new cue functions.
         // Interpolation time. For the seek function, we just pull all the relevant values,
         // and then interpolate between them.
 
@@ -305,62 +310,33 @@ namespace Lumiverse {
       auto pb = m_playbackData.begin();
 
       // Here's how this works.
-      // - it's complicated and being reworked. waiting on cue to have some functions completed.
+      // - For each active parameter, get the value at the given time.
+      // - Set the value in the layer state to the returned value.
+      // - Check if a parameter is active after the end of the update (to make sure we clamp to the right value)
       while (pb != m_playbackData.end()) {
         float cueTime = chrono::duration_cast<chrono::milliseconds>(updateStart - pb->start).count() / 1000.0f;
-        cueTime -= pb->delay;
 
-        // If we have a delay on the cue, don't do anything while the cue time is negative
-        if (cueTime < 0) {
-          pb++; 
-          continue;
-        }
+        auto devices = pb->activeParams.begin();
 
-        auto devices = pb->activeKeyframes.begin();
+        // Plan is to go through each active parameter, and ask the cue to give us the value
+        // at the specified time.
+        while (devices != pb->activeParams.end()) {
+          auto parameter = devices->second.begin();
+          while (parameter != devices->second.end()) {
+            shared_ptr<LumiverseType> val = pb->targetCue.getValueAtTime(&pb->previousCue, devices->first, *parameter, cueTime);
 
-        // Plan is to go through each active parameter, find which keyframes we should interpolate,
-        // and do the interpolation. For keyframes at the end, we should clamp to the final value.
-        // Keyframes are organized by device->parameter->keyframes
-        while (devices != pb->activeKeyframes.end()) {
-          auto parameters = devices->second.begin();
-          while (parameters != devices->second.end()) {
-            Keyframe first;
-            Keyframe next;
-            bool nextFound = false;
-            // Find the keyframes that contain cueTime in their interval (first <= cueTime < next)
-            for (auto keyframe = parameters->second.begin(); keyframe != parameters->second.end();) {
-              // We know that keyframes are ordered in ascending order, so the first one that's greater
-              // than cueTime is the "next" keyframe.
-              if (keyframe->t > cueTime) {
-                next = *keyframe;
-                first = *prev(keyframe);
-                nextFound = true;
-                break;
-              }
+            LumiverseTypeUtils::copyByVal(val.get(), m_layerState[devices->first]->getParam(*parameter));
 
-              ++keyframe;
-            }
-
-            // If we didn't find a next keyframe, we ended up at the end. Time to clamp
-            if (!nextFound) {
-              LumiverseTypeUtils::copyByVal(prev(parameters->second.end())->val.get(),
-                m_layerState[devices->first]->getParam(parameters->first));
-
-              pb->activeKeyframes[devices->first].erase(parameters++);
-            }
-            else {
-              // Otherwise, do a lerp between keyframes.
-              // First need to convert the cueTime to a position from 0-1
-              float t = (cueTime - first.t) / (next.t - first.t);
-              shared_ptr<Lumiverse::LumiverseType> lerped = LumiverseTypeUtils::lerp(first.val.get(), next.val.get(), t);
-              LumiverseTypeUtils::copyByVal(lerped.get(), m_layerState[devices->first]->getParam(parameters->first));
-              ++parameters;
-            }
+            // Check to see if we need to keep updating this param.
+            if (!pb->targetCue.paramIsActive(&pb->previousCue, devices->first, *parameter, cueTime))
+              pb->activeParams[devices->first].erase(parameter++);
+            else
+              ++parameter;
           }
 
-          if (pb->activeKeyframes[devices->first].size() == 0) {
+          if (pb->activeParams[devices->first].size() == 0) {
             // Delete the device entry if no more things are active
-            pb->activeKeyframes.erase(devices++);
+            pb->activeParams.erase(devices++);
           }
           else {
             devices++;
@@ -372,7 +348,7 @@ namespace Lumiverse {
 
       // Delete things that no longer have active keyframes.
       m_playbackData.erase(std::remove_if(m_playbackData.begin(), m_playbackData.end(),
-        [](PlaybackData p) { return p.activeKeyframes.size() == 0; }), m_playbackData.end());
+        [](PlaybackData p) { return p.activeParams.size() == 0; }), m_playbackData.end());
     }
   }
 
@@ -442,57 +418,26 @@ namespace Lumiverse {
     }
   }
 
-  map<string, map<string, set<Keyframe> > > Layer::diff(Cue& a, Cue& b, bool assert) {
-    map<string, map<string, set<Keyframe> > > data;
+  map<string, set<string> > Layer::diff(Cue* a, Cue* b, bool assert) {
+    map<string, set<string> > data;
 
     // The entire rig is stored, so comparison from a to be should be sufficient.
-    map<string, map<string, set<Keyframe> > >& cueAData = a.getCueData();
-    map<string, map<string, set<Keyframe> > >& cueBData = b.getCueData();
+    map<string, map<string, set<Keyframe> > >& cueAData = a->getCueData();
+    map<string, map<string, set<Keyframe> > >& cueBData = b->getCueData();
 
     // For all devices
     for (auto& it : cueAData) {
       // For all parameters in a device
       for (auto& param : it.second) {
-        // The conditions for not animating a parameter are that it has two keyframes, and the
+        // The conditions for not animating a parameter are that it has one keyframe, and the
         // values in the keyframes are identical and we're not asserting this cue
-        if (!assert && param.second.size() == 2 &&
+        if (!assert && param.second.size() == 1 &&
           LumiverseTypeUtils::equals(param.second.begin()->val.get(), cueBData[it.first][param.first].begin()->val.get())) {
           continue;
         }
         else {
-          // Otherwise just add all of cue a's keyframes into the active list and
-          // fill in the blanks wiht cue b's data.
-          // For all the keyframes assigned to a parameter
-          for (auto keyframe = param.second.begin(); keyframe != param.second.end(); ++keyframe) {
-            Keyframe k = Keyframe(*keyframe);
-
-            // If the keyframe's value is null, we need to get the data from cue b.
-            if (keyframe->val == nullptr) {
-              // Get the data from the first keyframe assigned to the parameter in cue b.
-              k.val = cueBData[it.first][param.first].begin()->val;
-
-              // If we're using the default timing for this cue.
-              if (k.useCueTiming) {
-                // Determine if the timing should pull from upfade or downfade.
-                // Compares the most recent cue value to the value in cue b to determine this.
-                Lumiverse::LumiverseType* nextVal = cueBData[it.first][param.first].begin()->val.get();
-                Lumiverse::LumiverseType* thisVal = prev(keyframe)->val.get();
-                int result = LumiverseTypeUtils::cmp(thisVal, nextVal);
-
-                if (result == -1) {
-                  // Upfade. a -> b uses cue a's timing.
-                  k.t = prev(keyframe)->t + a.getUpfade();
-                }
-                else if (result == 1) {
-                  // Downfade
-                  k.t = prev(keyframe)->t + a.getDownfade();
-                }
-              }
-            }
-
-            // If the keyframe has a value, we can skip all that cue timing nonsense.
-            data[it.first][param.first].insert(k);
-          }
+          // We add the parameter to the set of active parameters.
+          data[it.first].insert(param.first);
         }
       }
     }

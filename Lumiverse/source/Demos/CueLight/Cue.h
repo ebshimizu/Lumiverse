@@ -141,7 +141,7 @@ public:
   /*!
   \brief Copy a cue.
   */
-  Cue(Cue& other);
+  Cue(const Cue& other);
 
   // Destructor
   ~Cue();
@@ -290,6 +290,13 @@ public:
   \param t Time to access the cue value.
   */
   shared_ptr<LumiverseType> getValueAtCueTime(Cue* previousCue, string device, string param, float t);
+
+  /*!
+  \brief Indicates if a parameter should continue to be animated at the given time.
+
+  Parameters with function driven keyframes at the end should continue to be updated indefinitely.
+  */
+  bool paramIsActive(Cue* previousCue, string device, string param, float t);
 
 private:
   // Upfade time
