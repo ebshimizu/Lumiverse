@@ -4,7 +4,8 @@ Lumiverse can support any interface if there's a driver for it, and can output t
 multiple interfaces at the same time.
 
 ## Build instructions
-Note that the latest stable version is [v1.1](https://github.com/ebshimizu/Lumiverse/tree/v1.1)
+Please note that the current master version is not stable.
+The latest stable version is [v1.1](https://github.com/ebshimizu/Lumiverse/tree/v1.1)
 
 * Install CMake (>=2.8 suggested, >=2.6 required)
 * Install build dependencies for specific modules:

@@ -140,7 +140,7 @@
 			},
 			"metadata" : {
 				"exposure" : "6.0",
-				"filename" : "E:\/Users\/falindrith\/Documents\/Programming\/Lumiverse\/Core\/Lumiverse\/data\/DSP7-P250I-FL.IES",
+				"filename" : "E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/DSP7-P250I-FL.IES",
 				"location" : "floor right",
 				"matrix" : "1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.0621081069, 12.1992474, -1.84135723, 1",
 				"samples" : "3",
@@ -335,7 +335,7 @@
 			},
 			"metadata" : {
 				"exposure" : "6.0",
-				"filename" : "E:\/Users\/falindrith\/Documents\/Programming\/Lumiverse\/Core\/Lumiverse\/data\/DSP7-P250I-FL.IES",
+				"filename" : "E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/DSP7-P250I-FL.IES",
 				"location" : "floor right",
 				"matrix" : "1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0,  0.0290164705, 12.2592516, -8.55009556, 1",
 				"samples" : "3",
@@ -523,8 +523,8 @@
 		},
 		"arnold" : {
 			"type" : "ArnoldAnimationPatch",
-			"sceneFile" : "E:\/Users\/falindrith\/Documents\/Programming\/Lumiverse\/Core\/Lumiverse\/data\/cornell.ass",
-			"pluginDir" : "C:\/lib\/Lumiverse\/lib\/arnold\/plugin",
+			"sceneFile" : "E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/cornell.ass",
+			"pluginDir" : "C:/lib/Lumiverse/lib/arnold/plugin",
 			"gamma" : 2.2,
 			"lights" : [
 				"inno",
