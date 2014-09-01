@@ -12,6 +12,9 @@ Note that the latest stable version is [v1.1](https://github.com/ebshimizu/Lumiv
     * Bindings for other languages: [SWIG](http://www.swig.org/) (>= 3.0.0)
     	* Python: Python
     	* C#: .NET (any version that works with SWIG)
+    * Arnold Renderer:
+    	* zlib (included in source/LumiverseCore/lib)
+    	* libpng (included in source/LumiverseCore/lib)
 * Make a folder to contain all of your build files
 * Inside of the folder you made, run `cmake ../source`
 * Build
@@ -36,11 +39,8 @@ Lumiverse supports Windows, OS X, and iOS. Linux has some small issues at the
 moment preventing the project from compiling. I had some issues with the
 FTD2XX driver on OS X, so your mileage with OS X may vary.
 
-At the moment, Lumiverse only has drivers for ENTTEC's DMX PRO MkII devices,
-and has only been tested using one connected DMX PRO device at a time. iOS
-supports none of the USB interfaces. It should support Art-Net and other
-DMX over IP protocols at some point in the future, but I've run it with
-a Socket.IO interface just fine.
+At the moment, Lumiverse has drivers for the ENTTEC USB DMX PRO Mk 2
+and for KiNet.
 
 This project was supported in part by funding from the [Carnegie Mellon
 University Frank-Ratchye Fund for Art @ the Frontier](http://studioforcreativeinquiry.org/)

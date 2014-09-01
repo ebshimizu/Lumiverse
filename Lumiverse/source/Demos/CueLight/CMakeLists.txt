@@ -16,6 +16,15 @@ SET(CMAKE_EXE_LINKER_FLAGS "")
 SET(CMAKE_MODULE_LINKER_FLAGS "")
 SET(CMAKE_SHARED_LINKER_FLAGS "")
 
+IF(LumiverseCore_INCLUDE_ARNOLD)
+	find_package(PNG REQUIRED)
+	IF(PNG_FOUND)
+		include_directories(
+			${PNG_INCLUDE_DIRS}
+		)
+	ENDIF(PNG_FOUND)
+ENDIF(LumiverseCore_INCLUDE_ARNOLD)
+
 add_library (CueLight
 	Cue.h
 	CueList.h

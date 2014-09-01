@@ -139,22 +139,16 @@ ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 
 # Simulation module needs libpng to output png
 IF (LumiverseCore_INCLUDE_ARNOLD)
-	# Png output
-	IF(WIN32)
-		# Sets the dir for libpng on windows
-		set(PNG_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/lib/libpng")
-		set(PNG_LIBRARIES "${CMAKE_CURRENT_LIST_DIR}/lib/libpng/libpng.lib" "${CMAKE_CURRENT_LIST_DIR}/lib/libpng/zlib.lib")
-	ELSE(WIN32)
-		FIND_PACKAGE(PNG REQUIRED)
-		
-	ENDIF(WIN32)	
+	find_package(PNG REQUIRED)
 
-	include_directories(
+	IF(PNG_FOUND)
+		include_directories(
 			${PNG_INCLUDE_DIRS}
-	)
-	MESSAGE(${PNG_LIBRARIES})
-	target_link_libraries( LumiverseCore ${PNG_LIBRARIES} )
-	target_link_libraries( LumiverseCoreShared ${PNG_LIBRARIES} )
+		)
+
+		target_link_libraries( LumiverseCore ${PNG_LIBRARIES})
+		target_link_libraries( LumiverseCoreShared ${PNG_LIBRARIES})
+	ENDIF(PNG_FOUND)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
 # Build with Arnold SDK (ai)
