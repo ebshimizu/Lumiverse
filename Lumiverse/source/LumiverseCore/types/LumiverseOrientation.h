@@ -103,7 +103,7 @@ namespace Lumiverse {
     * \brief Sets the value of the orientation
     * \param val New value
     */
-    void setVal(float val, ORIENTATION_UNIT unit = DEGREE) { m_val = val; }
+    void setVal(float val, ORIENTATION_UNIT unit = DEGREE) { m_val = asUnit(unit, val); }
 
     /*!
     * \brief Set unit
