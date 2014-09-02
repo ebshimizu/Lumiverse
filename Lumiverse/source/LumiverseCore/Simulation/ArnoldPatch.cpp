@@ -379,13 +379,17 @@ JSONNode ArnoldPatch::toJSON() {
 	root.push_back(JSONNode("type", getType()));
 	root.push_back(JSONNode("sceneFile", m_interface.getAssFile()));
 	root.push_back(JSONNode("pluginDir", m_interface.getPluginDirectory()));
+	root.push_back(JSONNode("predictive", (m_interface.getPredictive()) ? 1 : 0));
 	root.push_back(JSONNode("gamma", m_interface.getGamma()));
-	
+
 	JSONNode lights;
 	lights.set_name("lights");
 
 	for (auto light : m_lights) {
-		lights.push_back(JSONNode("light", light.first));
+		JSONNode lightNode;
+		lightNode.set_name(light.first);
+		lightNode.push_back(JSONNode("type", light.second.arnold_type));
+		lights.push_back(lightNode);
 	}
 	root.push_back(lights.as_array());
 

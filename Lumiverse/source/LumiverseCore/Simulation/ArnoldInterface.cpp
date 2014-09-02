@@ -354,6 +354,7 @@ JSONNode ArnoldInterface::arnoldParameterToJSON() {
 		param.set_name(aparam.first);
 		param.push_back(JSONNode("dimension", (int)aparam.second.dimension));
 		param.push_back(JSONNode("arnoldType", aparam.second.arnoldTypeName));
+		map.push_back(param);
 	}
 
 	return map;
