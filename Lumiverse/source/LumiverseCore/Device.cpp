@@ -368,15 +368,52 @@ int Device::addMetadataChangedCallback(DeviceCallbackFunction func) {
 }
     
 void Device::deleteParameterChangedCallback(int id) {
-    if (m_onParameterChangedFunctions.count(id) > 0) {
-	m_onParameterChangedFunctions.erase(id);
-    }
+  if (m_onParameterChangedFunctions.count(id) > 0) {
+    m_onParameterChangedFunctions.erase(id);
+  }
 }
 
 void Device::deleteMetadataChangedCallback(int id) {
-    if (m_onMetadataChangedFunctions.count(id) > 0) {
-	m_onMetadataChangedFunctions.erase(id);
-    }
+  if (m_onMetadataChangedFunctions.count(id) > 0) {
+    m_onMetadataChangedFunctions.erase(id);
+  }
+}
+
+bool Device::isIdentical(Device* d) {
+  if (m_id != d->getId()) return false;
+  if (m_channel != d->getChannel()) return false;
+  if (m_type != d->getType()) return false;
+
+  // parameter check
+  if (m_parameters.size() != d->m_parameters.size())
+    return false;
+
+  for (auto p : m_parameters) {
+    // If a parameter doesn't exist in the other device, return false
+    // immediately, they must have the same parameter count at this point.
+    if (!d->paramExists(p.first))
+      return false;
+
+    if (!LumiverseTypeUtils::equals(p.second, d->getParam(p.first)))
+      return false;
+  }
+
+  // metadata check
+  if (m_metadata.size() != d->m_metadata.size())
+    return false;
+
+  for (auto m : m_metadata) {
+    string otherMData;
+    if (!getMetadata(m.first, otherMData))
+      return false;
+
+    if (m.second != otherMData)
+      return false;
+  }
+
+  // We don't check the callback functions since they're more attached
+  // to the device rather than intrinsic properties of the device.
+  return true;
 }
 
 JSONNode Device::parametersToJSON() {

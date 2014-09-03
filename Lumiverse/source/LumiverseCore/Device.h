@@ -400,6 +400,14 @@ namespace Lumiverse {
     * \sa addMetadataChangedCallback(DeviceCallbackFunction func)
     */
     void deleteMetadataChangedCallback(int id);
+
+    /*!
+    \brief Returns true if the device is identical to the given device.
+
+    Identical means that the parameters are all the same, the metadata is
+    all the same, and the other properties of the device are the same.
+    */
+    bool isIdentical(Device* d);
       
   private:
     /*! \brief Sets the id for the device

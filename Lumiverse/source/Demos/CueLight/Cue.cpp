@@ -85,7 +85,7 @@ Cue::Cue(JSONNode node) {
   }
 
   m_lengthIsUpdated = false;
-  m_type = "";
+  m_type = INVALID;
 }
 
 Cue::Cue(const Cue& other) {
@@ -130,7 +130,7 @@ void Cue::operator=(const Cue& other) {
 Cue::changedParams Cue::update(Rig* rig) {
   changedParams params;
   m_lengthIsUpdated = false;
-  m_type = "";
+  m_type = INVALID;
   
   for (auto d : rig->getDeviceRaw()) {
     if (m_cueData.count(d->getId()) == 0) {
@@ -155,7 +155,7 @@ Cue::changedParams Cue::update(Rig* rig) {
 Cue::changedParams Cue::update(map<string, Device*> devices) {
   changedParams params;
   m_lengthIsUpdated = false;
-  m_type = "";
+  m_type = INVALID;
 
   for (auto kvp : devices) {
     if (m_cueData.count(kvp.second->getId()) == 0) {
@@ -183,7 +183,7 @@ Cue::changedParams Cue::update(map<string, Device*> devices) {
 void Cue::trackedUpdate(Cue::changedParams& oldVals, Rig* rig) {
   auto it = oldVals.begin();
   m_lengthIsUpdated = false;
-  m_type = "";
+  m_type = INVALID;
 
   while (it != oldVals.end()) {
     auto params = it->second.begin();
@@ -248,7 +248,7 @@ void Cue::insertKeyframe(string id, string param, Lumiverse::LumiverseType* data
   }
 
   m_lengthIsUpdated = false;
-  m_type = "";
+  m_type = INVALID;
 }
 
 void Cue::insertKeyframe(float time, DeviceSet devices, bool uct) {
@@ -261,7 +261,7 @@ void Cue::insertKeyframe(float time, DeviceSet devices, bool uct) {
   }
 
   m_lengthIsUpdated = false;
-  m_type = "";
+  m_type = INVALID;
 }
 
 void Cue::deleteKeyframe(string id, string param, float time) {
@@ -278,7 +278,7 @@ void Cue::deleteKeyframe(string id, string param, float time) {
   }
 
   m_lengthIsUpdated = false;
-  m_type = "";
+  m_type = INVALID;
 }
 
 void Cue::deleteKeyframe(float time, DeviceSet devices) {
@@ -291,7 +291,7 @@ void Cue::deleteKeyframe(float time, DeviceSet devices) {
   }
 
   m_lengthIsUpdated = false;
-  m_type = "";
+  m_type = INVALID;
 }
 
 map<string, set<Keyframe> > Cue::getParams(Device* d) {
@@ -400,32 +400,35 @@ float Cue::getLength() {
   }
 }
 
-string Cue::getType() {
-  if (m_type == "")
+Cue::Type Cue::getType() {
+  if (m_type == INVALID)
   {
-    bool oneNull = false;
-    bool allNull = true;
+    bool allAtTimeZero = true;
+    bool noneUsePreviousData = true;
+    bool allUsePreviousData = true;
 
     for (const auto& id : m_cueData) {
       for (const auto& param : id.second) {
-        // The relevant parts of this check are the last keyframes of each parameter.
-        // They are the only keyframes that can be null.
-        if (param.second.rbegin()->val == nullptr) {
-          oneNull = true;
-          allNull &= true;
-        }
-        else {
-          allNull &= false;
-        }
+        // Check first keyframes.
+        allAtTimeZero &= (param.second.begin()->t == 0) && param.second.size() == 1;
+        noneUsePreviousData &= !(param.second.begin()->usePreviousValue);
+        allUsePreviousData &= param.second.begin()->usePreviousValue;
       }
     }
+    float t = getTransitionTime();
 
-    if (allNull)
-      m_type = "Linked";
-    else if (oneNull)
-      m_type = "Hybrid";
+    if (allAtTimeZero && noneUsePreviousData)
+      m_type = SCENE;
+    else if (!allAtTimeZero && noneUsePreviousData && t == 0)
+      m_type = STANDALONE;
+    else if (!allAtTimeZero && noneUsePreviousData && t != 0)
+      m_type = HYBRID;
+    else if (allAtTimeZero && allUsePreviousData && t == 0)
+      m_type = LINKED;
+    else if (allAtTimeZero && !noneUsePreviousData && t == 0)
+      m_type = PARTIAL_LINK;
     else
-      m_type = "Standalone";
+      m_type = OTHER;
   }
 
   return m_type;

@@ -98,6 +98,19 @@ By default, a Cue provides a trigger at the beginning of a cue transition and en
 */
 class Cue {
 public:
+  /*!
+  \brief Classifies the cue based on properties of its keyframes.
+  */
+  enum Type {
+    SCENE,      /*!< Cue only has keyframes at time 0 and no keyframes use data from a previous cue. */
+    STANDALONE, /*!< Cue has multiple keyframes beyond time 0. Cue also has a total transition time of 0 and no data comes from previous cues. */
+    HYBRID,     /*!< Using this cue type is not recommended. Cue is Standalone but has a non-zero transition time. */
+    LINKED,     /*!< Keyframes at time 0 use data from the previous cue, and the transition time is 0. */
+    PARTIAL_LINK, /*!< Some Keyframes at time 0 use data from the previous cue, and the transition time is 0. */
+    OTHER,      /*!< Cue cannot be classified as one of the standard options. */
+    INVALID     /*!< Invalid type. This value is used internally to signal a refresh of the type of the cue. */
+  };
+
   typedef map<string, map<string, shared_ptr<Lumiverse::LumiverseType> > > changedParams;
 
   /*!
@@ -240,7 +253,7 @@ public:
   float getLength();
   
   /*!
-  \brief Returns the transition time of the cue.
+  \brief Returns the total transition time of the cue.
    
   \return `max(upfade, downfade) + delay`
   */
@@ -254,7 +267,7 @@ public:
   Hybrid - Cue contains null keyframes (some parameters cross fade between cues)
   Linked - All parameters have null keyframes (all parameters cross fade between cues)
   */
-  string getType();
+  Type getType();
 
   /*!
   \brief Returns a copy of the first keyframe for the specified device and parameter.
@@ -319,7 +332,7 @@ private:
   
   If equal to "" then getType() will recheck the type of the cue;
   */
-  string m_type;
+  Type m_type;
 
   /*!
   \brief Data for this particular cue.

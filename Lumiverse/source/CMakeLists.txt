@@ -8,6 +8,7 @@ include_directories(
 add_subdirectory(LumiverseCore)
 
 add_subdirectory(Demos)
+add_subdirectory(Test)
 
 if (LUMIVERSE_DOCS)
   find_package(Doxygen)
