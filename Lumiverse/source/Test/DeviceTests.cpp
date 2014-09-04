@@ -36,8 +36,8 @@ bool DeviceTests::deviceCreation() {
 bool DeviceTests::deviceCopy(){
   Device d("test1", 1, "ETC Source 4 26deg");
 
-  if (d.setParam("intensity", 1.0f)) {
-    cout << "[ERROR] deviceCopy: Empty device already had intensity parameter\n";
+  if (d.setParam("intensity", (LumiverseType*)(new LumiverseFloat(1, 0, 1, 0)))) {
+    cout << "[ERROR] deviceCopy: Error creating intensity parameter\n";
     return false;
   }
   if (!d.setMetadata("test", "myVal")) {
@@ -114,20 +114,100 @@ bool DeviceTests::deviceAccessors() {
 }
 
 bool DeviceTests::devicePropertyManipulation() {
+  bool ret = true;
   Device d("test", 1, "TEST DEVICE");
 
   LumiverseFloat* f1 = new LumiverseFloat(1, 0, 1, 0);
 
   if (d.setParam("intensity", (LumiverseType*)f1))
-    return false;
+  {
+    cout << "Add new parameter failure.\n";
+    ret = false;
+  }
 
   if (!d.setParam("intensity", 0.5))
-    return false;
+  {
+    cout << "Set parameter failure.\n";
+    ret = false;
+  }
 
   if (((LumiverseFloat*)d.getParam("intensity"))->getVal() != 0.5)
-    return false;
+  {
+    cout << "Device parameter retrieval failure.\n";
+    ret = false;
+  }
 
   // test accsessors for inappropriate data retrieval next
+  float val;
+  if (d.getParam("does not exist", val))
+  {
+    cout << "Received data for non-existant parameter\n";
+    ret = false;
+  }
 
-  return true;
+  LumiverseColor* c = new LumiverseColor(BASIC_RGB);
+
+  c->setRGBRaw(1, 0, 0, 1);
+  d.setParam("color", (LumiverseType*)c);
+
+  // Should return false, type mismatch.
+  if (d.getParam("color", val))
+  {
+    cout << "Was able to set data for wrong type\n";
+    ret = false;
+  }
+
+  // If it somehow returns data for something that doesn't exist, that's wrong.
+  if (d.getParam("does not exist") != nullptr) {
+    cout << "Received data for parameter that doesn't exist.";
+    ret = false;
+  }
+
+  // Test for manipulators.
+  if (d.setParam("color", 5))
+  {
+    cout << "Set non-floating point parameter data as a floating point parameter.\n";
+    ret = false;
+  }
+
+  if (!d.setColorRGBRaw("color", 1, 0, 0, 1))
+  {
+    cout << "Unable to set color parameter data\n";
+    ret = false;
+  }
+
+  // Just testing type stuff here mostly.
+  LumiverseEnum* blank = new LumiverseEnum();
+  d.setParam("enum", (LumiverseType*)blank);
+
+  if (d.setParam("enum", "option doesn't exist")) {
+    cout << "Enumeration value set to invalid option\n";
+    ret = false;
+  }
+  
+  // Type mismatch
+  if (d.setParam("enum", 5)) {
+    cout << "Able to set enumeration as floating point\n";
+    ret = false;
+  }
+
+  // Data tests
+  d.setParam("intensity", 0.5f);
+  d.getParam("intensity", val);
+  if (val != 0.5f) {
+    cout << "Expected result: 0.5. Received: " << val << "\n";
+    ret = false;
+  }
+
+  d.setColorRGBRaw("color", 0, 1, 0, 1);
+  LumiverseColor* deviceColor = (LumiverseColor*)d.getParam("color");
+  if (deviceColor->getColorChannel("Green") != 1
+    && deviceColor->getColorChannel("Red") != 0
+    && deviceColor->getColorChannel("Blue") != 0)
+  {
+    cout << "Color data set incorrectly\n";
+    ret = false;
+  }
+
+  return ret;
 }

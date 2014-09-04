@@ -161,6 +161,10 @@ namespace Lumiverse {
     * \brief Sets the value of a parameter.
     * 
     * Can set arbitrary data with this version of the function.
+    * When you pass a LumiverseType* into a Device with this function, the memory is
+    * now owned by the Device, which will attempt to free it when it's destroyed.
+    * For this reason, you should not use heap-allocated variables with this function.
+    * This function will create new parameters if the specified key doesn't exist.
     * \param param Parameter name
     * \param val object to assign to the parameter
     * \return False if the parameter does not exist prior to set. True otherwise.
@@ -169,27 +173,28 @@ namespace Lumiverse {
     bool setParam(string param, LumiverseType* val);
 
     /*!
-    * \brief Sets the value of a LumiverseFloat parameter
+    * \brief Sets the value of a LumiverseFloat or LumiverseOrientation parameter
     *
+    * This function will not create a new parameter if the key doesn't exist.
     * Use of this function is reserved specifically for floating point valued parameters.
-    * It is up to the caller to insure that the parameter is actually a LumiverseFloat.
+    * It is up to the caller to insure that the parameter is actually a LumiverseFloat,
+    * however messing that up won't kill the program.
     * \param param Parameter name
     * \param val Value to assign to the parameter
-    * \return False if the parameter does not exist prior to set. True otherwise.
-    * \sa LumiverseType, LumiverseFloat
+    * \return true on success, false on failure.
+    * \sa LumiverseType, LumiverseFloat, LumiverseOrientation
     */
     bool setParam(string param, float val);
 
     /*!
     * \brief Sets the value of a LumiverseEnum parameter
     *
+    * This function will not create a new parameter if the key doesn't exist.
     * If val2 is not set, the tweak value isn't passed to the enumeration, allowing it to do default behavior.
     * \param param Parameter name
     * \param val Enumeration name
     * \param val2 The tweak value for the enumeration. See LumiverseEnum for details.
-    * \return False if the parameter changed does not exist prior to set. If the parameter doesn't
-    * exist, it's not actually going to be very useful as an enum so we don't actually create it
-    * because we don't know what the enumeration actually consists of.
+    * \return true on success, false on failure.
     * \sa LumiverseType, LumiverseEnum
     */
     bool setParam(string param, string val, float val2 = -1.0f);
@@ -197,38 +202,40 @@ namespace Lumiverse {
     /*!
     \brief Fully specify the value of an enumeration.
 
+    This function will not create a new parameter if the key doesn't exist.
+    \return true on success, false on failure.
     \sa LumiverseEnum
     */
     bool setParam(string param, string val, float val2, LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode);
 
     /*! \brief Sets the value of a LumiverseColor parameter
     *
+    * Does not create a new parameter if the key doesn't exist.
     * \param param Parameter name
     * \param channel Color channel name
     * \param val Value of the color channel
-    * \return False if parameter changed does not exist prior to set.
-    * Like setParam(string, string, float) we don't create the value if it doesn't exist.
-    * Color has a bunch of specific settings that aren't really useful if we don't know
-    * anything about the device.
+    * \return true on success, false on failure.
     * \sa LumiverseColor, LumiverseType
     */
     bool setParam(string param, string channel, double val);
 
     /*! \brief Sets the value of a LumiverseColor parameter using LumiverseColor::setxy() 
     *
+    * Does not create a new parameter if the key doesn't exist.
     * x and y are chromaticity coordinates in the xyY color space.
     * \param param Parameter name.
     * \param x x coordinate
     * \param y y coordinate
-    * \return False if parameter changed does not exist prior to set.
+    * \return true on success, false on failure
     * \sa LumiverseColor, LumiverseType, setParam(string, string, double)
     */
     bool setParam(string param, double x, double y, double weight = 1.0);
 
     /*! \brief Sets the value of a LumiverseColor parameter
     *
+    * Does not create a new parameter if the key doesn't exist.
     * Proxy for LumiverseColor::setRGBRaw().
-    * \return False if parameter changed does not exist prior to set.
+    * \return true on success, false on failure
     * \sa LumiverseColor::setRGBRaw(), LumiverseColor, LumiverseType
     */
     bool setColorRGBRaw(string param, double r, double g, double b, double weight = 1.0);
@@ -243,11 +250,12 @@ namespace Lumiverse {
 
     /*! \brief Sets the value of a LumiverseColor parameter
     *
+    * Does not create a new parameter if they key doesn't exist.
     * Proxy for LumiverseColor::setColorChannel().
     * \param param Parameter name.
     * \param channel Channel name.
     * \param val Channel value.
-    * \return False if parameter changed does not exist prior to set or channel doesn't exist.
+    * \return true on success, false on failure
     * \sa LumiverseColor::setColorChannel(), LumiverseColor, LumiverseType
     */
     bool setColorChannel(string param, string channel, double val);

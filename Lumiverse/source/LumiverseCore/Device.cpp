@@ -49,8 +49,10 @@ Device::~Device() {
 
 bool Device::getParam(string param, float& val) {
   if (m_parameters.count(param) > 0) {
-    val = ((LumiverseFloat*)m_parameters[param])->getVal();;
-    return true;
+    if (m_parameters[param]->getTypeName() == "float") {
+      val = ((LumiverseFloat*)m_parameters[param])->getVal();
+      return true;
+    }
   }
 
   return false;
@@ -80,6 +82,11 @@ bool Device::setParam(string param, LumiverseType* val) {
   if (m_parameters.count(param) == 0) {
     ret = false;
   }
+  else {
+    // Delete old value to avoid leaking memory.
+    // tbh this function feels a bit unsafe, considering ways to change it.
+    delete m_parameters[param];
+  }
 
   m_parameters[param] = val;
 
@@ -93,15 +100,11 @@ bool Device::setParam(string param, LumiverseType* val) {
 bool Device::setParam(string param, float val) {
   bool ret = true;
 
-  if (m_parameters.count(param) == 0) {
-    ret = false;
-    m_parameters[param] = (LumiverseType*) new LumiverseFloat();
-  }
-
   // Checks param type
-  if (m_parameters[param]->getTypeName() != "float" &&
-      m_parameters[param]->getTypeName() != "orientation") {
-      Logger::log(WARN, "Trying to assign float value to a non-float type.");
+  if (m_parameters.count(param) == 0 ||
+      (m_parameters[param]->getTypeName() != "float" &&
+      m_parameters[param]->getTypeName() != "orientation")) {
+      Logger::log(ERR, "Parameter doesn't exist or trying to assign float value to a non-float type.");
       
       return false;
   }
@@ -124,13 +127,14 @@ bool Device::setParam(string param, string val, float val2) {
 
   // Checks param type
   if (m_parameters[param]->getTypeName() != "enum") {
-    Logger::log(WARN, "Trying to assign enum value to a non-enum type.");
+    Logger::log(ERR, "Trying to assign enum value to a non-enum type.");
         
     return false;
   }
     
   LumiverseEnum* data = (LumiverseEnum *)m_parameters[param];
-  data->setVal(val);
+  if (!data->setVal(val))
+    return false;
 
   if (val2 >= 0) {
     data->setTweak(val2);
@@ -148,8 +152,7 @@ bool Device::setParam(string param, string val, float val2, LumiverseEnum::Mode 
     return false;
   }
     
-  LumiverseEnum* data = (LumiverseEnum *)m_parameters[param];
-  data->setVal(val, val2, mode, interpMode);
+  ((LumiverseEnum *)m_parameters[param])->setVal(val, val2, mode, interpMode);
 
   // callback
   onParameterChanged();
@@ -165,21 +168,21 @@ bool Device::setParam(string param, string channel, double val) {
 
   LumiverseColor* data = (LumiverseColor*)m_parameters[param];
   bool ret;
-  if ((ret = data->setColorChannel(channel, val)))
-      // callback
-      onParameterChanged();
+  if ((ret = data->setColorChannel(channel, val))) {
+    // callback
+    onParameterChanged();
+  }
     
   return ret;
 }
 
 bool Device::setParam(string param, double x, double y, double weight) {
   if (m_parameters.count(param) == 0 ||
-        m_parameters[param]->getTypeName() != "color") {
+      m_parameters[param]->getTypeName() != "color") {
     return false;
   }
 
-  LumiverseColor* data = (LumiverseColor*)m_parameters[param];
-  data->setxy(x, y, weight);
+  ((LumiverseColor*)m_parameters[param])->setxy(x, y, weight);
 
   // callback
   onParameterChanged();
@@ -189,12 +192,11 @@ bool Device::setParam(string param, double x, double y, double weight) {
 
 bool Device::setColorRGBRaw(string param, double r, double g, double b, double weight) {
   if (m_parameters.count(param) == 0 ||
-        m_parameters[param]->getTypeName() != "color") {
+      m_parameters[param]->getTypeName() != "color") {
     return false;
   }
 
-  LumiverseColor* data = (LumiverseColor*)m_parameters[param];
-  data->setRGBRaw(r, g, b, weight);
+  ((LumiverseColor*)m_parameters[param])->setRGBRaw(r, g, b, weight);
 
   // callback
   onParameterChanged();
@@ -204,12 +206,11 @@ bool Device::setColorRGBRaw(string param, double r, double g, double b, double w
 
 bool Device::setColorRGB(string param, double r, double g, double b, double weight, RGBColorSpace cs) {
   if (m_parameters.count(param) == 0 ||
-        m_parameters[param]->getTypeName() != "color") {
+      m_parameters[param]->getTypeName() != "color") {
     return false;
   }
 
-  LumiverseColor* data = (LumiverseColor*)m_parameters[param];
-  data->setRGB(r, g, b, weight, cs);
+  ((LumiverseColor*)m_parameters[param])->setRGB(r, g, b, weight, cs);
 
   // callback
   onParameterChanged();
