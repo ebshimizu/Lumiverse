@@ -175,7 +175,18 @@ namespace Lumiverse {
     return a.getVal() == b.getVal();
   }
 
+  inline bool operator==(LumiverseFloat& a, float b) {
+    if (a.getTypeName() != "float")
+      return false;
+
+    return a.getVal() == b;
+  }
+
   inline bool operator!=(LumiverseFloat& a, LumiverseFloat& b) {
+    return !(a == b);
+  }
+
+  inline bool operator!=(LumiverseFloat& a, float b) {
     return !(a == b);
   }
 
@@ -187,7 +198,25 @@ namespace Lumiverse {
     return a.getVal() < b.getVal();
   }
 
+  inline bool operator<(LumiverseFloat& a, float b) {
+    if (a.getTypeName() != "float")
+      return false;
+
+    return a.getVal() < b;
+  }
+
+  inline bool operator<(float a, LumiverseFloat& b) {
+    if (b.getTypeName() != "float")
+      return false;
+
+    return a < b.getVal();
+  }
+
   inline bool operator>(LumiverseFloat& a, LumiverseFloat& b) {
+    return b < a;
+  }
+
+  inline bool operator>(LumiverseFloat& a, float b) {
     return b < a;
   }
 
@@ -195,7 +224,15 @@ namespace Lumiverse {
     return !(a > b);
   }
 
+  inline bool operator<=(LumiverseFloat& a, float b) {
+    return !(a > b);
+  }
+
   inline bool operator>=(LumiverseFloat& a, LumiverseFloat b) {
+    return !(a < b);
+  }
+
+  inline bool operator>=(LumiverseFloat& a, float b) {
     return !(a < b);
   }
 

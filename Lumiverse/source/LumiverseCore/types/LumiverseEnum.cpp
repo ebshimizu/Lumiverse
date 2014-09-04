@@ -177,7 +177,7 @@ bool LumiverseEnum::setVal(float val) {
     return setVal(m_startToName.begin()->second, 0.0f);
   }
   else if (val > m_rangeMax) {
-    return setVal(m_startToName.end()->second, 1.0f);
+    return setVal(m_startToName.rbegin()->second, 1.0f);
   }
 
   lock_guard<mutex> lock(m_enumMapMutex);

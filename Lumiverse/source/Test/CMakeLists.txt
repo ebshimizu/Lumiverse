@@ -24,6 +24,8 @@ add_executable(LumiverseTest
 	TestMain.cpp
 	DeviceTests.cpp
 	DeviceTests.h
+	TypeTests.cpp
+	TypeTests.h
 )
 
 target_link_libraries(LumiverseTest LumiverseCore)

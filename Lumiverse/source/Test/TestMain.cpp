@@ -8,17 +8,24 @@
 */
 
 #include <LumiverseCore.h>
+#include "TypeTests.h"
 #include "DeviceTests.h"
 
 int main(int argc, char**argv) {
   DeviceTests dt;
+  TypeTests tt;
 
   cout << "Starting Lumiverse Test Suite for version " << LumiverseCore_VERSION_MAJOR << "." << LumiverseCore_VERSION_MINOR << "\n";
   cout << "========================================\n";
 
+  cout << "Running Tests for LumiverseType...\n";
+  int ttpassed = tt.runTests();
+  cout << "LumiverseType passed " << ttpassed << "/" << tt.numTests() << " tests.\n";
+  cout << "\n";
+
   cout << "Running Tests for LumiverseDevice...\n";
-  int passed = dt.runTests();
-  cout << "LumiverseDevice passed " << passed << "/" << dt.numTests() << " tests.\n";
+  int dtpassed = dt.runTests();
+  cout << "LumiverseDevice passed " << dtpassed << "/" << dt.numTests() << " tests.\n";
   cout << "\n";
 
   getch();
