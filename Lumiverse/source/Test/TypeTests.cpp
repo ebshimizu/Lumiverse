@@ -5,7 +5,7 @@ int TypeTests::runTests() {
 
   (runTest([=]{ return this->floatTests(); }, "floatTests", 1)) ? numPassed++ : numPassed;
   (runTest([=]{ return this->enumTests(); }, "enumTests", 2)) ? numPassed++ : numPassed;
-  //(runTest([=]{ return this->colorTests(); }, "colorTests", 3)) ? numPassed++ : numPassed;
+  (runTest([=]{ return this->colorTests(); }, "colorTests", 3)) ? numPassed++ : numPassed;
   //(runTest([=]{ return this->oriTests(); }, "oriTests", 4)) ? numPassed++ : numPassed;
   //(runTest([=]{ return this->utilTests(); }, "utilTests", 5)) ? numPassed++ : numPassed;
 
@@ -156,5 +156,38 @@ bool TypeTests::enumTests() {
     ret = false;
   }
 
+  return ret;
+}
+
+bool TypeTests::colorTests() {
+  bool ret = true;
+
+  map<string, Eigen::Vector3d> basis;
+  basis["Blue"] = Eigen::Vector3d(4.30497, 3.859103, 29.365243);
+  basis["Green"] = Eigen::Vector3d(5.59857, 25.901501, 4.084567);
+  basis["Red"] = Eigen::Vector3d(13.16544, 5.868346, 0.000025);
+  basis["White"] = Eigen::Vector3d(81.33195, 79.590576, 47.302138);
+
+  LumiverseColor c(basis);
+
+  c["Blue"] = 0.5;
+  if (c.getColorChannel("Blue") != 0.5) {
+    cout << "LumiverseColor error setting color channel. Expected: 0.5. Received: " << c["Blue"] << "\n";
+    ret = false;
+  }
+
+  c["White"] = c["Green"] = c["Red"] = 0.5;
+  auto calcXYZ = c["White"] * basis["White"] + c["Red"] * basis["Red"] + c["Blue"] * basis["Blue"] + c["Green"] * basis["Green"];
+  if (c.getXYZ() != calcXYZ) {
+    cout << "LumiverseColor error calculating XYZ coordinates.\n";
+    ret = false;
+  }
+
+  c.reset();
+  if (!c.isDefault()) {
+    cout << "LumiverseColor error resetting to default color.\n";
+    ret = false;
+  }
+     
   return ret;
 }
