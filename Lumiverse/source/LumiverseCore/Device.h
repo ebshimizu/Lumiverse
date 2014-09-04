@@ -306,7 +306,7 @@ namespace Lumiverse {
     * 
     * \param key Metadata key
     * \param val New value of the metadata field.
-    * \return True if metadata key does not exist prior to set.
+    * \return False if metadata key does not exist prior to set, true otherwise.
     */
     bool setMetadata(string key, string val);
 

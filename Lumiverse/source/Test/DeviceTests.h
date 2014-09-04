@@ -21,7 +21,7 @@ private:
   bool runTest(std::function<bool()> t, string testName, int testNum);
 
   // Update when new tests are written.
-  int m_numTests = 9;
+  int m_numTests = 8;
 
   // Test functions
   bool deviceCreation();
@@ -31,6 +31,5 @@ private:
   bool devicePropertyManipulation();
   bool deviceMetadataManipulation();
   bool devicePropertyInfo();
-  bool devicePropertyReset();
   bool deviceCallbacks();
 };

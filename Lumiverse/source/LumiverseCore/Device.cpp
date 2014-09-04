@@ -272,10 +272,10 @@ bool Device::getMetadata(string key, string& val) {
 }
 
 bool Device::setMetadata(string key, string val) {
-  bool ret = false;
+  bool ret = true;
 
   if (m_metadata.count(key) == 0) {
-    ret = true;
+    ret = false;
   }
 
   m_metadata[key] = val;
