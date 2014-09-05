@@ -68,6 +68,7 @@ void LumiverseOrientation::setUnit(ORIENTATION_UNIT unit) {
   m_val = valAsUnit(unit);
   m_max = maxAsUnit(unit);
   m_min = minAsUnit(unit);
+  m_default = defaultAsUnit(unit);
   m_unit = unit;
 }
 
@@ -90,15 +91,15 @@ float LumiverseOrientation::asPercent() {
   return (-m_min + m_val) / (m_max - m_min);
 }
 
-float LumiverseOrientation::asUnit(ORIENTATION_UNIT unit, float val) {
-  if (m_unit == unit)
+float LumiverseOrientation::asUnit(ORIENTATION_UNIT valUnit, float val, ORIENTATION_UNIT targetUnit) {
+  if (valUnit == targetUnit)
     return val;
-  else if (m_unit == DEGREE)
+  else if (valUnit == DEGREE && targetUnit == RADIAN)
     return val * M_PI / 180.0f;
-  else if (m_unit == RADIAN)
+  else if (valUnit == RADIAN && targetUnit == DEGREE)
     return val * 180.0f / M_PI;
   else {
-    Logger::log(ERR, "Unknown orientation unit specified: " + unit);
+    Logger::log(ERR, "Unknown orientation unit specified: " + targetUnit);
     return val;
   }
 }
@@ -112,6 +113,8 @@ void LumiverseOrientation::operator=(LumiverseOrientation val)
   m_max = val.m_max;
   m_min = val.m_min;
   m_default = val.m_default;
+
+  clamp();
 }
 
 // Arithmetic overrides

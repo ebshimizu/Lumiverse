@@ -6,7 +6,7 @@ int TypeTests::runTests() {
   (runTest([=]{ return this->floatTests(); }, "floatTests", 1)) ? numPassed++ : numPassed;
   (runTest([=]{ return this->enumTests(); }, "enumTests", 2)) ? numPassed++ : numPassed;
   (runTest([=]{ return this->colorTests(); }, "colorTests", 3)) ? numPassed++ : numPassed;
-  //(runTest([=]{ return this->oriTests(); }, "oriTests", 4)) ? numPassed++ : numPassed;
+  (runTest([=]{ return this->oriTests(); }, "oriTests", 4)) ? numPassed++ : numPassed;
   //(runTest([=]{ return this->utilTests(); }, "utilTests", 5)) ? numPassed++ : numPassed;
 
   return numPassed;
@@ -189,5 +189,103 @@ bool TypeTests::colorTests() {
     ret = false;
   }
      
+  return ret;
+}
+
+bool TypeTests::oriTests() {
+  bool ret = true;
+
+  LumiverseOrientation o(0, DEGREE, 180, 360, 0);
+
+  if (o.getVal() != 0) {
+    cout << "Error initializing orientation\n";
+    ret = false;
+  }
+
+  o.setVal(270);
+  if (o.getVal() != 270) {
+    cout << "Error setting new value for orientation\n";
+    ret = false;
+  }
+
+  o.setVal(M_PI, RADIAN);
+  if (o.getVal() != 180) {
+    cout << "Error setting values of different units. Expected: 180. Received: " << o.getVal() << "\n";
+    ret = false;
+  }
+
+  o += LumiverseOrientation(90);
+  if (o.getVal() != 270) {
+    cout << "+= op error. Expected: 270. Received: " << o.getVal() << "\n";
+    ret = false;
+  }
+
+  o.setVal(0);
+  o += LumiverseOrientation(M_PI, RADIAN);
+  if (o.getVal() != 180) {
+    cout << "+= op error for differnt units. Expected: 180. Received: " << o.getVal() << "\n";
+    ret = false;
+  }
+
+  o -= LumiverseOrientation(M_PI, RADIAN);
+  if (o.getVal() != 0) {
+    cout << "-= op error for different units. Expected: 0. Received: " << o.getVal() << "\n";
+    ret = false;
+  }
+
+  o.setVal(90);
+  o *= 2;
+  if (o.getVal() != 180) {
+    cout << "*= op error. Expected: 180. Received: " << o.getVal() << "\n";
+    ret = false;
+  }
+
+  o /= 2;
+  if (o.getVal() != 90) {
+    cout << "/= op error. Expected: 90. Received: " << o.getVal() << "\n";
+    ret = false;
+  }
+
+  if (!(o < LumiverseOrientation(M_PI, RADIAN))) {
+    cout << "< comparison op error. Claimed 90deg > PI rad\n";
+    ret = false;
+  }
+
+  if (!(o == LumiverseOrientation(M_PI_2, RADIAN))) {
+    cout << "== equality op error. Claimed 90deg != PI/2 rad\n";
+    ret = false;
+  }
+
+  o.setVal(310941423);
+  if (o.getVal() != 360) {
+    cout << "Orientation out of maximum bound. Expected: 360. Recevied: " << o.getVal() << "\n";
+    ret = false;
+  }
+
+  o.setVal(-31434);
+  if (o.getVal() != 0) {
+    cout << "Orientation out of minimal bound. Expected: 0. Received: " << o.getVal() << "\n";
+    ret = false;
+  }
+
+  o.setVal(180);
+  o.setUnit(RADIAN);
+  if (abs(o.getVal() - M_PI) > 1e-6) {
+    cout << "Orientation unit conversion value failure. Expected: " << M_PI << ". Received: " << o.getVal() << "\n";
+    ret = false;
+  }
+
+  if (abs(o.getMax() - (M_PI * 2)) > 1e-6) {
+    cout << "Orientation unit conversion maximum bound faliure. Expected: " << M_PI * 2 << ". Received: " << o.getMax() << "\n";
+    ret = false;
+  }
+
+  o.setVal(0);
+  o.reset();
+  if (abs(o.getVal() - M_PI) > 1e-6) {
+    cout << "Orientation didn't reset to default. Expected: " << M_PI << ". Received: " << o.getVal() << "\n";
+    ret = false;
+  }
+
   return ret;
 }

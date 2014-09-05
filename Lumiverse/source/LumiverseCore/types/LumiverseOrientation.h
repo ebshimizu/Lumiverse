@@ -50,7 +50,7 @@ namespace Lumiverse {
     * \param min Minimum allowed value
     * \sa reset()
     */
-	  LumiverseOrientation(float val = 0.0f, ORIENTATION_UNIT unit = DEGREE, float def = 0.0f, float max = 0.0f, float min = 360.0f);
+	  LumiverseOrientation(float val = 0.0f, ORIENTATION_UNIT unit = DEGREE, float def = 0.0f, float max = 360.0f, float min = 0.0f);
 
     /*!
     * \brief Constructs an orientation with the contents of a different orientation
@@ -103,7 +103,7 @@ namespace Lumiverse {
     * \brief Sets the value of the orientation
     * \param val New value
     */
-    void setVal(float val, ORIENTATION_UNIT unit = DEGREE) { m_val = asUnit(unit, val); }
+    void setVal(float val, ORIENTATION_UNIT unit = DEGREE) { m_val = asUnit(unit, val, m_unit); clamp(); }
 
     /*!
     * \brief Set unit
@@ -121,7 +121,7 @@ namespace Lumiverse {
     * \brief Set maximum value
     * \param val New maximum value
     */
-    void setMax(float val) { m_max = val; }
+    void setMax(float val, ORIENTATION_UNIT unit = DEGREE) { m_max = asUnit(unit, val, m_unit); }
     
     /*!
     * \brief Get the maximum value
@@ -133,23 +133,23 @@ namespace Lumiverse {
     * \brief Set miniumum value
     * \param val New minimum value
     */
-    void setMin(float val) { m_min = val; }
+    void setMin(float val, ORIENTATION_UNIT unit = DEGREE) { m_min = asUnit(unit, val, m_unit); }
     
     /*!
     * \brief Get the minimum value
-    * \return Minimum value for the float
+    * \return Minimum value for the orientation in local units
     */
     float getMin() { return m_min; }
 
     /*!
-    * \brief Set the default value for the float
+    * \brief Set the default value for the orientation
     * \param val New default value
     */
-    void setDefault(float val) { m_default = val; }
+    void setDefault(float val, ORIENTATION_UNIT unit = DEGREE) { m_default = asUnit(unit, val, m_unit); }
     
     /*!
-    * \brief Gets the default value for the float
-    * \return Default value
+    * \brief Gets the default value for the orientation
+    * \return Default value in local units
     */
     float getDefault() { return m_default; }
 
@@ -167,17 +167,22 @@ namespace Lumiverse {
     /*!
     * \brief Returns the value of this orientation with the specified units.
     */
-    float valAsUnit(ORIENTATION_UNIT unit) { return asUnit(unit, m_val); }
+    float valAsUnit(ORIENTATION_UNIT unit) { return asUnit(m_unit, m_val, unit); }
 
     /*!
     * \brief Returns the max value of the orientation with the specified units.
     */
-    float maxAsUnit(ORIENTATION_UNIT unit) { return asUnit(unit, m_max); }
+    float maxAsUnit(ORIENTATION_UNIT unit) { return asUnit(m_unit, m_max, unit); }
 
     /*!
     * \brief Returns the min value of the orientation with the specified units.
     */
-    float minAsUnit(ORIENTATION_UNIT unit) { return asUnit(unit, m_min); }
+    float minAsUnit(ORIENTATION_UNIT unit) { return asUnit(m_unit, m_min, unit); }
+
+    /*!
+    * \brief Returns the default value of the orientation with the specified units.
+    */
+    float defaultAsUnit(ORIENTATION_UNIT unit) { return asUnit(m_unit, m_default, unit); }
 
     // Converts a float to a JSON object with specified name.
     virtual JSONNode toJSON(string name);
@@ -202,9 +207,11 @@ namespace Lumiverse {
     *
     * In the event that the orientation is already using the specified units,
     * the same value as getVal() will be returned.
-    * \param unit Unit to get the value as
+    * \param valUnit Units of val.
+    * \param val Quantity to convert
+    * \param targetUnit desired final units
     */
-    float asUnit(ORIENTATION_UNIT unit, float val);
+    float asUnit(ORIENTATION_UNIT valUnit, float val, ORIENTATION_UNIT targetUnit);
 
     /*!
     * \brief the value of this object
@@ -269,14 +276,14 @@ namespace Lumiverse {
 
   inline LumiverseOrientation operator+(LumiverseOrientation& lhs, LumiverseOrientation& rhs) {
     LumiverseOrientation val = LumiverseOrientation(lhs);
-    val += rhs;
+    val += rhs.valAsUnit(val.getUnit());
     return val;
   }
 
   // Apparently clang needs this form of the overload to make it happy
   inline LumiverseOrientation operator+(LumiverseOrientation lhs, LumiverseOrientation rhs) {
     LumiverseOrientation val = LumiverseOrientation(lhs);
-    val += rhs;
+    val += rhs.valAsUnit(val.getUnit());
     return val;
   }
 
@@ -288,7 +295,7 @@ namespace Lumiverse {
 
   inline LumiverseOrientation operator-(LumiverseOrientation& lhs, LumiverseOrientation& rhs) {
     LumiverseOrientation val = LumiverseOrientation(lhs);
-    val -= rhs;
+    val -= rhs.valAsUnit(val.getUnit());
     return val;
   }
 
@@ -300,7 +307,7 @@ namespace Lumiverse {
 
   inline LumiverseOrientation operator*(LumiverseOrientation& lhs, LumiverseOrientation& rhs) {
     LumiverseOrientation val = LumiverseOrientation(lhs);
-    val *= rhs;
+    val *= rhs.valAsUnit(val.getUnit());;
     return val;
   }
 
@@ -312,7 +319,7 @@ namespace Lumiverse {
 
   inline LumiverseOrientation operator/(LumiverseOrientation& lhs, LumiverseOrientation& rhs) {
     LumiverseOrientation val = LumiverseOrientation(lhs);
-    val /= rhs;
+    val /= rhs.valAsUnit(val.getUnit());
     return val;
   }
 }
