@@ -10,10 +10,14 @@
 #include <LumiverseCore.h>
 #include "TypeTests.h"
 #include "DeviceTests.h"
+#include "RigTests.h"
 
 int main(int argc, char**argv) {
+  Logger::setLogFile("testLog.txt");
+
   DeviceTests dt;
   TypeTests tt;
+  RigTests rt;
 
   cout << "Starting Lumiverse Test Suite for version " << LumiverseCore_VERSION_MAJOR << "." << LumiverseCore_VERSION_MINOR << "\n";
   cout << "========================================\n";
@@ -26,6 +30,11 @@ int main(int argc, char**argv) {
   cout << "Running Tests for LumiverseDevice...\n";
   int dtpassed = dt.runTests();
   cout << "LumiverseDevice passed " << dtpassed << "/" << dt.numTests() << " tests.\n";
+  cout << "\n";
+
+  cout << "Runnint Tests for Rig and DeviceSet...\n";
+  int rtpassed = rt.runTests();
+  cout << "Rig and DeviceSet passed " << rtpassed << "/" << rt.numTests() << " tests.\n";
   cout << "\n";
 
   getch();

@@ -21,12 +21,11 @@ private:
   bool runTest(std::function<bool()> t, string testName, int testNum);
 
   // Update when new tests are written.
-  int m_numTests = 5;
+  int m_numTests = 4;
 
   // Test functions
   bool floatTests();
   bool enumTests();
   bool colorTests();
   bool oriTests();
-  bool utilTests();
 };

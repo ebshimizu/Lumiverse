@@ -7,7 +7,6 @@ int TypeTests::runTests() {
   (runTest([=]{ return this->enumTests(); }, "enumTests", 2)) ? numPassed++ : numPassed;
   (runTest([=]{ return this->colorTests(); }, "colorTests", 3)) ? numPassed++ : numPassed;
   (runTest([=]{ return this->oriTests(); }, "oriTests", 4)) ? numPassed++ : numPassed;
-  //(runTest([=]{ return this->utilTests(); }, "utilTests", 5)) ? numPassed++ : numPassed;
 
   return numPassed;
 }

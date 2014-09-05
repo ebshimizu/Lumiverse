@@ -593,4 +593,29 @@ string DeviceSet::info() {
 
   return ss.str();
 }
+
+bool DeviceSet::hasSameIds(DeviceSet& devices) {
+  if (devices.size() != size())
+    return false;
+
+  auto ids = devices.getIds();
+  for (auto d : m_workingSet) {
+    if (find(ids.begin(), ids.end(), d->getId()) == ids.end())
+      return false;
+  }
+
+  return true;
+}
+
+bool DeviceSet::hasSameDevices(DeviceSet& devices) {
+  if (devices.size() != size())
+    return false;
+
+  for (auto d : m_workingSet) {
+    if (devices.m_workingSet.count(d) == 0)
+      return false;
+  }
+
+  return true;
+}
 }

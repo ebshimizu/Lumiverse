@@ -468,6 +468,30 @@ namespace Lumiverse {
     */
     inline size_t size() { return m_workingSet.size(); }
 
+    /*!
+    \brief Returns true if the device sets have the same number of devices
+    and contain the same set of IDs.
+
+    Note that even if this returns true, the device sets could refer
+    to different objects, as they store pointers to the devices they contain.
+    This function is currently very slow.
+    */
+    bool hasSameIds(DeviceSet& devices);
+
+    /*!
+    \brief Returns true if the device sets have the same number of devices and
+    point to the same Devices. 
+
+    This actually just checks to see if the pointers in the set of devices
+    managed by the device set are pointing to the same things.
+    */
+    bool hasSameDevices(DeviceSet& devices);
+
+    /*!
+    \brief Removes all devices from the device set.
+    */
+    void clear() { m_workingSet.clear(); }
+
   private:
     /*!
     * \brief Adds to the set without returning a new copy.

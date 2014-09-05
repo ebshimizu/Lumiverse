@@ -347,6 +347,11 @@ namespace Lumiverse {
     */
     void setAllDevices(map<string, Device*> devices);
 
+    /*!
+    \brief Returns the number of devices in the Rig.
+    */
+    int getNumDevices() { return m_devices.size(); }
+
   private:
     /*!
     * \brief Loads the rig info from the parsed JSON data.
