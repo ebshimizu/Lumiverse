@@ -102,7 +102,7 @@
       "channel" : 9,
       "type" : "Source Four ERS",
       "parameters" : {
-        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+        "intensity" : { "type" : "float", "val" : 0.5, "default" : 0.0 }
       },
       "metadata" : {
         "color" : "L139",
@@ -114,7 +114,7 @@
       "channel" : 10,
       "type" : "Source Four ERS",
       "parameters" : {
-        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+        "intensity" : { "type" : "float", "val" : 1.0, "default" : 0.0 }
       },
       "metadata" : {
         "color" : "L148",
@@ -126,7 +126,7 @@
       "channel" : 11,
       "type" : "Source Four ERS",
       "parameters" : {
-        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+        "intensity" : { "type" : "float", "val" : 0.2, "default" : 0.0 }
       },
       "metadata" : {
         "color" : "R80",
@@ -138,7 +138,7 @@
       "channel" : 12,
       "type" : "Source Four PAR",
       "parameters" : {
-        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+        "intensity" : { "type" : "float", "val" : 0.33, "default" : 0.0 }
       },
       "metadata" : {
         "color" : "R27",
@@ -150,7 +150,7 @@
       "channel" : 13,
       "type" : "Source Four PAR",
       "parameters" : {
-        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+        "intensity" : { "type" : "float", "val" : 0.76, "default" : 0.0 }
       },
       "metadata" : {
         "color" : "R21",
@@ -162,7 +162,7 @@
       "channel" : 14,
       "type" : "Source Four PAR",
       "parameters" : {
-        "intensity" : { "type" : "float", "val" : 0.0, "default" : 0.0 }
+        "intensity" : { "type" : "float", "val" : 0.99, "default" : 0.0 }
       },
       "metadata" : {
         "color" : "R349",
