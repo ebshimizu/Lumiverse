@@ -100,6 +100,8 @@ void ArnoldAnimationPatch::close() {
     // Won't close immediately
     // Sends end signal to worker
     FrameDeviceInfo frame;
+	chrono::time_point<chrono::system_clock> current = chrono::system_clock::now();
+	frame.time = chrono::duration_cast<chrono::milliseconds>(current - m_startPoint).count();
     frame.mode = ArnoldAnimationMode::STOPPED;
 
     m_queue.lock();
@@ -129,7 +131,7 @@ void ArnoldAnimationPatch::reset() {
     // We want to block both worker and main thread during resetting
     m_queue.lock();
     m_mode = ArnoldAnimationMode::INTERACTIVE;
-    
+
     // Resets start point to init.
     m_startPoint = chrono::system_clock::from_time_t(0);
     
@@ -273,7 +275,6 @@ void ArnoldAnimationPatch::workerLoop() {
             if (frame.mode == ArnoldAnimationMode::STOPPED) {
                 m_mode = ArnoldAnimationMode::STOPPED;
                 Logger::log(INFO, "Worker stopped...");
-				onWorkerFinished();
 
                 return ;
             }
