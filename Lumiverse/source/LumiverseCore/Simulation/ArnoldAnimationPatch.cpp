@@ -57,8 +57,6 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
 		}
     }
 
-	clearUpdateFlags();
-
     std::stringstream ss;
     ss << "Sent new frame: " << frame.time << "(" << frame.mode << ")";
     Logger::log(LDEBUG, ss.str());
@@ -71,6 +69,9 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
     
 	// Enqueues.
 	enqueueFrameInfo(frame);
+
+	// A flag cleared means the task has been indeed inserted
+	clearUpdateFlags();
 }
 
 void ArnoldAnimationPatch::enqueueFrameInfo(const FrameDeviceInfo &frame) {
@@ -103,10 +104,14 @@ void ArnoldAnimationPatch::createFrameInfoHeader(FrameDeviceInfo &frame) {
 }
 
 void ArnoldAnimationPatch::rerender() {
-	// Adds a pseudo updating request with empty device set.
-	FrameDeviceInfo frame;
-	createFrameInfoHeader(frame);
-	enqueueFrameInfo(frame);
+	// Sets all rerendering flags to true to preserve the first frame
+	if (m_lights.size() > 0)
+		for (auto light : m_lights)
+			m_lights[light.first].rerender_req = true;
+
+	// When patch is working, makes sure the request be processed
+	while (m_lights.begin()->second.rerender_req &&
+		m_mode != ArnoldAnimationMode::STOPPED) ;
 }
 
 void ArnoldAnimationPatch::close() {
