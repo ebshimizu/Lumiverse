@@ -26,10 +26,8 @@ ArnoldAnimationPatch::~ArnoldAnimationPatch() {
 void ArnoldAnimationPatch::init() {
     ArnoldPatch::init();
 
-	/*
-    // Starts a worker thread.
-    m_worker = new std::thread(&ArnoldAnimationPatch::workerLoop, this);
-	*/
+	// Cleans hooks to old callbacks
+	m_onFinishedFunctions.clear();
 }
     
 void ArnoldAnimationPatch::update(set<Device *> devices) {
@@ -38,25 +36,12 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
         return ;
     
     FrameDeviceInfo frame;
-    chrono::time_point<chrono::system_clock> current = chrono::system_clock::now();
+	
+	// Fulls time and mode for frame info.
+	createFrameInfoHeader(frame);
 
-    // Sets the start point to the moment when update is called for the first time
-    if (m_startPoint == chrono::system_clock::from_time_t(0))
-		m_startPoint = current;
-
-    frame.time = chrono::duration_cast<chrono::milliseconds>(current - m_startPoint).count();
-
-	// A new Interactive frame indicates the end of Rendering tasks.
-	// Note that all Rendering frames are created by the worker thread.
-    if (m_mode == ArnoldAnimationMode::RENDERING ||
-        m_mode == ArnoldAnimationMode::INTERACTIVE)
-        frame.mode = ArnoldAnimationMode::INTERACTIVE;
-    else if (m_mode == ArnoldAnimationMode::RECORDING)
-        frame.mode = ArnoldAnimationMode::RECORDING;
-    
     // Checks if an update is needed.
     bool rerender_req = isUpdateRequired(devices);
-    clearUpdateFlags();
 
     // There's no need to send this frame
     if (!rerender_req)
@@ -64,18 +49,15 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
     
     for (Device *d : devices) {
 		// Checks if the device is connect to this patch
-		if (m_lights.count(d->getId()) > 0) {
+		if (m_lights.count(d->getId()) > 0 &&
+			m_lights[d->getId()].rerender_req) {
 			// Makes copy of this device
 			Device *d_copy = new Device(*d);
 			frame.devices.insert(d_copy);
-			if (d_copy->getId() == "vizi") {
-				std::stringstream ss;
-				LumiverseOrientation *ori = (LumiverseOrientation *)d_copy->getParam("pan");
-				ss << "vizi: " << ori->getVal();
-				Logger::log(LDEBUG, ss.str());
-			}
 		}
     }
+
+	clearUpdateFlags();
 
     std::stringstream ss;
     ss << "Sent new frame: " << frame.time << "(" << frame.mode << ")";
@@ -87,13 +69,44 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
         m_interface.interrupt();
     }
     
-    // Since there aren't many competitions (worker runs slowly),
-    // it's okay to just use a coarse lock.
-    m_queue.lock();
-    // Checks if start point was reset during this update call.
-    if (m_startPoint != chrono::system_clock::from_time_t(0))
-        m_queuedFrameDeviceInfo.push_back(frame);
-    m_queue.unlock();
+	// Enqueues.
+	enqueueFrameInfo(frame);
+}
+
+void ArnoldAnimationPatch::enqueueFrameInfo(const FrameDeviceInfo &frame) {
+	// Since there aren't many competitions (worker runs slowly),
+	// it's okay to just use a coarse lock.
+	m_queue.lock();
+	// Checks if start point was reset during this update call.
+	if (m_startPoint != chrono::system_clock::from_time_t(0))
+		m_queuedFrameDeviceInfo.push_back(frame);
+	m_queue.unlock();
+}
+
+void ArnoldAnimationPatch::createFrameInfoHeader(FrameDeviceInfo &frame) {
+	chrono::time_point<chrono::system_clock> current = chrono::system_clock::now();
+
+	// Sets the start point to the moment when update is called for the first time
+	if (m_startPoint == chrono::system_clock::from_time_t(0))
+		m_startPoint = current;
+
+	frame.time = chrono::duration_cast<chrono::milliseconds>(current - m_startPoint).count();
+
+	// A new Interactive frame indicates the end of Rendering tasks.
+	// Note that all Rendering frames are created by the worker thread.
+	if (m_mode == ArnoldAnimationMode::RENDERING ||
+		m_mode == ArnoldAnimationMode::INTERACTIVE)
+		frame.mode = ArnoldAnimationMode::INTERACTIVE;
+	else if (m_mode == ArnoldAnimationMode::RECORDING)
+		frame.mode = ArnoldAnimationMode::RECORDING;
+
+}
+
+void ArnoldAnimationPatch::rerender() {
+	// Adds a pseudo updating request with empty device set.
+	FrameDeviceInfo frame;
+	createFrameInfoHeader(frame);
+	enqueueFrameInfo(frame);
 }
 
 void ArnoldAnimationPatch::close() {

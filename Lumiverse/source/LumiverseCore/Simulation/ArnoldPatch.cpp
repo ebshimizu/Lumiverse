@@ -180,9 +180,6 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
 				<< rotation(2, 0) << "," << rotation(2, 1) << "," << rotation(2, 2) << ",0,"
 				<< pos << ",1";
 
-			Logger::log(LDEBUG, light_name);
-			Logger::log(LDEBUG, ss.str());
-
 			m_interface.setParameter(light_ptr, "matrix", ss.str());
 		}
     }

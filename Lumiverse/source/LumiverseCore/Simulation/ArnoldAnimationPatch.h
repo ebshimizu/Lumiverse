@@ -146,6 +146,13 @@ namespace Lumiverse {
     */
 	virtual void update(set<Device *> devices) override;
 
+	/*!
+	* \brief Manually schedule a re-rendering and make sure the task be inserted into queue.
+	*
+	* This new rendering task may not be done immediately, but it will get inserted.
+	*/
+	virtual void rerender();
+
     /*!
     * \brief Waits for the worker thread and closes the Arnold session.
     *
@@ -249,6 +256,10 @@ namespace Lumiverse {
 	* \brief Helper to call all the registered callbacks for rendering finished event.
 	*/
     void onWorkerFinished();
+
+	void createFrameInfoHeader(FrameDeviceInfo &frame);
+
+	void enqueueFrameInfo(const FrameDeviceInfo &frame);
 
     // The worker thread.
     std::thread *m_worker;
