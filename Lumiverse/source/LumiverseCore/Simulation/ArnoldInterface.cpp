@@ -297,6 +297,8 @@ void ArnoldInterface::init() {
 	AiNodeSetBool(driver, "predictive", m_predictive);
     
     // Assume we are using RGBA
+	if (!m_buffer)
+		delete[] m_buffer;
     m_buffer = new float[m_width * m_height * 4];
     AiNodeSetPtr(driver, "buffer_pointer", m_buffer);
 
@@ -320,6 +322,8 @@ void ArnoldInterface::init() {
 
 void ArnoldInterface::close() {
     AiEnd();
+	// Cleans buffer
+	delete[] m_buffer;
 }
     
 int ArnoldInterface::render() {

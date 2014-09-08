@@ -153,7 +153,7 @@ namespace Lumiverse {
 	*
 	* This new rendering task may not be done immediately. This function just sets on the flag for rendering.
 	*/
-    void rerender();
+    virtual void rerender();
       
 	/*!
 	* \brief Gets the progress of current frame in percentage.
