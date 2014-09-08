@@ -9,7 +9,7 @@ class RigTests
 {
 public: 
   RigTests() { };
-  ~RigTests() { };
+  ~RigTests() { delete m_testRig; };
 
   // Runs all the tests and returns the number of tests that passed.
   int runTests();

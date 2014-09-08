@@ -78,8 +78,9 @@ namespace Lumiverse {
 
     Name is extracted from the layer settings
     \param layer The layer to add to the Playback object.
+    \return True on success, false if a layer already exists with the same name
     */
-    void addLayer(shared_ptr<Layer> layer);
+    bool addLayer(shared_ptr<Layer> layer);
 
     /*!
     \brief Retrieves a pointer to the layer with the specified name.
@@ -134,13 +135,15 @@ namespace Lumiverse {
     /*!
     \brief Binds the update function for this playback to the Rig's update function.
     \param pid ID to assign to the function. Defaults to 1. Must be positive.
+    \return True on success, false on failure
     */
-    void attachToRig(int pid = 1);
+    bool attachToRig(int pid = 1);
 
     /*!
     \brief Unbinds the update function for this playback from the Rig.
+    \return True on success, false on failure.
     */
-    void detachFromRig();
+    bool detachFromRig();
 
     /*! \brief Gets a reference to the programmer object stored by the playback */
     const unique_ptr<Programmer>& getProgrammer() { return m_prog; }

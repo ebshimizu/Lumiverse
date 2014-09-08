@@ -20,6 +20,8 @@ IF(LumiverseCore_INCLUDE_ARNOLD)
 	ENDIF(PNG_FOUND)
 ENDIF(LumiverseCore_INCLUDE_ARNOLD)
 
+include_directories("${CMAKE_CURRENT_LIST_DIR}/../Demos/CueLight")
+
 add_executable(LumiverseTest
 	TestMain.cpp
 	DeviceTests.cpp
@@ -28,6 +30,8 @@ add_executable(LumiverseTest
 	TypeTests.h
 	RigTests.h
 	RigTests.cpp
+	PlaybackTests.h
+	PlaybackTests.cpp
 )
 
 target_link_libraries(LumiverseTest LumiverseCore)

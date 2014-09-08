@@ -118,8 +118,15 @@ namespace Lumiverse {
     }
   }
 
-  void Playback::addLayer(shared_ptr<Layer> layer) {
-    m_layers[layer->getName()] = layer;
+  bool Playback::addLayer(shared_ptr<Layer> layer) {
+    if (m_layers.count(layer->getName()) > 0) {
+      // Key already exists
+      return false;
+    }
+    else {
+      m_layers[layer->getName()] = layer;
+      return true;
+    }
   }
 
   shared_ptr<Layer> Playback::getLayer(string name) {
@@ -178,17 +185,22 @@ namespace Lumiverse {
     }
   }
 
-  void Playback::attachToRig(int pid) {
+  bool Playback::attachToRig(int pid) {
     // Bind update function to rig update function
     if (pid > 0 && m_rig->addFunction(pid, [&]() { this->update(); })) {
       m_funcId = pid;
+      return true;
     }
+    else
+      return false;
   }
   
-  void Playback::detachFromRig() {
+  bool Playback::detachFromRig() {
     if (m_funcId > 0) {
-      m_rig->removeFunction(m_funcId);
+      return m_rig->removeFunction(m_funcId);
     }
+    else
+      return false;
   }
 
   bool Playback::save(string filename, bool overwrite) {

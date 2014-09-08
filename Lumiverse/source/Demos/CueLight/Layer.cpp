@@ -62,14 +62,9 @@ namespace Lumiverse {
       m_layerState[d->getId()]->reset();
     }
 
-    // This line resolves performance issues with blank layers.
-    // For some strange reason.
-    // this is the definition of a hack.
-    // goToCue(Cue(m_layerState, 0), Cue(m_layerState, 0), false);
-
     m_active = false;
     m_invertFilter = false;
-    m_currentCue = -1;  // Generally people won't have negative cue numbers, so we'll use -1 to mean no active cue.
+    m_currentCue = -1;  // People can't have negative cue numbers, so we'll use -1 to mean no active cue.
   }
 
   Layer::~Layer() {

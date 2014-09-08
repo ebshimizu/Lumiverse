@@ -11,6 +11,7 @@
 #include "TypeTests.h"
 #include "DeviceTests.h"
 #include "RigTests.h"
+#include "PlaybackTests.h"
 
 int main(int argc, char**argv) {
   Logger::setLogFile("testLog.txt");
@@ -18,24 +19,33 @@ int main(int argc, char**argv) {
   DeviceTests dt;
   TypeTests tt;
   RigTests rt;
+  PlaybackTests pt;
 
   cout << "Starting Lumiverse Test Suite for version " << LumiverseCore_VERSION_MAJOR << "." << LumiverseCore_VERSION_MINOR << "\n";
   cout << "========================================\n";
 
   cout << "Running Tests for LumiverseType...\n";
   int ttpassed = tt.runTests();
-  cout << "LumiverseType passed " << ttpassed << "/" << tt.numTests() << " tests.\n";
   cout << "\n";
 
-  cout << "Running Tests for LumiverseDevice...\n";
+  cout << "Running Tests for Device...\n";
   int dtpassed = dt.runTests();
-  cout << "LumiverseDevice passed " << dtpassed << "/" << dt.numTests() << " tests.\n";
+  cout << "\n";
+  
+  cout << "Running Tests for Rig and DeviceSet...\n";
+  int rtpassed = rt.runTests();
   cout << "\n";
 
-  cout << "Runnint Tests for Rig and DeviceSet...\n";
-  int rtpassed = rt.runTests();
-  cout << "Rig and DeviceSet passed " << rtpassed << "/" << rt.numTests() << " tests.\n";
+  cout << "Running Tests for Playback...\n";
+  int ptpassed = pt.runTests();
   cout << "\n";
+
+  cout << "========================================\n";
+  cout << "Summary\n\n";
+  cout << "[" << ttpassed << "/" << tt.numTests() << "]\tLumiverseType\n";
+  cout << "[" << dtpassed << "/" << dt.numTests() << "]\tDevice\n";
+  cout << "[" << rtpassed << "/" << rt.numTests() << "]\tRig and Device Set\n";
+  cout << "[" << ptpassed << "/" << pt.numTests() << "]\tPlayback\n";
 
   getch();
 }
