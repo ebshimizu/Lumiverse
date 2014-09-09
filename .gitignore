@@ -236,3 +236,4 @@ Lumiverse/source/LumiverseCore/lib/clp/ClpConfig.h
 Lumiverse/source/LumiverseCore/LumiverseCoreConfig.h
 
 *.psd
+Lumiverse/source/LumiverseCore/lib/arnold/plugin/BufferDriver.dll

@@ -479,7 +479,10 @@ shared_ptr<LumiverseType> Cue::getValueAtTime(Cue* previousCue, string device, s
 }
   
 shared_ptr<LumiverseType> Cue::getValueAtCueTime(Cue* previousCue, string device, string param, float t) {
-  // get the keyframes
+  // get the keyframes if they exist, otherwise return null immediately.
+  if (m_cueData[device].count(param) == 0)
+    return nullptr;
+  
   auto keyframes = m_cueData[device][param];
   Keyframe first;
   Keyframe next;

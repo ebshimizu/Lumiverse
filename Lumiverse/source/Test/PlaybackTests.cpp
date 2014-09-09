@@ -123,6 +123,11 @@ bool PlaybackTests::checkCue() {
     return false;
   }
 
+  if (c->getValueAtCueTime(nullptr, "s41", "INVALID PARAMETER", 0) != nullptr) {
+    cout << "Cue access failure. Able to get data for device with invalid parameter\n";
+    return false;
+  }
+
   return true;
 }
 
