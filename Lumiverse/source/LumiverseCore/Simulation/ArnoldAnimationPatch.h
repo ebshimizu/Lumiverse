@@ -81,7 +81,7 @@ namespace Lumiverse {
     */
     ArnoldAnimationPatch() : m_worker(NULL), 
 	  m_startPoint(std::chrono::system_clock::from_time_t(0)),
-	  m_frameManager(NULL), m_mode(ArnoldAnimationMode::STOPPED),
+	  m_mem_frameManager(NULL), m_file_frameManager(NULL), m_mode(ArnoldAnimationMode::STOPPED),
       m_preview_samples(m_interface.getSamples()),
       m_render_samples(m_interface.getSamples()) { }
 
@@ -107,7 +107,15 @@ namespace Lumiverse {
     * \brief Starts recording.
     * Main thread starts to send frame labeled as RECORDING info to worker.
     */
-    void startRecording() { m_frameManager->clear(); m_mode = ArnoldAnimationMode::RECORDING; }
+    void startRecording() { 
+		m_mem_frameManager->clear();
+
+		// Overwrite existing frames instead of clearing all
+		if (!m_file_frameManager)
+			m_file_frameManager->reset();
+
+		m_mode = ArnoldAnimationMode::RECORDING; 
+	}
     
 	/*!
 	* \brief Ends recording.
@@ -243,6 +251,13 @@ namespace Lumiverse {
 	*/
     virtual float getPercentage() const override;
 
+  protected:
+	/*!
+	* \brief Loads data from a parsed JSON object
+	* \param data JSON data to load
+	*/
+	virtual void loadJSON(const JSONNode data) override;
+
   private:
     /*!
     * \brief Worker loop.
@@ -276,7 +291,8 @@ namespace Lumiverse {
     std::chrono::time_point<std::chrono::system_clock> m_startPoint;
 
     // The ArnoldFrameManager object. Used to store frame buffers.
-    ArnoldFrameManager *m_frameManager;
+    ArnoldMemoryFrameManager *m_mem_frameManager;
+	ArnoldFileFrameManager *m_file_frameManager;
       
     /*! \brief Indicates the mode of ArnoldAnimationPatch.
     */

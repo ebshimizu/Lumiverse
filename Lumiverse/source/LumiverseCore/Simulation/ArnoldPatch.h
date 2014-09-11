@@ -206,7 +206,7 @@ namespace Lumiverse {
     * \brief Loads data from a parsed JSON object
     * \param data JSON data to load
     */
-    void loadJSON(const JSONNode data);
+    virtual void loadJSON(const JSONNode data);
       
     /*!
     * \brief Loads a arnold light node.
