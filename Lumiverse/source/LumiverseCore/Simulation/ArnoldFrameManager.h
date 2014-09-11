@@ -110,6 +110,13 @@ namespace Lumiverse {
         reset();
     }
 
+	/*!
+	* \brief Gets type of a ArnoldFrameManager object.
+	*
+	* \return The type.
+	*/
+	virtual std::string getType() { return "ArnoldFrameManager"; }
+
 	virtual void setFps(int fps) { m_fps = fps; }
 	virtual int getFps() { return m_fps; }
 

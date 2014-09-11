@@ -53,7 +53,7 @@ void ArnoldInterface::setArrayParameter(AtNode *node, const std::string &paramNa
     ArnoldParameterVector<D, T> paramVector;
     std::vector<ArnoldParameterVector<D, T>> array;
     size_t offset = 0;
-    
+
     // Cuts input with ;
     while (1) {
         parseArnoldParameter<D, T>(value.substr(offset), paramVector);
