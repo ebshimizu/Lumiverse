@@ -157,6 +157,14 @@ public:
   */
   void captureFromRig(DeviceSet devices);
 
+  /*!
+  \brief Captures the selected devices and copies their current values from the rig.
+
+  Andy existing captured devices will be added to by this function
+  \param id Id of the device to capture.
+  */
+  void captureFromRig(string id);
+
 private:
   /*!
   \brief Set of devices managed by this Programmer

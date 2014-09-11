@@ -211,7 +211,20 @@ void Programmer::captureFromRig(DeviceSet devices) {
     }
   }
 
-  captured = captured.add(devices);
+  addCaptured(devices);
+}
+
+void Programmer::captureFromRig(string id) {
+  Device* d = m_rig->getDevice(id);
+
+  if (d == nullptr)
+    return;
+
+  for (auto& p : d->getRawParameters()) {
+    LumiverseTypeUtils::copyByVal(d->getParam(p.first), m_devices[id]->getParam(p.first));
+  }
+
+  addCaptured(id);
 }
 
 void Programmer::addCaptured(DeviceSet set) {
