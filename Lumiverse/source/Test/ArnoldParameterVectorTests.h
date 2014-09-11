@@ -5,11 +5,11 @@
 #include <LumiverseCore.h>
 using namespace Lumiverse;
 
-class TypeTests
+class ArnoldParameterVectorTests
 {
 public: 
-  TypeTests() { };
-  ~TypeTests() { };
+  ArnoldParameterVectorTests() { };
+  ~ArnoldParameterVectorTests() { };
 
   // Runs all the tests and returns the number of tests that passed.
   int runTests();
@@ -21,11 +21,9 @@ private:
   bool runTest(std::function<bool()> t, string testName, int testNum);
 
   // Update when new tests are written.
-  int m_numTests = 4;
+  int m_numTests = 2;
 
   // Test functions
-  bool floatTests();
-  bool enumTests();
-  bool colorTests();
-  bool oriTests();
+  bool parseTests();
+  bool vectorTests();
 };

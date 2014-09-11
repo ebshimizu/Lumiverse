@@ -39,20 +39,23 @@ bool ArnoldFrameManagerTests::dumpAndPlayTests(ArnoldFrameManager *fm) {
   }
 
   m_mem_frame_manager.reset();
-  int i;
-  for (i = 0; i < 10; i++) {
-	  if (m_mem_frame_manager.getCurrentTime() != i) {
+  for (int j = 0; j < 10; j++) {
+	  if (m_mem_frame_manager.getCurrentTime() != j) {
 		  cout << "[ERROR] dump: Disordered frame.Type: " << fm->getType() << endl;
 		  return false;
 	  }
-	  if (abs(m_mem_frame_manager.getCurrentFrameBuffer()[0] - i) > 1e-4) {
+	  if (abs(m_mem_frame_manager.getCurrentFrameBuffer()[0] - j) > 1e-4) {
 		  cout << "[ERROR] dump: Corrupted frame content. Type: " << fm->getType() << endl;
 		  return false;
 	  }
 		 
-	  if (m_mem_frame_manager.hasNext())
+	  if (j < 9 && m_mem_frame_manager.hasNext())
 		  m_mem_frame_manager.next();
-	  else {
+	  else if (j == 9 && m_mem_frame_manager.hasNext()) {
+		  cout << "[ERROR] dump: Wrong end. Type: " << fm->getType() << endl;
+		  return false;
+	  }
+	  else if (j < 9) {
 		  cout << "[ERROR] dump: Missing frame. Type: " << fm->getType() << endl;
 		  return false;
 	  }

@@ -133,7 +133,6 @@ driver_open
 		(data_height + bucket_size - 1) / bucket_size);
 	progress[0] = num_buckets;
 	progress[1] = 0;
-	printf("@@@: %d\n", num_buckets);
 }
     
 driver_extension

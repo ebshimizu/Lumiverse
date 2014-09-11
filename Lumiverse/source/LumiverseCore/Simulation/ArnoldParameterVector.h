@@ -172,7 +172,7 @@ namespace Lumiverse {
     ArnoldParameterVector<D, T> val = ArnoldParameterVector<D, T>(lhs);
 
     for (size_t i = 0; i < D; i++) {
-	val.getElement(i) += rhs.getElement(i);
+	val[i] += rhs.getElement(i);
     }
 
     return val;
@@ -183,14 +183,14 @@ namespace Lumiverse {
     ArnoldParameterVector<D, T> val = ArnoldParameterVector<D, T>(lhs);
 
     for (size_t i = 0; i < D; i++) {
-	val.getElement(i) -= rhs.getElement(i);
+	val[i] -= rhs.getElement(i);
     }
 
     return val;
   }
 
   template<size_t D, typename T>
-  inline T operator*(ArnoldParameterVector<D, T>& lhs, float rhs) {
+  inline ArnoldParameterVector<D, T> operator*(ArnoldParameterVector<D, T>& lhs, float rhs) {
     ArnoldParameterVector<D, T> val = ArnoldParameterVector<D, T>(lhs);
     val *= rhs;
     return val;
@@ -204,7 +204,7 @@ namespace Lumiverse {
   }
 
   template<size_t D, typename T>
-  inline T operator/(ArnoldParameterVector<D, T>& lhs, float rhs) {
+  inline ArnoldParameterVector<D, T> operator/(ArnoldParameterVector<D, T>& lhs, float rhs) {
     ArnoldParameterVector<D, T> val = ArnoldParameterVector<D, T>(lhs);
     val /= rhs;
     return val;

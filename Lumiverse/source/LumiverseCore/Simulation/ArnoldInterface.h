@@ -369,30 +369,47 @@ namespace Lumiverse {
   *
   * \param value A formatted string.
   * \param vector The returned vector.
+  * \return If there is error.
   */
   template<size_t D, typename T>
-  static void parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) {
+  static bool parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) {
 	  T element;
 	  std::string value_spaceless = value;
+	  bool ret = true;
 
 	  // Removes spaces when the input type is not string
-	  if (typeid(std::string) != typeid(T))
-		  std::remove_if(value_spaceless.begin(), value_spaceless.end(),
-		  [](char x){return std::isspace(x); });
+	  int count = 0;
+	  for (char c : value) {
+		  if (!std::isspace(c)) {
+			  value_spaceless[count++] = c;
+		  }
+	  }
+	  value_spaceless = value_spaceless.substr(0, count);
 
 	  // Format: "v1, v2, ..."
 	  size_t offset = 0;
-	  for (size_t i = 0; i < D; i++) {
+	  size_t i;
+	  for (i = 0; i < D; i++) {
 		  std::istringstream iss(value_spaceless.substr(offset));
 		  iss >> element;
 		  vector[i] = element;
 
 		  offset = value_spaceless.find(",", offset);
 
-		  if (offset == std::string::npos)
+		  if (offset == std::string::npos) {
+			  i++;
 			  break;
+		  }
+
 		  offset++;
 	  }
+
+	  if (i != D) {
+		  ret = false;
+		  Logger::log(WARN, "Input dimension disagrees with vector dimension. Extra elements are left with existing values.");
+	  }
+
+	  return ret;
   }
 }
 
