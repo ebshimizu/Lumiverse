@@ -80,8 +80,29 @@ bool ArnoldFileFrameManager::hasNext() const {
 	return fileExists(file);
 }
 
-void ArnoldFileFrameManager::clear() {
+void ArnoldFileFrameManager::deleteFile(std::string fileName) const {
+	remove(fileName.c_str());
+}
 
+void ArnoldFileFrameManager::clear() {
+	char digits[7];
+
+	// Deletes all files.
+	for (size_t i = 0; i <= m_prev_frame; i++) {
+		sprintf(digits, "%06d", m_current);
+
+		std::stringstream ss;
+		ss << "\\" << digits << ".png";
+		std::string file = m_frame_path;
+		file.append(ss.str());
+		deleteFile(file);
+	}
+
+	// Sets state to init.
+	delete[] m_buffer;
+	m_buffer = NULL;
+	m_prev_frame = -1;
+	m_current = 0;	
 }
 
 bool ArnoldFileFrameManager::isEmpty() const {
@@ -94,7 +115,7 @@ bool ArnoldFileFrameManager::isEmpty() const {
 }
 
 size_t ArnoldFileFrameManager::getFrameNum() const {
-	return 0;
+	return m_prev_frame;
 }
 
 }

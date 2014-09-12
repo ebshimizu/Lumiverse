@@ -110,13 +110,20 @@ namespace Lumiverse {
         reset();
     }
 
+	/*!
+	* \brief Gets type of a ArnoldFrameManager object.
+	*
+	* \return The type.
+	*/
+	virtual std::string getType() { return "ArnoldFrameManager"; }
+
 	virtual void setFps(int fps) { m_fps = fps; }
 	virtual int getFps() { return m_fps; }
 
   protected:
     // An atomic counter to implement the cursor.
     std::atomic<unsigned int> m_current;
-	size_t m_fps;
+	int m_fps;
   };
     
 }

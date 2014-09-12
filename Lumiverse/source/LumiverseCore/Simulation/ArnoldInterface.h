@@ -74,13 +74,19 @@ namespace Lumiverse {
     * The frame buffer point is set to NULL. The buffer will be initialized after getting the size of output.
     * The default gamma is 2.2.
     */
-	 ArnoldInterface() : m_buffer(NULL), m_gamma(2.2), m_samples(-3), m_predictive(false),
+	 ArnoldInterface() : m_buffer(NULL), m_gamma(2.2f), m_samples(-3), m_predictive(false),
 		  m_bucket_pos(NULL), m_bucket_num(0) { }
       
     /*!
     * \brief Destroys the object.
     */
-	virtual ~ArnoldInterface() { delete[] m_buffer; delete[] m_bucket_pos; m_bucket_num = 0; }
+	virtual ~ArnoldInterface() { 
+		delete[] m_buffer; 
+		m_buffer = NULL;
+		delete[] m_bucket_pos; 
+		m_bucket_pos = NULL;
+		m_bucket_num = 0; 
+	}
       
     /*!
     * \brief Initializes the Arnold renderer.
@@ -369,30 +375,47 @@ namespace Lumiverse {
   *
   * \param value A formatted string.
   * \param vector The returned vector.
+  * \return If there is error.
   */
   template<size_t D, typename T>
-  static void parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) {
+  static bool parseArnoldParameter(const std::string &value, ArnoldParameterVector<D, T> &vector) {
 	  T element;
 	  std::string value_spaceless = value;
+	  bool ret = true;
 
 	  // Removes spaces when the input type is not string
-	  if (typeid(std::string) != typeid(T))
-		  std::remove_if(value_spaceless.begin(), value_spaceless.end(),
-		  [](char x){return std::isspace(x); });
+	  int count = 0;
+	  for (char c : value) {
+		  if (!std::isspace(c)) {
+			  value_spaceless[count++] = c;
+		  }
+	  }
+	  value_spaceless = value_spaceless.substr(0, count);
 
 	  // Format: "v1, v2, ..."
 	  size_t offset = 0;
-	  for (size_t i = 0; i < D; i++) {
+	  size_t i;
+	  for (i = 0; i < D; i++) {
 		  std::istringstream iss(value_spaceless.substr(offset));
 		  iss >> element;
 		  vector[i] = element;
 
 		  offset = value_spaceless.find(",", offset);
 
-		  if (offset == std::string::npos)
+		  if (offset == std::string::npos) {
+			  i++;
 			  break;
+		  }
+
 		  offset++;
 	  }
+
+	  if (i != D) {
+		  ret = false;
+		  Logger::log(WARN, "Input dimension disagrees with vector dimension. Extra elements are left with existing values.");
+	  }
+
+	  return ret;
   }
 }
 

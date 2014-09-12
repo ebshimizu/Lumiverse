@@ -19,6 +19,7 @@
 #include <chrono>
 #include <sstream>
 #include <iostream>
+#include <cstdio>
 #include "../lib/libpng/png.h"
 
 namespace Lumiverse {
@@ -99,9 +100,16 @@ namespace Lumiverse {
 		/*!
 		 * \brief Clears the frame manager.
 		 * This function should be called before the object is destroyed.
-		 * Releases memory for each frame buffer.
+		 * Deletes files for each frame buffer.
 		 */
 		virtual void clear();
+
+		/*!
+		* \brief Gets type of a ArnoldFrameManager object.
+		*
+		* \return The type.
+		*/
+		virtual std::string getType() { return "ArnoldFileFrameManager"; }
 
       private:
 		 /*!
@@ -110,6 +118,8 @@ namespace Lumiverse {
 		 * \return If the file exists.
 		 */
 		bool fileExists(std::string fileName) const;
+
+		void deleteFile(std::string fileName) const;
 
 		// A frame buffer of current frame. This buffer is only used to display.
 		float *m_buffer;

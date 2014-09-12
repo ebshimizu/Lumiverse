@@ -112,6 +112,13 @@ namespace Lumiverse {
 	 */
 	virtual void clear();
 
+	/*!
+	* \brief Gets type of a ArnoldFrameManager object.
+	*
+	* \return The type.
+	*/
+	virtual std::string getType() { return "ArnoldMemoryFrameManager"; }
+
       private:
 	// A set for frame data ordered by time ascendingly.
 	std::set<FrameData, std::function<bool(FrameData, FrameData)>> m_bufferSet;

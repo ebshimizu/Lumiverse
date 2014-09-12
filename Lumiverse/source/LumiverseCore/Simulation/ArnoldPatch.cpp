@@ -116,6 +116,53 @@ AtNode *ArnoldPatch::getLightNode(Device *d) {
 	return light_ptr;
 }
 
+void ArnoldPatch::setOrientation(AtNode *light_ptr, Device *d_ptr, std::string pan_str, std::string tilt_str) {
+	float pan_val;
+	float tilt_val;
+
+	std::istringstream iss_pan(pan_str);
+	iss_pan >> pan_val;
+
+	std::istringstream iss_tilt(tilt_str);
+	iss_tilt >> tilt_val;
+
+	LumiverseOrientation pan(pan_val, DEGREE, pan_val);
+	LumiverseOrientation tilt(tilt_val, DEGREE, tilt_val);
+
+	setOrientation(light_ptr, d_ptr, &pan, &tilt);
+}
+
+void ArnoldPatch::setOrientation(AtNode *light_ptr, Device *d_ptr, LumiverseOrientation *pan, LumiverseOrientation *tilt) {
+	std::string lookat_str;
+	std::string up_str;
+	std::string pos;
+	if (!d_ptr->getMetadata("lookat", lookat_str) ||
+		!d_ptr->getMetadata("up", up_str) ||
+		!d_ptr->getMetadata("position", pos)) {
+		return ;
+	}
+
+	ArnoldParameterVector<3, float> lookat_vec;
+	parseArnoldParameter<3, float>(lookat_str, lookat_vec);
+	ArnoldParameterVector<3, float> up_vec;
+	parseArnoldParameter<3, float>(up_str, up_vec);
+	ArnoldParameterVector<3, float> pos_vec;
+	parseArnoldParameter<3, float>(pos, pos_vec);
+
+	Eigen::Vector3f lookat(lookat_vec[0] - pos_vec[0], lookat_vec[1] - pos_vec[1], lookat_vec[2] - pos_vec[2]);
+	Eigen::Vector3f up(up_vec[0], up_vec[1], up_vec[2]);
+
+	Eigen::Matrix3f rotation = LumiverseTypeUtils::getRotationMatrix(lookat, up, pan, tilt);
+
+	std::stringstream ss;
+	ss << rotation(0, 0) << "," << rotation(0, 1) << "," << rotation(0, 2) << ",0,"
+		<< rotation(1, 0) << "," << rotation(1, 1) << "," << rotation(1, 2) << ",0,"
+		<< rotation(2, 0) << "," << rotation(2, 1) << "," << rotation(2, 2) << ",0,"
+		<< pos << ",1";
+
+	m_interface.setParameter(light_ptr, "matrix", ss.str());
+}
+
 void ArnoldPatch::loadLight(Device *d_ptr) {
     std::string light_name = d_ptr->getId();
     AtNode *light_ptr = getLightNode(d_ptr);
@@ -126,8 +173,20 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
     // TODO: mesh_light
     for (std::string meta : d_ptr->getMetadataKeyNames()) {
         std::string value;
-        d_ptr->getMetadata(meta, value);
-        m_interface.setParameter(light_ptr, meta, value);
+
+		// Set fixed position with metadata
+		// Assume we are using degree
+		if (meta == "pan") {
+			d_ptr->getMetadata(meta, value);
+			std::string tilt_str;
+			d_ptr->getMetadata("tilt", tilt_str);
+
+			setOrientation(light_ptr, d_ptr, value, tilt_str);
+		}
+		else {
+			d_ptr->getMetadata(meta, value);
+			m_interface.setParameter(light_ptr, meta, value);
+		}
     }
     
     // Sets arnold params with device params
@@ -155,32 +214,7 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
 			if (pan == NULL)
 				continue;
 
-			std::string lookat_str;
-			std::string up_str;
-			std::string pos;
-			if (!d_ptr->getMetadata("lookat", lookat_str) ||
-				!d_ptr->getMetadata("up", up_str) ||
-				!d_ptr->getMetadata("position", pos)) {
-				continue;
-			}
-
-			ArnoldParameterVector<3, float> lookat_vec;
-			parseArnoldParameter<3, float>(lookat_str, lookat_vec);
-			ArnoldParameterVector<3, float> up_vec;
-			parseArnoldParameter<3, float>(up_str, up_vec);
-
-			Eigen::Vector3f lookat(lookat_vec[0], lookat_vec[1], lookat_vec[2]);
-			Eigen::Vector3f up(up_vec[0], up_vec[1], up_vec[2]);
-
-			Eigen::Matrix3f rotation = LumiverseTypeUtils::getRotationMatrix(lookat, up, pan, tilt);
-
-			std::stringstream ss;
-			ss << rotation(0, 0) << "," << rotation(0, 1) << "," << rotation(0, 2) << ",0,"
-				<< rotation(1, 0) << "," << rotation(1, 1) << "," << rotation(1, 2) << ",0,"
-				<< rotation(2, 0) << "," << rotation(2, 1) << "," << rotation(2, 2) << ",0,"
-				<< pos << ",1";
-
-			m_interface.setParameter(light_ptr, "matrix", ss.str());
+			setOrientation(light_ptr, d_ptr, pan, tilt);
 		}
     }
 

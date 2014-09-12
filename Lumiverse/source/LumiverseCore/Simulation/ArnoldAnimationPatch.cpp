@@ -11,16 +11,38 @@ ArnoldAnimationPatch::ArnoldAnimationPatch(const JSONNode data)
     m_mode(ArnoldAnimationMode::STOPPED), m_preview_samples(m_interface.getSamples()),
     m_render_samples(m_interface.getSamples()) {
     // TODO: type for frame manager
-	m_frameManager = new ArnoldMemoryFrameManager();
+	m_mem_frameManager = new ArnoldMemoryFrameManager();
+	m_file_frameManager = NULL;
     loadJSON(data);
 }
     
 ArnoldAnimationPatch::~ArnoldAnimationPatch() {
-    delete m_frameManager;
+    delete m_mem_frameManager;
+	delete m_file_frameManager;
 
     // If close() hasn't been called, closes here.
     if (m_worker != NULL)
         close();
+}
+
+void ArnoldAnimationPatch::loadJSON(const JSONNode data) {
+	ArnoldPatch::loadJSON(data);
+
+	string patchName = data.name();
+
+	// Load options for raytracer application. (window, ray tracer, filter)
+	JSONNode::const_iterator i = data.begin();
+
+	while (i != data.end()) {
+		std::string nodeName = i->name();
+
+		if (nodeName == "frameDirectory") {
+			JSONNode fileName = *i;
+			m_file_frameManager = new ArnoldFileFrameManager(fileName.as_string());
+		}
+
+		i++;
+	}
 }
 
 void ArnoldAnimationPatch::init() {
@@ -142,7 +164,7 @@ void ArnoldAnimationPatch::close() {
 }
 
 ArnoldFrameManager *ArnoldAnimationPatch::getFrameManager() const {
-    return m_frameManager;
+    return m_mem_frameManager;
 }
 
 void ArnoldAnimationPatch::reset() {
@@ -171,7 +193,9 @@ void ArnoldAnimationPatch::reset() {
     }
     
 	// Resets the frame manager to the beginning of current video.
-    m_frameManager->reset();
+    m_mem_frameManager->reset();
+	if (m_file_frameManager)
+		m_file_frameManager->reset();
     
     m_queue.unlock();
 }
@@ -216,7 +240,7 @@ float ArnoldAnimationPatch::getPercentage() const {
 		return ArnoldPatch::getPercentage();
 	else if (m_mode == ArnoldAnimationMode::RENDERING) {
 		// Don't forget the frame being processed
-		size_t finished = m_frameManager->getFrameNum();
+		size_t finished = m_mem_frameManager->getFrameNum();
 		size_t sum = finished + m_queuedFrameDeviceInfo.size() + 1;
 		float renderingPer = m_interface.getPercentage();
 		sum = (sum == 0) ? 1 : sum;
@@ -324,8 +348,11 @@ void ArnoldAnimationPatch::workerLoop() {
     // If the worker was reset while rendering, doesn't dump.
     if (code == AI_SUCCESS &&
         (frame.mode == ArnoldAnimationMode::RENDERING)) {
-        m_frameManager->dump(frame.time, m_interface.getBufferPointer(),
+        m_mem_frameManager->dump(frame.time, m_interface.getBufferPointer(),
                              m_interface.getWidth(), m_interface.getHeight());
+		if (m_file_frameManager)
+			m_file_frameManager->dump(frame.time, m_interface.getBufferPointer(),
+				m_interface.getWidth(), m_interface.getHeight());
     }
 
 	// Releases copies of devices.

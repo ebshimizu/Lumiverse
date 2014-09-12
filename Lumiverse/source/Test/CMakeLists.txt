@@ -22,7 +22,7 @@ ENDIF(LumiverseCore_INCLUDE_ARNOLD)
 
 include_directories("${CMAKE_CURRENT_LIST_DIR}/../Demos/CueLight")
 
-add_executable(LumiverseTest
+SET(LUMIVERSE_TEST_SOURCE
 	TestMain.cpp
 	DeviceTests.cpp
 	DeviceTests.h
@@ -33,6 +33,19 @@ add_executable(LumiverseTest
 	PlaybackTests.h
 	PlaybackTests.cpp
 )
+
+IF(LumiverseCore_INCLUDE_ARNOLD)
+	SET(LUMIVERSE_TEST_SOURCE ${LUMIVERSE_TEST_SOURCE}
+		ArnoldParameterVectorTests.h
+		ArnoldParameterVectorTests.cpp
+		ArnoldInterfaceTests.h
+		ArnoldInterfaceTests.cpp
+		ArnoldFrameManagerTests.h
+		ArnoldFrameManagerTests.cpp
+	)
+ENDIF(LumiverseCore_INCLUDE_ARNOLD)
+
+add_executable(LumiverseTest ${LUMIVERSE_TEST_SOURCE})
 
 target_link_libraries(LumiverseTest LumiverseCore)
 target_link_libraries(LumiverseTest CueLight)
