@@ -2,7 +2,7 @@
 	"version" : "1.1",
 	"refreshRate" : 24,
 	"devices" : {
-		"par16" : {
+		"par_E_16" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 26",
 			"parameters" : {
@@ -45,22 +45,6 @@
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
 				}
 			},
 			"metadata" : {
@@ -70,11 +54,13 @@
                 "volume_samples" : "3",
                 "exposure" : "3.0",
                 "up" :  "0, -1, 0",
-                "lookat" : "0, -1, -0.01",
-                "position" : "-0.853, 3.0, 3.619"
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "-0.853, 1.6, 3.619",
+                "pan" :  "0",
+                "tilt" :  "0.0"
 			}
 		},
-		"par11" : {
+		"par_E_11" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 26",
 			"parameters" : {
@@ -117,22 +103,6 @@
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
 				}
 			},
 			"metadata" : {
@@ -142,11 +112,14 @@
                 "volume_samples" : "3",
                 "exposure" : "3.0",
                 "up" :  "0, -1, 0",
-                "lookat" : "0, -1, -0.01",
-                "position" : "1.545, 3.0, 3.619"
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "1.545, 1.6, 3.619",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+
 			}
 		},
-		"par7" : {
+		"par_E_7" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 26",
 			"parameters" : {
@@ -189,22 +162,6 @@
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
 				}
 			},
 			"metadata" : {
@@ -214,11 +171,13 @@
                 "volume_samples" : "3",
                 "exposure" : "3.0",
                 "up" :  "0, -1, 0",
-                "lookat" : "0, -1, -0.01",
-                "position" : "2.599, 3.0, 3.619"
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "2.599, 1.6, 3.619",
+                "pan" :  "0",
+                "tilt" :  "0.0"
 			}
 		},
-		"par3" : {
+		"par_E_3" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 26",
 			"parameters" : {
@@ -261,22 +220,6 @@
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
 				}
 			},
 			"metadata" : {
@@ -286,1022 +229,16 @@
                 "volume_samples" : "3",
                 "exposure" : "3.0",
                 "up" :  "0, -1, 0",
-                "lookat" : "0, -1, -0.01",
-                "position" : "4.478, 3.0, 3.619"
-			}
-		},
-		"parm12" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "0.01, -1, 0",
-                "position" : "-0.427, 3.0, 1.438"
-			}
-		},
-		"parm11" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "0.01, -1, 0",
-                "position" : "-0.427, 3.0, 1.688"
-			}
-		},
-		"parm8" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "0.01, -1, 0",
-                "position" : "1.434, 3.0, 1.438"
-			}
-		},
-		"parm7" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "0.01, -1, 0",
-                "position" : "1.434, 3.0, 1.688"
-			}
-		},
-		"parm6" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "-0.01, -1, 0",
-                "position" : "2.427, 3.0, 1.438"
-			}
-		},
-		"parm5" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "-0.01, -1, 0",
-                "position" : "2.427, 3.0, 1.688"
-			}
-		},
-		"parm2" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "-0.01, -1, 0",
-                "position" : "4.538, 3.0, 1.438"
-			}
-		},
-		"parm1" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "-0.01, -1, 0",
-                "position" : "4.538, 3.0, 1.688"
-			}
-		},
-		"parm9" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
-                "position" : "1.074, 3.0, 1.499"
-			}
-		},
-		"parm3" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
-                "position" : "3.67, 3.0, 1.499"
-			}
-		},
-		"part11" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
-                "position" : "0.734, 3.0, 0.098"
-			}
-		},
-		"part10" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
-                "position" : "1.098, 3.0, 0.098"
-			}
-		},
-		"part5" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
-                "position" : "2.712, 3.0, 0.098"
-			}
-		},
-		"part4" : {
-			"channel" : 1,
-			"type" : "Source Four PAR 36",
-			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
-				"intensity" : {
-					"type" : "float",
-					"val" : 1,
-					"default" : 0,
-					"max" : 1,
-					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
-				}
-			},
-			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
-				"location" : "floor right",
-                "samples" : "3",
-                "volume_samples" : "3",
-                "exposure" : "3.0",
-                "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
-                "position" : "3.077, 3.0, 0.098"
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "4.478, 1.6, 3.619",
+                "pan" :  "0",
+                "tilt" :  "0.0"
 			}
 		},
 
-		"fresnelwfl14" : {
+        "par_E1_3" : {
 			"channel" : 1,
-			"type" : "Source Four PAR WFL",
+			"type" : "Source Four PAR 36",
 			"parameters" : {
 				"color" : {
 					"type" : "color",
@@ -1342,38 +279,24 @@
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
 				}
 			},
 			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
 				"location" : "floor right",
                 "samples" : "3",
                 "volume_samples" : "3",
                 "exposure" : "3.0",
                 "up" :  "0, -1, 0",
                 "lookat" : "0, -1, 0.01",
-                "position" : "-0.496, 3.0, 0.171"
+                "lookat" : "0.908, -2.0, 1.604",
+                "pan" :  "0",
+                "tilt" :  "0.0"
 			}
 		},
-		"fresnelwfl13" : {
+		"par_E1_1" : {
 			"channel" : 1,
-			"type" : "Source Four PAR WFL",
+			"type" : "Source Four PAR 36",
 			"parameters" : {
 				"color" : {
 					"type" : "color",
@@ -1414,38 +337,25 @@
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
 				}
 			},
 			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
 				"location" : "floor right",
                 "samples" : "3",
                 "volume_samples" : "3",
                 "exposure" : "3.0",
                 "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
-                "position" : "-0.225, 3.0, 0.171"
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "3.036, 1.6, 3.076",
+                "pan" :  "0",
+                "tilt" :  "0.0"
 			}
 		},
-		"fresnelwfl9" : {
+
+		"par_G_12" : {
 			"channel" : 1,
-			"type" : "Source Four PAR WFL",
+			"type" : "Source Four PAR 36",
 			"parameters" : {
 				"color" : {
 					"type" : "color",
@@ -1486,38 +396,24 @@
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
 				}
 			},
 			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
 				"location" : "floor right",
                 "samples" : "3",
                 "volume_samples" : "3",
                 "exposure" : "3.0",
                 "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
-                "position" : "1.475, 3.0, 0.171"
+                "lookat" : "0.01, -1, 0",
+                "lookat" : "0.908, -2.0, 1.604",
+                "pan" :  "0",
+                "tilt" :  "0.0"
 			}
 		},
-		"fresnelwfl8" : {
+		"par_G_11" : {
 			"channel" : 1,
-			"type" : "Source Four PAR WFL",
+			"type" : "Source Four PAR 36",
 			"parameters" : {
 				"color" : {
 					"type" : "color",
@@ -1558,38 +454,24 @@
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
 				}
 			},
 			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
 				"location" : "floor right",
                 "samples" : "3",
                 "volume_samples" : "3",
                 "exposure" : "3.0",
                 "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
-                "position" : "1.746, 3.0, 0.171"
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "-0.427, 1.6, 1.688",
+                "pan" :  "0",
+                "tilt" :  "0.0"
 			}
 		},
-		"fresnelwfl7" : {
+		"par_G_8" : {
 			"channel" : 1,
-			"type" : "Source Four PAR WFL",
+			"type" : "Source Four PAR 36",
 			"parameters" : {
 				"color" : {
 					"type" : "color",
@@ -1630,38 +512,24 @@
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
 				}
 			},
 			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
 				"location" : "floor right",
                 "samples" : "3",
                 "volume_samples" : "3",
                 "exposure" : "3.0",
                 "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
-                "position" : "2.09, 3.0, 0.171"
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "1.434, 1.6, 1.438",
+                "pan" :  "0",
+                "tilt" :  "0.0"
 			}
 		},
-		"fresnelwfl6" : {
+		"par_G_7" : {
 			"channel" : 1,
-			"type" : "Source Four PAR WFL",
+			"type" : "Source Four PAR 36",
 			"parameters" : {
 				"color" : {
 					"type" : "color",
@@ -1702,38 +570,24 @@
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
 				}
 			},
 			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
 				"location" : "floor right",
                 "samples" : "3",
                 "volume_samples" : "3",
                 "exposure" : "3.0",
                 "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
-                "position" : "2.361, 3.0, 0.171"
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "1.434, 1.6, 1.688",
+                "pan" :  "0",
+                "tilt" :  "0.0"
 			}
 		},
-		"fresnelwfl2" : {
+		"par_G_6" : {
 			"channel" : 1,
-			"type" : "Source Four PAR WFL",
+			"type" : "Source Four PAR 36",
 			"parameters" : {
 				"color" : {
 					"type" : "color",
@@ -1774,36 +628,546 @@
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
-				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
-					"min" : 0
 				}
 			},
 			"metadata" : {
-                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
 				"location" : "floor right",
                 "samples" : "3",
                 "volume_samples" : "3",
                 "exposure" : "3.0",
                 "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
-                "position" : "4.077, 3.0, 0.171"
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "2.427, 1.6, 1.438",
+                "pan" :  "0",
+                "tilt" :  "0.0"
 			}
 		},
-		"fresnelwfl1" : {
+		"par_G_5" : {
+			"channel" : 1,
+			"type" : "Source Four PAR 36",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "2.427, 1.6, 1.688",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"par_G_2" : {
+			"channel" : 1,
+			"type" : "Source Four PAR 36",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "4.538, 1.6, 1.438",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"par_G_1" : {
+			"channel" : 1,
+			"type" : "Source Four PAR 36",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "4.538, 1.6, 1.688",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"par_G_9" : {
+			"channel" : 1,
+			"type" : "Source Four PAR 36",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "1.074, 1.6, 1.499",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"par_G_3" : {
+			"channel" : 1,
+			"type" : "Source Four PAR 36",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "3.67, 1.6, 1.499",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+
+		"par_H1_11" : {
+			"channel" : 1,
+			"type" : "seachanger",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "0.734, 1.6, 0.098",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"par_H1_10" : {
+			"channel" : 1,
+			"type" : "Source Four PAR 36",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "1.098, 1.6, 0.098",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"par_H1_5" : {
+			"channel" : 1,
+			"type" : "Source Four PAR 36",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "2.712, 1.6, 0.098",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"par_H1_4" : {
+			"channel" : 1,
+			"type" : "seachanger",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr36Deg.575X-115v_LM6302_07.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "3.077, 1.6, 0.098",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+
+		"fresnelwfl_H1_14" : {
 			"channel" : 1,
 			"type" : "Source Four PAR WFL",
 			"parameters" : {
@@ -1846,21 +1210,63 @@
 					"default" : 0,
 					"max" : 1,
 					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "-0.496, 1.6, 0.171",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"fresnelwfl_H1_13" : {
+			"channel" : 1,
+			"type" : "Source Four PAR WFL",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
 				},
-				"pan" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
 					"default" : 0,
-					"max" : 360,
-					"min" : 0
-				},
-				"tilt" : {
-					"type" : "orientation",
-                    "unit" : "degree",
-					"val" : 0,
-					"default" : 0,
-					"max" : 90,
+					"max" : 1,
 					"min" : 0
 				}
 			},
@@ -1871,8 +1277,358 @@
                 "volume_samples" : "3",
                 "exposure" : "3.0",
                 "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
-                "position" : "4.348, 3.0, 0.171"
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "-0.225, 1.6, 0.171",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"fresnelwfl_H1_9" : {
+			"channel" : 1,
+			"type" : "Source Four PAR WFL",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "1.475, 1.6, 0.171",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"fresnelwfl_H1_8" : {
+			"channel" : 1,
+			"type" : "Source Four PAR WFL",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "1.746, 1.6, 0.171",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"fresnelwfl_H1_7" : {
+			"channel" : 1,
+			"type" : "Source Four PAR WFL",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "2.09, 1.6, 0.171",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"fresnelwfl_H1_6" : {
+			"channel" : 1,
+			"type" : "Source Four PAR WFL",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "2.361, 1.6, 0.171",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"fresnelwfl_H1_2" : {
+			"channel" : 1,
+			"type" : "Source Four PAR WFL",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "4.077, 1.6, 0.171",
+                "pan" :  "0",
+                "tilt" :  "0.0"
+			}
+		},
+		"fresnelwfl_H1_1" : {
+			"channel" : 1,
+			"type" : "Source Four PAR WFL",
+			"parameters" : {
+				"color" : {
+					"type" : "color",
+					"channels" : {
+						"Blue" : 0.8,
+						"Green" : 0,
+						"Red" : 0.6,
+						"White" : 0.02
+					},
+					"basis" : {
+						"Blue" : [
+							4.30497,
+							3.859103,
+							29.365243
+						],
+						"Green" : [
+							5.59857,
+							25.901501,
+							4.084567
+						],
+						"Red" : [
+							13.16544,
+							5.868346,
+							0.000025
+						],
+						"White" : [
+							81.33195,
+							79.590576,
+							47.302138
+						]
+					},
+					"weight" : 1,
+					"mode" : "ADDITIVE"
+				},
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4 Fresnel UL flood_575w-115v_wfl.IES",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "2.912, -2.0, 1.604",
+                "position" : "4.348, 1.6, 0.171",
+                "pan" :  "0",
+                "tilt" :  "0.0"
 			}
 		}
 	},
@@ -2061,32 +1817,34 @@
             "gamma" : 2.2,
             "predictive" : 0,
             "lights" : {
-                "par16" : { "type" : "photometric_light" }, 
-                "par11" : { "type" : "photometric_light" }, 
-                "par7" : { "type" : "photometric_light" },
-                "par3" : { "type" : "photometric_light" },
-                "parm12" : { "type" : "photometric_light" }, 
-                "parm11" : { "type" : "photometric_light" }, 
-                "parm8" : { "type" : "photometric_light" },
-                "parm7" : { "type" : "photometric_light" },
-                "parm6" : { "type" : "photometric_light" }, 
-                "parm5" : { "type" : "photometric_light" }, 
-                "parm2" : { "type" : "photometric_light" },
-                "parm1" : { "type" : "photometric_light" },
-                "parm9" : { "type" : "photometric_light" }, 
-                "parm3" : { "type" : "photometric_light" }, 
-                "part11" : { "type" : "photometric_light" },
-                "part10" : { "type" : "photometric_light" },
-                "part5" : { "type" : "photometric_light" }, 
-                "part4" : { "type" : "photometric_light" },
-                "fresnelwfl14" : { "type" : "photometric_light" },
-                "fresnelwfl13" : { "type" : "photometric_light" },
-                "fresnelwfl9" : { "type" : "photometric_light" }, 
-                "fresnelwfl8" : { "type" : "photometric_light" }, 
-                "fresnelwfl7" : { "type" : "photometric_light" },
-                "fresnelwfl6" : { "type" : "photometric_light" },
-                "fresnelwfl2" : { "type" : "photometric_light" }, 
-                "fresnelwfl1" : { "type" : "photometric_light" }
+                "par_E_16" : { "type" : "photometric_light" }, 
+                "par_E_11" : { "type" : "photometric_light" }, 
+                "par_E_7" : { "type" : "photometric_light" },
+                "par_E_3" : { "type" : "photometric_light" },
+                "par_E1_1" : { "type" : "photometric_light" },
+                "par_E1_3" : { "type" : "photometric_light" },
+                "par_G_12" : { "type" : "photometric_light" }, 
+                "par_G_11" : { "type" : "photometric_light" }, 
+                "par_G_8" : { "type" : "photometric_light" },
+                "par_G_7" : { "type" : "photometric_light" },
+                "par_G_6" : { "type" : "photometric_light" }, 
+                "par_G_5" : { "type" : "photometric_light" }, 
+                "par_G_2" : { "type" : "photometric_light" },
+                "par_G_1" : { "type" : "photometric_light" },
+                "par_G_9" : { "type" : "photometric_light" }, 
+                "par_G_3" : { "type" : "photometric_light" }, 
+                "par_H1_11" : { "type" : "photometric_light" },
+                "par_H1_10" : { "type" : "photometric_light" },
+                "par_H1_5" : { "type" : "photometric_light" }, 
+                "par_H1_4" : { "type" : "photometric_light" },
+                "fresnelwfl_H1_14" : { "type" : "photometric_light" },
+                "fresnelwfl_H1_13" : { "type" : "photometric_light" },
+                "fresnelwfl_H1_9" : { "type" : "photometric_light" }, 
+                "fresnelwfl_H1_8" : { "type" : "photometric_light" }, 
+                "fresnelwfl_H1_7" : { "type" : "photometric_light" },
+                "fresnelwfl_H1_6" : { "type" : "photometric_light" },
+                "fresnelwfl_H1_2" : { "type" : "photometric_light" }, 
+                "fresnelwfl_H1_1" : { "type" : "photometric_light" }
             },
             "arnoldParamMaps" : {
                 "filename" : { "dimension" : 1, "arnoldType" : "string" },

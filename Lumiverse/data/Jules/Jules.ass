@@ -2,8 +2,10 @@
 options
 {
  AA_samples 4
- xres 640
- yres 480
+ ###xres 640
+ ###yres 480
+ xres 960
+ yres 540
  GI_diffuse_samples 3
  GI_diffuse_depth 1
  shader_gamma 2.2
@@ -21,7 +23,7 @@ gaussian_filter
 persp_camera
 {
   name persp
-  position 1.68 -1.0 6
+  position 1.68 -1.0 7
   look_at 1.68 -1.0 0
   up 0 1 0
   fov 60
@@ -74,7 +76,14 @@ standard
 
 standard
 {
-  name pimp
+  name pimp_left
+  Kr 1
+  Kd 0
+}
+
+standard
+{
+  name pimp_right
   Kr 1
   Kd 0
 }
@@ -235,9 +244,16 @@ polymesh
 
 sphere
 {
- shader pimp
+ shader pimp_left
  radius 0.2
- center 0 -1.8 0
+ center 0.908 -1.8 1.604
+}
+
+sphere
+{
+ shader pimp_right
+ radius 0.2
+ center 2.912 -1.8 1.604
 }
 
 quad_light
