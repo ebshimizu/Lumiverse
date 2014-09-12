@@ -6,39 +6,6 @@
 			"channel" : 1,
 			"type" : "Source Four PAR 26",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -57,46 +24,14 @@
                 "lookat" : "0.908, -2.0, 1.604",
                 "position" : "-0.853, 1.6, 3.619",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_E_11" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 26",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -115,47 +50,14 @@
                 "lookat" : "0.908, -2.0, 1.604",
                 "position" : "1.545, 1.6, 3.619",
                 "pan" :  "0",
-                "tilt" :  "0.0"
-
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_E_7" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 26",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -174,46 +76,14 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "2.599, 1.6, 3.619",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_E_3" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 26",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -232,7 +102,8 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "4.478, 1.6, 3.619",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 
@@ -240,39 +111,6 @@
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -288,49 +126,17 @@
                 "volume_samples" : "3",
                 "exposure" : "3.0",
                 "up" :  "0, -1, 0",
-                "lookat" : "0, -1, 0.01",
+                "position" : "1.113, 1.6, 3.076",
                 "lookat" : "0.908, -2.0, 1.604",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_E1_1" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -349,7 +155,114 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "3.036, 1.6, 3.076",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
+			}
+		},
+
+        "par_BSR_1" : {
+			"channel" : 1,
+			"type" : "Source Four PAR 50",
+			"parameters" : {
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr 50 Deg. 575X-115v_LM6302_07.ies",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "-1.075, -0.6875, 1.834",
+                "pan" :  "0",
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
+			}
+		},
+		"par_BSR_2" : {
+			"channel" : 1,
+			"type" : "Source Four PAR 50",
+			"parameters" : {
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr 50 Deg. 575X-115v_LM6302_07.ies",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "-1.075, -1.3334, 1.834",
+                "pan" :  "0",
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
+			}
+		},
+
+        "par_BSL_1" : {
+			"channel" : 1,
+			"type" : "Source Four PAR 50",
+			"parameters" : {
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr 50 Deg. 575X-115v_LM6302_07.ies",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "4.452, -0.71875, 1.659",
+                "pan" :  "0",
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
+			}
+		},
+		"par_BSL_2" : {
+			"channel" : 1,
+			"type" : "Source Four PAR 50",
+			"parameters" : {
+				"intensity" : {
+					"type" : "float",
+					"val" : 1,
+					"default" : 0,
+					"max" : 1,
+					"min" : 0
+				}
+			},
+			"metadata" : {
+                "filename" : "J:/Lumiverse/Lumiverse/data/Jules/S4jr 50 Deg. 575X-115v_LM6302_07.ies",
+				"location" : "floor right",
+                "samples" : "3",
+                "volume_samples" : "3",
+                "exposure" : "3.0",
+                "up" :  "0, -1, 0",
+                "lookat" : "0.908, -2.0, 1.604",
+                "position" : "4.452, -1.417, 1.659",
+                "pan" :  "0",
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 
@@ -357,39 +270,6 @@
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -408,46 +288,14 @@
                 "lookat" : "0.01, -1, 0",
                 "lookat" : "0.908, -2.0, 1.604",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_G_11" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -466,46 +314,14 @@
                 "lookat" : "0.908, -2.0, 1.604",
                 "position" : "-0.427, 1.6, 1.688",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_G_8" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -524,46 +340,14 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "1.434, 1.6, 1.438",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_G_7" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -582,46 +366,14 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "1.434, 1.6, 1.688",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_G_6" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -640,46 +392,14 @@
                 "lookat" : "0.908, -2.0, 1.604",
                 "position" : "2.427, 1.6, 1.438",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_G_5" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -698,46 +418,14 @@
                 "lookat" : "0.908, -2.0, 1.604",
                 "position" : "2.427, 1.6, 1.688",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_G_2" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -756,46 +444,14 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "4.538, 1.6, 1.438",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_G_1" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -814,46 +470,14 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "4.538, 1.6, 1.688",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_G_9" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -872,46 +496,14 @@
                 "lookat" : "0.908, -2.0, 1.604",
                 "position" : "1.074, 1.6, 1.499",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_G_3" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -930,7 +522,8 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "3.67, 1.6, 1.499",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 
@@ -938,39 +531,6 @@
 			"channel" : 1,
 			"type" : "seachanger",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -989,46 +549,14 @@
                 "lookat" : "0.908, -2.0, 1.604",
                 "position" : "0.734, 1.6, 0.098",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_H1_10" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -1047,46 +575,14 @@
                 "lookat" : "0.908, -2.0, 1.604",
                 "position" : "1.098, 1.6, 0.098",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_H1_5" : {
 			"channel" : 1,
 			"type" : "Source Four PAR 36",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -1105,46 +601,14 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "2.712, 1.6, 0.098",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"par_H1_4" : {
 			"channel" : 1,
 			"type" : "seachanger",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -1163,7 +627,8 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "3.077, 1.6, 0.098",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 
@@ -1171,39 +636,6 @@
 			"channel" : 1,
 			"type" : "Source Four PAR WFL",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -1222,46 +654,14 @@
                 "lookat" : "0.908, -2.0, 1.604",
                 "position" : "-0.496, 1.6, 0.171",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"fresnelwfl_H1_13" : {
 			"channel" : 1,
 			"type" : "Source Four PAR WFL",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -1280,46 +680,14 @@
                 "lookat" : "0.908, -2.0, 1.604",
                 "position" : "-0.225, 1.6, 0.171",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"fresnelwfl_H1_9" : {
 			"channel" : 1,
 			"type" : "Source Four PAR WFL",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -1338,46 +706,14 @@
                 "lookat" : "0.908, -2.0, 1.604",
                 "position" : "1.475, 1.6, 0.171",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"fresnelwfl_H1_8" : {
 			"channel" : 1,
 			"type" : "Source Four PAR WFL",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -1396,46 +732,14 @@
                 "lookat" : "0.908, -2.0, 1.604",
                 "position" : "1.746, 1.6, 0.171",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"fresnelwfl_H1_7" : {
 			"channel" : 1,
 			"type" : "Source Four PAR WFL",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -1454,46 +758,14 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "2.09, 1.6, 0.171",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"fresnelwfl_H1_6" : {
 			"channel" : 1,
 			"type" : "Source Four PAR WFL",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -1512,46 +784,14 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "2.361, 1.6, 0.171",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"fresnelwfl_H1_2" : {
 			"channel" : 1,
 			"type" : "Source Four PAR WFL",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -1570,46 +810,14 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "4.077, 1.6, 0.171",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		},
 		"fresnelwfl_H1_1" : {
 			"channel" : 1,
 			"type" : "Source Four PAR WFL",
 			"parameters" : {
-				"color" : {
-					"type" : "color",
-					"channels" : {
-						"Blue" : 0.8,
-						"Green" : 0,
-						"Red" : 0.6,
-						"White" : 0.02
-					},
-					"basis" : {
-						"Blue" : [
-							4.30497,
-							3.859103,
-							29.365243
-						],
-						"Green" : [
-							5.59857,
-							25.901501,
-							4.084567
-						],
-						"Red" : [
-							13.16544,
-							5.868346,
-							0.000025
-						],
-						"White" : [
-							81.33195,
-							79.590576,
-							47.302138
-						]
-					},
-					"weight" : 1,
-					"mode" : "ADDITIVE"
-				},
 				"intensity" : {
 					"type" : "float",
 					"val" : 1,
@@ -1628,7 +836,8 @@
                 "lookat" : "2.912, -2.0, 1.604",
                 "position" : "4.348, 1.6, 0.171",
                 "pan" :  "0",
-                "tilt" :  "0.0"
+                "tilt" :  "0.0",
+                "color" : "1.0, 0.7020, 0.4431"
 			}
 		}
 	},
@@ -1814,6 +1023,7 @@
           "type" : "ArnoldAnimationPatch",
             "sceneFile" : "J:/Lumiverse/Lumiverse/data/Jules/Jules.ass",
             "pluginDir" : "J:/LumiverseInstall/plugin;I:/solidangle/mtoadeploy/2014/shaders/",
+            "frameDirectory" : "J:/lumiverseboard/LumiverseBoard/Builds/VisualStudio2013/movie/",
             "gamma" : 2.2,
             "predictive" : 0,
             "lights" : {
@@ -1823,6 +1033,10 @@
                 "par_E_3" : { "type" : "photometric_light" },
                 "par_E1_1" : { "type" : "photometric_light" },
                 "par_E1_3" : { "type" : "photometric_light" },
+                "par_BSR_1" : { "type" : "photometric_light" },
+                "par_BSR_2" : { "type" : "photometric_light" },
+                "par_BSL_1" : { "type" : "photometric_light" },
+                "par_BSL_2" : { "type" : "photometric_light" },
                 "par_G_12" : { "type" : "photometric_light" }, 
                 "par_G_11" : { "type" : "photometric_light" }, 
                 "par_G_8" : { "type" : "photometric_light" },

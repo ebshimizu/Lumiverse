@@ -80,7 +80,13 @@ namespace Lumiverse {
     /*!
     * \brief Destroys the object.
     */
-	virtual ~ArnoldInterface() { delete[] m_buffer; delete[] m_bucket_pos; m_bucket_num = 0; }
+	virtual ~ArnoldInterface() { 
+		delete[] m_buffer; 
+		m_buffer = NULL;
+		delete[] m_bucket_pos; 
+		m_bucket_pos = NULL;
+		m_bucket_num = 0; 
+	}
       
     /*!
     * \brief Initializes the Arnold renderer.

@@ -111,7 +111,7 @@ namespace Lumiverse {
 		m_mem_frameManager->clear();
 
 		// Overwrite existing frames instead of clearing all
-		if (!m_file_frameManager)
+		if (m_file_frameManager)
 			m_file_frameManager->reset();
 
 		m_mode = ArnoldAnimationMode::RECORDING; 
