@@ -123,7 +123,7 @@ namespace Lumiverse {
   protected:
     // An atomic counter to implement the cursor.
     std::atomic<unsigned int> m_current;
-	size_t m_fps;
+	int m_fps;
   };
     
 }

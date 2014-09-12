@@ -74,7 +74,7 @@ namespace Lumiverse {
     * The frame buffer point is set to NULL. The buffer will be initialized after getting the size of output.
     * The default gamma is 2.2.
     */
-	 ArnoldInterface() : m_buffer(NULL), m_gamma(2.2), m_samples(-3), m_predictive(false),
+	 ArnoldInterface() : m_buffer(NULL), m_gamma(2.2f), m_samples(-3), m_predictive(false),
 		  m_bucket_pos(NULL), m_bucket_num(0) { }
       
     /*!

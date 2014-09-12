@@ -194,7 +194,7 @@ void ArnoldAnimationPatch::reset() {
     
 	// Resets the frame manager to the beginning of current video.
     m_mem_frameManager->reset();
-	if (!m_file_frameManager)
+	if (m_file_frameManager)
 		m_file_frameManager->reset();
     
     m_queue.unlock();
@@ -350,7 +350,7 @@ void ArnoldAnimationPatch::workerLoop() {
         (frame.mode == ArnoldAnimationMode::RENDERING)) {
         m_mem_frameManager->dump(frame.time, m_interface.getBufferPointer(),
                              m_interface.getWidth(), m_interface.getHeight());
-		if (!m_file_frameManager)
+		if (m_file_frameManager)
 			m_file_frameManager->dump(frame.time, m_interface.getBufferPointer(),
 				m_interface.getWidth(), m_interface.getHeight());
     }

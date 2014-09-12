@@ -232,6 +232,10 @@ namespace Lumiverse {
     ArnoldInterface m_interface;
 
   private:
+	void setOrientation(AtNode *light_ptr, Device *d_ptr, LumiverseOrientation *pan, LumiverseOrientation *tilt);
+
+	void setOrientation(AtNode *light_ptr, Device *d_ptr, std::string pan_str, std::string tilt_str);
+
 	/*!
     * \brief Modifies light color according to Picture Perfect RGB Rendering Using Spectral Prefiltering and Sharp Color Primaries.
 	* \param d The device representing the light.
