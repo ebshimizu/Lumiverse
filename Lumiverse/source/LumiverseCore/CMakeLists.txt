@@ -126,14 +126,6 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
             ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/ftd2xx/libftd2xx.1.2.2.dylib)
         target_link_libraries(LumiverseCore ftd2xx)
         target_link_libraries(LumiverseCoreShared ftd2xx)
-
-        # Note that this does copy over the libftd2xx library to the proper location to run on OS X
-        # It's really not that much fun to do so I'm looking for a better way of doing it.
-        # For some reason it didn't like linking to libusb and ftd2xx normally.
-		# Not sure if this is actually necessary at this point as you should install ftd2xx with
-		# their provided installer.
-        execute_process(COMMAND cp ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/ftd2xx/libftd2xx.1.2.2.dylib 
-            /usr/local/lib/libftd2xx.1.2.2.dylib)
     ENDIF(APPLE)
 ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 
