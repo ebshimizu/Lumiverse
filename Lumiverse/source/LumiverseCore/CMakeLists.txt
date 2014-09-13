@@ -13,7 +13,6 @@ set (LumiverseCore_VERSION_MAJOR 1)
 set (LumiverseCore_VERSION_MINOR 1)
 set (LumiverseCore_INCLUDE_DMXPRO2INTERFACE ON CACHE BOOL "Build LumiverseCore with Enttec USB DMX Pro Mk II Driver")
 set (LumiverseCore_INCLUDE_KINET ON CACHE BOOL "Build LumiverseCore with KiNet Driver")
-set (LumiverseCore_INCLUDE_ARNOLD ON CACHE BOOL "Build LumiverseCore with Arnold Simulator")
 set (LumiverseCore_PYTHON_BINDINGS ON CACHE BOOL "Build LumiverseCore bindings for Python")
 set (LumiverseCore_CSHARP_BINDINGS OFF CACHE BOOL "Build LumiverseCore bindings for C#")
 
@@ -25,10 +24,6 @@ ENDIF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 IF (LumiverseCore_INCLUDE_KINET)
     SET (LumiverseCore_USE_KINET "#define USE_KINET")
 ENDIF (LumiverseCore_INCLUDE_KINET)
-
-IF (LumiverseCore_INCLUDE_ARNOLD)
-    SET (LumiverseCore_USE_ARNOLD "#define USE_ARNOLD")
-ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
 configure_file (
   "${CMAKE_CURRENT_LIST_DIR}/LumiverseCoreConfig.h.in"
@@ -152,7 +147,7 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
     IF(WIN32)
         add_library(ai STATIC IMPORTED)
         set_property(TARGET ai PROPERTY IMPORTED_LOCATION
-            ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/arnold/bin/ai.lib)
+            ${LumiverseCore_ARNOLD_PATH}/bin/ai.lib)
         target_link_libraries(LumiverseCore ai)
         target_link_libraries(LumiverseCoreShared ai)
     ENDIF(WIN32)
@@ -160,7 +155,7 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
     IF(APPLE)
         add_library(ai SHARED IMPORTED)
         set_property(TARGET ai PROPERTY IMPORTED_LOCATION
-            ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/arnold/bin/libai.dylib)
+            ${LumiverseCore_ARNOLD_PATH}/bin/libai.dylib)
         target_link_libraries(LumiverseCore ai)
         target_link_libraries(LumiverseCoreShared ai)
     ENDIF(APPLE)
@@ -232,11 +227,15 @@ INSTALL(FILES ${pngbinfiles} DESTINATION lib)
 FILE(GLOB pngfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/libpng/*.h)
 INSTALL(FILES ${pngfiles} DESTINATION include/lib/libpng)
 
-FILE(GLOB arnoldfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/arnold/include/*.h)
+IF (LumiverseCore_INCLUDE_ARNOLD)
+
+FILE(GLOB arnoldfiles ${LumiverseCore_ARNOLD_PATH}/include/*.h)
 INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold/include)
 
 FILE(GLOB arnoldbinfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/arnold/bin/*)
 INSTALL(FILES ${arnoldbinfiles} DESTINATION lib)
+
+ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
 INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
 INSTALL(TARGETS LumiverseCoreShared DESTINATION lib)

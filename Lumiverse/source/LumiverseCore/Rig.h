@@ -21,10 +21,10 @@
 #include "Device.h"
 #include "Logger.h"
 #include "DeviceSet.h"
-#include "lib/arnold/include/ai.h"
 #include "lib/libjson/libjson.h"
 
 #ifdef USE_ARNOLD
+#include "lib/arnold/include/ai.h"
 #include "Simulation/ArnoldPatch.h"
 #include "Simulation/ArnoldAnimationPatch.h"
 #endif
@@ -32,7 +32,7 @@
 namespace Lumiverse {
   class DeviceSet;
 
-  /*! 
+  /*!
   * \brief The Rig contains information about the state of the lighting system.
   *
   * A Rig is responsible for maintaining a list of all devices in the system,
@@ -94,7 +94,7 @@ namespace Lumiverse {
 
     /*!
     * \brief Stops the update loop.
-    * 
+    *
     * Do this before shutting down the network or potential reconfiguring.
     * \sa m_updateLoop
     */
@@ -141,7 +141,7 @@ namespace Lumiverse {
 
     /*!
     * \brief Adds a Patch to the rig.
-    * 
+    *
     * User is responsible for allocating memory for the patch,
     * Rig is responsible for freeing an allocated patch.
     * Expects the patch to be configured before sending it to the rig.
@@ -154,7 +154,7 @@ namespace Lumiverse {
 
     /*!
     * \brief Gets a patch from the rig.
-    * 
+    *
     * \return Pointer to the requested patch. Returns a nullptr if patch with specified ID doesn't exist.
     * \sa Patch
     */
@@ -172,7 +172,7 @@ namespace Lumiverse {
 
     /*!
     * \brief Deletes an entire patch from the rig.
-    * 
+    *
     * Memory is freed after delete. If you need to save it for some reason, get it with
     * getPatch() first.
     * \param Patch id
@@ -182,7 +182,7 @@ namespace Lumiverse {
 
     /*!
     * \brief Sets the refresh rate for the update loop in cycles / second
-    * 
+    *
     * The DMX protocol is limited to 44Hz max, but you could run the loop faster.
     * \param rate Number of times the update loop should run per second.
     */
@@ -205,7 +205,7 @@ namespace Lumiverse {
 
     /*!
     * \brief Gets a DeviceSet based on a query string
-    * 
+    *
     * This will probably replace operator[](string) at some point, but that point is not now.
     * \param q Query string
     * \return DeviceSet containing all devices matching the query string.
@@ -215,7 +215,7 @@ namespace Lumiverse {
 
     /*!
     * \brief Shorthand for getChannel(unsigned int)
-    * 
+    *
     * \return DeviceSet containing all devices in the specified channel
     * \sa getChannel(unsigned int)
     */
@@ -272,7 +272,7 @@ namespace Lumiverse {
 
     /*!
     * \brief Gets the raw list of devices.
-    * 
+    *
     * Users shouldn't modify the set of devices through this method,
     * but may read the data and modify device parameters.
     * \return Set of Devices maintained by this Rig
@@ -292,7 +292,7 @@ namespace Lumiverse {
 
     /*!
     * \brief Gets the JSON data for the rig.
-    * 
+    *
     * \return JSONNode containing all Rig information
     */
     JSONNode toJSON();
@@ -312,7 +312,7 @@ namespace Lumiverse {
 
     /*!
     * \brief Removes a function from the additional functions list.
-    * 
+    *
     * This function will stop the update loop while it modifies the function
     * list, and will automatically restart it.
     * \param pid The function number to remove.
@@ -327,7 +327,7 @@ namespace Lumiverse {
     * \sa Patch
     */
     void update();
-      
+
     /*!
     * \brief Get a simulation patch
     *
@@ -385,7 +385,7 @@ namespace Lumiverse {
     thread* m_updateLoop;
 
     /*! \brief Indicates the status of the update loop.
-    * 
+    *
     * True if running.
     */
     bool m_running;

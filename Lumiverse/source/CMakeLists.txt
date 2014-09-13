@@ -8,6 +8,25 @@ IF (NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE         "Release" CACHE STRING "Type of build (Debug Release RelWithDebInfo MinSizeRel)" FORCE)
 ENDIF ()
 
+
+# NOTE(kayvonf): needed to pull all the Arnold config out here so it
+# is in scope for the Demo and Tests directories (not just
+# LumiverseCore).  We may wish to remove the LumiverseCore_ prefix so
+# as to not be sloppy.
+
+set (LumiverseCore_INCLUDE_ARNOLD OFF CACHE BOOL   "Build LumiverseCore with Arnold Simulator")
+set (LumiverseCore_ARNOLD_PATH    "" CACHE STRING "Location of Arnold Renderer tree")
+
+IF (LumiverseCore_INCLUDE_ARNOLD)
+
+  # make sure the an Arnold path was given
+  IF (LumiverseCore_ARNOLD_PATH MATCHES "")
+  message( FATAL_ERROR "INCLUDE_ARNOLD is TRUE but no ARNOLD_PATH specified." )
+  ENDIF (LumiverseCore_ARNOLD_PATH MATCHES "")
+  
+  SET (LumiverseCore_USE_ARNOLD "#define USE_ARNOLD")
+ENDIF (LumiverseCore_INCLUDE_ARNOLD)
+
 include_directories(
   "${PROJECT_SOURCE_DIR}/LumiverseCore")
 add_subdirectory(LumiverseCore)

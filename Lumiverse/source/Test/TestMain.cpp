@@ -13,9 +13,11 @@
 #include "RigTests.h"
 #include "PlaybackTests.h"
 
+#ifdef USE_ARNOLD
 #include "ArnoldInterfaceTests.h"
 #include "ArnoldFrameManagerTests.h"
 #include "ArnoldParameterVectorTests.h"
+#endif
 
 int main(int argc, char**argv) {
   Logger::setLogFile("testLog.txt");
@@ -25,9 +27,11 @@ int main(int argc, char**argv) {
   RigTests rt;
   PlaybackTests pt;
 
+#ifdef USE_ARNOLD
   ArnoldInterfaceTests ait;
   ArnoldFrameManagerTests afmt;
   ArnoldParameterVectorTests apvt;
+#endif
 
   cout << "Starting Lumiverse Test Suite for version " << LumiverseCore_VERSION_MAJOR << "." << LumiverseCore_VERSION_MINOR << "\n";
   cout << "========================================\n";
@@ -39,7 +43,7 @@ int main(int argc, char**argv) {
   cout << "Running Tests for Device...\n";
   int dtpassed = dt.runTests();
   cout << "\n";
-  
+
   cout << "Running Tests for Rig and DeviceSet...\n";
   int rtpassed = rt.runTests();
   cout << "\n";
@@ -47,6 +51,8 @@ int main(int argc, char**argv) {
   cout << "Running Tests for Playback...\n";
   int ptpassed = pt.runTests();
   cout << "\n";
+
+#ifdef USE_ARNOLD
 
   cout << "Running Tests for ArnoldInterface...\n";
   int aitpassed = ait.runTests();
@@ -60,6 +66,8 @@ int main(int argc, char**argv) {
   int apvtpassed = apvt.runTests();
   cout << "\n";
 
+#endif
+
   cout << "========================================\n";
   cout << "Summary\n\n";
   cout << "[" << ttpassed << "/" << tt.numTests() << "]\tLumiverseType\n";
@@ -67,9 +75,11 @@ int main(int argc, char**argv) {
   cout << "[" << rtpassed << "/" << rt.numTests() << "]\tRig and Device Set\n";
   cout << "[" << ptpassed << "/" << pt.numTests() << "]\tPlayback\n";
 
+#ifdef USE_ARNOLD
   cout << "[" << aitpassed << "/" << ait.numTests() << "]\tArnoldInterface\n";
   cout << "[" << afmtpassed << "/" << afmt.numTests() << "]\tArnoldFrameManager\n";
   cout << "[" << apvtpassed << "/" << apvt.numTests() << "]\tArnoldParameterVector\n";
+#endif
 
   getchar();
 }
