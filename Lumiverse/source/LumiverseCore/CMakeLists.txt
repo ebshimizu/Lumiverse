@@ -38,14 +38,18 @@ configure_file (
 # Compiler options
 IF(APPLE)
     SET(CLANG_FLAGS "-std=c++11 -stdlib=libc++")
+    
+    # HACK(kayvonf): removing frequently occurring warnings due to clp
+    # sloppiness.  If possible, someone should try to surpress these
+    # warnings only for the relevant file(s).
+    SET(CLANG_FLAGS "${CLANG_FLAGS} -Wno-deprecated-register -Wno-extra-tokens")
+    
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_FLAGS}")
-ENDIF(APPLE)
-
-IF(UNIX)
+ELSEIF(UNIX)
     SET(GCC_FLAGS "-std=c++11 -pthread -fPIC")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_FLAGS}")
     MESSAGE("Adding -std=c++11 to g++ flags")
-ENDIF(UNIX)
+ENDIF(APPLE)
 
 # TODO: Bug with machine:x86 linker option
 SET(CMAKE_EXE_LINKER_FLAGS "")
