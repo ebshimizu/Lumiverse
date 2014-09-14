@@ -579,6 +579,19 @@ set<string> DeviceSet::getAllMetadata() {
   return params;
 }
 
+set<string> DeviceSet::getAllMetadataForKey(string key) {
+  set<string> vals;
+
+  for (auto& d : m_workingSet) {
+    string val;
+    if (d->getMetadata(key, val)) {
+      vals.insert(val);
+    }
+  }
+
+  return vals;
+}
+
 string DeviceSet::info() {
   stringstream ss;
 

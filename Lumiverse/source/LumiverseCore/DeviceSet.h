@@ -455,6 +455,11 @@ namespace Lumiverse {
     set<string> getAllMetadata();
 
     /*!
+    \brief Gets a copy of the set of all metadata values used by a particular key.
+    */
+    set<string> getAllMetadataForKey(string key);
+
+    /*!
     * \brief Returns a string containing info about the DeviceSet.
     *
     * \return DeviceSet as a string. String contains the number of devices contained

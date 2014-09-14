@@ -1,5 +1,8 @@
 #include "LumiverseColor.h"
 
+#include "lib/clp/ClpSimplex.hpp"
+#include "lib/clp/CoinError.hpp"
+
 namespace Lumiverse {
 
   LumiverseColor::LumiverseColor(ColorMode mode) : m_mode(mode) {

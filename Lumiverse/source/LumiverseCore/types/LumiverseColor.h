@@ -12,8 +12,6 @@
 #include <mutex>
 #include <memory>
 #include "lib/Eigen/Dense"
-#include "lib/clp/ClpSimplex.hpp"
-#include "lib/clp/CoinError.hpp"
 #include "../LumiverseType.h"
 
 using namespace std;

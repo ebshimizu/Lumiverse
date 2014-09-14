@@ -18,6 +18,7 @@
 #include "ArnoldParameterVector.h"
 #include <thread>
 #include <iostream>
+#include <locale>
 
 namespace Lumiverse {
 
@@ -386,7 +387,8 @@ namespace Lumiverse {
 	  // Removes spaces when the input type is not string
 	  int count = 0;
 	  for (char c : value) {
-		  if (!std::isspace(c)) {
+      std::locale loc;
+		  if (!std::isspace(c, loc)) {
 			  value_spaceless[count++] = c;
 		  }
 	  }
