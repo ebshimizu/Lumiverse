@@ -15,14 +15,14 @@ ENDIF ()
 # as to not be sloppy.
 
 set (LumiverseCore_INCLUDE_ARNOLD OFF CACHE BOOL   "Build LumiverseCore with Arnold Simulator")
-set (LumiverseCore_ARNOLD_PATH    "" CACHE STRING "Location of Arnold Renderer tree")
+set (LumiverseCore_ARNOLD_PATH "" CACHE PATH "Location of Arnold Renderer tree")
 
 IF (LumiverseCore_INCLUDE_ARNOLD)
 
   # make sure the an Arnold path was given
-  IF (LumiverseCore_ARNOLD_PATH MATCHES "")
-  message( FATAL_ERROR "INCLUDE_ARNOLD is TRUE but no ARNOLD_PATH specified." )
-  ENDIF (LumiverseCore_ARNOLD_PATH MATCHES "")
+  IF (NOT EXISTS ${LumiverseCore_ARNOLD_PATH})
+  	message( FATAL_ERROR "INCLUDE_ARNOLD is TRUE but no ARNOLD_PATH specified." )
+  ENDIF (NOT EXISTS ${LumiverseCore_ARNOLD_PATH})
   
   SET (LumiverseCore_USE_ARNOLD "#define USE_ARNOLD")
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
