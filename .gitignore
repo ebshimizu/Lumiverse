@@ -219,6 +219,9 @@ LumiverseCoreConfig.h
 node_modules/
 LumiverseColorGame/
 Lumiverse/source/LumiverseCore/lib/clp/ClpConfig.h
+Lumiverse/source/LumiverseCore/lib/arnold/bin
+Lumiverse/source/LumiverseCore/lib/arnold/plugin
+Lumiverse/source/LumiverseCore/lib/arnold/include
 Lumiverse/docs
 
 # Mac
