@@ -76,7 +76,7 @@ bool LumiverseOrientation::isDefault() {
   return m_val == m_default;
 }
 
-void LumiverseOrientation::clamp() {
+inline void LumiverseOrientation::clamp() {
   if (m_val < m_min) {
     m_val = m_min;
     return;
