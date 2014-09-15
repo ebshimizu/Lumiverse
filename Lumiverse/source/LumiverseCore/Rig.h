@@ -350,7 +350,7 @@ namespace Lumiverse {
     /*!
     \brief Returns the number of devices in the Rig.
     */
-    int getNumDevices() { return m_devices.size(); }
+    size_t getNumDevices() { return m_devices.size(); }
 
   private:
     /*!
