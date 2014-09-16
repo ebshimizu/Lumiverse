@@ -29,11 +29,13 @@ add_library (LumiverseShowControl
 	Playback.h
 	Layer.h
 	Programmer.h
+    Snapshot.h
 	Cue.cpp
 	CueList.cpp
 	Playback.cpp
 	Layer.cpp
 	Programmer.cpp
+    Snapshot.cpp
     LumiverseShowControl.h)
 
 add_executable (PlaybackDemo
