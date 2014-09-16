@@ -269,9 +269,6 @@ void ArnoldInterface::init() {
     // Starts a arnold session
     AiBegin();
 
-	AiMsgSetLogFileName("J:/Lumiverse/Lumiverse/data/Jules/log");
-	AiMsgSetLogFileFlags(AI_LOG_ALL);
-
     AiLoadPlugins(m_plugin_dir.c_str());
     
     // Doesn't read light node and filter node from the ass file

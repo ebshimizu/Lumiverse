@@ -40,6 +40,8 @@ IF(LumiverseCore_INCLUDE_ARNOLD)
 		ArnoldInterfaceTests.cpp
 		ArnoldFrameManagerTests.h
 		ArnoldFrameManagerTests.cpp
+		RegressiveTest.h
+		RegressiveTest.cpp
 	)
 ENDIF(LumiverseCore_INCLUDE_ARNOLD)
 

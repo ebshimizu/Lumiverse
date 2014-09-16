@@ -17,6 +17,7 @@
 #include "ArnoldInterfaceTests.h"
 #include "ArnoldFrameManagerTests.h"
 #include "ArnoldParameterVectorTests.h"
+#include "RegressiveTest.h"
 #endif
 
 int main(int argc, char**argv) {
@@ -31,6 +32,7 @@ int main(int argc, char**argv) {
   ArnoldInterfaceTests ait;
   ArnoldFrameManagerTests afmt;
   ArnoldParameterVectorTests apvt;
+  RegressiveTest rgt;
 #endif
 
   cout << "Starting Lumiverse Test Suite for version " << LumiverseCore_VERSION_MAJOR << "." << LumiverseCore_VERSION_MINOR << "\n";
@@ -53,7 +55,6 @@ int main(int argc, char**argv) {
   cout << "\n";
 
 #ifdef USE_ARNOLD
-
   cout << "Running Tests for ArnoldInterface...\n";
   int aitpassed = ait.runTests();
   cout << "\n";
@@ -66,6 +67,8 @@ int main(int argc, char**argv) {
   int apvtpassed = apvt.runTests();
   cout << "\n";
 
+  cout << "Running Test show with Arnold...\n";
+  rgt.runTest();
 #endif
 
   cout << "========================================\n";

@@ -25,7 +25,7 @@ bool ArnoldInterfaceTests::runTest(std::function<bool()> t, string testName, int
 
 bool ArnoldInterfaceTests::initTests() {
   std::string file = "J:/Lumiverse/Lumiverse/data/cornell.ass";
-  std::string plugins = "J:/LumiverseInstall/plugin;I:/solidangle/mtoadeploy/2014/shaders/";
+  std::string plugins = "J:/LumiverseInstall/lib/arnold/plugin;I:/solidangle/mtoadeploy/2014/shaders/";
   m_test_interface = new ArnoldInterface();
 
   m_test_interface->setAssFile(file);
