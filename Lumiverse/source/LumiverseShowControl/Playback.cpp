@@ -244,6 +244,8 @@ namespace ShowControl {
     }
     pb.push_back(layers);
 
+    pb.push_back(m_prog->toJSON());
+
     root.push_back(pb);
     return root;
   }
@@ -334,6 +336,14 @@ namespace ShowControl {
 
         it++;
       }
+    }
+
+    auto prog = data->find("programmer");
+    if (prog == data->end()) {
+      Logger::log(WARN, "No programmer data found");
+    }
+    else {
+      m_prog->loadJSON(*prog);
     }
 
     return true;

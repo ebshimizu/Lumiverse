@@ -31,6 +31,11 @@ public:
   Programmer(Rig* rig);
 
   /*!
+  \brief Creates a programmed based off the given rig and intialized with the JSON data.
+  */
+  Programmer(Rig* rig, JSONNode data);
+
+  /*!
   \brief Destroys a programmer object.
   */
   ~Programmer();
@@ -178,6 +183,19 @@ public:
   \param id Id of the device to capture.
   */
   void captureFromRig(string id);
+
+  /*!
+  \brief Converts this object to a JSON object.
+  */
+  JSONNode toJSON();
+
+  /*!
+  \brief Loads JSON data into the Programmer
+
+  Does not assign the rig, so it's ok to use this for reinitialization
+  if the rig is the same.
+  */
+  bool loadJSON(JSONNode data);
 
 private:
   /*!

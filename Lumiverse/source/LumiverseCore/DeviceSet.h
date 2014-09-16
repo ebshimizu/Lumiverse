@@ -70,6 +70,11 @@ namespace Lumiverse {
     DeviceSet(Rig* rig, set<Device *> devices);
 
     /*!
+    \brief Constructs a DeviceSet from a JSON node and a given Rig.
+    */
+    DeviceSet(Rig* rig, JSONNode node);
+
+    /*!
     * \brief Copy a DeviceSet
     * 
     * \param dc DeviceSet to copy data from
@@ -512,6 +517,15 @@ namespace Lumiverse {
     a device with the same id is in the set.
     */
     bool contains(string id);
+
+    /*!
+    \brief Saves the device set as a JSON object with the given name.
+
+    This serializes to a list of IDs that can be used to reconstruct the
+    DeviceSet if it's given the same Rig as it currently has.
+    \param name Node name.
+    */
+    JSONNode toJSON(string name);
 
   private:
     /*!
