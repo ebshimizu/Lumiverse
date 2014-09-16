@@ -4,7 +4,6 @@
 #pragma once
 
 #include "Rig.h"
-#include "types/LumiverseTypeUtils.h"
 #include "Cue.h"
 
 namespace Lumiverse {
@@ -125,6 +124,13 @@ public:
   \brief Returns the set of captured devices.
   */
   map<string, Device*> getCapturedDevices();
+
+  /*!
+  \brief Returns that capture status of a single device.
+
+  \return true if the device is captured, false otherwise.
+  */
+  bool isCaptured(string id);
 
   /*!
   \brief Writes the programmer's captured channels on top of the given device state

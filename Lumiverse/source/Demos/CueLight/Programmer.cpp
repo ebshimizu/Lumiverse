@@ -1,4 +1,5 @@
 #include "Programmer.h"
+#include "types/LumiverseTypeUtils.h"
 
 namespace Lumiverse {
 
@@ -184,6 +185,10 @@ map<string, Device*> Programmer::getCapturedDevices() {
   m_progMutex.unlock();
 
   return devices;
+}
+
+bool Programmer::isCaptured(string id) {
+  return captured.contains(id);
 }
 
 void Programmer::blend(map<string, Device*> state) {
