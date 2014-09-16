@@ -2,13 +2,6 @@
 #include "BufferDriver.h"
 
 namespace {
-
-static float clamp(float f, float min, float max) {
-    if (f < min) return min;
-    if (f > max) return max;
-    
-    return f;
-}
     
 AtMatrix sharp_inv = { 0.8156, 0.0472, 0.1372, 0,
 0.3791, 0.5769, 0.0440, 0,
@@ -43,6 +36,7 @@ static AtRGBA tone_map(const AtRGBA &rgba, const float gamma, const bool predict
 	}
 	*/
 	AiRGBAGamma(&result, gamma);
+	result = AiRGBAClamp(result, 0.f, 1.f);
 
 	return result;
 }
@@ -50,18 +44,6 @@ static AtRGBA tone_map(const AtRGBA &rgba, const float gamma, const bool predict
 static void drawToBuffer(float *buffer, const float gamma, const size_t width,
                          const size_t x, const size_t y,
                          const AtRGBA &rgba, const bool predictive) { 
-	/*
-    for (size_t i = 0; i < 4; i++) {
-        if (i != 3)
-            buffer[(y * width + x) * 4 + i] = clamp(std::powf(rgba[i], 1 / gamma), 0.f, 1.f);
-        else
-            buffer[(y * width + x) * 4 + i] = rgba[i];
-    }
-    
-    if (x == 0 && y < 10)
-        printf("@@@  %zu, %zu: %f, %f, %f, %f\n", x, y, buffer[(y * width + x) * 4 + 0], buffer[(y * width + x) * 4 + 1],
-               buffer[(y * width + x) * 4 + 2], buffer[(y * width + x) * 4 + 3]);
-     */
 	AtRGBA mapped = tone_map(rgba, gamma, predictive);
 
 	for (size_t i = 0; i < 4; i++) {
