@@ -158,6 +158,10 @@ const Device* Programmer::readDevice(string id) {
   return m_devices.count(id) > 0 ? m_devices[id] : nullptr;
 }
 
+void Programmer::captureDevices(DeviceSet d) {
+  addCaptured(d);
+}
+
 void Programmer::clearCaptured() {
   m_progMutex.lock();
   captured = DeviceSet(m_rig);

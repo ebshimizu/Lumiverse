@@ -89,7 +89,7 @@ public:
   Device* operator[](string id);
 
   /*!
-  \brief Returns a device from the Programmer.
+  \brief Returns a device from the Programmer and captures it.
 
   \param id Device ID
   \return Pointer to specified device. nullptr if device does not exist.
@@ -104,6 +104,13 @@ public:
   \return Pointer to specified device. nullptr if device does not exist.
   */
   const Device* readDevice(string id);
+
+  /*!
+  \brief Adds the selected devices to the captured list.
+
+  \param d Devices to capture
+  */
+  void captureDevices(DeviceSet d);
 
   /*!
   \brief Clears the list of captured devices but does not reset the state of the devices.
