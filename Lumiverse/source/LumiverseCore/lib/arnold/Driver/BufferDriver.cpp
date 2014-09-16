@@ -28,6 +28,7 @@ AtMatrix tone = { 2.0667, - 0.7423, - 0.1193,         0,
 static AtRGBA tone_map(const AtRGBA &rgba, const float gamma, const bool predictive) {
 	AtRGBA result = AiRGBACreate(rgba.r, rgba.g, rgba.b, rgba.a);
 
+	/*
 	if (predictive) {
 		AtVector sharp;
 		AtVector out;
@@ -40,7 +41,7 @@ static AtRGBA tone_map(const AtRGBA &rgba, const float gamma, const bool predict
 
 		result = AiRGBACreate(out.x, out.y, out.z, rgba.a);
 	}
-
+	*/
 	AiRGBAGamma(&result, gamma);
 
 	return result;

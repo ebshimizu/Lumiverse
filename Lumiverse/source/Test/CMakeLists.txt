@@ -3,11 +3,13 @@
 IF(APPLE)
     SET(CLANG_FLAGS "-std=c++11 -stdlib=libc++")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_FLAGS}")
-ELSEIF(UNIX)
+ENDIF(APPLE)
+
+IF(UNIX)
     SET(GCC_FLAGS "-std=c++11 -pthread")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_FLAGS}")
-    MESSAGE("Adding -std=c++11 to g++ flags for Test")
-ENDIF(APPLE)
+    MESSAGE("Adding -std=c++11 to g++ flags for CueLight")
+ENDIF(UNIX)
 
 IF(LumiverseCore_INCLUDE_ARNOLD)
 	find_package(PNG REQUIRED)
@@ -30,6 +32,8 @@ SET(LUMIVERSE_TEST_SOURCE
 	RigTests.cpp
 	PlaybackTests.h
 	PlaybackTests.cpp
+	RegressiveTest.h
+	RegressiveTest.cpp
 )
 
 IF(LumiverseCore_INCLUDE_ARNOLD)

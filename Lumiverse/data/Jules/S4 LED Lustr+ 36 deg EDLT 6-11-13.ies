@@ -1,15 +1,3 @@
-IESNA:LM-63-2002
-[TEST]#5 S4 LED Lustr+ 36 Degree EDLT
-[TESTLAB]ETC Light Lab, Middleton, Wisconsin 
-[ISSUEDATE]11-Jun-13
-[TESTDATE]22-Mar-12
-[MANUFAC]Electronic Theatre Controls, Inc.
-[LUMCAT]Ellipsoidal
-[LUMINAIRE]Source 4 LED Lustr+ / Full Regulated Mode
-[LAMPCAT]LED 
-[LAMP]Lumileds Rebel
-[LENS TUBE]36 Degree EDLT
-[OTHER]File created in 1.5 degree increments
 TILT=NONE
 1 -1 1.107 61 241 1 2 0 0 0
 1 1 90
