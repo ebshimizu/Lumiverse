@@ -631,4 +631,17 @@ bool DeviceSet::hasSameDevices(DeviceSet& devices) {
 
   return true;
 }
+
+bool DeviceSet::contains(Device* d) {
+  return m_workingSet.count(d) > 0;
+}
+
+bool DeviceSet::contains(string id) {
+  for (const auto& d : m_workingSet) {
+    if (d->getId() == id)
+      return true;
+  }
+
+  return false;
+}
 }

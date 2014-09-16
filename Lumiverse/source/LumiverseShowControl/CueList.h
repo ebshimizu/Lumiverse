@@ -7,6 +7,7 @@
 #include "Cue.h"
 
 namespace Lumiverse {
+namespace ShowControl {
 
 // A cue list is a list of cues. This class maintains the relationships
 // between cues and performs update operations.
@@ -112,5 +113,6 @@ private:
   string m_name;
 };
 
+}
 }
 #endif

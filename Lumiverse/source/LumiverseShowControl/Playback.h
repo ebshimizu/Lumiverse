@@ -13,6 +13,7 @@
 #include "Programmer.h"
 
 namespace Lumiverse {
+namespace ShowControl{
 
   /*!
   \brief A playback object manages layers and coordinates their actions and updates.
@@ -219,5 +220,6 @@ namespace Lumiverse {
     /*! \brief Loads data from a JSON object */
     bool loadJSON(JSONNode node);
   };
+}
 }
 #endif

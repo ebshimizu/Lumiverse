@@ -1,6 +1,8 @@
 #include "Programmer.h"
+#include "types/LumiverseTypeUtils.h"
 
 namespace Lumiverse {
+namespace ShowControl {
 
 Programmer::Programmer(Rig* rig) : m_rig(rig) {
   const set<Device*>& devices = m_rig->getDeviceRaw();
@@ -157,6 +159,10 @@ const Device* Programmer::readDevice(string id) {
   return m_devices.count(id) > 0 ? m_devices[id] : nullptr;
 }
 
+void Programmer::captureDevices(DeviceSet d) {
+  addCaptured(d);
+}
+
 void Programmer::clearCaptured() {
   m_progMutex.lock();
   captured = DeviceSet(m_rig);
@@ -184,6 +190,10 @@ map<string, Device*> Programmer::getCapturedDevices() {
   m_progMutex.unlock();
 
   return devices;
+}
+
+bool Programmer::isCaptured(string id) {
+  return captured.contains(id);
 }
 
 void Programmer::blend(map<string, Device*> state) {
@@ -243,5 +253,5 @@ void Programmer::addCaptured(string id) {
   m_progMutex.unlock();
 }
 
-
+}
 }

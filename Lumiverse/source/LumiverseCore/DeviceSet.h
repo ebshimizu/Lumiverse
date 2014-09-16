@@ -497,6 +497,22 @@ namespace Lumiverse {
     */
     void clear() { m_workingSet.clear(); }
 
+    /*!
+    \brief Checks to see if a device is in the device set.
+
+    This version of the contains function takes a pointer and checks to see if
+    the exact same device is in the set. This function is faster than contains(string).
+    */
+    bool contains(Device* d);
+
+    /*!
+    \brief Checks to see if a device is in the device set.
+
+    This version of the contains function takes a device ID and checks if
+    a device with the same id is in the set.
+    */
+    bool contains(string id);
+
   private:
     /*!
     * \brief Adds to the set without returning a new copy.

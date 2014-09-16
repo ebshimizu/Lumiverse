@@ -11,6 +11,7 @@
 #endif
 
 namespace Lumiverse {
+namespace ShowControl {
 
 /*!
 \brief A Keyframe stores the value of a parameter at the specified time.
@@ -353,5 +354,7 @@ private:
   // Reserved for future use.
   // m_follow - cue follow time (time to wait before automatically taking the next cue)
 };
+
+}
 }
 #endif

@@ -23,7 +23,7 @@ IF(LumiverseCore_INCLUDE_ARNOLD)
 	ENDIF(PNG_FOUND)
 ENDIF(LumiverseCore_INCLUDE_ARNOLD)
 
-add_library (CueLight
+add_library (LumiverseShowControl
 	Cue.h
 	CueList.h
 	Playback.h
@@ -33,14 +33,15 @@ add_library (CueLight
 	CueList.cpp
 	Playback.cpp
 	Layer.cpp
-	Programmer.cpp)
+	Programmer.cpp
+    LumiverseShowControl.h)
 
-add_executable (CueLightDemo
+add_executable (PlaybackDemo
 	CueLightDemo.cpp)
 
-target_link_libraries(CueLightDemo LumiverseCore)
-target_link_libraries(CueLightDemo CueLight)
+target_link_libraries(PlaybackDemo LumiverseCore)
+target_link_libraries(PlaybackDemo LumiverseShowControl)
 
 FILE(GLOB cuefiles ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-INSTALL(FILES ${cuefiles} DESTINATION include/CueLight)
-INSTALL(TARGETS CueLight ARCHIVE DESTINATION lib)
+INSTALL(FILES ${cuefiles} DESTINATION include/LumiverseShowControl)
+INSTALL(TARGETS LumiverseShowControl ARCHIVE DESTINATION lib)
