@@ -30,6 +30,7 @@ ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 include_directories(
   "${PROJECT_SOURCE_DIR}/LumiverseCore")
 add_subdirectory(LumiverseCore)
+add_subdirectory(LumiverseShowControl)
 
 add_subdirectory(Demos)
 add_subdirectory(Test)

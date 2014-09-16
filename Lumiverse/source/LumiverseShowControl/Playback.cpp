@@ -1,6 +1,8 @@
 #include "Playback.h"
 
 namespace Lumiverse {
+namespace ShowControl {
+
   Playback::Playback(Rig* rig) : m_rig(rig) {
     // setRefreshRate(refreshRate);
     m_running = false;
@@ -337,4 +339,5 @@ namespace Lumiverse {
     return true;
   }
 
+}
 }

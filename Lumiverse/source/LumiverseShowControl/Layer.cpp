@@ -1,6 +1,8 @@
 #include "Layer.h"
 
 namespace Lumiverse {
+namespace ShowControl {
+
   Layer::Layer(Rig* rig, string name, int priority, BlendMode mode) : m_mode(mode),
     m_name(name), m_priority(priority)
   {
@@ -479,4 +481,5 @@ namespace Lumiverse {
     return layer;
   }
 
+}
 }

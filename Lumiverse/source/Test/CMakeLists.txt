@@ -18,7 +18,7 @@ IF(LumiverseCore_INCLUDE_ARNOLD)
 	ENDIF(PNG_FOUND)
 ENDIF(LumiverseCore_INCLUDE_ARNOLD)
 
-include_directories("${CMAKE_CURRENT_LIST_DIR}/../Demos/CueLight")
+include_directories("${CMAKE_CURRENT_LIST_DIR}/../LumiverseShowControl")
 
 SET(LUMIVERSE_TEST_SOURCE
 	TestMain.cpp
@@ -46,4 +46,4 @@ ENDIF(LumiverseCore_INCLUDE_ARNOLD)
 add_executable(LumiverseTest ${LUMIVERSE_TEST_SOURCE})
 
 target_link_libraries(LumiverseTest LumiverseCore)
-target_link_libraries(LumiverseTest CueLight)
+target_link_libraries(LumiverseTest LumiverseShowControl)

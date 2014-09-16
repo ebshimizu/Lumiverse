@@ -12,6 +12,8 @@
 #include <unordered_map>
 
 namespace Lumiverse {
+namespace ShowControl {
+
   /*! \brief Data that tracks the progress of a cue and stores the data used in the cue transition. */
   struct PlaybackData {
     chrono::time_point<chrono::high_resolution_clock> start;    // Cue start time. More accurate to take difference between now and start instead of summing.
@@ -352,13 +354,14 @@ namespace Lumiverse {
     return !(lhs < rhs);
   }
 }
+}
 
 namespace std
 {
     template<>
-    struct hash<Lumiverse::Layer::BlendMode>
+    struct hash<Lumiverse::ShowControl::Layer::BlendMode>
     {
-        size_t operator()( const Lumiverse::Layer::BlendMode& arg ) const
+        size_t operator()( const Lumiverse::ShowControl::Layer::BlendMode& arg ) const
         {
             std::hash<unsigned int> hasher;
             return hasher( static_cast<unsigned int>( arg ) );

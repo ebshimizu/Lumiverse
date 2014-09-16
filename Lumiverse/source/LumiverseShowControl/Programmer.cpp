@@ -2,6 +2,7 @@
 #include "types/LumiverseTypeUtils.h"
 
 namespace Lumiverse {
+namespace ShowControl {
 
 Programmer::Programmer(Rig* rig) : m_rig(rig) {
   const set<Device*>& devices = m_rig->getDeviceRaw();
@@ -252,5 +253,5 @@ void Programmer::addCaptured(string id) {
   m_progMutex.unlock();
 }
 
-
+}
 }

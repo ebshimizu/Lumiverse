@@ -1,6 +1,7 @@
 #include "CueList.h"
 
 namespace Lumiverse {
+namespace ShowControl {
 
 CueList::CueList(string name) : m_name(name)
 {
@@ -178,4 +179,5 @@ JSONNode CueList::toJSON() {
   return list;
 }
 
+}
 }

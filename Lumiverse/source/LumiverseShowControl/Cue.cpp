@@ -1,6 +1,7 @@
 #include "Cue.h"
 
 namespace Lumiverse {
+namespace ShowControl {
 
 Keyframe::Keyframe(JSONNode node) {
   auto it = node.begin();
@@ -545,4 +546,5 @@ bool Cue::paramIsActive(Cue* previousCue, string device, string param, float t) 
   }
 }
 
+}
 }

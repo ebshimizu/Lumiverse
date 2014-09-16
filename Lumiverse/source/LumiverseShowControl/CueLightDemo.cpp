@@ -12,6 +12,7 @@
 
 using namespace std;
 using namespace Lumiverse;
+using namespace Lumiverse::ShowControl;
 
 void simulation() {
     Rig rig("J:/Lumiverse/Lumiverse/data/movingLights_box2.rig.json");

@@ -8,6 +8,7 @@
 #include <Layer.h>
 #include <CueList.h>
 using namespace Lumiverse;
+using namespace Lumiverse::ShowControl;
 
 class PlaybackTests
 {

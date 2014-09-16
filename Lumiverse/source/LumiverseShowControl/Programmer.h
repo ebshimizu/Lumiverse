@@ -7,6 +7,7 @@
 #include "Cue.h"
 
 namespace Lumiverse {
+namespace ShowControl {
 
 /*!
 \brief A Programmer is a special Layer-like object used to manipulate specific devices for cues.
@@ -206,6 +207,7 @@ private:
   void addCaptured(string id);
 };
 
+}
 }
 
 #endif
