@@ -310,6 +310,13 @@ namespace Lumiverse {
     */
     bool setMetadata(string key, string val);
 
+	/*!
+	* \brief Deletes the metadata entry for a given key.
+	*
+	* \param key Metadata key
+	*/
+	void deleteMetadata(string key);
+
     /*!
     * \brief Erases all values in the metadata fields
     *

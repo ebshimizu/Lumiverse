@@ -286,6 +286,15 @@ bool Device::setMetadata(string key, string val) {
   return ret;
 }
 
+void Device::deleteMetadata(string key) {
+	if (m_metadata.count(key) != 0) {
+		m_metadata.erase(key);
+
+		// callback
+		onMetadataChanged();
+	}
+}
+
 void Device::clearMetadataValues() {
   for (auto& kv : m_metadata) {
     kv.second = "";
