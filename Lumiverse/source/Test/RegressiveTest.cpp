@@ -36,6 +36,7 @@ void RegressiveTest::runTest() {
 	ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_testRig->getSimulationPatch("ArnoldAnimationPatch");
 	// TODO: add flag to check if interface is open
 	aap->reset();
+	aap->setRenderSamples(3);
 	aap->startRecording();
 	aap->rerender();
 #endif
