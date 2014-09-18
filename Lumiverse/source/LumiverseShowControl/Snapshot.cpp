@@ -15,7 +15,9 @@ namespace ShowControl {
   }
 
   void Snapshot::saveSnapshot(Rig* rig, Playback* pb) {
-    for (const auto& d : rig->getAllDevices().getDevices()) {
+    DeviceSet allDevices = rig->getAllDevices();
+    const set<Device*>& devices = allDevices.getDevices();
+    for (auto d : devices) {
       m_rigData[d->getId()] = new Device(d);
     }
 
@@ -23,9 +25,24 @@ namespace ShowControl {
   }
 
   void Snapshot::loadSnapshot(Rig* targetRig, Playback* targetPb) {
-    targetRig->setAllDevices(m_rigData);
-    targetPb->loadJSON(m_playbackData);
+    loadRig(targetRig);
+    loadPlayback(targetPb);
   }
 
+  void Snapshot::loadRig(Rig* targetRig) {
+    targetRig->setAllDevices(m_rigData);
+  }
+
+  void Snapshot::loadPlayback(Playback* targetPb) {
+    bool running = targetPb->isRunning();
+
+    if (running)
+      targetPb->stop();
+
+    targetPb->loadJSON(m_playbackData);
+
+    if (running)
+      targetPb->start();
+  }
 }
 }

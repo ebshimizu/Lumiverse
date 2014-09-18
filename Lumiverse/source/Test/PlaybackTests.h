@@ -3,10 +3,8 @@
 */
 
 #include <LumiverseCore.h>
-#include <Playback.h>
-#include <Cue.h>
-#include <Layer.h>
-#include <CueList.h>
+#include <LumiverseShowControl.h>
+
 using namespace Lumiverse;
 using namespace Lumiverse::ShowControl;
 
@@ -26,7 +24,7 @@ private:
   bool runTest(std::function<bool()> t, string testName, int testNum);
 
   // Update when new tests are written.
-  int m_numTests = 7;
+  int m_numTests = 8;
 
   // Initialized in PlaybackStart()
   Rig* m_testRig;
@@ -43,4 +41,5 @@ private:
   bool checkCue();
   bool playCue();
   bool layerToggle();
+  bool snapshot();
 };

@@ -47,6 +47,20 @@ namespace ShowControl {
     */
     void loadSnapshot(Rig* targetRig, Playback* targetPb);
 
+    /*!
+    \brief Loads the stored rig state into the given Rig.
+
+    \param targetRig Rig to load the snapshot into.
+    */
+    void loadRig(Rig* targetRig);
+
+    /*!
+    \brief Loads the stored playback object into the given Playback.
+
+    \param targetPb Playback to load the snapshot into.
+    */
+    void loadPlayback(Playback* targetPb);
+
   private:
     /*!
     \brief Stores the device data from the rig

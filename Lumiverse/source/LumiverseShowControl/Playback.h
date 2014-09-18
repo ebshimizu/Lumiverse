@@ -64,6 +64,11 @@ namespace ShowControl{
     void stop();
 
     /*!
+    \brief Returns the status of the playback update loop.
+    */
+    bool isRunning() { return m_running; }
+
+    /*!
     * \brief Sets the playback update rate
     * \param rate Update loop rate in cycles/second
     */
