@@ -23,6 +23,7 @@ namespace Lumiverse {
     RGB_REPEAT4,      /*!< Converts a floating point value to a single-byte DMX value and outputs it four times offset by 3. */
     COLOR_RGB,        /*!< Converts a color with RGB parameters to single-byte (0-255) DMX parameters. */
     COLOR_RGBW,       /*!< Converts a color with RGBW parameters to singly-byte (0-255) DMX parameters. */
+    COLOR_LUSTRPLUS,  /*!< Converts a color with RWAGCBI parameters (in that order) to DMX paramters. */
     ORI_TO_FINE       /*!< Converts an orientation to a double-byte DMX value (0-65535) */
   };
 
@@ -30,14 +31,14 @@ namespace Lumiverse {
     { FLOAT_TO_SINGLE, "FLOAT_TO_SINGLE" }, { FLOAT_TO_FINE, "FLOAT_TO_FINE" },
     { ENUM, "ENUM" }, { RGB_REPEAT2, "RGB_REPEAT2" }, { RGB_REPEAT3, "RGB_REPEAT3" },
     { RGB_REPEAT4, "RGB_REPEAT4" }, { COLOR_RGB, "COLOR_RGB" }, { COLOR_RGBW, "COLOR_RGBW" },
-    { ORI_TO_FINE, "ORI_TO_FINE" }
+    { ORI_TO_FINE, "ORI_TO_FINE" }, { COLOR_LUSTRPLUS, "COLOR_LUSTRPLUS" }
   };
 
   static unordered_map<string, int> stringToConvType = {
     { "FLOAT_TO_SINGLE", FLOAT_TO_SINGLE }, { "FLOAT_TO_FINE", FLOAT_TO_FINE },
     { "ENUM", ENUM }, { "RGB_REPEAT2", RGB_REPEAT2 }, { "RGB_REPEAT3", RGB_REPEAT3 },
     { "RGB_REPEAT4", RGB_REPEAT4 }, { "COLOR_RGB", COLOR_RGB }, { "COLOR_RGBW", COLOR_RGBW },
-    { "ORI_TO_FINE", ORI_TO_FINE }
+    { "ORI_TO_FINE", ORI_TO_FINE }, { "COLOR_LUSTRPLUS", COLOR_LUSTRPLUS }
   };
 
   /*!
@@ -238,6 +239,17 @@ namespace Lumiverse {
     * \param val LumiverseColor value to convert
     */
     void ColorToRGBW(unsigned char* data, unsigned int address, LumiverseColor* val);
+
+    /*!
+    \brief Converts a LumiverseColor to 7 channels of DMX data.
+
+    Conversion assumes an ETC Source 4 LED Lustr+ in direct control mode.
+    See https://www.etcconnect.com/WorkArea/DownloadAsset.aspx?id=10737461413
+    \param data DMX Universe buffer
+    \param address Address to write the value to
+    \param val LumiverseColor value to convert
+    */
+    void ColorToLustrPlus(unsigned char* data, unsigned int address, LumiverseColor* val);
 
     /*!
     * \brief Helper for setting DMX values.
