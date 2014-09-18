@@ -28,6 +28,11 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 	while (i != data.end()) {
 		std::string nodeName = i->name();
 
+		if (nodeName == "jsonPath") {
+			JSONNode path = *i;
+			m_interface.setDefaultPath(path.as_string());
+		}
+
 		if (nodeName == "sceneFile") {
           JSONNode fileName = *i;
           m_interface.setAssFile(fileName.as_string());

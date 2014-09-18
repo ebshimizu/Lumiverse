@@ -272,7 +272,7 @@ void ArnoldInterface::init() {
     AiLoadPlugins(m_plugin_dir.c_str());
     
     // Doesn't read light node and filter node from the ass file
-    AiASSLoad(m_ass_file.c_str(), AI_NODE_ALL & ~AI_NODE_LIGHT);
+	AiASSLoad(m_ass_file.c_str(), AI_NODE_ALL & ~AI_NODE_LIGHT & ~AI_NODE_DRIVER);
     
     AtNode *options = AiUniverseGetOptions();
     m_width = AiNodeGetInt(options, "xres");
@@ -294,8 +294,11 @@ void ArnoldInterface::init() {
 	AiNodeSetBool(driver, "predictive", m_predictive);
     
     // Assume we are using RGBA
-	if (!m_buffer)
+	if (!m_buffer) {
 		delete[] m_buffer;
+		m_buffer = NULL;
+	}
+		
     m_buffer = new float[m_width * m_height * 4];
     AiNodeSetPtr(driver, "buffer_pointer", m_buffer);
 
@@ -321,6 +324,7 @@ void ArnoldInterface::close() {
     AiEnd();
 	// Cleans buffer
 	delete[] m_buffer;
+	m_buffer = NULL;
 }
     
 int ArnoldInterface::render() {
