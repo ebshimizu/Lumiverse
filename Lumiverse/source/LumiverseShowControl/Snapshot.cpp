@@ -36,8 +36,11 @@ namespace ShowControl {
   void Snapshot::loadPlayback(Playback* targetPb) {
     bool running = targetPb->isRunning();
 
-    if (running)
+    if (running) {
       targetPb->stop();
+      // Doesn't happen instantly, wait for a sec
+      this_thread::sleep_for(chrono::milliseconds(40));
+    }
 
     targetPb->loadJSON(m_playbackData);
 

@@ -41,6 +41,10 @@ namespace ShowControl {
 
   Playback::~Playback() {
     stop();
+
+    for (auto& d : m_state) {
+      delete d.second;
+    }
   }
 
   void Playback::start() {
@@ -300,6 +304,9 @@ namespace ShowControl {
   }
 
   bool Playback::loadJSON(JSONNode node) {
+    m_layers.clear();
+    m_cueLists.clear();
+
     auto data = node.find("playback");
     if (data == node.end()) {
       Logger::log(ERR, "No Playback data found");
