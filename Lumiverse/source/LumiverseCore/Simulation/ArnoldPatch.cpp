@@ -30,7 +30,19 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 
 		if (nodeName == "jsonPath") {
 			JSONNode path = *i;
-			m_interface.setDefaultPath(path.as_string());
+
+			// TODO: better separator
+			std::string directory = path.as_string();
+			int slash;
+			if ((slash = directory.find_last_of("/")) != string::npos) {
+				directory = directory.substr(0, slash + 1);
+			}
+			else if ((slash = directory.find_last_of("\\")) != string::npos) {
+				directory = directory.substr(0, slash + 1);
+			}
+			else
+				directory += "/";
+			m_interface.setDefaultPath(directory);
 		}
 
 		if (nodeName == "sceneFile") {

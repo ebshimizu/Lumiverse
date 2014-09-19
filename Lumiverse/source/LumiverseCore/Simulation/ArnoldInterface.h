@@ -333,7 +333,31 @@ namespace Lumiverse {
 	* \brief Appends the new output command to the outputs attribute of options.
 	*/
 	void setSamplesOption();
+
+	/*!
+	* \brief Checks to see if this arnold STRING parameter is a file.
+	* Currently it only checks if the file contains ".ies".
+	* \return If is a file.
+	*/
+	inline static bool isRelativeFileName(std::string str) {
+		// This function is applied to STRING arnold parameters.
+		// Right now we only need to handle .ies file.
+		// May add more conditions to this line in the future.
+		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+		if ((!str.empty() && str[0] == '.') ||
+			((str.find(".ies") != std::string::npos || str.find(".ass") != std::string::npos) &&
+			(str.find("/") == std::string::npos && str.find("\\") == std::string::npos)))
+			return true;
+		return false;
+	}
       
+	/*!
+	* \brief Converts to relative path with respect to json path.
+	* Currently it only checks if the file contains ".ies".
+	* \return If is a file.
+	*/
+	inline std::string toRelativePath(std::string file);
+
     /*!
     * \brief The list containing the mappings between metadata to Arnold parameter.
     * \sa ArnoldParam

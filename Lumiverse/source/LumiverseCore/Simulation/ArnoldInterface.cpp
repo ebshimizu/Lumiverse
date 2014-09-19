@@ -151,8 +151,9 @@ void ArnoldInterface::setParameter(AtNode *light_ptr, const std::string &paramNa
                 setSingleParameter<1, float>(light_ptr, paramName, value, AiNodeSetter);
             }
             else if (param.arnoldTypeName == "string") {
-                // Use metadata directly for string value.
-                AiNodeSetStr(light_ptr, paramName.c_str(), value.c_str());
+				// First to see if the string is a path (if is a ies file).
+				// If it is, converts to relative path.
+				AiNodeSetStr(light_ptr, paramName.c_str(), toRelativePath(value).c_str());
             }
         
             break;
@@ -240,6 +241,12 @@ void ArnoldInterface::setSamplesOption() {
     AiNodeSetInt(options, "AA_samples", m_samples);
 }
 
+inline std::string ArnoldInterface::toRelativePath(std::string file) {
+	if (!isRelativeFileName(file))
+		return file;
+	return m_default_path + file;
+}
+
 void ArnoldInterface::updateSurfaceColor(Eigen::Vector3d white) {
 	Eigen::Matrix3d toxyz = RGBToXYZ[sRGB];
 	// TODO: To query names of existing surface
@@ -269,10 +276,12 @@ void ArnoldInterface::init() {
     // Starts a arnold session
     AiBegin();
 
-    AiLoadPlugins(m_plugin_dir.c_str());
+	// Keeps directory of plugins absolute.
+	AiLoadPlugins(m_plugin_dir.c_str());
     
     // Doesn't read light node and filter node from the ass file
-	AiASSLoad(m_ass_file.c_str(), AI_NODE_ALL & ~AI_NODE_LIGHT & ~AI_NODE_DRIVER);
+	AiASSLoad(toRelativePath(m_ass_file).c_str(), 
+		AI_NODE_ALL & ~AI_NODE_LIGHT & ~AI_NODE_DRIVER);
     
     AtNode *options = AiUniverseGetOptions();
     m_width = AiNodeGetInt(options, "xres");
