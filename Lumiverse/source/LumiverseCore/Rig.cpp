@@ -252,6 +252,7 @@ bool Rig::load(string filename) {
     // This could get to be a large function, so let's break off into a helper.
     loadJSON(n);
 
+    delete memblock;
     return true;
   }
   else {

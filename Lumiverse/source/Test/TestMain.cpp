@@ -66,9 +66,6 @@ int main(int argc, char**argv) {
   cout << "Running Tests for ArnoldParameterVector...\n";
   int apvtpassed = apvt.runTests();
   cout << "\n";
-
-  cout << "Running Test show with Arnold...\n";
-  rgt.runTest();
 #endif
 
   cout << "========================================\n";
@@ -82,6 +79,12 @@ int main(int argc, char**argv) {
   cout << "[" << aitpassed << "/" << ait.numTests() << "]\tArnoldInterface\n";
   cout << "[" << afmtpassed << "/" << afmt.numTests() << "]\tArnoldFrameManager\n";
   cout << "[" << apvtpassed << "/" << apvt.numTests() << "]\tArnoldParameterVector\n";
+
+  cout << "\nPress a key to start the test show.\n";
+  getchar();
+
+  cout << "Running Test show with Arnold...\n";
+  rgt.runTest();
 #endif
 
   getchar();

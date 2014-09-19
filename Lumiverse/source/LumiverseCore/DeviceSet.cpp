@@ -9,6 +9,14 @@ DeviceSet::DeviceSet(Rig* rig, set<Device *> devices) : m_rig(rig) {
   m_workingSet = set<Device *>(devices);
 }
 
+DeviceSet::DeviceSet(Rig* rig, JSONNode node) : m_rig(rig) {
+  auto it = node.begin();
+  while (it != node.end()) {
+    addDevice(m_rig->getDevice(it->as_string()));
+    it++;
+  }
+}
+
 DeviceSet::DeviceSet(const DeviceSet& dc) {
   m_workingSet = set<Device *>(dc.m_workingSet);
   m_rig = dc.m_rig;
@@ -643,5 +651,17 @@ bool DeviceSet::contains(string id) {
   }
 
   return false;
+}
+
+JSONNode DeviceSet::toJSON(string name) {
+  JSONNode arr;
+  arr.set_name(name);
+
+  for (const auto& d : m_workingSet) {
+    JSONNode newNode(d->getId(), d->getId());
+    arr.push_back(newNode);
+  }
+
+  return arr.as_array();
 }
 }

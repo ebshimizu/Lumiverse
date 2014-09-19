@@ -74,6 +74,12 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
         ColorToRGBW(data, instr.second.startAddress, val);
         break;
       }
+      case (COLOR_LUSTRPLUS):
+      {
+        LumiverseColor* val = (LumiverseColor*)device->getParam(instr.first);
+        ColorToLustrPlus(data, instr.second.startAddress, val);
+        break;
+      }
       case (ORI_TO_FINE) :
       {
         LumiverseOrientation* val = (LumiverseOrientation*)device->getParam(instr.first);
@@ -143,6 +149,16 @@ void DMXDevicePatch::ColorToRGBW(unsigned char* data, unsigned int address, Lumi
   setDMXVal(data, address + 1, g);
   setDMXVal(data, address + 2, b);
   setDMXVal(data, address + 3, w);
+}
+
+void DMXDevicePatch::ColorToLustrPlus(unsigned char* data, unsigned int address, LumiverseColor* val) {
+  setDMXVal(data, address, (unsigned char)(255 * val->getColorChannel("Red")));
+  setDMXVal(data, address + 1, (unsigned char)(255 * val->getColorChannel("White")));
+  setDMXVal(data, address + 2, (unsigned char)(255 * val->getColorChannel("Amber")));
+  setDMXVal(data, address + 3, (unsigned char)(255 * val->getColorChannel("Green")));
+  setDMXVal(data, address + 4, (unsigned char)(255 * val->getColorChannel("Cyan")));
+  setDMXVal(data, address + 5, (unsigned char)(255 * val->getColorChannel("Blue")));
+  setDMXVal(data, address + 6, (unsigned char)(255 * val->getColorChannel("Indigo")));
 }
 
 void DMXDevicePatch::setDMXVal(unsigned char* data, unsigned int address, unsigned char val) {

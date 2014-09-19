@@ -15,6 +15,7 @@ int PlaybackTests::runTests() {
   (runTest([=]{ return this->checkCue(); }, "checkCue", 5)) ? numPassed++ : numPassed;
   (runTest([=]{ return this->playCue(); }, "playCue", 6)) ? numPassed++ : numPassed;
   (runTest([=]{ return this->layerToggle(); }, "layerToggle", 7)) ? numPassed++ : numPassed;
+  (runTest([=]{ return this->snapshot(); }, "snapshot", 8)) ? numPassed++ : numPassed;
 
   return numPassed;
 }
@@ -163,6 +164,45 @@ bool PlaybackTests::layerToggle() {
 
   if (((LumiverseFloat*)m_testRig->getDevice("s41")->getParam("intensity"))->getVal() != 0) {
     cout << "Layer deactivation failed.\n";
+    return false;
+  }
+
+  return true;
+}
+
+bool PlaybackTests::snapshot() {
+  m_pb->getProgrammer()->setParam("s41", "intensity", 1.0f);
+
+  Snapshot state1(m_testRig, m_pb);
+
+  m_pb->getProgrammer()->clearAndReset();
+
+  state1.loadSnapshot(m_testRig, m_pb);
+
+  this_thread::sleep_for(chrono::milliseconds(40));
+  float val;
+  m_testRig->getDevice("s41")->getParam("intensity", val);
+
+  if (!m_pb->getProgrammer()->isCaptured("s41") || val != 1.0f) {
+    cout << "Failed to restore programmer state\n";
+    return false;
+  }
+
+  m_pb->deleteLayer("Layer 1");
+  if (m_pb->getLayer("Layer 1") != nullptr) {
+    cout << "Failed to delete Layer 1\n";
+    return false;
+  }
+
+  state1.loadSnapshot(m_testRig, m_pb);
+
+  if (m_pb->getLayer("Layer 1") == nullptr) {
+    cout << "Failed to restore Layer 1\n";
+    return false;
+  }
+
+  if (m_pb->getLayer("Layer 1")->getCueList() == nullptr) {
+    cout << "Failed to restore Layer 1's cue list\n";
     return false;
   }
 

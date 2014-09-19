@@ -64,6 +64,11 @@ namespace ShowControl{
     void stop();
 
     /*!
+    \brief Returns the status of the playback update loop.
+    */
+    bool isRunning() { return m_running; }
+
+    /*!
     * \brief Sets the playback update rate
     * \param rate Update loop rate in cycles/second
     */
@@ -183,6 +188,9 @@ namespace ShowControl{
     /*! \brief Returns a reference to the layers in the Playback. */
     const map<string, shared_ptr<Layer> >& getLayers() { return m_layers; }
 
+    /*! \brief Loads data from a JSON object */
+    bool loadJSON(JSONNode node);
+
   private:
     /*! \brief Map of layer names to layers. */
     map<string, shared_ptr<Layer> > m_layers;
@@ -216,9 +224,6 @@ namespace ShowControl{
 
     /*! \brief Load Playback data from a file. */
     bool load(string filename);
-
-    /*! \brief Loads data from a JSON object */
-    bool loadJSON(JSONNode node);
   };
 }
 }

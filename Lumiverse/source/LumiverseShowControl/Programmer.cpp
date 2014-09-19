@@ -14,6 +14,10 @@ Programmer::Programmer(Rig* rig) : m_rig(rig) {
   captured = DeviceSet(m_rig);
 }
 
+Programmer::Programmer(Rig* rig, JSONNode data) : m_rig(rig) {
+  loadJSON(data);
+}
+
 Programmer::~Programmer()
 {
   for (auto& kvp : m_devices) {
@@ -235,6 +239,54 @@ void Programmer::captureFromRig(string id) {
   }
 
   addCaptured(id);
+}
+
+JSONNode Programmer::toJSON() {
+  JSONNode root;
+  root.set_name("programmer");
+
+  JSONNode devices;
+  devices.set_name("devices");
+
+  for (const auto& kvp : m_devices) {
+    devices.push_back(kvp.second->toJSON());
+  }
+
+  root.push_back(devices);
+
+  root.push_back(captured.toJSON("captured"));
+
+  return root;
+}
+
+bool Programmer::loadJSON(JSONNode data) {
+  auto devices = data.find("devices");
+  if (devices == data.end()) {
+    Logger::log(ERR, "No devices found in Programmer");
+    return false;
+  }
+
+  auto it = devices->begin();
+  while (it != devices->end()) {
+    Device* device = new Device(it->name(), *it);
+
+    // We're overwriting data here, so make sure to actually delete the old data.
+    // if there is any
+    if (m_devices.count(device->getId()) > 0)
+      delete m_devices[device->getId()];
+
+    m_devices[device->getId()] = device;
+    it++;
+  }
+
+  auto c = data.find("captured");
+  if (c == data.end()) {
+    Logger::log(WARN, "No captured set found in Programmer");
+    captured = DeviceSet(m_rig);
+  }
+  else {
+    captured = DeviceSet(m_rig, *c);
+  }
 }
 
 void Programmer::addCaptured(DeviceSet set) {

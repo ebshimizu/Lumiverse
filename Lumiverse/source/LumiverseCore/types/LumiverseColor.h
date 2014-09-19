@@ -42,7 +42,7 @@ namespace Lumiverse {
   /*! \brief Selects a RGB color space to use in color conversion functions. */
   enum RGBColorSpace {
     sRGB,        /*!< sRGB color space. D65 reference white. See http://en.wikipedia.org/wiki/SRGB */
-	sharpRGB	 /* Picture Perfect RGB Rendering Using Spectral Prefiltering */
+    sharpRGB	 /* Picture Perfect RGB Rendering Using Spectral Prefiltering */
   };
 
   enum ReferenceWhite {
@@ -56,9 +56,9 @@ namespace Lumiverse {
     { sRGB, (Eigen::Matrix3d() << 0.4124564, 0.3575761, 0.1804375,
                                   0.2126729, 0.7151522, 0.0721750,
                                   0.0193339, 0.1191920, 0.9503041).finished() },
-	{ sharpRGB, (Eigen::Matrix3d() << 0.8156, 0.0472, 0.1372,
-								  0.3791, 0.5769, 0.0440,
-								  -0.0123, 0.0167, 0.9955).finished() }
+    { sharpRGB, (Eigen::Matrix3d() << 0.8156, 0.0472, 0.1372,
+                                      0.3791, 0.5769, 0.0440,
+                                      -0.0123, 0.0167, 0.9955).finished() }
   };
 
   /*! \brief Maps Color space to the Reference White it uses */

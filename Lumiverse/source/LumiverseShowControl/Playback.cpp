@@ -41,6 +41,10 @@ namespace ShowControl {
 
   Playback::~Playback() {
     stop();
+
+    for (auto& d : m_state) {
+      delete d.second;
+    }
   }
 
   void Playback::start() {
@@ -244,6 +248,8 @@ namespace ShowControl {
     }
     pb.push_back(layers);
 
+    pb.push_back(m_prog->toJSON());
+
     root.push_back(pb);
     return root;
   }
@@ -287,6 +293,7 @@ namespace ShowControl {
 
       JSONNode n = libjson::parse(memblock);
 
+      delete memblock;
       return loadJSON(n);
     }
     else {
@@ -298,6 +305,9 @@ namespace ShowControl {
   }
 
   bool Playback::loadJSON(JSONNode node) {
+    m_layers.clear();
+    m_cueLists.clear();
+
     auto data = node.find("playback");
     if (data == node.end()) {
       Logger::log(ERR, "No Playback data found");
@@ -334,6 +344,14 @@ namespace ShowControl {
 
         it++;
       }
+    }
+
+    auto prog = data->find("programmer");
+    if (prog == data->end()) {
+      Logger::log(WARN, "No programmer data found");
+    }
+    else {
+      m_prog->loadJSON(*prog);
     }
 
     return true;
