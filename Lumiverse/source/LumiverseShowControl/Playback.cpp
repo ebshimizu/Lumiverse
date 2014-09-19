@@ -293,6 +293,7 @@ namespace ShowControl {
 
       JSONNode n = libjson::parse(memblock);
 
+      delete memblock;
       return loadJSON(n);
     }
     else {

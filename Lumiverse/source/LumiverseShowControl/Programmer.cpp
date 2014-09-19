@@ -269,6 +269,12 @@ bool Programmer::loadJSON(JSONNode data) {
   auto it = devices->begin();
   while (it != devices->end()) {
     Device* device = new Device(it->name(), *it);
+
+    // We're overwriting data here, so make sure to actually delete the old data.
+    // if there is any
+    if (m_devices.count(device->getId()) > 0)
+      delete m_devices[device->getId()];
+
     m_devices[device->getId()] = device;
     it++;
   }
