@@ -1075,7 +1075,7 @@
         "arnold" : {
           "type" : "ArnoldAnimationPatch",
             "sceneFile" : "Jules.ass",
-            "pluginDir" : "J:/LumiverseInstall/lib/arnold/plugin;I:/solidangle/mtoadeploy/2014/shaders/",
+            "pluginDir" : "J:/LumiverseInstall/lib/arnold/plugin;C:/solidangle/mtoadeploy/2015/shaders/",
             "frameDirectory" : "J:/Lumiverse/Lumiverse/source/Test/movie/",
             "gamma" : 2.2,
             "predictive" : 0,
