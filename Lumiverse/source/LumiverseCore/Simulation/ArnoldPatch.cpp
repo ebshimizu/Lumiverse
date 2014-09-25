@@ -415,8 +415,7 @@ void ArnoldPatch::update(set<Device *> devices) {
 void ArnoldPatch::init() {
 	// Init patch and interface
 	for (auto light : m_lights) {
-		m_lights[light.first].rerender_req = true;
-		m_lights[light.first].light = NULL;
+		m_lights[light.first].init();
 	}
     m_interface.init();
 }
