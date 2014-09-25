@@ -28,6 +28,23 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 	while (i != data.end()) {
 		std::string nodeName = i->name();
 
+		if (nodeName == "jsonPath") {
+			JSONNode path = *i;
+
+			// TODO: better separator
+			std::string directory = path.as_string();
+			int slash;
+			if ((slash = directory.find_last_of("/")) != string::npos) {
+				directory = directory.substr(0, slash + 1);
+			}
+			else if ((slash = directory.find_last_of("\\")) != string::npos) {
+				directory = directory.substr(0, slash + 1);
+			}
+			else
+				directory += "/";
+			m_interface.setDefaultPath(directory);
+		}
+
 		if (nodeName == "sceneFile") {
           JSONNode fileName = *i;
           m_interface.setAssFile(fileName.as_string());
@@ -398,8 +415,7 @@ void ArnoldPatch::update(set<Device *> devices) {
 void ArnoldPatch::init() {
 	// Init patch and interface
 	for (auto light : m_lights) {
-		m_lights[light.first].rerender_req = true;
-		m_lights[light.first].light = NULL;
+		m_lights[light.first].init();
 	}
     m_interface.init();
 }

@@ -201,12 +201,17 @@ namespace Lumiverse {
     */
     float getGamma() { return m_gamma; }
 
+	/*!
+	* \brief Sets the predictive flag.
+	*
+	* \param predictive The predictive flag.
+	*/
 	void setPredictive(bool predictive) { m_predictive = predictive; }
 
 	/*!
-	* \brief Gets the gamma.
+	* \brief Gets the predictive flag.
 	*
-	* \return The gamma.
+	* \return The predictive flag.
 	*/
 	bool getPredictive() { return m_predictive; }
     
@@ -272,6 +277,20 @@ namespace Lumiverse {
 	* Currently only converts sRGB to sharp RGB.
 	*/
 	void updateSurfaceColor(Eigen::Vector3d white);
+
+	/*!
+	* \brief Sets the default path.
+	*
+	* \param def_path The default path.
+	*/
+	void setDefaultPath(std::string def_path) { m_default_path = def_path; }
+
+	/*!
+	* \brief Gets the default path.
+	*
+	* \return The default path.
+	*/
+	std::string getDefaultPath() { return m_default_path; }
       
   private:
     /*!
@@ -314,7 +333,31 @@ namespace Lumiverse {
 	* \brief Appends the new output command to the outputs attribute of options.
 	*/
 	void setSamplesOption();
+
+	/*!
+	* \brief Checks to see if this arnold STRING parameter is a file.
+	* Currently it only checks if the file contains ".ies".
+	* \return If is a file.
+	*/
+	inline static bool isRelativeFileName(std::string str) {
+		// This function is applied to STRING arnold parameters.
+		// Right now we only need to handle .ies file.
+		// May add more conditions to this line in the future.
+		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+		if ((!str.empty() && str[0] == '.') ||
+			((str.find(".ies") != std::string::npos || str.find(".ass") != std::string::npos) &&
+			(str.find("/") == std::string::npos && str.find("\\") == std::string::npos)))
+			return true;
+		return false;
+	}
       
+	/*!
+	* \brief Converts to relative path with respect to json path.
+	* Currently it only checks if the file contains ".ies".
+	* \return If is a file.
+	*/
+	inline std::string toRelativePath(std::string file);
+
     /*!
     * \brief The list containing the mappings between metadata to Arnold parameter.
     * \sa ArnoldParam
@@ -369,6 +412,9 @@ namespace Lumiverse {
 
 	// The progress info of the current frame.
 	ProgressInfo m_progress;
+
+	// The default path for all passed files (.ass, .ies...)
+	std::string m_default_path;
   };
 
   /*!

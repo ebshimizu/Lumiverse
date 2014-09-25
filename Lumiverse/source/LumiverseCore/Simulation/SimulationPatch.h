@@ -1,13 +1,12 @@
-/*! \file ArnoldPatch.h
+/*! \file SimulationPatch.h
 * \brief Implementation of a patch for Arnold.
 */
-#ifndef _ArnoldPATCH_H_
-#define _ArnoldPATCH_H_
+#ifndef _SimulationPATCH_H_
+#define _SimulationPATCH_H_
 
 #pragma once
 
 #include "LumiverseCoreConfig.h"
-#ifdef USE_ARNOLD
 
 #include <iostream>
 #include <thread>
@@ -16,59 +15,64 @@
 
 #include "../Patch.h"
 #include "../lib/libjson/libjson.h"
-#include "ArnoldParameterVector.h"
-#include "ArnoldInterface.h"
 
 namespace Lumiverse {
-
-  struct ArnoldParam;
 
   /*! \brief Record that denotes if a arnold light node requires
    * update.
    */    
-  struct ArnoldLightRecord {
-      ArnoldLightRecord()
-		  : arnold_type(""), rerender_req(true), light(NULL) { }
-      ArnoldLightRecord(AtNode *node)
-		  : arnold_type(AiNodeGetName(node)), rerender_req(true), light(node) { }
+  struct SimulationLightRecord {
+	  SimulationLightRecord()
+		  : metadata(""), rerender_req(true) { }
+	  virtual ~SimulationLightRecord() { }
       
-	  virtual void init() {
-		  rerender_req = true;
-		  light = NULL;
+	  virtual void init() { rerender_req = true; }
+
+	  std::string metadata;
+      bool rerender_req;
+  };
+
+  struct PhotoLightRecord : SimulationLightRecord {
+	  PhotoLightRecord()
+		  : intensity(0), color(1.f, 1.f, 1.f), SimulationLightRecord() {}
+	  virtual ~PhotoLightRecord() { }
+	  virtual void init() { 
+		  SimulationLightRecord::init(); 
+		  intensity = 0; 
+		  color.setOnes();
 	  }
 
-	  std::string arnold_type;
-      bool rerender_req;
-      AtNode *light;
+	  float intensity;
+	  Eigen::Vector3f color;
   };
     
   /*!
   * \brief The Arnold Patch object is responsible for the communication
   * between the Arnold renderer and the Lumiverse devices. The major part
   * of communication is done with help of an ArnoldInterface object.
-  * ArnoldPatch handles parsing Json and passing info to ArnoldInterface.
+  * SimulationPatch handles parsing Json and passing info to ArnoldInterface.
   *  
   * \sa ArnoldInterface, ArnoldAnimationPatch
   */
-  class ArnoldPatch : public Patch
+  class SimulationPatch : public Patch
   {
   public:
     /*!
-    * \brief Constructs a ArnoldPatch object.
+    * \brief Constructs a SimulationPatch object.
     */
-    ArnoldPatch() : m_renderloop(NULL) { }
+	SimulationPatch() : m_renderloop(NULL), m_blend(NULL) {}
 
     /*!
-    * \brief Construct ArnoldPatch from JSON data.
+    * \brief Construct SimulationPatch from JSON data.
     *
-    * \param data JSONNode containing the ArnoldPatch object data.
+    * \param data JSONNode containing the SimulationPatch object data.
     */
-    ArnoldPatch(const JSONNode data);
+    SimulationPatch(const JSONNode data);
 
     /*!
     * \brief Destroys the object.
     */
-    virtual ~ArnoldPatch();
+    virtual ~SimulationPatch();
 
     /*!
     * \brief Updates the rendering given the list of devices
@@ -93,52 +97,38 @@ namespace Lumiverse {
     /*!
     * \brief Exports a JSONNode with the data in this patch
     *
-    * \return JSONNode containing the ArnoldPatch object
+    * \return JSONNode containing the SimulationPatch object
     */
     virtual JSONNode toJSON();
 
     /*!
     * \brief Gets the type of this object.
     *
-    * \return String containing "ArnoldPatch"
+    * \return String containing "SimulationPatch"
     */
-    virtual string getType() { return "ArnoldPatch"; }
+    virtual string getType() { return "SimulationPatch"; }
       
     /*!
     * \brief Gets the width of result.
     *
     * \return The width of result
     */
-    int getWidth() { return m_interface.getWidth(); }
+    int getWidth() { return m_width; }
 
     /*!
     * \brief Gets the height of result.
     *
     * \return The height of result
     */
-    int getHeight() { return m_interface.getHeight(); }
+    int getHeight() { return m_height; }
       
     /*!
     * \brief Gets the pointer to the frame buffer.
     *
     * \return The pointer to the frame buffer.
     */
-    float *getBufferPointer() { return m_interface.getBufferPointer(); }
-      
-    /*!
-    * \brief Gets the sample rate (n * n per pixel).
-    *
-    * \return The number of AA samples.
-    */
-    int getSamples() { return m_interface.getSamples(); }
-      
-    /*!
-    * \brief Sets the sample rate (n * n per pixel).
-    *
-    * \param samples The number of AA samples.
-    */
-    void setSamples(int samples);
-      
+	float *getBufferPointer() { return m_blend; }
+
     /*!
     * \brief Stops the working rendering procedure if Arnold is running.
     */
@@ -165,20 +155,7 @@ namespace Lumiverse {
 	*
 	* \return The percent.
 	*/
-	virtual float getPercentage() const { return m_interface.getPercentage(); }
-
-	/*!
-	* \brief Gets the current bucket for each worker thread.
-	* \return An array of current buckets.
-	*/
-	virtual BucketPositionInfo *getBucketPositionInfo() const { return m_interface.getBucketPositionInfo(); }
-
-	/*!
-	* \brief Gets number of buckets rendered simultanously.
-	* This is usually the number of threads supported by hardware.
-	* \return The number of buckets rendered simultanously.
-	*/
-	virtual size_t getBucketNumber() const { return m_interface.getBucketNumber(); }
+	//virtual float getPercentage() const { return m_interface.getPercentage(); }
 
   protected:
     /*!
@@ -194,6 +171,13 @@ namespace Lumiverse {
     * \param devices The device list.
     */
     void updateLight(set<Device *> devices);
+
+	/*!
+	* \brief Loads a arnold light node.
+	* This function is also used to update a light node.
+	* \param d_ptr The device with updated parameters.
+	*/
+	void loadLight(Device *d_ptr);
 
 	/*!
 	* \brief Resets the arnold light node and surface with updated parameters of deices.
@@ -212,56 +196,33 @@ namespace Lumiverse {
     * \param data JSON data to load
     */
     virtual void loadJSON(const JSONNode data);
-      
-    /*!
-    * \brief Loads a arnold light node.
-    * This function is also used to update a light node.
-    * \param d_ptr The device with updated parameters.
-    */
-    void loadLight(Device *d_ptr);
 
 	/*!
     * \brief Calls Arnold render function.
     * This function runs in a separate thread.
     */
-    void renderLoop();
+    virtual void renderLoop();
 
     /*!
     * \brief A list contains infos about if a light is updated.
     */
-    map<string, ArnoldLightRecord> m_lights;
-
-    /*!
-    * \brief Arnold Interface
-    */
-    ArnoldInterface m_interface;
+    map<string, SimulationLightRecord*> m_lights;
 
   private:
-	void setOrientation(AtNode *light_ptr, Device *d_ptr, LumiverseOrientation *pan, LumiverseOrientation *tilt);
 
-	void setOrientation(AtNode *light_ptr, Device *d_ptr, std::string pan_str, std::string tilt_str);
-
-	/*!
-    * \brief Modifies light color according to Picture Perfect RGB Rendering Using Spectral Prefiltering and Sharp Color Primaries.
-	* \param d The device representing the light.
-	* \param white The white spot in sharp RGB. (currently not used)
-    */
-	void modifyLightColor(Device *d, Eigen::Vector3d white);
-
-	/*!
-	* \brief Gets a light node.
-	* \param d The device representing the light.
-	* \return The light node.
-	*/
-	AtNode *getLightNode(Device *d);
+	void blendUint8(float* blended, unsigned char* light, float intensity, Eigen::Vector3f color);
 
     /*!
     * \brief The separate thread running the render loop.
     */
     std::thread *m_renderloop;
+	float *m_blend;
+
+	int m_height;
+	int m_width;
   };
 }
 
-#endif
+
 
 #endif

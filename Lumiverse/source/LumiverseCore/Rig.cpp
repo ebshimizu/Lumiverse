@@ -19,7 +19,8 @@ Rig::Rig(string filename) {
 }
 
 void Rig::loadJSON(JSONNode root) {
-  JSONNode::const_iterator i = root.begin();
+  //JSONNode::const_iterator i = root.begin();
+  JSONNode::iterator i = root.begin();
 
   auto version = root.find("version");
   if (version == root.end()) {
@@ -57,6 +58,7 @@ void Rig::loadJSON(JSONNode root) {
       Logger::log(INFO, "Device load complete");
     }
     else if (nodeName == "patches") {
+	  i->push_back(*root.find("jsonPath"));
       loadPatches(*i);
       Logger::log(INFO, "Patch load complete");
     }
@@ -88,11 +90,16 @@ void Rig::loadDevices(JSONNode root) {
 }
 
 void Rig::loadPatches(JSONNode root) {
-  JSONNode::const_iterator i = root.begin();
+  JSONNode::iterator i = root.begin();
 
   // for this we want to iterate through all children and have the device class
   // parse the sub-element.
   while (i != root.end()){
+	if (i->name() == "jsonPath") {
+		i++;
+		continue;
+	}
+
     // get the node name and value as a string
     std::string nodeName = i->name();
 
@@ -116,8 +123,21 @@ void Rig::loadPatches(JSONNode root) {
       patch = (Patch*) new DMXPatch(*i);
       addPatch(nodeName, patch);
     }
+	else if (patchType == "SimulationPatch") {
+		patch = (Patch*) new SimulationPatch(*i);
+		addPatch(nodeName, patch);
+
+		Device::DeviceCallbackFunction callback = std::bind(&SimulationPatch::onDeviceChanged,
+			(SimulationPatch*)patch,
+			std::placeholders::_1);
+		for (Device *d : getDeviceRaw()) {
+			d->addParameterChangedCallback(callback);
+			d->addMetadataChangedCallback(callback);
+		}
+	}
 #ifdef USE_ARNOLD
     else if (patchType == "ArnoldAnimationPatch") {
+	  i->push_back(*root.find("jsonPath"));
       patch = (Patch*) new ArnoldAnimationPatch(*i);
       addPatch(nodeName, patch);
       Device::DeviceCallbackFunction callback = std::bind(&ArnoldAnimationPatch::onDeviceChanged,
@@ -129,6 +149,7 @@ void Rig::loadPatches(JSONNode root) {
       }
     }
     else if (patchType == "ArnoldPatch") {
+	  i->push_back(*i->find("jsonPath"));
       patch = (Patch*) new ArnoldPatch(*i);
       addPatch(nodeName, patch);
         
@@ -236,6 +257,9 @@ bool Rig::load(string filename) {
     memblock[size] = '\0';
       
     JSONNode n = libjson::parse(memblock);
+
+	// Pass in json path with the original json nodes.
+	n.push_back(JSONNode("jsonPath", filename));
 
     // This could get to be a large function, so let's break off into a helper.
     loadJSON(n);
@@ -483,7 +507,8 @@ JSONNode Rig::toJSON() {
 Patch* Rig::getSimulationPatch(string type) {
     for (pair<string, Patch*> patch : m_patches) {
         if ((patch.second->getType() == "ArnoldPatch" ||
-            patch.second->getType() == "ArnoldAnimationPatch") &&
+            patch.second->getType() == "ArnoldAnimationPatch" ||
+			patch.second->getType() == "SimulationPatch") &&
             patch.second->getType() == type) {
             return patch.second;
         }
