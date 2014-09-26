@@ -135,6 +135,18 @@ void Rig::loadPatches(JSONNode root) {
 			d->addMetadataChangedCallback(callback);
 		}
 	}
+	else if (patchType == "SimulationAnimationPatch") {
+		patch = (Patch*) new SimulationAnimationPatch(*i);
+		addPatch(nodeName, patch);
+
+		Device::DeviceCallbackFunction callback = std::bind(&SimulationAnimationPatch::onDeviceChanged,
+			(SimulationAnimationPatch*)patch,
+			std::placeholders::_1);
+		for (Device *d : getDeviceRaw()) {
+			d->addParameterChangedCallback(callback);
+			d->addMetadataChangedCallback(callback);
+		}
+	}
 #ifdef USE_ARNOLD
     else if (patchType == "ArnoldAnimationPatch") {
 	  i->push_back(*root.find("jsonPath"));
@@ -508,7 +520,8 @@ Patch* Rig::getSimulationPatch(string type) {
     for (pair<string, Patch*> patch : m_patches) {
         if ((patch.second->getType() == "ArnoldPatch" ||
             patch.second->getType() == "ArnoldAnimationPatch" ||
-			patch.second->getType() == "SimulationPatch") &&
+			patch.second->getType() == "SimulationPatch" ||
+			patch.second->getType() == "SimulationAnimationPatch") &&
             patch.second->getType() == type) {
             return patch.second;
         }

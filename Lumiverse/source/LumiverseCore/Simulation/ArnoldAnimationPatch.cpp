@@ -8,7 +8,7 @@ namespace Lumiverse {
 // Uses chrono::system_clock::from_time_t(0) as an invalid value.
 ArnoldAnimationPatch::ArnoldAnimationPatch(const JSONNode data)
 : m_worker(NULL), m_startPoint(chrono::system_clock::from_time_t(0)),
-    m_mode(ArnoldAnimationMode::STOPPED), m_preview_samples(m_interface.getSamples()),
+    m_mode(SimulationAnimationMode::STOPPED), m_preview_samples(m_interface.getSamples()),
     m_render_samples(m_interface.getSamples()) {
     // TODO: type for frame manager
 	m_mem_frameManager = new ArnoldMemoryFrameManager();
@@ -54,7 +54,7 @@ void ArnoldAnimationPatch::init() {
     
 void ArnoldAnimationPatch::update(set<Device *> devices) {
 	// Doesn't respond if it's stopped.
-    if (m_mode == ArnoldAnimationMode::STOPPED)
+    if (m_mode == SimulationAnimationMode::STOPPED)
         return ;
     
     FrameDeviceInfo frame;
@@ -84,8 +84,8 @@ void ArnoldAnimationPatch::update(set<Device *> devices) {
     Logger::log(LDEBUG, ss.str());
 
 	// Interrupts the current rendering if in the interactive mode.
-    if (m_mode == ArnoldAnimationMode::INTERACTIVE ||
-		m_mode == ArnoldAnimationMode::RECORDING) {
+    if (m_mode == SimulationAnimationMode::INTERACTIVE ||
+		m_mode == SimulationAnimationMode::RECORDING) {
         m_interface.interrupt();
     }
     
@@ -117,11 +117,11 @@ void ArnoldAnimationPatch::createFrameInfoHeader(FrameDeviceInfo &frame) {
 
 	// A new Interactive frame indicates the end of Rendering tasks.
 	// Note that all Rendering frames are created by the worker thread.
-	if (m_mode == ArnoldAnimationMode::RENDERING ||
-		m_mode == ArnoldAnimationMode::INTERACTIVE)
-		frame.mode = ArnoldAnimationMode::INTERACTIVE;
-	else if (m_mode == ArnoldAnimationMode::RECORDING)
-		frame.mode = ArnoldAnimationMode::RECORDING;
+	if (m_mode == SimulationAnimationMode::RENDERING ||
+		m_mode == SimulationAnimationMode::INTERACTIVE)
+		frame.mode = SimulationAnimationMode::INTERACTIVE;
+	else if (m_mode == SimulationAnimationMode::RECORDING)
+		frame.mode = SimulationAnimationMode::RECORDING;
 
 }
 
@@ -133,7 +133,7 @@ void ArnoldAnimationPatch::rerender() {
 
 	// When patch is working, makes sure the request be processed
 	while (m_lights.begin()->second.rerender_req &&
-		m_mode != ArnoldAnimationMode::STOPPED) ;
+		m_mode != SimulationAnimationMode::STOPPED) ;
 }
 
 void ArnoldAnimationPatch::close() {
@@ -142,7 +142,7 @@ void ArnoldAnimationPatch::close() {
     FrameDeviceInfo frame;
 	chrono::time_point<chrono::system_clock> current = chrono::system_clock::now();
 	frame.time = chrono::duration_cast<chrono::milliseconds>(current - m_startPoint).count();
-    frame.mode = ArnoldAnimationMode::STOPPED;
+    frame.mode = SimulationAnimationMode::STOPPED;
 
     m_queue.lock();
     m_queuedFrameDeviceInfo.push_back(frame);
@@ -157,7 +157,7 @@ void ArnoldAnimationPatch::close() {
         m_worker->join();
     m_worker = NULL;
     
-    m_mode = ArnoldAnimationMode::STOPPED;
+    m_mode = SimulationAnimationMode::STOPPED;
     
     // Close arnold interface
     ArnoldPatch::close();
@@ -170,7 +170,7 @@ ArnoldFrameManager *ArnoldAnimationPatch::getFrameManager() const {
 void ArnoldAnimationPatch::reset() {
     // We want to block both worker and main thread during resetting
     m_queue.lock();
-    m_mode = ArnoldAnimationMode::INTERACTIVE;
+    m_mode = SimulationAnimationMode::INTERACTIVE;
 
     // Resets start point to init.
     m_startPoint = chrono::system_clock::from_time_t(0);
@@ -201,19 +201,19 @@ void ArnoldAnimationPatch::reset() {
 }
 
 void ArnoldAnimationPatch::stop() {
-    m_mode = ArnoldAnimationMode::STOPPED;
+    m_mode = SimulationAnimationMode::STOPPED;
 }
 
 void ArnoldAnimationPatch::endRecording() {
     if (m_queuedFrameDeviceInfo.size() > 0)
-        m_mode = ArnoldAnimationMode::RENDERING;
+        m_mode = SimulationAnimationMode::RENDERING;
     else
-        m_mode = ArnoldAnimationMode::INTERACTIVE;
+        m_mode = SimulationAnimationMode::INTERACTIVE;
 }
 
 void ArnoldAnimationPatch::setPreviewSamples(int preview) {
     m_preview_samples = preview;
-    if (m_mode == ArnoldAnimationMode::INTERACTIVE)
+    if (m_mode == SimulationAnimationMode::INTERACTIVE)
         setSamples(m_preview_samples);
 }
     
@@ -236,9 +236,9 @@ void ArnoldAnimationPatch::deleteFinishedCallback(int id) {
     
 float ArnoldAnimationPatch::getPercentage() const {
     // Rough number.
-    if (m_mode == ArnoldAnimationMode::INTERACTIVE)
+    if (m_mode == SimulationAnimationMode::INTERACTIVE)
 		return ArnoldPatch::getPercentage();
-	else if (m_mode == ArnoldAnimationMode::RENDERING) {
+	else if (m_mode == SimulationAnimationMode::RENDERING) {
 		// Don't forget the frame being processed
 		size_t finished = m_mem_frameManager->getFrameNum();
 		size_t sum = finished + m_queuedFrameDeviceInfo.size() + 1;
@@ -263,17 +263,17 @@ void ArnoldAnimationPatch::workerLoop() {
     while(1) {
 	// Releases the lock immediately if the queue is still empty.
 	while (frame.time < 0) {
-		if (m_mode == ArnoldAnimationMode::STOPPED)
+		if (m_mode == SimulationAnimationMode::STOPPED)
 			continue;
 
 	    m_queue.lock();
         if (m_queuedFrameDeviceInfo.size() > 0) {
-            if (m_mode == ArnoldAnimationMode::RECORDING) {
+            if (m_mode == SimulationAnimationMode::RECORDING) {
                 // Clears irrelated info
                 std::vector<FrameDeviceInfo>::iterator i;
                 for (i = m_queuedFrameDeviceInfo.begin();
                      i != m_queuedFrameDeviceInfo.end() &&
-                     i->mode == ArnoldAnimationMode::INTERACTIVE; i++) {
+                     i->mode == SimulationAnimationMode::INTERACTIVE; i++) {
                     i->clear();
                 }
                 m_queuedFrameDeviceInfo.erase(m_queuedFrameDeviceInfo.begin(), i);
@@ -282,19 +282,19 @@ void ArnoldAnimationPatch::workerLoop() {
                 for (i = m_queuedFrameDeviceInfo.begin();
                      i != m_queuedFrameDeviceInfo.end(); i++) {
                     // Copies the last recording info to do preview
-                    if (i->mode == ArnoldAnimationMode::RECORDING) {
+                    if (i->mode == SimulationAnimationMode::RECORDING) {
                         frame.copyByValue(*i);
                         // Waits to be rendered with higher sampling rate
-                        i->mode = ArnoldAnimationMode::RENDERING;
+                        i->mode = SimulationAnimationMode::RENDERING;
                     }
                 }
             }
-            else if (m_mode == ArnoldAnimationMode::RENDERING) {
+            else if (m_mode == SimulationAnimationMode::RENDERING) {
 				// No frame would be skipped.
                 frame = m_queuedFrameDeviceInfo[0];
                 m_queuedFrameDeviceInfo.erase(m_queuedFrameDeviceInfo.begin());
             }
-            else if (m_mode == ArnoldAnimationMode::INTERACTIVE) {
+            else if (m_mode == SimulationAnimationMode::INTERACTIVE) {
                 frame = m_queuedFrameDeviceInfo.back();
                 for (FrameDeviceInfo &info : m_queuedFrameDeviceInfo) {
                     if (info.time != m_queuedFrameDeviceInfo.back().time)
@@ -304,9 +304,9 @@ void ArnoldAnimationPatch::workerLoop() {
             }
         }
         // No more frames for rendering
-        else if (m_mode == ArnoldAnimationMode::RENDERING) {
+        else if (m_mode == SimulationAnimationMode::RENDERING) {
             setSamples(m_preview_samples);
-            m_mode = ArnoldAnimationMode::INTERACTIVE;
+            m_mode = SimulationAnimationMode::INTERACTIVE;
             
             onWorkerFinished();
         }
@@ -314,23 +314,23 @@ void ArnoldAnimationPatch::workerLoop() {
 
 		// The frame is valid.
         if (frame.time >= 0) {
-            if (frame.mode == ArnoldAnimationMode::STOPPED) {
-                m_mode = ArnoldAnimationMode::STOPPED;
+            if (frame.mode == SimulationAnimationMode::STOPPED) {
+                m_mode = SimulationAnimationMode::STOPPED;
                 Logger::log(INFO, "Worker stopped...");
 
                 return ;
             }
-            else if (frame.mode == ArnoldAnimationMode::RECORDING) {
+            else if (frame.mode == SimulationAnimationMode::RECORDING) {
                 setSamples(m_preview_samples);
             }
-            else if (frame.mode == ArnoldAnimationMode::RENDERING) {
+            else if (frame.mode == SimulationAnimationMode::RENDERING) {
                 setSamples(m_render_samples);
             }
             // Finished recording work
-            else if (frame.mode == ArnoldAnimationMode::INTERACTIVE &&
-                     (m_mode == ArnoldAnimationMode::RENDERING)) {
+            else if (frame.mode == SimulationAnimationMode::INTERACTIVE &&
+                     (m_mode == SimulationAnimationMode::RENDERING)) {
                 setSamples(m_preview_samples);
-                m_mode = ArnoldAnimationMode::INTERACTIVE;
+                m_mode = SimulationAnimationMode::INTERACTIVE;
                 
                 onWorkerFinished();
             }
@@ -347,7 +347,7 @@ void ArnoldAnimationPatch::workerLoop() {
 	// Dumps only when the image was rendered successfully for rendering.
     // If the worker was reset while rendering, doesn't dump.
     if (code == AI_SUCCESS &&
-        (frame.mode == ArnoldAnimationMode::RENDERING)) {
+        (frame.mode == SimulationAnimationMode::RENDERING)) {
         m_mem_frameManager->dump(frame.time, m_interface.getBufferPointer(),
                              m_interface.getWidth(), m_interface.getHeight());
 		if (m_file_frameManager)

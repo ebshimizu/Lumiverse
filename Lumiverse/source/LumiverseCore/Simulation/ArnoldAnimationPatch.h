@@ -10,6 +10,7 @@
 #ifdef USE_ARNOLD
 
 #include "../lib/libjson/libjson.h"
+#include "SimulationAnimationPatch.h"
 #include "ArnoldPatch.h"
 #include "ArnoldMemoryFrameManager.h"
 #include "ArnoldFileFrameManager.h"
@@ -26,44 +27,10 @@ namespace Lumiverse {
 	* RENDERING: Renders the frames with rendering sampling rate.
 	* STOPPED: Patch doesn't respond to any input. This state is usually used for playing video.
 	*/
-  enum ArnoldAnimationMode {
-      INTERACTIVE, RECORDING, RENDERING, STOPPED
-  };
+  enum SimulationAnimationMode;
     
   /*! \brief The state info for worker thread. */
-  struct FrameDeviceInfo {
-      // The time point of this frame.
-      // It's actually the duration counted from the update is first time
-      // called.
-      time_t time;
-      // Copies for devices connected to this patch.
-      std::set<Device *> devices;
-      ArnoldAnimationMode mode;
-
-      /*! \brief Constructor. */
-      FrameDeviceInfo() : time(-1), mode(ArnoldAnimationMode::INTERACTIVE) { }
-
-      /*! \brief Releases the copies for devices. */
-      void clear() {
-		  time = -1;
-
-		  for (Device *d : devices) {
-			  if (d != NULL)
-			  delete d;
-			  d = NULL;
-		  }
-		  devices.clear();
-      }
-      
-	  /*! \brief Deep copy. */
-      void copyByValue(const FrameDeviceInfo &other) {
-          time = other.time;
-          mode = other.mode;
-          for (Device *d : other.devices) {
-              devices.insert(new Device(d));
-          }
-      }
-  };
+  struct FrameDeviceInfo;
     
   /*!
   * \brief A subclass of ArnoldPatch. 
@@ -81,7 +48,7 @@ namespace Lumiverse {
     */
     ArnoldAnimationPatch() : m_worker(NULL), 
 	  m_startPoint(std::chrono::system_clock::from_time_t(0)),
-	  m_mem_frameManager(NULL), m_file_frameManager(NULL), m_mode(ArnoldAnimationMode::STOPPED),
+	  m_mem_frameManager(NULL), m_file_frameManager(NULL), m_mode(SimulationAnimationMode::STOPPED),
       m_preview_samples(m_interface.getSamples()),
       m_render_samples(m_interface.getSamples()) { }
 
@@ -114,7 +81,7 @@ namespace Lumiverse {
 		if (m_file_frameManager)
 			m_file_frameManager->reset();
 
-		m_mode = ArnoldAnimationMode::RECORDING; 
+		m_mode = SimulationAnimationMode::RECORDING; 
 	}
     
 	/*!
@@ -128,14 +95,14 @@ namespace Lumiverse {
     * \brief Starts interactive mode.
     * Worker thread can get interrupted. It always takes the most fresh info.
     */
-    void startInteractive() { m_mode = ArnoldAnimationMode::INTERACTIVE; }
+    void startInteractive() { m_mode = SimulationAnimationMode::INTERACTIVE; }
       
 	/*!
 	* \brief Returns the mode/state in which the patch is.
 	*
 	* \return The mode/state.
 	*/
-    ArnoldAnimationMode getMode() { return m_mode; }
+    SimulationAnimationMode getMode() { return m_mode; }
       
     /*!
     * \brief Gets the type of this object.
@@ -296,7 +263,7 @@ namespace Lumiverse {
       
     /*! \brief Indicates the mode of ArnoldAnimationPatch.
     */
-    ArnoldAnimationMode m_mode;
+    SimulationAnimationMode m_mode;
       
 	/*! \brief The camera sampling rate for preview.
 	*/

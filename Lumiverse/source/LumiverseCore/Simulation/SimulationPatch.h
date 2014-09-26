@@ -12,6 +12,7 @@
 #include <thread>
 #include <algorithm>
 #include <cstdio>
+#include <atomic>
 
 #include "../Patch.h"
 #include "../lib/libjson/libjson.h"
@@ -34,8 +35,10 @@ namespace Lumiverse {
 
   struct PhotoLightRecord : SimulationLightRecord {
 	  PhotoLightRecord()
-		  : intensity(0), color(1.f, 1.f, 1.f), SimulationLightRecord() {}
-	  virtual ~PhotoLightRecord() { }
+		  : intensity(0), color(1.f, 1.f, 1.f), photo(NULL), SimulationLightRecord() {}
+	  virtual ~PhotoLightRecord() { 
+		  delete[] photo;
+	  }
 	  virtual void init() { 
 		  SimulationLightRecord::init(); 
 		  intensity = 0; 
@@ -44,6 +47,7 @@ namespace Lumiverse {
 
 	  float intensity;
 	  Eigen::Vector3f color;
+	  float *photo;
   };
     
   /*!
@@ -60,7 +64,9 @@ namespace Lumiverse {
     /*!
     * \brief Constructs a SimulationPatch object.
     */
-	SimulationPatch() : m_renderloop(NULL), m_blend(NULL) {}
+	SimulationPatch() : m_renderloop(NULL), m_blend(NULL), m_blend_buffer(NULL) {
+		m_interrupt_flag.clear();
+	}
 
     /*!
     * \brief Construct SimulationPatch from JSON data.
@@ -113,21 +119,21 @@ namespace Lumiverse {
     *
     * \return The width of result
     */
-    int getWidth() { return m_width; }
+    virtual int getWidth() { return m_width; }
 
     /*!
     * \brief Gets the height of result.
     *
     * \return The height of result
     */
-    int getHeight() { return m_height; }
+    virtual int getHeight() { return m_height; }
       
     /*!
     * \brief Gets the pointer to the frame buffer.
     *
     * \return The pointer to the frame buffer.
     */
-	float *getBufferPointer() { return m_blend; }
+	virtual float *getBufferPointer() { return m_blend; }
 
     /*!
     * \brief Stops the working rendering procedure if Arnold is running.
@@ -177,7 +183,14 @@ namespace Lumiverse {
 	* This function is also used to update a light node.
 	* \param d_ptr The device with updated parameters.
 	*/
-	void loadLight(Device *d_ptr);
+	virtual void loadLight(Device *d_ptr);
+
+	/*!
+	* \brief Loads a arnold light node.
+	* This function is also used to update a light node.
+	* \param d_ptr The device with updated parameters.
+	*/
+	virtual void loadLight(std::string light);
 
 	/*!
 	* \brief Resets the arnold light node and surface with updated parameters of deices.
@@ -201,22 +214,28 @@ namespace Lumiverse {
     * \brief Calls Arnold render function.
     * This function runs in a separate thread.
     */
-    virtual void renderLoop();
+    virtual bool renderLoop();
 
     /*!
     * \brief A list contains infos about if a light is updated.
     */
     map<string, SimulationLightRecord*> m_lights;
 
+	std::atomic_flag m_interrupt_flag;
+
   private:
 
-	void blendUint8(float* blended, unsigned char* light, float intensity, Eigen::Vector3f color);
+	bool blendUint8(float* blended, unsigned char* light, float intensity, Eigen::Vector3f color);
+
+	bool blendFloat(float* blended, float* light, float intensity, Eigen::Vector3f color);
 
     /*!
     * \brief The separate thread running the render loop.
     */
     std::thread *m_renderloop;
+
 	float *m_blend;
+	float *m_blend_buffer;
 
 	int m_height;
 	int m_width;

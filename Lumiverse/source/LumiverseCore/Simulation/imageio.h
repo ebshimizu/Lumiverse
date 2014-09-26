@@ -53,7 +53,7 @@ namespace Lumiverse {
 			for (int i = 0; i < width; i++) {
 				int offset = (j * width + i) * 4;
 				int inv_offset = ((height - 1 - j) * width + i) * 4;
-
+				
 				// convert to bytes
 				arr[offset] = static_cast<unsigned char>(rgba[inv_offset] * 0xff);
 				arr[offset + 1] = static_cast<unsigned char>(rgba[inv_offset + 1] * 0xff);

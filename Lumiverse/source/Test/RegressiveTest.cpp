@@ -32,6 +32,8 @@ void RegressiveTest::runTest() {
 
 	m_playback->getProgrammer()->clearAndReset();
 
+	m_playback->save("../../data/Jules/jules_photo.pb.json");
+
 #ifdef USE_ARNOLD
 	ArnoldAnimationPatch *aap = (ArnoldAnimationPatch*)m_testRig->getSimulationPatch("ArnoldAnimationPatch");
 	// TODO: add flag to check if interface is open
@@ -80,7 +82,7 @@ void RegressiveTest::runTest() {
 	while (aap->getMode() == RENDERING)
 		;
 #endif
-	// Compare more complicate transition
+	
 }
 
 void RegressiveTest::initCues() {
