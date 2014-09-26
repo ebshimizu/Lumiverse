@@ -176,17 +176,13 @@ bool SimulationPatch::blendFloat(float* blended, float* light,
 					blended[offset] += light[offset] * rgba[ch] * intensity;
 				else
 					blended[offset] += light[offset] * rgba[ch];
-
-				if (!m_interrupt_flag.test_and_set())
-					goto exit_blend;
 			}
 		}
+		if (!m_interrupt_flag.test_and_set())
+			return false;
 	}
 
 	return true;
-
-exit_blend:
-	return false;
 }
 
 bool SimulationPatch::blendUint8(float* blended, unsigned char* light, 
@@ -206,17 +202,13 @@ bool SimulationPatch::blendUint8(float* blended, unsigned char* light,
 					blended[offset_des] += cvt_channel * rgba[ch];
 
 				blended[offset_des] = (blended[offset_des] > 1) ? 1.f : blended[offset_des];
-
-				if (!m_interrupt_flag.test_and_set())
-					goto exit_blend_int;
 			}
 		}
+		if (!m_interrupt_flag.test_and_set())
+			return false;
 	}
 
 	return true;
-
-exit_blend_int:
-	return false;
 }
 
 bool SimulationPatch::renderLoop() {
