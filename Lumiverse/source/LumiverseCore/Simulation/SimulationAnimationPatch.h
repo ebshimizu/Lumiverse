@@ -1,8 +1,8 @@
-/*! \file ArnoldAnimationPatch.h
+/*! \file SimulationAnimationPatch.h
 * \brief Subclass of ArnoldPatch to render frames of an animation.
 */
-#ifndef _ArnoldAnimationPATCH_H_
-#define _ArnoldAnimationPATCH_H_
+#ifndef _SimulationAnimationPATCH_H_
+#define _SimulationAnimationPATCH_H_
 
 #pragma once
 
@@ -10,8 +10,7 @@
 #ifdef USE_ARNOLD
 
 #include "../lib/libjson/libjson.h"
-#include "SimulationAnimationPatch.h"
-#include "ArnoldPatch.h"
+#include "SimulationPatch.h"
 #include "ArnoldMemoryFrameManager.h"
 #include "ArnoldFileFrameManager.h"
 
@@ -20,17 +19,51 @@
 #include <iostream>
 
 namespace Lumiverse {
-	/*! \brief Four working modes of ArnoldAnimationPatch. 
+	/*! \brief Four working modes of SimulationAnimationPatch. 
 	* INTERACTIVE: Patch renders the latest sent frame with preview sampling rate (camera).
 	* RECORDING: Patch renders the preview scene with similar behavior as INTERACTIVE,
 	* and it also creates a duplicate for each frame, which is used later for rendering.
 	* RENDERING: Renders the frames with rendering sampling rate.
 	* STOPPED: Patch doesn't respond to any input. This state is usually used for playing video.
 	*/
-  enum SimulationAnimationMode;
+  enum SimulationAnimationMode {
+      INTERACTIVE, RECORDING, RENDERING, STOPPED
+  };
     
   /*! \brief The state info for worker thread. */
-  struct FrameDeviceInfo;
+  struct FrameDeviceInfo {
+      // The time point of this frame.
+      // It's actually the duration counted from the update is first time
+      // called.
+      time_t time;
+      // Copies for devices connected to this patch.
+      std::set<Device *> devices;
+      SimulationAnimationMode mode;
+
+      /*! \brief Constructor. */
+      FrameDeviceInfo() : time(-1), mode(SimulationAnimationMode::INTERACTIVE) { }
+
+      /*! \brief Releases the copies for devices. */
+      void clear() {
+		  time = -1;
+
+		  for (Device *d : devices) {
+			  if (d != NULL)
+			  delete d;
+			  d = NULL;
+		  }
+		  devices.clear();
+      }
+      
+	  /*! \brief Deep copy. */
+      void copyByValue(const FrameDeviceInfo &other) {
+          time = other.time;
+          mode = other.mode;
+          for (Device *d : other.devices) {
+              devices.insert(new Device(d));
+          }
+      }
+  };
     
   /*!
   * \brief A subclass of ArnoldPatch. 
@@ -40,29 +73,27 @@ namespace Lumiverse {
   *  
   * \sa ArnoldPatch, ArnoldFrameManager
   */
-  class ArnoldAnimationPatch : public ArnoldPatch
+  class SimulationAnimationPatch : public SimulationPatch
   {
   public:
     /*!
-    * \brief Constructs a ArnoldAnimationPatch object.
+    * \brief Constructs a SimulationAnimationPatch object.
     */
-    ArnoldAnimationPatch() : m_worker(NULL), 
+    SimulationAnimationPatch() : m_worker(NULL), 
 	  m_startPoint(std::chrono::system_clock::from_time_t(0)),
-	  m_mem_frameManager(NULL), m_file_frameManager(NULL), m_mode(SimulationAnimationMode::STOPPED),
-      m_preview_samples(m_interface.getSamples()),
-      m_render_samples(m_interface.getSamples()) { }
+	  m_mem_frameManager(NULL), m_file_frameManager(NULL), m_mode(SimulationAnimationMode::STOPPED) { }
 
     /*!
     * \brief Constructs ArnoldPatch from JSON data.
     *
-    * \param data JSONNode containing the ArnoldAnimationPatch object data.
+    * \param data JSONNode containing the SimulationAnimationPatch object data.
     */
-    ArnoldAnimationPatch(const JSONNode data);
+    SimulationAnimationPatch(const JSONNode data);
 
     /*!
     * \brief Destroys the object.
     */
-    virtual ~ArnoldAnimationPatch();
+    virtual ~SimulationAnimationPatch();
 
     /*!
     * \brief Initializes Arnold with function of its parent class and
@@ -107,9 +138,9 @@ namespace Lumiverse {
     /*!
     * \brief Gets the type of this object.
     *
-    * \return String containing "ArnoldAnimationPatch"
+    * \return String containing "SimulationAnimationPatch"
     */
-    virtual string getType() { return "ArnoldAnimationPatch"; }
+    virtual string getType() { return "SimulationAnimationPatch"; }
 
     /*!
     * \brief Updates the rendering queue given the list of devices
@@ -160,32 +191,6 @@ namespace Lumiverse {
 	* The main thread would stop responding to new requests and the worker thread would be joined.
 	*/
     void stop();
-
-	/*!
-	* \brief Sets the camera sampling rate for preview.
-	*
-	* Although it's possible to set the rate to a large number. It's not recommended.
-	* \param preview The camera sampling rate for preview.
-	*/
-    void setPreviewSamples(int preview);
-
-	/*!
-	* \brief Sets the camera sampling rate for rendering.
-	*
-	* Although it's possible to set the rate to a small number. It's not recommended.
-	* \param render The camera sampling rate for rendering.
-	*/
-    void setRenderSamples(int render);
-
-	/*!
-	* \brief Returns the camera sampling rate for preview.
-	*/
-    int getPreviewSamples() { return m_preview_samples; }
-
-	/*!
-	* \brief Returns the camera sampling rate for render.
-	*/
-    int getRenderSamples() { return m_render_samples; }
       
     // Callbacks
     typedef function<void()> FinishedCallbackFunction;
@@ -208,15 +213,6 @@ namespace Lumiverse {
     * \sa addParameterChangedCallback(DeviceCallbackFunction func)
     */
     void deleteFinishedCallback(int id);
-      
-	/*!
-	* \brief Gets the current rendering progress as percentage.
-	*
-	* The value returned may not be the accurate number due to concurrency.
-	* Also the accuracy is limited to number of frame.
-	* \return The current rendering progress as percentage
-	*/
-    virtual float getPercentage() const override;
 
   protected:
 	/*!
@@ -225,19 +221,24 @@ namespace Lumiverse {
 	*/
 	virtual void loadJSON(const JSONNode data) override;
 
-  private:
-    /*!
-    * \brief Worker loop.
-    *
-    * Dequeues a new task. Sets the light parameters and renders. Dumps
-    * the frame buffer. The loop ends when an end info is received.
-    */
-    void workerLoop();
-      
+	/*!
+	* \brief Worker loop.
+	*
+	* Dequeues a new task. Sets the light parameters and renders. Dumps
+	* the frame buffer. The loop ends when an end info is received.
+	*/
+	virtual void workerLoop();
+
 	/*!
 	* \brief Helper to call all the registered callbacks for rendering finished event.
 	*/
-    void onWorkerFinished();
+	virtual  void onWorkerFinished();
+
+	virtual void onRecording() { }
+
+	virtual void onRendering() { }
+
+	virtual void workerRender(FrameDeviceInfo frame);
 
 	void createFrameInfoHeader(FrameDeviceInfo &frame);
 
@@ -261,21 +262,15 @@ namespace Lumiverse {
     ArnoldMemoryFrameManager *m_mem_frameManager;
 	ArnoldFileFrameManager *m_file_frameManager;
       
-    /*! \brief Indicates the mode of ArnoldAnimationPatch.
+    /*! \brief Indicates the mode of SimulationAnimationPatch.
     */
     SimulationAnimationMode m_mode;
-      
-	/*! \brief The camera sampling rate for preview.
-	*/
-    int m_preview_samples;
-
-	/*! \brief The camera sampling rate for rendering.
-	*/
-    int m_render_samples;
       
 	/*! \brief The list for callback functions.
 	*/
     map<int, FinishedCallbackFunction> m_onFinishedFunctions;
+
+	private: 
   };
     
 }

@@ -7,7 +7,8 @@
 namespace Lumiverse {
 
 SimulationPatch::SimulationPatch(const JSONNode data) :
-m_renderloop(NULL), m_blend(NULL) {
+m_renderloop(NULL), m_blend(NULL), m_blend_buffer(NULL) {
+	m_interrupt_flag.test_and_set();
 	loadJSON(data);
 }
 
@@ -75,6 +76,35 @@ void SimulationPatch::loadJSON(const JSONNode data) {
 void SimulationPatch::loadLight(Device *d_ptr) {
     std::string light_name = d_ptr->getId();
 
+	loadLight(light_name);
+}
+
+void SimulationPatch::loadLight(std::string light) {
+	std::string light_name = light;
+
+	if (m_lights.count(light_name) > 0) {
+		unsigned char *buffer;
+		PhotoLightRecord *record = (PhotoLightRecord *)m_lights[light_name];
+		buffer = imageio_load_image(record->metadata.c_str(), &m_width, &m_height);
+
+		if (!buffer) {
+			std::stringstream sstm;
+			sstm << "Unable to read file: " << record->metadata.c_str();
+
+			Logger::log(WARN, sstm.str());
+
+			return;
+		}
+
+		if (record->photo) {
+			delete[] record->photo;
+			record->photo = NULL;
+		}
+
+		record->photo = new float[m_width * m_height * 4];
+		bytes_to_floats(record->photo, buffer, m_width, m_height);
+	}
+
 }
 
 /*!
@@ -83,8 +113,12 @@ void SimulationPatch::loadLight(Device *d_ptr) {
 SimulationPatch::~SimulationPatch() {
 	delete[] m_blend;
 	m_blend = NULL;
+	delete[] m_blend_buffer;
+	m_blend_buffer = NULL;
+
 	for (auto light : m_lights) {
 		delete light.second;
+		light.second = NULL;
 	}
 }
 
@@ -128,7 +162,30 @@ void SimulationPatch::clearUpdateFlags() {
     }
 }
     
-void SimulationPatch::blendUint8(float* blended, unsigned char* light, 
+bool SimulationPatch::blendFloat(float* blended, float* light, 
+	float intensity, Eigen::Vector3f color) {
+	Eigen::Vector4f rgba(color[0], color[1], color[2], 1.f);
+
+	// Assume they are of size (m_width, m_height)
+	for (size_t i = 0; i < m_height; i++) {
+		for (size_t j = 0; j < m_width; j++) {
+			for (size_t ch = 0; ch < 4; ch++) {
+				size_t offset = (m_width * i + j) * 4 + ch;
+				size_t offset_des = (m_width * (m_height - 1 - i) + j) * 4 + ch;
+				if (ch < 3)
+					blended[offset] += light[offset] * rgba[ch] * intensity;
+				else
+					blended[offset] += light[offset] * rgba[ch];
+			}
+		}
+		if (!m_interrupt_flag.test_and_set())
+			return false;
+	}
+
+	return true;
+}
+
+bool SimulationPatch::blendUint8(float* blended, unsigned char* light, 
 	float intensity, Eigen::Vector3f color) {
 	Eigen::Vector4f rgba(color[0], color[1], color[2], 1.f);
 
@@ -143,50 +200,62 @@ void SimulationPatch::blendUint8(float* blended, unsigned char* light,
 					blended[offset_des] += cvt_channel * rgba[ch] * intensity;
 				else
 					blended[offset_des] += cvt_channel * rgba[ch];
+
+				blended[offset_des] = (blended[offset_des] > 1) ? 1.f : blended[offset_des];
 			}
 		}
+		if (!m_interrupt_flag.test_and_set())
+			return false;
 	}
+
+	return true;
 }
 
-void SimulationPatch::renderLoop() {
+bool SimulationPatch::renderLoop() {
 	// Set to zeros.
-	unsigned char *buffer;
 	bool toclear = true;
+	size_t img_size = (size_t)(m_height * m_width * 4);
+	bool success = true;
 
-	// TODO: Potential optimization here. Data casting.
-	// Read and blend one by one
+	m_interrupt_flag.test_and_set();
+
+	// Blend one by one
 	for (auto record : m_lights) {
-		PhotoLightRecord *photo = (PhotoLightRecord *)record.second;
-		buffer = imageio_load_image(photo->metadata.c_str(), &m_width, &m_height);
+		PhotoLightRecord *light = (PhotoLightRecord *)record.second;
 
-		// Allocate or clear once we know the size.
-		size_t img_size = (size_t)(m_height * m_width * 4);
-		if (!m_blend) {
-			m_blend = new float[img_size];
-			std::memset(m_blend, 0, img_size * sizeof(float));
-		}
-		else if (toclear) {
+		if (toclear) {
 			toclear = false;
-			std::memset(m_blend, 0, img_size * sizeof(float));
+			std::memset(m_blend_buffer, 0, img_size * sizeof(float));
 		}
 			
-		if (buffer)
-			blendUint8(m_blend, buffer, photo->intensity, photo->color);
-		else {
+		if (light->photo && light->intensity > 0 &&
+			!light->color.isZero())
+			success = blendFloat(m_blend_buffer, light->photo, light->intensity, light->color);
+		else if (!light->photo) {
 			std::stringstream sstm;
-			sstm << "Unable to read file: " << photo->metadata.c_str();
+			sstm << "Empty file: " << light->metadata.c_str();
 
 			Logger::log(WARN, sstm.str());
 		}
+
+		if (!success)
+			break;
 	}
+
+	if (success)
+		std::memcpy(m_blend, m_blend_buffer, img_size * sizeof(float));
+
+	return success;
 }
 
 void SimulationPatch::interruptRender() {
-	
+	m_interrupt_flag.clear();
+	if (m_renderloop &&
+		m_renderloop->joinable())
+		m_renderloop->join();
 }
 
 void SimulationPatch::onDeviceChanged(Device *d) {
-    // TODO : LOCK
     if (m_lights.count(d->getId()) > 0) {
         m_lights[d->getId()]->rerender_req = true;
     }
@@ -209,7 +278,16 @@ void SimulationPatch::update(set<Device *> devices) {
 void SimulationPatch::init() {
 	// Init patch and interface
 	for (auto light : m_lights) {
-		m_lights[light.first]->init();
+		light.second->init();
+		loadLight(light.first);
+	}
+
+	size_t img_size = (size_t)(m_height * m_width * 4);
+	if (!m_blend) {
+		m_blend = new float[img_size];
+		std::memset(m_blend, 0, img_size * sizeof(float));
+		m_blend_buffer = new float[img_size];
+		std::memset(m_blend_buffer, 0, img_size * sizeof(float));
 	}
 }
 

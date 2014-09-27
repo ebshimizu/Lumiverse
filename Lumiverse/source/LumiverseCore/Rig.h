@@ -19,6 +19,7 @@
 #include "Patch.h"
 #include "DMX/DMXPatch.h"
 #include "Simulation/SimulationPatch.h"
+#include "Simulation/SimulationAnimationPatch.h"
 #include "Device.h"
 #include "Logger.h"
 #include "DeviceSet.h"

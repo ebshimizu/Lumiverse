@@ -82,7 +82,9 @@ set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
 	DMX/KiNetInterface.h
 	DMX/KiNetInterface.cpp
 	Simulation/SimulationPatch.h
-	Simulation/SimulationPatch.cpp)
+	Simulation/SimulationPatch.cpp
+	Simulation/SimulationAnimationPatch.h
+	Simulation/SimulationAnimationPatch.cpp)
 
 # CMake is a bit weird and wants this defined here instead of inside the ftd2xx folder
 # Add relevant files to build if using DMXPRO2
