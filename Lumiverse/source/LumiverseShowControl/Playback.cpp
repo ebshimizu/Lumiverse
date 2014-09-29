@@ -357,5 +357,13 @@ namespace ShowControl {
     return true;
   }
 
+  int Playback::getNumCueLists() {
+    return m_cueLists.size();
+  }
+
+  int Playback::getNumLayers() {
+    return m_layers.size();
+  }
+
 }
 }
