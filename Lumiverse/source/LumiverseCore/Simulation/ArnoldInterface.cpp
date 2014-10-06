@@ -303,10 +303,10 @@ void ArnoldInterface::init() {
 	AiNodeSetBool(driver, "predictive", m_predictive);
     
     // Assume we are using RGBA
-	if (!m_buffer) {
-		delete[] m_buffer;
-		m_buffer = NULL;
-	}
+	delete[] m_buffer;
+	m_buffer = NULL;
+	delete[] m_bucket_pos;
+	m_bucket_pos = NULL;
 		
     m_buffer = new float[m_width * m_height * 4];
     AiNodeSetPtr(driver, "buffer_pointer", m_buffer);
@@ -334,6 +334,8 @@ void ArnoldInterface::close() {
 	// Cleans buffer
 	delete[] m_buffer;
 	m_buffer = NULL;
+	delete[] m_bucket_pos;
+	m_bucket_pos = NULL;
 }
     
 int ArnoldInterface::render() {

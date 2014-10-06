@@ -153,8 +153,11 @@ void ArnoldAnimationPatch::close() {
     startInteractive();
     
     // Waits until worker finishes its job
-    if (m_worker != NULL)
-        m_worker->join();
+	if (m_worker != NULL) {
+		m_worker->join();
+		delete m_worker;
+	}
+        
     m_worker = NULL;
     
     m_mode = SimulationAnimationMode::STOPPED;

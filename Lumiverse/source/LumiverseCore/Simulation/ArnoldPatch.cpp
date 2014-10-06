@@ -242,7 +242,7 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
 * \brief Destroys the object.
 */
 ArnoldPatch::~ArnoldPatch() {
-
+	m_interface.close();
 }
 
 bool ArnoldPatch::isUpdateRequired(set<Device *> devices) {
