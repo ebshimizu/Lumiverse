@@ -191,6 +191,20 @@ namespace ShowControl{
     /*! \brief Loads data from a JSON object */
     bool loadJSON(JSONNode node);
 
+    /*!
+    \brief Returns the number of cue lists contained in this Playback object.
+
+    \return Number of cue lists.
+    */
+    int getNumCueLists();
+
+    /*!
+    \brief Returns the number of layers contained in this Playback object.
+
+    \return Number of layers.
+    */
+    int getNumLayers();
+
   private:
     /*! \brief Map of layer names to layers. */
     map<string, shared_ptr<Layer> > m_layers;

@@ -36,6 +36,11 @@ CueList::~CueList()
 }
 
 bool CueList::storeCue(float num, Cue cue, bool overwrite) {
+  if (num < 0) {
+    Logger::log(ERR, "Cue numbers must be positive.");
+    return false;
+  }
+
   if (overwrite == true || m_cues.count(num) == 0) {
     m_cues[num] = cue;
     stringstream ss;
@@ -88,16 +93,16 @@ void CueList::update(float num, Rig* rig, bool track) {
 
 float CueList::getFirstCueNum() {
   if (m_cues.size() == 0) {
-    // No cues defaults this to 0.    
-    return 0;
+    // No cues defaults this to -1.    
+    return -1;
   }
   return m_cues.begin()->first;
 }
 
 float CueList::getLastCueNum() {
   if (m_cues.size() == 0) {
-    // No cues defaults this to 0
-    return 0;
+    // No cues defaults this to -1
+    return -1;
   }
 
   return m_cues.rbegin()->first;
