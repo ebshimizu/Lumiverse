@@ -1,25 +1,38 @@
 #include "DeviceSet.h"
 namespace Lumiverse {
 
-DeviceSet::DeviceSet(Rig* rig) : m_rig(rig) {
+DeviceSet::DeviceSet(Rig* rig) : m_rig(rig), m_query("") {
   // look it's empty
 }
 
-DeviceSet::DeviceSet(Rig* rig, set<Device *> devices) : m_rig(rig) {
+DeviceSet::DeviceSet(Rig* rig, set<Device *> devices) : m_rig(rig), m_query("") {
   m_workingSet = set<Device *>(devices);
 }
 
 DeviceSet::DeviceSet(Rig* rig, JSONNode node) : m_rig(rig) {
   auto it = node.begin();
-  while (it != node.end()) {
-    addDevice(m_rig->getDevice(it->as_string()));
-    it++;
+
+  if (node.type() == JSON_ARRAY) {
+    while (it != node.end()) {
+      // TODO: if device set is a query set, load should be different.
+      addDevice(m_rig->getDevice(it->as_string()));
+      it++;
+    }
+    m_query = "";
+  }
+  else {
+    m_query = it->as_string();
   }
 }
 
 DeviceSet::DeviceSet(const DeviceSet& dc) {
   m_workingSet = set<Device *>(dc.m_workingSet);
   m_rig = dc.m_rig;
+  m_query = dc.m_query;
+}
+
+DeviceSet::DeviceSet(Rig* rig, string query) : m_rig(rig), m_query(query) {
+  select(query);
 }
 
 DeviceSet::~DeviceSet() {
@@ -478,26 +491,39 @@ void DeviceSet::reset() {
 }
 
 void DeviceSet::addDevice(Device* device) {
+  if (isQuery())
+    return;
+
   if (device != nullptr) {
     m_workingSet.insert(device);
   }
 }
 
 void DeviceSet::removeDevice(Device* device) {
+  if (isQuery())
+    return;
+
   m_workingSet.erase(device);
 }
 
 void DeviceSet::addSet(DeviceSet otherSet) {
+  if (isQuery())
+    return;
+
   m_workingSet.insert(otherSet.m_workingSet.begin(), otherSet.m_workingSet.end());
 }
 
 void DeviceSet::removeSet(DeviceSet otherSet) {
+  if (isQuery())
+    return;
+
   for (auto& d : otherSet.m_workingSet) {
     removeDevice(d);
   }
 }
 
 void DeviceSet::setParam(string param, float val) {
+  reloadQuery();
   for (auto& d : m_workingSet) {
     if (d->paramExists(param)) {
       d->setParam(param, val);
@@ -506,6 +532,7 @@ void DeviceSet::setParam(string param, float val) {
 }
 
 void DeviceSet::setParam(string param, string val, float val2) {
+  reloadQuery();
   for (auto& d : m_workingSet) {
     if (d->paramExists(param)) {
       d->setParam(param, val, val2);
@@ -514,6 +541,7 @@ void DeviceSet::setParam(string param, string val, float val2) {
 }
 
 void DeviceSet::setParam(string param, string val, float val2, LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode) {
+  reloadQuery();
   for (auto& d : m_workingSet) {
     if (d->paramExists(param)) {
       d->setParam(param, val, val2, mode, interpMode);
@@ -522,6 +550,7 @@ void DeviceSet::setParam(string param, string val, float val2, LumiverseEnum::Mo
 }
 
 void DeviceSet::setParam(string param, string channel, double val) {
+  reloadQuery();
   for (auto& d : m_workingSet) {
     if (d->paramExists(param)) {
       d->setParam(param, channel, val);
@@ -530,6 +559,7 @@ void DeviceSet::setParam(string param, string channel, double val) {
 }
 
 void DeviceSet::setParam(string param, double x, double y, double weight) {
+  reloadQuery();
   for (auto& d : m_workingSet) {
     if (d->paramExists(param)) {
       d->setParam(param, x, y, weight);
@@ -538,6 +568,7 @@ void DeviceSet::setParam(string param, double x, double y, double weight) {
 }
 
 void DeviceSet::setColorRGBRaw(string param, double r, double g, double b, double weight) {
+  reloadQuery();
   for (auto& d : m_workingSet) {
     if (d->paramExists(param)) {
       d->setColorRGBRaw(param, r, g, b, weight);
@@ -546,6 +577,7 @@ void DeviceSet::setColorRGBRaw(string param, double r, double g, double b, doubl
 }
 
 void DeviceSet::setColorRGB(string param, double r, double g, double b, double weight, RGBColorSpace cs) {
+  reloadQuery();
   for (auto& d : m_workingSet) {
     if (d->paramExists(param)) {
       d->setColorRGB(param, r, g, b, weight, cs);
@@ -657,11 +689,27 @@ JSONNode DeviceSet::toJSON(string name) {
   JSONNode arr;
   arr.set_name(name);
 
-  for (const auto& d : m_workingSet) {
-    JSONNode newNode(d->getId(), d->getId());
-    arr.push_back(newNode);
+  if (isQuery()) {
+    arr = m_query;
+    return arr;
   }
+  else {
+    for (const auto& d : m_workingSet) {
+      JSONNode newNode(d->getId(), d->getId());
+      arr.push_back(newNode);
+    }
+    return arr.as_array();
+  }
+}
 
-  return arr.as_array();
+bool DeviceSet::isQuery() {
+  return m_query != "";
+}
+
+void DeviceSet::reloadQuery() {
+  if (isQuery()) {
+    m_workingSet.clear();
+    select(m_query);
+  }
 }
 }
