@@ -128,6 +128,12 @@ namespace Lumiverse {
 	*/
 	virtual void rerender();
 
+	/*!
+	* \brief Stops the working rendering procedure if Arnold is running. Potentially
+	* interrupt rendering process if the patch is in rendering mode.
+	*/
+	virtual void interruptRender();
+
     /*!
     * \brief Waits for the worker thread and closes the Arnold session.
     *

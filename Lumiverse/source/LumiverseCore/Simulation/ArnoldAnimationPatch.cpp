@@ -38,6 +38,7 @@ void ArnoldAnimationPatch::loadJSON(const JSONNode data) {
 
 		if (nodeName == "frameDirectory") {
 			JSONNode fileName = *i;
+			delete m_file_frameManager;
 			m_file_frameManager = new ArnoldFileFrameManager(fileName.as_string());
 		}
 
@@ -140,6 +141,23 @@ void ArnoldAnimationPatch::rerender() {
 				if (!flag)
 					return;
 			}
+	}
+}
+
+void ArnoldAnimationPatch::interruptRender() {
+	if (m_mode == SimulationAnimationMode::RECORDING ||
+		m_mode == SimulationAnimationMode::INTERACTIVE)
+		ArnoldPatch::interruptRender();
+	else if (m_mode == SimulationAnimationMode::RENDERING) {
+		ArnoldPatch::interruptRender();
+
+		// Clear queue (turn rendering tasks into interactive tasks)
+		m_queue.lock();
+		for (auto i = m_queuedFrameDeviceInfo.begin();
+			i != m_queuedFrameDeviceInfo.end(); i++) {
+			i->mode = SimulationAnimationMode::INTERACTIVE;
+		}
+		m_queue.unlock();
 	}
 }
 
