@@ -132,8 +132,21 @@ void ArnoldAnimationPatch::rerender() {
 			m_lights[light.first].rerender_req = true;
 
 	// When patch is working, makes sure the request be processed
-	while (m_lights.begin()->second.rerender_req &&
-		m_mode != SimulationAnimationMode::STOPPED) ;
+	bool flag = true;
+	while (flag && m_mode != SimulationAnimationMode::STOPPED) {
+		//bool dev_req = m_lights.begin()->second.rerender_req;
+		//printf("%d\n", dev_req);
+		if (m_lights.size() > 0)
+			for (auto light : m_lights) {
+				flag &= m_lights[light.first].rerender_req;
+				if (!flag)
+					return;
+			}
+				
+		//std::stringstream ss;
+		//ss << m_lights.begin()->second.rerender_req;
+		//Logger::log(LDEBUG, ss.str());
+	}
 }
 
 void ArnoldAnimationPatch::close() {
