@@ -19,6 +19,7 @@ int RigTests::runTests() {
   (runTest([=]{ return this->queryParameter(); }, "queryParameter", 9)) ? numPassed++ : numPassed;
   (runTest([=]{ return this->queryMixed(); }, "queryMixed", 10)) ? numPassed++ : numPassed;
   (runTest([=]{ return this->queryFilter(); }, "queryFilter", 11)) ? numPassed++ : numPassed;
+  (runTest([=]{ return this->dynamicQuery(); }, "dynamicQuery", 12)) ? numPassed++ : numPassed;
 
   return numPassed;
 }
@@ -385,5 +386,47 @@ bool RigTests::queryFilter() {
     ret = false;
   }
 
+  return ret;
+}
+
+bool RigTests::dynamicQuery() {
+  m_testRig->resetDevices();
+
+  bool ret = true;
+  DynamicDeviceSet dynam(m_testRig, "@intensity>0.5f");
+  
+  DeviceSet expected(m_testRig);
+  expected = expected.select("");
+  
+  if (dynam.size() != 0) {
+    cout << "Dynamic DeviceSet shouldn't have any devices in it. (No devices with intensity > 0.5).\n";
+    ret = false;
+  }
+
+  m_testRig->getDevice("s41")->setParam("intensity", 1.0f);
+  expected = expected.select("s41");
+
+  if (!dynam.getDeviceSet().hasSameDevices(expected)) {
+    cout << "Dynamic DeviceSet should have one device in it (s41)\n";
+    cout << "Info: " << dynam.info() << "\n";
+    ret = false;
+  }
+
+  m_testRig->getDevice("s42")->setParam("intensity", 0.7f);
+  expected = expected.add("s42");
+
+  if (!dynam.getDeviceSet().hasSameDevices(expected)) {
+    cout << "Dynamic DeviceSet should have two devices in it (s41, s42)\n";
+    cout << "Info: " << dynam.info() << "\n";
+    ret = false;
+  }
+
+  m_testRig->getDevice("s43")->setParam("intensity", 0.2f);
+
+  if (!dynam.getDeviceSet().hasSameDevices(expected)) {
+    cout << "Dynamic DeviceSet should have two devices in it (s41, s42)\n";
+    cout << "Info: " << dynam.info() << "\n";
+    ret = false;
+  }
   return ret;
 }

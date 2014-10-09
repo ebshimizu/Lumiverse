@@ -54,6 +54,7 @@
 #include "Device.h"
 #include "Rig.h"
 #include "DeviceSet.h"
+#include "DynamicDeviceSet.h"
 #include "Patch.h"
 #include "LumiverseType.h"
 #include "types/LumiverseFloat.h"

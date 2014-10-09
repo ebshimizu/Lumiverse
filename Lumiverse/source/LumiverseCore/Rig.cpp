@@ -590,4 +590,10 @@ bool Rig::removeFunction(int pid) {
   return ret;
 }
 
+void Rig::resetDevices() {
+  for (const auto& d : m_devices) {
+    d->reset();
+  }
+}
+
 }

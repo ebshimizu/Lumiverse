@@ -354,6 +354,11 @@ namespace Lumiverse {
     */
     size_t getNumDevices() { return m_devices.size(); }
 
+    /*!
+    \brief Resets all devices in the rig to defaults.
+    */
+    void resetDevices();
+
   private:
     /*!
     * \brief Loads the rig info from the parsed JSON data.

@@ -73,12 +73,6 @@ namespace Lumiverse {
     \brief Constructs a DeviceSet from a JSON node and a given Rig.
     */
     DeviceSet(Rig* rig, JSONNode node);
-    
-    /*!
-    \brief Constructs a DeviceSet from a custom query and assigns that query
-    to the DeviceSet.
-    */
-    DeviceSet(Rig* rig, string query);
 
     /*!
     * \brief Copy a DeviceSet
@@ -533,11 +527,6 @@ namespace Lumiverse {
     */
     JSONNode toJSON(string name);
 
-    /*!
-    \brief If this DeviceSet is using a query to select devices, this returns true.
-    */
-    bool isQuery();
-
   private:
     /*!
     * \brief Adds to the set without returning a new copy.
@@ -572,12 +561,6 @@ namespace Lumiverse {
     void removeSet(DeviceSet otherSet);
 
     /*!
-    \brief Requeries the Rig to update the set of devices managed by
-    the device set.
-    */
-    void reloadQuery();
-
-    /*!
     * \brief Set of devices currently contained in the Deviceset
     */
     set<Device *> m_workingSet;
@@ -586,15 +569,6 @@ namespace Lumiverse {
     * \brief Pointer to the rig for accessing indexes and devices
     */
     Rig* m_rig;
-
-    /*!
-    \brief DeviceSet query string
-
-    DeviceSet objects can also be constructed with queries. At that point,
-    they become dynamic queries which will select a different series of
-    lights based on current conditions in the rig.
-    */
-    string m_query;
   };
 }
 

@@ -62,6 +62,8 @@ set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
     Rig.cpp
     DeviceSet.h
     DeviceSet.cpp
+    DynamicDeviceSet.h
+    DynamicDeviceSet.cpp
     LumiverseType.h
     Patch.h
     types/LumiverseFloat.h

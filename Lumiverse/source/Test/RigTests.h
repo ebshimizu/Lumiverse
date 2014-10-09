@@ -21,7 +21,7 @@ private:
   bool runTest(std::function<bool()> t, string testName, int testNum);
 
   // Update when new tests are written.
-  int m_numTests = 11;
+  int m_numTests = 12;
 
   // Initialized in rigStart()
   Rig* m_testRig;
@@ -38,6 +38,7 @@ private:
   bool queryParameter();
   bool queryMixed();
   bool queryFilter();
+  bool dynamicQuery();
 
   // Reserved for future use.
   bool queryComplex();
