@@ -24,7 +24,7 @@ private:
   bool runTest(std::function<bool()> t, string testName, int testNum);
 
   // Update when new tests are written.
-  int m_numTests = 8;
+  int m_numTests = 9;
 
   // Initialized in PlaybackStart()
   Rig* m_testRig;
@@ -42,4 +42,5 @@ private:
   bool playCue();
   bool layerToggle();
   bool snapshot();
+  bool groups();
 };

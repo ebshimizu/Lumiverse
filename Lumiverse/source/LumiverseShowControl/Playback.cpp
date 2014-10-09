@@ -248,6 +248,24 @@ namespace ShowControl {
     }
     pb.push_back(layers);
 
+    // Then groups
+    JSONNode groups;
+    groups.set_name("groups");
+
+    for (auto& kvp : m_groups) {
+      groups.push_back(kvp.second.toJSON(kvp.first));
+    }
+    pb.push_back(groups);
+
+    // Then dynamic groups
+    JSONNode dynGroups;
+    dynGroups.set_name("dynamic_groups");
+
+    for (auto& kvp : m_dynGroups) {
+      dynGroups.push_back(kvp.second.toJSON(kvp.first));
+    }
+    pb.push_back(dynGroups);
+
     pb.push_back(m_prog->toJSON());
 
     root.push_back(pb);
@@ -346,6 +364,32 @@ namespace ShowControl {
       }
     }
 
+    auto groups = data->find("groups");
+    if (groups == data->end()) {
+      Logger::log(INFO, "No groups found for Playback.");
+    }
+    else {
+      auto it = groups->begin();
+      while (it != groups->end()) {
+        m_groups[it->name()] = DeviceSet(getRig(), *it);
+
+        it++;
+      }
+    }
+
+    auto dynGroups = data->find("dynamic_groups");
+    if (dynGroups == data->end()) {
+      Logger::log(INFO, "No dynamic groups found for Playback.");
+    }
+    else {
+      auto it = dynGroups->begin();
+      while (it != dynGroups->end()) {
+        m_dynGroups[it->name()] = DynamicDeviceSet(getRig(), *it);
+
+        it++;
+      }
+    }
+
     auto prog = data->find("programmer");
     if (prog == data->end()) {
       Logger::log(WARN, "No programmer data found");
@@ -365,5 +409,52 @@ namespace ShowControl {
     return m_layers.size();
   }
 
+  bool Playback::storeGroup(string name, DeviceSet group, bool overwrite) {
+    if (!overwrite && m_groups.count(name) > 0)
+    {
+      Logger::log(ERR, "Group with name " + name + " already exists");
+      return false;
+    }
+
+    m_groups[name] = group;
+    return true;
+  }
+
+  bool Playback::storeDynamicGroup(string name, DynamicDeviceSet group, bool overwrite) {
+    if (!overwrite && m_dynGroups.count(name) > 0) {
+      Logger::log(ERR, "Group with name " + name + " already exists");
+      return false;
+    }
+
+    m_dynGroups[name] = group;
+    return true;
+  }
+
+  bool Playback::deleteGroup(string name) {
+    return m_groups.erase(name) > 0;
+  }
+
+  bool Playback::deleteDynamicGroup(string name) {
+    return m_dynGroups.erase(name) > 0;
+  }
+
+  DeviceSet Playback::getGroup(string name) {
+    if (m_groups.count(name) == 0) {
+      Logger::log(WARN, "Group " + name + " not found. Returning default group...");
+      return DeviceSet(getRig());
+    }
+
+    return m_groups[name];
+  }
+
+  DynamicDeviceSet Playback::getDynamicGroup(string name) {
+    if (m_dynGroups.count(name) == 0) {
+      Logger::log(WARN, "Group " + name + " not found. Returning default group...");
+      return DynamicDeviceSet(getRig(), "");
+    }
+
+    return m_dynGroups[name];
+  }
+  
 }
 }

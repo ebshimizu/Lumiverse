@@ -205,6 +205,60 @@ namespace ShowControl{
     */
     int getNumLayers();
 
+    /*!
+    \brief Saves a user-specified DeviceSet as a group in the Playback.
+    \param name Name of the group
+    \param group DeviceSet to be saved
+    \param overwrite If set to true, will replace the group with the same name if it exists.
+    \return True on success, false if a group with the given name already exists
+    and overwrite is set to false
+    */
+    bool storeGroup(string name, DeviceSet group, bool overwrite = false);
+
+    /*!
+    \brief Saves a user-specified DynamicDeviceSet as a group in the Playback
+    \param name Name of the group
+    \param group DynamicDeviceSet to be saved
+    \param overwrite If set to true, will replace the group with the same name if it exists.
+    \return True on success, false if a group with the given name already exists
+    and overwrite is set to false.
+    */
+    bool storeDynamicGroup(string name, DynamicDeviceSet group, bool overwrite = false);
+
+    /*!
+    \brief Deletes a group
+    \param name Name of the group to delete
+    \return True on success, false if a group with the given name does not exist
+    */
+    bool deleteGroup(string name);
+
+    /*!
+    \brief Deletes a dynamic group
+    \param name Name of the group to delete
+    \return True on success, false if a group with the given name does not exist
+    */
+    bool deleteDynamicGroup(string name);
+
+    /*!
+    \brief Gets a saved group.
+    */
+    DeviceSet getGroup(string name);
+
+    /*!
+    \brief Gets a saved Dynamic group.
+    */
+    DynamicDeviceSet getDynamicGroup(string name);
+
+    /*!
+    \brief Get the map of groups in the Playback
+    */
+    const map<string, DeviceSet>& getGroups() { return m_groups; }
+
+    /*!
+    \brief GEt the map of dynamic groups in the Playback.
+    */
+    const map<string, DynamicDeviceSet>& getDynamicGroups() { return m_dynGroups; }
+
   private:
     /*! \brief Map of layer names to layers. */
     map<string, shared_ptr<Layer> > m_layers;
@@ -214,6 +268,12 @@ namespace ShowControl{
 
     /*! \brief Copy of all devices in the rig. Current state of the playback. */
     map<string, Device*> m_state;
+
+    /*! \brief Stores named groups (DeviceSets) created by the user. */
+    map<string, DeviceSet> m_groups;
+
+    /*! \brief Stores named dynamic groups (DynamicDeviceSets) created by the user. */
+    map<string, DynamicDeviceSet> m_dynGroups;
 
     // Does the updating of the rig while running.
     // unique_ptr<thread> m_updateLoop;

@@ -16,6 +16,7 @@ int PlaybackTests::runTests() {
   (runTest([=]{ return this->playCue(); }, "playCue", 6)) ? numPassed++ : numPassed;
   (runTest([=]{ return this->layerToggle(); }, "layerToggle", 7)) ? numPassed++ : numPassed;
   (runTest([=]{ return this->snapshot(); }, "snapshot", 8)) ? numPassed++ : numPassed;
+  (runTest([=]{ return this->groups(); }, "groups", 9)) ? numPassed++ : numPassed;
 
   return numPassed;
 }
@@ -206,5 +207,74 @@ bool PlaybackTests::snapshot() {
     return false;
   }
 
+  return true;
+}
+
+bool PlaybackTests::groups() {
+  DeviceSet g1 = m_testRig->query("#1-10");
+
+  if (!m_pb->storeGroup("my group", g1)) {
+    cout << "Failed to save group in playback\n";
+    return false;
+  }
+
+  if (!m_pb->getGroup("my group").hasSameDevices(g1)) {
+    cout << "Failed to retrive group from playback\n";
+    return false;
+  }
+
+  DeviceSet g2 = m_testRig->query("#1-5");
+  if (m_pb->storeGroup("my group", g2)) {
+    cout << "Failed to detect exiting group in playback\n";
+    return false;
+  }
+
+  if (m_pb->getGroup("DNE").size() != 0) {
+    cout << "Group that doesn't exist in playback has non-zero number of devices\n";
+    return false;
+  }
+
+  if (!m_pb->storeGroup("my group", g2, true)) {
+    cout << "Failed to overwrite existing group.";
+    return false;
+  }
+
+  if (!m_pb->deleteGroup("my group")) {
+    cout << "Failed to delete group\n";
+    return false;
+  }
+
+  DynamicDeviceSet dg1 = DynamicDeviceSet(m_testRig, "#1-5");
+
+  if (!m_pb->storeDynamicGroup("my group", dg1)) {
+    cout << "Failed to save dynamic group in playback\n";
+    return false;
+  }
+
+  if (!m_pb->getDynamicGroup("my group").hasSameDevices(dg1)) {
+    cout << "Failed to retrive dynamic group from playback\n";
+    return false;
+  }
+
+  DynamicDeviceSet dg2 = DynamicDeviceSet(m_testRig, "#1-10");
+  if (m_pb->storeDynamicGroup("my group", dg2)) {
+    cout << "Failed to detect exiting dynamic group in playback\n";
+    return false;
+  }
+
+  if (m_pb->getDynamicGroup("DNE").size() != 0) {
+    cout << "Dynamic group that doesn't exist in playback has non-zero number of devices\n";
+    return false;
+  }
+
+  if (!m_pb->storeDynamicGroup("my group", dg2, true)) {
+    cout << "Failed to overwrite existing dynamic group.";
+    return false;
+  }
+
+  if (!m_pb->deleteDynamicGroup("my group")) {
+    cout << "Failed to delete dynamic group\n";
+    return false;
+  }
   return true;
 }

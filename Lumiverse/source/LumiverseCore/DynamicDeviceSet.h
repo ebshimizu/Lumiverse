@@ -35,6 +35,13 @@ namespace Lumiverse {
   {
   public:
     /*!
+    \brief Default constructor
+    
+    Like the default constructor for DeviceSet, this isn't particularly useful.
+    */
+    DynamicDeviceSet() : m_query("") { };
+
+    /*!
     * \brief Constructs a DynamicDeviceSet
     *
     * Similar to a copy constructor.
