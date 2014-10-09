@@ -253,7 +253,8 @@ bool ArnoldPatch::isUpdateRequired(set<Device *> devices) {
 		if (m_lights.count(name) == 0)
 			continue;
 		
-        if (m_lights[d->getId()].rerender_req) {
+		bool dev_req = m_lights[d->getId()].rerender_req;
+		if (dev_req) {
             req = true;
             break;
         }

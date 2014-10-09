@@ -38,6 +38,7 @@ void ArnoldAnimationPatch::loadJSON(const JSONNode data) {
 
 		if (nodeName == "frameDirectory") {
 			JSONNode fileName = *i;
+			delete m_file_frameManager;
 			m_file_frameManager = new ArnoldFileFrameManager(fileName.as_string());
 		}
 
@@ -132,8 +133,32 @@ void ArnoldAnimationPatch::rerender() {
 			m_lights[light.first].rerender_req = true;
 
 	// When patch is working, makes sure the request be processed
-	while (m_lights.begin()->second.rerender_req &&
-		m_mode != SimulationAnimationMode::STOPPED) ;
+	bool flag = true;
+	while (flag && m_mode != SimulationAnimationMode::STOPPED) {
+		if (m_lights.size() > 0)
+			for (auto light : m_lights) {
+				flag &= m_lights[light.first].rerender_req;
+				if (!flag)
+					return;
+			}
+	}
+}
+
+void ArnoldAnimationPatch::interruptRender() {
+	if (m_mode == SimulationAnimationMode::RECORDING ||
+		m_mode == SimulationAnimationMode::INTERACTIVE)
+		ArnoldPatch::interruptRender();
+	else if (m_mode == SimulationAnimationMode::RENDERING) {
+		ArnoldPatch::interruptRender();
+
+		// Clear queue (turn rendering tasks into interactive tasks)
+		m_queue.lock();
+		for (auto i = m_queuedFrameDeviceInfo.begin();
+			i != m_queuedFrameDeviceInfo.end(); i++) {
+			i->mode = SimulationAnimationMode::INTERACTIVE;
+		}
+		m_queue.unlock();
+	}
 }
 
 void ArnoldAnimationPatch::close() {
@@ -296,6 +321,8 @@ void ArnoldAnimationPatch::workerLoop() {
 				// No frame would be skipped.
                 frame = m_queuedFrameDeviceInfo[0];
                 m_queuedFrameDeviceInfo.erase(m_queuedFrameDeviceInfo.begin());
+				if (frame.mode == SimulationAnimationMode::RECORDING)
+					frame.mode = SimulationAnimationMode::RENDERING;
             }
             else if (m_mode == SimulationAnimationMode::INTERACTIVE) {
                 frame = m_queuedFrameDeviceInfo.back();
