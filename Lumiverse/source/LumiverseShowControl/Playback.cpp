@@ -455,6 +455,14 @@ namespace ShowControl {
 
     return m_dynGroups[name];
   }
+
+  bool Playback::groupExists(string name) {
+    return m_groups.count(name) > 0;
+  }
+
+  bool Playback::dynamicGroupExists(string name) {
+    return m_dynGroups.count(name) > 0;
+  }
   
 }
 }

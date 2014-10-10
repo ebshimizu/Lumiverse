@@ -109,4 +109,12 @@ JSONNode DynamicDeviceSet::toJSON(string name) {
 
   return str;
 }
+
+void DynamicDeviceSet::setQuery(string query) {
+  m_query = query;
+}
+
+string DynamicDeviceSet::getQuery() {
+  return m_query;
+}
 }

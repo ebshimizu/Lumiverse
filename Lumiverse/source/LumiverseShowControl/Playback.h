@@ -250,6 +250,16 @@ namespace ShowControl{
     DynamicDeviceSet getDynamicGroup(string name);
 
     /*!
+    \brief Checks if a group with the given name exists
+    */
+    bool groupExists(string name);
+
+    /*!
+    \brief Checks if a dynamic group with the given name exists.
+    */
+    bool dynamicGroupExists(string name);
+
+    /*!
     \brief Get the map of groups in the Playback
     */
     const map<string, DeviceSet>& getGroups() { return m_groups; }
