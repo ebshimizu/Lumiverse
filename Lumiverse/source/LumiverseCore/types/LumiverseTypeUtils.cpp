@@ -178,6 +178,24 @@ bool LumiverseTypeUtils::lessThan(LumiverseType* lhs, LumiverseType* rhs) {
   return (cmp(lhs, rhs) == -1);
 }
 
+void LumiverseTypeUtils::scaleParam(LumiverseType* val, float scale) {
+  if (val != nullptr) {
+    if (val->getTypeName() == "float")
+      (*((LumiverseFloat*)val)) *= scale;
+    else if (val->getTypeName() == "enum") {
+      LumiverseEnum* eVal = (LumiverseEnum*)val;
+      float num = eVal->getRangeVal();
+      eVal->setVal(num);
+    }
+    else if (val->getTypeName() == "color")
+      (*((LumiverseColor*)val)) *= scale;
+    else if (val->getTypeName() == "orientation")
+      (*((LumiverseOrientation*)val)) *= scale;
+    else
+      Logger::log(ERR, "Invalid Lumiverse type " + val->getTypeName() + " found.");
+  }
+}
+
 LumiverseType* LumiverseTypeUtils::loadFromJSON(JSONNode node) {
   bool err = false;
 

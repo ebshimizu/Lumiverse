@@ -34,7 +34,7 @@ namespace ShowControl{
     \brief Initializes a playback object.
     \param rig Rig object associated with this playback.
     */
-    Playback(Rig* rig);
+    Playback(Rig* rig, float gm = 1.0f);
 
     /*!
     \brief Loads a playback object from a file.
@@ -265,9 +265,20 @@ namespace ShowControl{
     const map<string, DeviceSet>& getGroups() { return m_groups; }
 
     /*!
-    \brief GEt the map of dynamic groups in the Playback.
+    \brief Get the map of dynamic groups in the Playback.
     */
     const map<string, DynamicDeviceSet>& getDynamicGroups() { return m_dynGroups; }
+
+    /*!
+    \briefs Sets the level of the grandmaster.
+    \param val Value between 0 and 1. Values outisde this range will be clamped.
+    */
+    void setGrandmaster(float val);
+
+    /*!
+    \brief Gets the value of the grandmaster.
+    */
+    float getGrandmaster() { return m_grandmaster; }
 
   private:
     /*! \brief Map of layer names to layers. */
@@ -293,6 +304,9 @@ namespace ShowControl{
 
     /*! \brief ID of the attached function in the rig update loop */
     int m_funcId;
+
+    /*! \brief Controls the overall level of parameters in the rig. */
+    float m_grandmaster;
 
     // Refresh rate used by the update loop.
     // unsigned int m_refreshRate;

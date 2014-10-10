@@ -73,7 +73,7 @@ namespace Lumiverse {
     */
     inline bool areSameType(LumiverseType* lhs, LumiverseType* rhs);
 
-	Eigen::Matrix3f getRotationMatrix(Eigen::Vector3f lookat, Eigen::Vector3f up, LumiverseOrientation pan, LumiverseOrientation tilt);
+    Eigen::Matrix3f getRotationMatrix(Eigen::Vector3f lookat, Eigen::Vector3f up, LumiverseOrientation pan, LumiverseOrientation tilt);
 
     /*!
     * \brief Compares two LumiverseTypes with <
@@ -82,6 +82,16 @@ namespace Lumiverse {
     * \return true if lhs < rhs
     */
     bool lessThan(LumiverseType* lhs, LumiverseType* rhs);
+
+    /*!
+    \brief Multiplies a parameter by a constant value (typically from 0 to 1, but no limits
+    are enforced in this function).
+
+    The scaling is done inline, as in this function directly modifies the value passed in.
+    \param val LumiverseType to scale.
+    \param scale The scaling factor.
+    */
+    void scaleParam(LumiverseType* val, float scale);
 
     /*! \brief Loads a LumiverseType from a JSON node. */
     LumiverseType* loadFromJSON(JSONNode node);

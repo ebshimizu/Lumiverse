@@ -3,7 +3,7 @@
 namespace Lumiverse {
 namespace ShowControl {
 
-  Playback::Playback(Rig* rig) : m_rig(rig) {
+  Playback::Playback(Rig* rig, float gm) : m_rig(rig), m_grandmaster(gm) {
     // setRefreshRate(refreshRate);
     m_running = false;
 
@@ -102,6 +102,15 @@ namespace ShowControl {
       // This layer sits on top of everything else and anything captured by it
       // will take precedence over everything.
       m_prog->blend(m_state);
+
+      // If we have a GM value less than 1, do some scaling
+      if (m_grandmaster < 1) {
+        for (const auto& d : m_state) {
+          for (auto p : d.second->getRawParameters()) {
+            LumiverseTypeUtils::scaleParam(p.second, m_grandmaster);
+          }
+        }
+      }
 
       // Write state to rig.
       m_rig->setAllDevices(m_state);
@@ -230,6 +239,9 @@ namespace ShowControl {
     JSONNode pb;
     pb.set_name("playback");
 
+    // Easy stuff first
+    pb.push_back(JSONNode("grandmaster", m_grandmaster));
+
     // Cue Lists first.
     JSONNode lists;
     lists.set_name("cueLists");
@@ -330,6 +342,15 @@ namespace ShowControl {
     if (data == node.end()) {
       Logger::log(ERR, "No Playback data found");
       return false;
+    }
+
+    auto gm = data->find("grandmaster");
+    if (gm == data->end()) {
+      Logger::log(INFO, "No Grandmaster value found, defaulting to 1.");
+      m_grandmaster = 1;
+    }
+    else {
+      m_grandmaster = gm->as_float();
     }
     
     auto cueLists = data->find("cueLists");
@@ -463,6 +484,9 @@ namespace ShowControl {
   bool Playback::dynamicGroupExists(string name) {
     return m_dynGroups.count(name) > 0;
   }
-  
+
+  void Playback::setGrandmaster(float val) {
+    m_grandmaster = (val > 1) ? 1 : ((val < 0) ? 0 : val);
+  }
 }
 }
