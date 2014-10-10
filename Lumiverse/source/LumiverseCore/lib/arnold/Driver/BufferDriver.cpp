@@ -80,7 +80,6 @@ node_parameters
 	AiParameterBool("predictive", 0);
 }
     
-    
 node_initialize
 {
     // Initialize the driver (set the required AOVs and indicate that

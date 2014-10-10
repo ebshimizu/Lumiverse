@@ -137,10 +137,12 @@ void ArnoldAnimationPatch::rerender() {
 	while (flag && m_mode != SimulationAnimationMode::STOPPED) {
 		if (m_lights.size() > 0)
 			for (auto light : m_lights) {
-				flag &= m_lights[light.first].rerender_req;
-				if (!flag)
-					return;
+			flag &= m_lights[light.first].rerender_req;
+			if (!flag)
+				return;
 			}
+		else
+			return;
 	}
 }
 
