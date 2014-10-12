@@ -481,5 +481,13 @@ namespace ShowControl {
     return layer;
   }
 
+  void Layer::reset() {
+    for (const auto& kvp : m_layerState) {
+      kvp.second->reset();
+    }
+
+    m_currentCue = -1;
+  }
+  
 }
 }

@@ -206,6 +206,14 @@ public:
   */
   void setTime(float up, float down);
 
+  /*!
+  \brief Sets a time with an up, down, and delay for the cue.
+  \param up Upfade in seconds
+  \param down Downfade in seconds
+  \param delay Delay in seconds
+  */
+  void setTime(float up, float down, float delay);
+
   // Keyframe modifiers
   // Does a raw insert of a single parameter's data into a keyframe
   inline void insertKeyframe(string id, string param, Lumiverse::LumiverseType* data, float time, bool uct = true);
@@ -331,7 +339,7 @@ private:
   /*!
   \brief Cue type.
   
-  If equal to "" then getType() will recheck the type of the cue;
+  If equal to INVALID then getType() will recheck the type of the cue;
   */
   Type m_type;
 
