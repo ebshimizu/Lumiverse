@@ -73,7 +73,7 @@ namespace Lumiverse {
   *  
   * \sa ArnoldPatch, ArnoldFrameManager
   */
-  class SimulationAnimationPatch : public SimulationPatch
+  class SimulationAnimationPatch
   {
   public:
     /*!
@@ -81,7 +81,8 @@ namespace Lumiverse {
     */
     SimulationAnimationPatch() : m_worker(NULL), 
 	  m_startPoint(std::chrono::system_clock::from_time_t(0)),
-	  m_mem_frameManager(NULL), m_file_frameManager(NULL), m_mode(SimulationAnimationMode::STOPPED) { }
+	  m_mem_frameManager(NULL), m_file_frameManager(NULL), 
+	  m_mode(SimulationAnimationMode::STOPPED) { }
 
     /*!
     * \brief Constructs ArnoldPatch from JSON data.
@@ -95,17 +96,24 @@ namespace Lumiverse {
     */
     virtual ~SimulationAnimationPatch();
 
+	// Callbacks
+	typedef function<void()> FinishedCallbackFunction;
+	typedef function<bool(set<Device *>)> IsUpdateRequiredFunction;
+	typedef function<void(FrameDeviceInfo&)> CreateFrameInfoBodyFunction;
+	typedef function<void()> InterruptFunction;
+	typedef function<void()> ClearUpdateFlagsFunction;
+
     /*!
     * \brief Initializes Arnold with function of its parent class and
     * starts a worker thread.
     */
-    virtual void init() override;
+    void init();
 
     /*!
     * \brief Starts recording.
     * Main thread starts to send frame labeled as RECORDING info to worker.
     */
-    void startRecording() { 
+    virtual void startRecording() { 
 		m_mem_frameManager->clear();
 
 		// Overwrite existing frames instead of clearing all
@@ -120,20 +128,20 @@ namespace Lumiverse {
 	* Main thread stops to send frame labeled as RECORDING info to worker.
 	* It starts to send INTERACTIVE frame instead.
 	*/
-    void endRecording();
+    virtual void endRecording();
       
     /*!
     * \brief Starts interactive mode.
     * Worker thread can get interrupted. It always takes the most fresh info.
     */
-    void startInteractive() { m_mode = SimulationAnimationMode::INTERACTIVE; }
+	virtual void startInteractive() { m_mode = SimulationAnimationMode::INTERACTIVE; }
       
 	/*!
 	* \brief Returns the mode/state in which the patch is.
 	*
 	* \return The mode/state.
 	*/
-    SimulationAnimationMode getMode() { return m_mode; }
+    virtual SimulationAnimationMode getMode() { return m_mode; }
       
     /*!
     * \brief Gets the type of this object.
@@ -150,14 +158,9 @@ namespace Lumiverse {
     * there is any parameter or metadata changed during last update
     * interval. It only adds a new request when it's truly necessary.
     */
-	virtual void update(set<Device *> devices) override;
-
-	/*!
-	* \brief Manually schedule a re-rendering and make sure the task be inserted into queue.
-	*
-	* This new rendering task may not be done immediately, but it will get inserted.
-	*/
-	virtual void rerender();
+	void update(set<Device *> devices, IsUpdateRequiredFunction isUpdateRequired,
+		InterruptFunction interruptRender,
+		ClearUpdateFlagsFunction clearUpdateFlags);
 
     /*!
     * \brief Waits for the worker thread and closes the Arnold session.
@@ -167,7 +170,7 @@ namespace Lumiverse {
     * Then the thread would wait to join the worker thread. After all
     * there are done, closes the arnold session as the parent class.
     */
-	virtual void close() override;
+	void close();
 
     /*!
     * \brief Returns the ArnoldFrameManager to reconstruction the 
@@ -176,24 +179,21 @@ namespace Lumiverse {
     * \return The ArnoldFrameManager object containning all the frame
     * and their corresponding time point.
     */
-    ArnoldFrameManager *getFrameManager() const;
+    virtual ArnoldFrameManager *getFrameManager() const;
     
     /*!
     * \brief Resets the object to its initial state.
     *
     * Including resetting start point, clearing frame manager, interrupting worker and clearing worker's queue.
     */
-    void reset();
+	virtual void reset(InterruptFunction interruptRender);
       
 	/*!
 	* \brief Stops the patch.
 	*
 	* The main thread would stop responding to new requests and the worker thread would be joined.
 	*/
-    void stop();
-      
-    // Callbacks
-    typedef function<void()> FinishedCallbackFunction;
+	virtual void stop();
       
     /*!
     * \brief Registers a callback function for parameter changed event.
@@ -204,7 +204,7 @@ namespace Lumiverse {
     * \return The int id for the registered function.
     * \sa addMetadataChangedCallback(DeviceCallbackFunction func)
     */
-    int addFinishedCallback(FinishedCallbackFunction func);
+    virtual int addFinishedCallback(FinishedCallbackFunction func);
       
     /*!
     * \brief Deletes a registered callback for parameter change
@@ -212,14 +212,15 @@ namespace Lumiverse {
     * \param id The id returned when the callback is registered
     * \sa addParameterChangedCallback(DeviceCallbackFunction func)
     */
-    void deleteFinishedCallback(int id);
+	virtual void deleteFinishedCallback(int id);
 
   protected:
+
 	/*!
 	* \brief Loads data from a parsed JSON object
 	* \param data JSON data to load
 	*/
-	virtual void loadJSON(const JSONNode data) override;
+	void loadJSON(const JSONNode data);
 
 	/*!
 	* \brief Worker loop.
@@ -238,11 +239,13 @@ namespace Lumiverse {
 
 	virtual void onRendering() { }
 
-	virtual void workerRender(FrameDeviceInfo frame);
+	virtual void workerRender(FrameDeviceInfo frame) = 0;
 
-	void createFrameInfoHeader(FrameDeviceInfo &frame);
+	virtual void createFrameInfoHeader(FrameDeviceInfo &frame);
 
-	void enqueueFrameInfo(const FrameDeviceInfo &frame);
+	virtual void createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame) = 0;
+
+	virtual void enqueueFrameInfo(const FrameDeviceInfo &frame);
 
     // The worker thread.
     std::thread *m_worker;
@@ -269,8 +272,6 @@ namespace Lumiverse {
 	/*! \brief The list for callback functions.
 	*/
     map<int, FinishedCallbackFunction> m_onFinishedFunctions;
-
-	private: 
   };
     
 }

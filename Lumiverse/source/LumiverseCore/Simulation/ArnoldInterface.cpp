@@ -276,6 +276,9 @@ void ArnoldInterface::init() {
     // Starts a arnold session
     AiBegin();
 
+	//AiMsgSetLogFileName("J:/Lumiverse/Lumiverse/data/Jules/LOG");
+	//AiMsgSetLogFileFlags(AI_LOG_ALL);
+
 	// Keeps directory of plugins absolute.
 	AiLoadPlugins(m_plugin_dir.c_str());
     
@@ -330,12 +333,16 @@ void ArnoldInterface::init() {
 }
 
 void ArnoldInterface::close() {
-    AiEnd();
+    //AiEnd();
 	// Cleans buffer
 	delete[] m_buffer;
 	m_buffer = NULL;
 	delete[] m_bucket_pos;
 	m_bucket_pos = NULL;
+
+	AiBegin();
+
+	AiEnd();
 }
     
 int ArnoldInterface::render() {

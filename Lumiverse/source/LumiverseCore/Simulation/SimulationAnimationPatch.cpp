@@ -8,10 +8,11 @@ namespace Lumiverse {
 // Uses chrono::system_clock::from_time_t(0) as an invalid value.
 SimulationAnimationPatch::SimulationAnimationPatch(const JSONNode data)
 : m_worker(NULL), m_startPoint(chrono::system_clock::from_time_t(0)),
-    m_mode(SimulationAnimationMode::STOPPED) {
+    m_mode(SimulationAnimationMode::STOPPED), 
+	m_mem_frameManager(new ArnoldMemoryFrameManager()), m_file_frameManager(NULL) {
     // TODO: type for frame manager
-	m_mem_frameManager = new ArnoldMemoryFrameManager();
-	m_file_frameManager = NULL;
+	//m_mem_frameManager = new ArnoldMemoryFrameManager();
+	//m_file_frameManager = NULL;
     loadJSON(data);
 }
     
@@ -25,8 +26,6 @@ SimulationAnimationPatch::~SimulationAnimationPatch() {
 }
 
 void SimulationAnimationPatch::loadJSON(const JSONNode data) {
-	SimulationPatch::loadJSON(data);
-
 	string patchName = data.name();
 
 	// Load options for raytracer application. (window, ray tracer, filter)
@@ -45,13 +44,14 @@ void SimulationAnimationPatch::loadJSON(const JSONNode data) {
 }
 
 void SimulationAnimationPatch::init() {
-    SimulationPatch::init();
-
 	// Cleans hooks to old callbacks
 	m_onFinishedFunctions.clear();
 }
     
-void SimulationAnimationPatch::update(set<Device *> devices) {
+void SimulationAnimationPatch::update(set<Device *> devices, 
+	IsUpdateRequiredFunction isUpdateRequired,
+	InterruptFunction interruptRender,
+	ClearUpdateFlagsFunction clearUpdateFlags) {
 	// Doesn't respond if it's stopped.
     if (m_mode == SimulationAnimationMode::STOPPED)
         return ;
@@ -68,15 +68,7 @@ void SimulationAnimationPatch::update(set<Device *> devices) {
     if (!rerender_req)
         return ;
     
-    for (Device *d : devices) {
-		// Checks if the device is connect to this patch
-		if (m_lights.count(d->getId()) > 0 &&
-			m_lights[d->getId()]->rerender_req) {
-			// Makes copy of this device
-			Device *d_copy = new Device(*d);
-			frame.devices.insert(d_copy);
-		}
-    }
+	createFrameInfoBody(devices, frame);
 
     std::stringstream ss;
     ss << "Sent new frame: " << frame.time << "(" << frame.mode << ")";
@@ -124,17 +116,6 @@ void SimulationAnimationPatch::createFrameInfoHeader(FrameDeviceInfo &frame) {
 
 }
 
-void SimulationAnimationPatch::rerender() {
-	// Sets all rerendering flags to true to preserve the first frame
-	if (m_lights.size() > 0)
-		for (auto light : m_lights)
-			m_lights[light.first]->rerender_req = true;
-
-	// When patch is working, makes sure the request be processed
-	while (m_lights.begin()->second->rerender_req &&
-		m_mode != SimulationAnimationMode::STOPPED) ;
-}
-
 void SimulationAnimationPatch::close() {
     // Won't close immediately
     // Sends end signal to worker
@@ -157,16 +138,13 @@ void SimulationAnimationPatch::close() {
     m_worker = NULL;
     
     m_mode = SimulationAnimationMode::STOPPED;
-    
-    // Close arnold interface
-    SimulationPatch::close();
 }
 
 ArnoldFrameManager *SimulationAnimationPatch::getFrameManager() const {
     return m_mem_frameManager;
 }
 
-void SimulationAnimationPatch::reset() {
+void SimulationAnimationPatch::reset(InterruptFunction interruptRender) {
     // We want to block both worker and main thread during resetting
     m_queue.lock();
     m_mode = SimulationAnimationMode::INTERACTIVE;
@@ -234,24 +212,7 @@ void SimulationAnimationPatch::onWorkerFinished(){
     }
 }
     
-void SimulationAnimationPatch::workerRender(FrameDeviceInfo frame) {
-	std::stringstream ss;
-	ss << "Received new frame: " << frame.time << "(" << frame.mode << ")";
-	Logger::log(LDEBUG, ss.str());
 
-	updateLight(frame.devices);
-	bool success = SimulationPatch::renderLoop();
-
-	// Dumps only when the image was rendered successfully for rendering.
-	// If the worker was reset while rendering, doesn't dump.
-	if (success && frame.mode == SimulationAnimationMode::RENDERING) {
-		m_mem_frameManager->dump(frame.time, getBufferPointer(),
-			getWidth(), getHeight());
-		if (m_file_frameManager)
-			m_file_frameManager->dump(frame.time, getBufferPointer(),
-			getWidth(), getHeight());
-	}
-}
 
 void SimulationAnimationPatch::workerLoop() {
     FrameDeviceInfo frame;

@@ -1506,7 +1506,7 @@
 			}
 		},
         "combiner" : {
-          "type" : "SimulationAnimationPatch",
+          "type" : "PhotoAnimationPatch",
           "width" : "1359",
           "height" : "900",
           "frameDirectory" : "J:/Lumiverse/Lumiverse/source/Test/movie/",

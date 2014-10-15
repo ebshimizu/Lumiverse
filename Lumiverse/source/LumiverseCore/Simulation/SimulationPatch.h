@@ -33,22 +33,6 @@ namespace Lumiverse {
       bool rerender_req;
   };
 
-  struct PhotoLightRecord : SimulationLightRecord {
-	  PhotoLightRecord()
-		  : intensity(0), color(1.f, 1.f, 1.f), photo(NULL), SimulationLightRecord() {}
-	  virtual ~PhotoLightRecord() { 
-		  delete[] photo;
-	  }
-	  virtual void init() { 
-		  SimulationLightRecord::init(); 
-		  intensity = 0; 
-		  color.setOnes();
-	  }
-
-	  float intensity;
-	  Eigen::Vector3f color;
-	  float *photo;
-  };
     
   /*!
   * \brief The Arnold Patch object is responsible for the communication
@@ -64,7 +48,7 @@ namespace Lumiverse {
     /*!
     * \brief Constructs a SimulationPatch object.
     */
-	SimulationPatch() : m_renderloop(NULL), m_blend(NULL), m_blend_buffer(NULL) {
+	SimulationPatch() : m_renderloop(NULL) {
 		m_interrupt_flag.clear();
 	}
 
@@ -119,21 +103,21 @@ namespace Lumiverse {
     *
     * \return The width of result
     */
-    virtual int getWidth() { return m_width; }
+	virtual int getWidth() = 0;
 
     /*!
     * \brief Gets the height of result.
     *
     * \return The height of result
     */
-    virtual int getHeight() { return m_height; }
+	virtual int getHeight() = 0;
       
     /*!
     * \brief Gets the pointer to the frame buffer.
     *
     * \return The pointer to the frame buffer.
     */
-	virtual float *getBufferPointer() { return m_blend; }
+	virtual float *getBufferPointer() { return NULL; }
 
     /*!
     * \brief Stops the working rendering procedure if Arnold is running.
@@ -147,7 +131,7 @@ namespace Lumiverse {
     * will change the state of patch.
     * \param d The device which calls this function.
     */
-    void onDeviceChanged(Device *d);
+    virtual void onDeviceChanged(Device *d);
       
 	/*!
 	* \brief Manually schedule a re-rendering.
@@ -157,6 +141,19 @@ namespace Lumiverse {
     virtual void rerender();
       
 	/*!
+	* \brief Checks if any device connected with this patch has updated parameters or metadata.
+	* \param devices The device list.
+	* \return If there is any update.
+	*/
+	virtual bool isUpdateRequired(set<Device *> devices);
+
+
+	/*!
+	* \brief Resets the update flags for lights.
+	*/
+	virtual void clearUpdateFlags();
+
+	/*!
 	* \brief Gets the progress of current frame in percentage.
 	*
 	* \return The percent.
@@ -164,19 +161,13 @@ namespace Lumiverse {
 	//virtual float getPercentage() const { return m_interface.getPercentage(); }
 
   protected:
-    /*!
-    * \brief Checks if any device connected with this patch has updated parameters or metadata.
-    * \param devices The device list.
-    * \return If there is any update.
-    */
-    bool isUpdateRequired(set<Device *> devices);
-      
+
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.
     * This function updates light node for renderer.
     * \param devices The device list.
     */
-    void updateLight(set<Device *> devices);
+	virtual void updateLight(set<Device *> devices) = 0;
 
 	/*!
 	* \brief Loads a arnold light node.
@@ -190,19 +181,7 @@ namespace Lumiverse {
 	* This function is also used to update a light node.
 	* \param d_ptr The device with updated parameters.
 	*/
-	virtual void loadLight(std::string light);
-
-	/*!
-	* \brief Resets the arnold light node and surface with updated parameters of deices.
-	* Experiment with methods from Picture Perfect RGB rendering.
-	* \param devices The device list.
-	*/
-	void updateLightPredictive(set<Device *> devices);
-    
-    /*!
-    * \brief Resets the update flags for lights.
-    */
-    void clearUpdateFlags();
+	virtual void loadLight(std::string light) = 0;
     
     /*!
     * \brief Loads data from a parsed JSON object
@@ -214,7 +193,9 @@ namespace Lumiverse {
     * \brief Calls Arnold render function.
     * This function runs in a separate thread.
     */
-    virtual bool renderLoop();
+    virtual bool renderLoop() = 0;
+
+	virtual void bindRenderLoop();
 
     /*!
     * \brief A list contains infos about if a light is updated.
@@ -223,22 +204,10 @@ namespace Lumiverse {
 
 	std::atomic_flag m_interrupt_flag;
 
-  private:
-
-	bool blendUint8(float* blended, unsigned char* light, float intensity, Eigen::Vector3f color);
-
-	bool blendFloat(float* blended, float* light, float intensity, Eigen::Vector3f color);
-
-    /*!
-    * \brief The separate thread running the render loop.
-    */
-    std::thread *m_renderloop;
-
-	float *m_blend;
-	float *m_blend_buffer;
-
-	int m_height;
-	int m_width;
+	/*!
+	* \brief The separate thread running the render loop.
+	*/
+	std::thread *m_renderloop;
   };
 }
 
