@@ -123,24 +123,24 @@ void Rig::loadPatches(JSONNode root) {
       patch = (Patch*) new DMXPatch(*i);
       addPatch(nodeName, patch);
     }
-	else if (patchType == "SimulationPatch") {
-		patch = (Patch*) new SimulationPatch(*i);
+	else if (patchType == "PhotoPatch") {
+		patch = (Patch*) new PhotoPatch(*i);
 		addPatch(nodeName, patch);
 
-		Device::DeviceCallbackFunction callback = std::bind(&SimulationPatch::onDeviceChanged,
-			(SimulationPatch*)patch,
+		Device::DeviceCallbackFunction callback = std::bind(&PhotoPatch::onDeviceChanged,
+			(PhotoPatch*)patch,
 			std::placeholders::_1);
 		for (Device *d : getDeviceRaw()) {
 			d->addParameterChangedCallback(callback);
 			d->addMetadataChangedCallback(callback);
 		}
 	}
-	else if (patchType == "SimulationAnimationPatch") {
-		patch = (Patch*) new SimulationAnimationPatch(*i);
+	else if (patchType == "PhotoAnimationPatch") {
+		patch = (Patch*) new PhotoAnimationPatch(*i);
 		addPatch(nodeName, patch);
 
-		Device::DeviceCallbackFunction callback = std::bind(&SimulationAnimationPatch::onDeviceChanged,
-			(SimulationAnimationPatch*)patch,
+		Device::DeviceCallbackFunction callback = std::bind(&PhotoAnimationPatch::onDeviceChanged,
+			(PhotoAnimationPatch*)patch,
 			std::placeholders::_1);
 		for (Device *d : getDeviceRaw()) {
 			d->addParameterChangedCallback(callback);
@@ -520,8 +520,8 @@ Patch* Rig::getSimulationPatch(string type) {
     for (pair<string, Patch*> patch : m_patches) {
         if ((patch.second->getType() == "ArnoldPatch" ||
             patch.second->getType() == "ArnoldAnimationPatch" ||
-			patch.second->getType() == "SimulationPatch" ||
-			patch.second->getType() == "SimulationAnimationPatch") &&
+			patch.second->getType() == "PhotoPatch" ||
+			patch.second->getType() == "PhotoAnimationPatch") &&
             patch.second->getType() == type) {
             return patch.second;
         }

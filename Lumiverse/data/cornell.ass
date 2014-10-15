@@ -11,7 +11,7 @@ options
  texture_gamma 2.2
  camera persp
  outputs "RGBA RGBA filter testrender"
- atmosphere "aiVolumeScattering"
+ #atmosphere "aiVolumeScattering"
 }
 
 gaussian_filter
@@ -142,12 +142,7 @@ polymesh
   shader back_srf
 }
 
-sphere
-{
- shader pimp
- radius 1
- center 0 -1 0
-}
+
 
 quad_light
 {
@@ -160,4 +155,11 @@ quad_light
   normalize on
 }
 
-
+disk
+{
+  name plane022023024
+  center 1.79586 -0.92807 -1.41309
+  normal 0.999938 0.007874 0.007874
+  radius 0.05
+  shader back_srf
+}

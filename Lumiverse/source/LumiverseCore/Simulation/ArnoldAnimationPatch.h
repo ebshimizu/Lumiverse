@@ -83,13 +83,6 @@ namespace Lumiverse {
 
 		m_mode = SimulationAnimationMode::RECORDING; 
 	}
-    
-	/*!
-	* \brief Ends recording.
-	* Main thread stops to send frame labeled as RECORDING info to worker.
-	* It starts to send INTERACTIVE frame instead.
-	*/
-    void endRecording();
       
     /*!
     * \brief Starts interactive mode.
@@ -104,6 +97,8 @@ namespace Lumiverse {
 	*/
     SimulationAnimationMode getMode() { return m_mode; }
       
+	void endRecording();
+
     /*!
     * \brief Gets the type of this object.
     *
