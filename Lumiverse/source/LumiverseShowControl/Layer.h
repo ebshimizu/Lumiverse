@@ -198,7 +198,8 @@ namespace ShowControl {
     void goToCue(float num, float up = 3, float down = 3, float delay = 0);
 
     /*!
-    \brief Sets the layer state to the state at the specified time in a cue.
+    \brief NOTE: NOT UPDATED YET USE WITH CAUTION
+    Sets the layer state to the state at the specified time in a cue.
 
     This seeks to a position in a timeline. If time is greater than the length of the cue,
     it will be clamped to the beginning of the next cue (if one exists).
@@ -229,6 +230,9 @@ namespace ShowControl {
 
     /*! \brief Returns the JSON representation of a Layer. */
     JSONNode toJSON();
+
+    /*! \brief Restores the layer state to defaults and gets out of the current cue. */
+    void reset();
 
   private:
     /*!

@@ -221,13 +221,22 @@ void Cue::trackedUpdate(Cue::changedParams& oldVals, Rig* rig) {
   }
 }
 
+void Cue::setDelay(float delay) {
+  setTime(m_upfade, m_downfade, delay);
+}
+
 void Cue::setTime(float time) {
-  setTime(time, time);
+  setTime(time, time, m_delay);
 }
 
 void Cue::setTime(float up, float down) {
+  setTime(up, down, m_delay);
+}
+
+void Cue::setTime(float up, float down, float delay) {
   m_upfade = up;
   m_downfade = down;
+  m_delay = delay;
   m_lengthIsUpdated = false;
 }
 
