@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <cstdio>
 
-#include "../Patch.h"
+#include "SimulationPatch.h"
 #include "../lib/libjson/libjson.h"
 #include "ArnoldParameterVector.h"
 #include "ArnoldInterface.h"
@@ -26,19 +26,20 @@ namespace Lumiverse {
   /*! \brief Record that denotes if a arnold light node requires
    * update.
    */    
-  struct ArnoldLightRecord {
+  struct ArnoldLightRecord : public SimulationLightRecord {
       ArnoldLightRecord()
-		  : arnold_type(""), rerender_req(true), light(NULL) { }
+		  : light(NULL), SimulationLightRecord() {}
       ArnoldLightRecord(AtNode *node)
-		  : arnold_type(AiNodeGetName(node)), rerender_req(true), light(node) { }
+		  : light(node) {
+		  metadata = AiNodeGetName(node);
+		  rerender_req = true;
+	  }
       
 	  virtual void init() {
 		  rerender_req = true;
 		  light = NULL;
 	  }
 
-	  std::string arnold_type;
-      bool rerender_req;
       AtNode *light;
   };
     
@@ -50,13 +51,14 @@ namespace Lumiverse {
   *  
   * \sa ArnoldInterface, ArnoldAnimationPatch
   */
-  class ArnoldPatch : public Patch
+  class ArnoldPatch : public SimulationPatch
   {
   public:
     /*!
     * \brief Constructs a ArnoldPatch object.
     */
-    ArnoldPatch() : m_renderloop(NULL) { }
+    ArnoldPatch() :
+		SimulationPatch() { }
 
     /*!
     * \brief Construct ArnoldPatch from JSON data.
@@ -83,47 +85,59 @@ namespace Lumiverse {
     /*!
     * \brief Initializes Arnold with ArnoldInterface.
     */
-    virtual void init();
+	virtual void init() override;
 
     /*!
     * \brief Closes the Arnold session.
     */
-    virtual void close();
+	virtual void close() override;
 
     /*!
     * \brief Exports a JSONNode with the data in this patch
     *
     * \return JSONNode containing the ArnoldPatch object
     */
-    virtual JSONNode toJSON();
+	virtual JSONNode toJSON() override;
 
     /*!
     * \brief Gets the type of this object.
     *
     * \return String containing "ArnoldPatch"
     */
-    virtual string getType() { return "ArnoldPatch"; }
+	virtual string getType() override { return "ArnoldPatch"; }
       
     /*!
     * \brief Gets the width of result.
     *
     * \return The width of result
     */
-    int getWidth() { return m_interface.getWidth(); }
+    virtual int getWidth() { 
+		if (!m_interface.isOpen())
+			m_interface.init();
+		return m_interface.getWidth();
+	}
 
     /*!
     * \brief Gets the height of result.
     *
     * \return The height of result
     */
-    int getHeight() { return m_interface.getHeight(); }
+	virtual int getHeight() {
+		if (!m_interface.isOpen())
+			m_interface.init();
+		return m_interface.getHeight();
+	}
       
     /*!
     * \brief Gets the pointer to the frame buffer.
     *
     * \return The pointer to the frame buffer.
     */
-    float *getBufferPointer() { return m_interface.getBufferPointer(); }
+	virtual float *getBufferPointer() { 
+		if (!m_interface.isOpen())
+			m_interface.init();
+		return m_interface.getBufferPointer();
+	}
       
     /*!
     * \brief Gets the sample rate (n * n per pixel).
@@ -142,23 +156,7 @@ namespace Lumiverse {
     /*!
     * \brief Stops the working rendering procedure if Arnold is running.
     */
-    virtual void interruptRender();
-    
-    /*!
-    * \brief Callback function for devices.
-    *
-    * This function is registered to all devices by the rig. Only devices in the list
-    * will change the state of patch.
-    * \param d The device which calls this function.
-    */
-    void onDeviceChanged(Device *d);
-      
-	/*!
-	* \brief Manually schedule a re-rendering.
-	*
-	* This new rendering task may not be done immediately. This function just sets on the flag for rendering.
-	*/
-    virtual void rerender();
+    virtual void interruptRender() override;
       
 	/*!
 	* \brief Gets the progress of current frame in percentage.
@@ -181,19 +179,20 @@ namespace Lumiverse {
 	virtual size_t getBucketNumber() const { return m_interface.getBucketNumber(); }
 
   protected:
-    /*!
-    * \brief Checks if any device connected with this patch has updated parameters or metadata.
-    * \param devices The device list.
-    * \return If there is any update.
-    */
-    bool isUpdateRequired(set<Device *> devices);
-      
+ 
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.
     * This function updates light node for renderer.
     * \param devices The device list.
     */
     void updateLight(set<Device *> devices);
+
+	/*!
+	* \brief Loads a arnold light node.
+	* This function is also used to update a light node.
+	* \param d_ptr The device with updated parameters.
+	*/
+	virtual void loadLight(Device *d_ptr) override;
 
 	/*!
 	* \brief Resets the arnold light node and surface with updated parameters of deices.
@@ -203,33 +202,16 @@ namespace Lumiverse {
 	void updateLightPredictive(set<Device *> devices);
     
     /*!
-    * \brief Resets the update flags for lights.
-    */
-    void clearUpdateFlags();
-    
-    /*!
     * \brief Loads data from a parsed JSON object
     * \param data JSON data to load
     */
-    virtual void loadJSON(const JSONNode data);
-      
-    /*!
-    * \brief Loads a arnold light node.
-    * This function is also used to update a light node.
-    * \param d_ptr The device with updated parameters.
-    */
-    void loadLight(Device *d_ptr);
+    virtual void loadJSON(const JSONNode data) override;
 
 	/*!
     * \brief Calls Arnold render function.
     * This function runs in a separate thread.
     */
-    void renderLoop();
-
-    /*!
-    * \brief A list contains infos about if a light is updated.
-    */
-    map<string, ArnoldLightRecord> m_lights;
+	virtual bool renderLoop();
 
     /*!
     * \brief Arnold Interface
@@ -254,11 +236,6 @@ namespace Lumiverse {
 	* \return The light node.
 	*/
 	AtNode *getLightNode(Device *d);
-
-    /*!
-    * \brief The separate thread running the render loop.
-    */
-    std::thread *m_renderloop;
   };
 }
 

@@ -83,7 +83,7 @@ namespace Lumiverse {
 	*/
 	virtual void close() override;
 
-	void reset();
+	virtual void reset();
 
   protected:
 
