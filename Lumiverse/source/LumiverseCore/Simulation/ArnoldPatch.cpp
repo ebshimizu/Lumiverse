@@ -15,7 +15,7 @@ namespace Lumiverse {
 #endif
 
 ArnoldPatch::ArnoldPatch(const JSONNode data) :
-m_renderloop(NULL) {
+SimulationPatch() {
 	loadJSON(data);
 }
 
@@ -80,11 +80,11 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 			while (light != lights.end()) {
 				std::string light_name = light->name();
 
-				m_lights[light_name] = ArnoldLightRecord();
-				m_lights[light_name].arnold_type = light->find("type")->as_string();
+				m_lights[light_name] = new ArnoldLightRecord();
+				m_lights[light_name]->metadata = light->find("type")->as_string();
 
 				std::stringstream sstm;
-				sstm << "Added light " << light_name << ": " << m_lights[light_name].arnold_type;
+				sstm << "Added light " << light_name << ": " << m_lights[light_name]->metadata;
 
 				Logger::log(INFO, sstm.str());
 
@@ -120,14 +120,14 @@ AtNode *ArnoldPatch::getLightNode(Device *d) {
 
 	if (m_lights.count(light_name) == 0)
 		return NULL;
-	std::string type = m_lights[light_name].arnold_type;
-
-	if (m_lights[light_name].light == NULL) {
+	std::string type = m_lights[light_name]->metadata;
+	ArnoldLightRecord *record = (ArnoldLightRecord *)m_lights[light_name];
+	if (record->light == NULL) {
 		light_ptr = AiNode(type.c_str());
 		AiNodeSetStr(light_ptr, "name", light_name.c_str());
 	}
 	else {
-		light_ptr = m_lights[light_name].light;
+		light_ptr = record->light;
 	}
 
 	return light_ptr;
@@ -235,7 +235,8 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
 		}
     }
 
-    m_lights[light_name].light = light_ptr;
+	ArnoldLightRecord *record = (ArnoldLightRecord *)m_lights[light_name];
+	record->light = light_ptr;
 }
 
 /*!
@@ -243,24 +244,6 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
 */
 ArnoldPatch::~ArnoldPatch() {
 	m_interface.close();
-}
-
-bool ArnoldPatch::isUpdateRequired(set<Device *> devices) {
-    bool req = false;
-    
-    for (Device* d : devices) {
-		std::string name = d->getId();
-		if (m_lights.count(name) == 0)
-			continue;
-		
-		bool dev_req = m_lights[d->getId()].rerender_req;
-		if (dev_req) {
-            req = true;
-            break;
-        }
-	}
-    
-    return req;
 }
 
 void ArnoldPatch::modifyLightColor(Device *d, Eigen::Vector3d white) {
@@ -363,15 +346,11 @@ void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
 
 	m_interface.updateSurfaceColor(rgb_w);
 }
-
-void ArnoldPatch::clearUpdateFlags() {
-    for (auto& record : m_lights) {
-        record.second.rerender_req = false;
-    }
-}
     
-void ArnoldPatch::renderLoop() {
-    m_interface.render();
+bool ArnoldPatch::renderLoop() {
+    int code = m_interface.render();
+
+	return (code == AI_SUCCESS);
 }
 
 void ArnoldPatch::interruptRender() {
@@ -385,13 +364,6 @@ void ArnoldPatch::interruptRender() {
             Logger::log(ERR, "Thread doesn't exist.");
         }
         m_renderloop = NULL;
-    }
-}
-
-void ArnoldPatch::onDeviceChanged(Device *d) {
-    // TODO : LOCK
-    if (m_lights.count(d->getId()) > 0) {
-        m_lights[d->getId()].rerender_req = true;
     }
 }
     
@@ -416,9 +388,9 @@ void ArnoldPatch::update(set<Device *> devices) {
 void ArnoldPatch::init() {
 	// Init patch and interface
 	for (auto light : m_lights) {
-		m_lights[light.first].init();
+		m_lights[light.first]->init();
 	}
-    m_interface.init();
+    //m_interface.init();
 }
 
 void ArnoldPatch::close() {
@@ -441,7 +413,7 @@ JSONNode ArnoldPatch::toJSON() {
 	for (auto light : m_lights) {
 		JSONNode lightNode;
 		lightNode.set_name(light.first);
-		lightNode.push_back(JSONNode("type", light.second.arnold_type));
+		lightNode.push_back(JSONNode("type", light.second->metadata));
 		lights.push_back(lightNode);
 	}
 	root.push_back(lights.as_array());
@@ -449,13 +421,6 @@ JSONNode ArnoldPatch::toJSON() {
 	root.push_back(m_interface.arnoldParameterToJSON());
 
 	return root;
-}
-    
-void ArnoldPatch::rerender() {
-    // Given at least one light exists
-    // This will triggle a rerender later.
-    if (m_lights.size() > 0)
-        m_lights.begin()->second.rerender_req = true;
 }
 
 }

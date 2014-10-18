@@ -1507,8 +1507,8 @@
 		},
         "combiner" : {
           "type" : "PhotoAnimationPatch",
-          "width" : "1359",
-          "height" : "900",
+          "width" : "680",
+          "height" : "450",
           "frameDirectory" : "J:/Lumiverse/Lumiverse/source/Test/movie/",
             "lights" : {
                 "s4_E_16" : { "filename" : "J:/Lumiverse/Lumiverse/data/Jules/png/light_025.png" }, 

@@ -42,17 +42,12 @@ void SimulationPatch::loadJSON(const JSONNode data) {
 	}
 }
 
-void SimulationPatch::loadLight(Device *d_ptr) {
-    std::string light_name = d_ptr->getId();
-
-	loadLight(light_name);
-}
-
 /*!
 * \brief Destroys the object.
 */
 SimulationPatch::~SimulationPatch() {
 	for (auto light : m_lights) {
+		light.second->clear();
 		delete light.second;
 		light.second = NULL;
 	}
@@ -116,7 +111,6 @@ void SimulationPatch::init() {
 	// Init patch and interface
 	for (auto light : m_lights) {
 		light.second->init();
-		loadLight(light.first);
 	}
 }
 

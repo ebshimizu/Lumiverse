@@ -72,13 +72,19 @@ void PhotoPatch::loadJSON(const JSONNode data) {
 	}
 }
 
-void PhotoPatch::loadLight(std::string light) {
-	std::string light_name = light;
+void PhotoPatch::loadLight(Device *d_ptr) {
+	std::string light_name = d_ptr->getId();
 
 	if (m_lights.count(light_name) > 0) {
-		unsigned char *buffer;
+		unsigned char *buffer = NULL;
 		PhotoLightRecord *record = (PhotoLightRecord *)m_lights[light_name];
-		buffer = imageio_load_image(record->metadata.c_str(), &m_width, &m_height);
+		int width, height;
+
+		if (record->photo) {
+			return;
+		}
+
+		buffer = imageio_load_image(record->metadata.c_str(), &width, &height);
 
 		if (!buffer) {
 			std::stringstream sstm;
@@ -89,13 +95,12 @@ void PhotoPatch::loadLight(std::string light) {
 			return;
 		}
 
-		if (record->photo) {
-			delete[] record->photo;
-			record->photo = NULL;
-		}
-
 		record->photo = new float[m_width * m_height * 4];
 		bytes_to_floats(record->photo, buffer, m_width, m_height);
+
+		delete[] buffer;
+		buffer = NULL;
+
 	}
 
 }
@@ -115,7 +120,11 @@ void PhotoPatch::updateLight(set<Device *> devices) {
 		std::string name = d->getId();
 		if (m_lights.count(name) == 0)
 			continue;
+
 		PhotoLightRecord *light = (PhotoLightRecord *)m_lights[d->getId()];
+		if (light->photo == NULL)
+			loadLight(d);
+
 		LumiverseColor *color = d->getColor();
 		if (color != NULL) {
 			light->color[0] = (float)color->getRGB()[0];
@@ -132,8 +141,8 @@ bool PhotoPatch::blendFloat(float* blended, float* light,
 	Eigen::Vector4f rgba(color[0], color[1], color[2], 1.f);
 
 	// Assume they are of size (m_width, m_height)
-	for (size_t i = 0; i < m_height; i++) {
-		for (size_t j = 0; j < m_width; j++) {
+	for (int i = 0; i < m_height; i++) {
+		for (int j = 0; j < m_width; j++) {
 			for (size_t ch = 0; ch < 4; ch++) {
 				size_t offset = (m_width * i + j) * 4 + ch;
 				size_t offset_des = (m_width * (m_height - 1 - i) + j) * 4 + ch;
@@ -155,8 +164,8 @@ bool PhotoPatch::blendUint8(float* blended, unsigned char* light,
 	Eigen::Vector4f rgba(color[0], color[1], color[2], 1.f);
 
 	// Assume they are of size (m_width, m_height)
-	for (size_t i = 0; i < m_height; i++) {
-		for (size_t j = 0; j < m_width; j++) {
+	for (int i = 0; i < m_height; i++) {
+		for (int j = 0; j < m_width; j++) {
 			for (size_t ch = 0; ch < 4; ch++) {
 				size_t offset = (m_width * i + j) * 4 + ch;
 				size_t offset_des = (m_width * (m_height - 1 - i) + j) * 4 + ch;
@@ -196,7 +205,7 @@ bool PhotoPatch::renderLoop() {
 			toclear = false;
 			std::memset(m_blend_buffer, 0, img_size * sizeof(float));
 		}
-			
+		
 		if (light->photo && light->intensity > 0 &&
 			!light->color.isZero())
 			success = blendFloat(m_blend_buffer, light->photo, light->intensity, light->color);

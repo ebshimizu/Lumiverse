@@ -188,6 +188,8 @@ namespace Lumiverse {
     */
 	virtual void reset(InterruptFunction interruptRender);
       
+	virtual void reset() = 0;
+
 	/*!
 	* \brief Stops the patch.
 	*

@@ -13,9 +13,6 @@ PhotoAnimationPatch::PhotoAnimationPatch(const JSONNode data) :
 }
     
 PhotoAnimationPatch::~PhotoAnimationPatch() {
-    delete m_mem_frameManager;
-	delete m_file_frameManager;
-
     // If close() hasn't been called, closes here.
     if (m_worker != NULL)
         close();

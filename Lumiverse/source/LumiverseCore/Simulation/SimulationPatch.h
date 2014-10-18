@@ -28,6 +28,7 @@ namespace Lumiverse {
 	  virtual ~SimulationLightRecord() { }
       
 	  virtual void init() { rerender_req = true; }
+	  virtual void clear() { }
 
 	  std::string metadata;
       bool rerender_req;
@@ -147,7 +148,6 @@ namespace Lumiverse {
 	*/
 	virtual bool isUpdateRequired(set<Device *> devices);
 
-
 	/*!
 	* \brief Resets the update flags for lights.
 	*/
@@ -174,15 +174,8 @@ namespace Lumiverse {
 	* This function is also used to update a light node.
 	* \param d_ptr The device with updated parameters.
 	*/
-	virtual void loadLight(Device *d_ptr);
+	virtual void loadLight(Device *d_ptr) = 0;
 
-	/*!
-	* \brief Loads a arnold light node.
-	* This function is also used to update a light node.
-	* \param d_ptr The device with updated parameters.
-	*/
-	virtual void loadLight(std::string light) = 0;
-    
     /*!
     * \brief Loads data from a parsed JSON object
     * \param data JSON data to load

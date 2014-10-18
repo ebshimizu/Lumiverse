@@ -26,10 +26,15 @@ namespace Lumiverse {
 		virtual ~PhotoLightRecord() {
 			delete[] photo;
 		}
-		virtual void init() {
+		virtual void init() override {
 			SimulationLightRecord::init();
 			intensity = 0;
 			color.setOnes();
+		}
+
+		virtual void clear() override {
+			delete[] photo;
+			photo = NULL;
 		}
 
 		float intensity;
@@ -43,7 +48,7 @@ namespace Lumiverse {
   * of communication is done with help of an ArnoldInterface object.
   * PhotoPatch handles parsing Json and passing info to ArnoldInterface.
   *  
-  * \sa ArnoldInterface, ArnoldAnimationPatch
+  * \sa PhotoAnimationPatch
   */
   class PhotoPatch : public SimulationPatch
   {
@@ -51,9 +56,8 @@ namespace Lumiverse {
     /*!
     * \brief Constructs a PhotoPatch object.
     */
-	PhotoPatch() : m_blend(NULL), m_blend_buffer(NULL) {
-		m_interrupt_flag.clear();
-	}
+	PhotoPatch() : m_blend(NULL), m_blend_buffer(NULL),
+				SimulationPatch() { }
 
     /*!
     * \brief Construct PhotoPatch from JSON data.
@@ -127,7 +131,7 @@ namespace Lumiverse {
 	* This function is also used to update a light node.
 	* \param d_ptr The device with updated parameters.
 	*/
-	virtual void loadLight(std::string light);
+	virtual void loadLight(Device *d_ptr);
 
     /*!
     * \brief Loads data from a parsed JSON object

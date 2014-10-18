@@ -284,7 +284,7 @@ void ArnoldInterface::init() {
     
     // Doesn't read light node and filter node from the ass file
 	AiASSLoad(toRelativePath(m_ass_file).c_str(), 
-		AI_NODE_ALL & ~AI_NODE_LIGHT & ~AI_NODE_DRIVER);
+		AI_NODE_ALL & ~AI_NODE_LIGHT);
     
     AtNode *options = AiUniverseGetOptions();
     m_width = AiNodeGetInt(options, "xres");
@@ -330,22 +330,31 @@ void ArnoldInterface::init() {
     // The function keeps the output options from ass file
     std::string command("RGBA RGBA filter ");
     appendToOutputs(command.append(name).c_str());
+
+	m_open = true;
 }
 
 void ArnoldInterface::close() {
-    //AiEnd();
 	// Cleans buffer
 	delete[] m_buffer;
 	m_buffer = NULL;
 	delete[] m_bucket_pos;
 	m_bucket_pos = NULL;
 
-	AiBegin();
+	// Couple up begin-end would avoid errors caused by a single call to end.
+	if (m_open) {
+		AiBegin();
 
-	AiEnd();
+		AiEnd();
+	}
+	
+	m_open = false;
 }
     
 int ArnoldInterface::render() {
+	if (!m_open)
+		init();
+
     int code;
 
 	// Sets the sampling rate with the current rate

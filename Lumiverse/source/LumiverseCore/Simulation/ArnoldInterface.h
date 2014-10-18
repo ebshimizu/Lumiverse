@@ -76,7 +76,7 @@ namespace Lumiverse {
     * The default gamma is 2.2.
     */
 	 ArnoldInterface() : m_buffer(NULL), m_gamma(2.2f), m_samples(-3), m_predictive(false),
-		  m_bucket_pos(NULL), m_bucket_num(0) { }
+		  m_bucket_pos(NULL), m_bucket_num(0), m_open(false) { }
       
     /*!
     * \brief Destroys the object.
@@ -291,6 +291,13 @@ namespace Lumiverse {
 	* \return The default path.
 	*/
 	std::string getDefaultPath() { return m_default_path; }
+
+	/*!
+	* \brief Checks if this interface is currently open.
+	*
+	* \return If it's open.
+	*/
+	bool isOpen() { return m_open; }
       
   private:
     /*!
@@ -403,6 +410,11 @@ namespace Lumiverse {
 	* \brief If turn on (so-called) predictive rendering
 	*/
 	bool m_predictive;
+
+	/*!
+	* \brief If the interface is currently open
+	*/
+	bool m_open;
 
 	// An array for worker threads.
 	BucketPositionInfo *m_bucket_pos;

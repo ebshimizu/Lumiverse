@@ -139,6 +139,8 @@ namespace Lumiverse {
 		}
 		png_read_rows(png_ptr, row_pointers, 0, (long unsigned int) (*height));
 
+		delete[] row_pointers;
+
 		// deallocate memory and return
 		fclose(fp);
 		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);

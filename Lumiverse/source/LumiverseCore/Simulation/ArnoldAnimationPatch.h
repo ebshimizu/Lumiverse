@@ -40,15 +40,14 @@ namespace Lumiverse {
   *  
   * \sa ArnoldPatch, ArnoldFrameManager
   */
-  class ArnoldAnimationPatch : public ArnoldPatch
+  class ArnoldAnimationPatch : public SimulationAnimationPatch,
+								public ArnoldPatch
   {
   public:
     /*!
     * \brief Constructs a ArnoldAnimationPatch object.
     */
-    ArnoldAnimationPatch() : m_worker(NULL), 
-	  m_startPoint(std::chrono::system_clock::from_time_t(0)),
-	  m_mem_frameManager(NULL), m_file_frameManager(NULL), m_mode(SimulationAnimationMode::STOPPED),
+	  ArnoldAnimationPatch() : SimulationAnimationPatch(),
       m_preview_samples(m_interface.getSamples()),
       m_render_samples(m_interface.getSamples()) { }
 
@@ -71,40 +70,11 @@ namespace Lumiverse {
     virtual void init() override;
 
     /*!
-    * \brief Starts recording.
-    * Main thread starts to send frame labeled as RECORDING info to worker.
-    */
-    void startRecording() { 
-		m_mem_frameManager->clear();
-
-		// Overwrite existing frames instead of clearing all
-		if (m_file_frameManager)
-			m_file_frameManager->reset();
-
-		m_mode = SimulationAnimationMode::RECORDING; 
-	}
-      
-    /*!
-    * \brief Starts interactive mode.
-    * Worker thread can get interrupted. It always takes the most fresh info.
-    */
-    void startInteractive() { m_mode = SimulationAnimationMode::INTERACTIVE; }
-      
-	/*!
-	* \brief Returns the mode/state in which the patch is.
-	*
-	* \return The mode/state.
-	*/
-    SimulationAnimationMode getMode() { return m_mode; }
-      
-	void endRecording();
-
-    /*!
     * \brief Gets the type of this object.
     *
     * \return String containing "ArnoldAnimationPatch"
     */
-    virtual string getType() { return "ArnoldAnimationPatch"; }
+    virtual string getType() override { return "ArnoldAnimationPatch"; }
 
     /*!
     * \brief Updates the rendering queue given the list of devices
@@ -139,29 +109,6 @@ namespace Lumiverse {
     */
 	virtual void close() override;
 
-    /*!
-    * \brief Returns the ArnoldFrameManager to reconstruction the 
-    * animation.
-    *
-    * \return The ArnoldFrameManager object containning all the frame
-    * and their corresponding time point.
-    */
-    ArnoldFrameManager *getFrameManager() const;
-    
-    /*!
-    * \brief Resets the object to its initial state.
-    *
-    * Including resetting start point, clearing frame manager, interrupting worker and clearing worker's queue.
-    */
-    void reset();
-      
-	/*!
-	* \brief Stops the patch.
-	*
-	* The main thread would stop responding to new requests and the worker thread would be joined.
-	*/
-    void stop();
-
 	/*!
 	* \brief Sets the camera sampling rate for preview.
 	*
@@ -191,25 +138,6 @@ namespace Lumiverse {
     // Callbacks
     typedef function<void()> FinishedCallbackFunction;
       
-    /*!
-    * \brief Registers a callback function for parameter changed event.
-    *
-    * All registered functinos would be called when a parameter is changed
-    * by Device::setParam and Device::reset function.
-    * \param func The callback function.
-    * \return The int id for the registered function.
-    * \sa addMetadataChangedCallback(DeviceCallbackFunction func)
-    */
-    int addFinishedCallback(FinishedCallbackFunction func);
-      
-    /*!
-    * \brief Deletes a registered callback for parameter change
-    *
-    * \param id The id returned when the callback is registered
-    * \sa addParameterChangedCallback(DeviceCallbackFunction func)
-    */
-    void deleteFinishedCallback(int id);
-      
 	/*!
 	* \brief Gets the current rendering progress as percentage.
 	*
@@ -219,53 +147,23 @@ namespace Lumiverse {
 	*/
     virtual float getPercentage() const override;
 
+	virtual void reset();
+
   protected:
+	virtual void onRecording() override { setSamples(m_preview_samples); }
+
+	virtual void onRendering() override { setSamples(m_render_samples); }
 	/*!
 	* \brief Loads data from a parsed JSON object
 	* \param data JSON data to load
 	*/
 	virtual void loadJSON(const JSONNode data) override;
 
+	virtual void workerRender(FrameDeviceInfo frame);
+
+	virtual void createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame);
+
   private:
-    /*!
-    * \brief Worker loop.
-    *
-    * Dequeues a new task. Sets the light parameters and renders. Dumps
-    * the frame buffer. The loop ends when an end info is received.
-    */
-    void workerLoop();
-      
-	/*!
-	* \brief Helper to call all the registered callbacks for rendering finished event.
-	*/
-    void onWorkerFinished();
-
-	void createFrameInfoHeader(FrameDeviceInfo &frame);
-
-	void enqueueFrameInfo(const FrameDeviceInfo &frame);
-
-    // The worker thread.
-    std::thread *m_worker;
-
-    // The lock for the task queue.
-    std::mutex m_queue;
-
-    // The task queue.
-    std::vector<FrameDeviceInfo> m_queuedFrameDeviceInfo;
-
-    // The start point for time points in FrameDeviceInfo.
-    // It's the moment when update function is called for the first
-    // time.
-    std::chrono::time_point<std::chrono::system_clock> m_startPoint;
-
-    // The ArnoldFrameManager object. Used to store frame buffers.
-    ArnoldMemoryFrameManager *m_mem_frameManager;
-	ArnoldFileFrameManager *m_file_frameManager;
-      
-    /*! \brief Indicates the mode of ArnoldAnimationPatch.
-    */
-    SimulationAnimationMode m_mode;
-      
 	/*! \brief The camera sampling rate for preview.
 	*/
     int m_preview_samples;
@@ -273,10 +171,7 @@ namespace Lumiverse {
 	/*! \brief The camera sampling rate for rendering.
 	*/
     int m_render_samples;
-      
-	/*! \brief The list for callback functions.
-	*/
-    map<int, FinishedCallbackFunction> m_onFinishedFunctions;
+
   };
     
 }
