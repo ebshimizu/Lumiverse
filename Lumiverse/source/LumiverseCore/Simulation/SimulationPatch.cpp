@@ -67,6 +67,24 @@ bool SimulationPatch::isUpdateRequired(set<Device *> devices) {
         }
 	}
     
+	if (!req) {
+		std::set<std::string> existingDevs;
+		for (Device *dev : devices) {
+			existingDevs.insert(dev->getId());
+		}
+
+		for (auto it = m_lights.cbegin(); !m_lights.empty() && it != m_lights.cend(); ) {
+			if (existingDevs.count(it->first) == 0) {
+				it->second->clear();
+				delete it->second;
+				auto del = it++;
+				m_lights.erase(del);
+			}
+			else
+				it++;
+		}
+	}
+
     return req;
 }
 
@@ -133,7 +151,7 @@ JSONNode SimulationPatch::toJSON() {
 		lightNode.push_back(JSONNode("filename", light.second->metadata));
 		lights.push_back(lightNode);
 	}
-	root.push_back(lights.as_array());
+	root.push_back(lights);
 
 	return root;
 }

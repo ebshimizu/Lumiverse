@@ -1689,11 +1689,42 @@
 			"pluginDir" : "C:\/lib\/Lumiverse\/lib\/arnold\/plugin;C:\/solidangle\/mtoadeploy\/2015\/shaders\/",
 			"predictive" : 0,
 			"gamma" : 2.2,
-			"lights" : [
-				{
-					"type" : "photometric_light"
-				}
-			],
+			"lights" : {
+        "s4_E_16" : { "type" : "photometric_light" }, 
+        "s4_E_11" : { "type" : "photometric_light" }, 
+        "s4_E_7" : { "type" : "photometric_light" },
+        "s4_E_3" : { "type" : "photometric_light" },
+        "s4_E_LED1" : { "type" : "photometric_light" },
+        "s4_E_LED2" : { "type" : "photometric_light" },
+        "s4_E1_1" : { "type" : "photometric_light" },
+        "s4_E1_3" : { "type" : "photometric_light" },
+        "s4_BSR_1" : { "type" : "photometric_light" },
+        "s4_BSR_2" : { "type" : "photometric_light" },
+        "s4_BSL_1" : { "type" : "photometric_light" },
+        "s4_BSL_2" : { "type" : "photometric_light" },
+        "s4_G_12" : { "type" : "photometric_light" }, 
+        "s4_G_11" : { "type" : "photometric_light" }, 
+        "s4_G_8" : { "type" : "photometric_light" },
+        "s4_G_7" : { "type" : "photometric_light" },
+        "s4_G_6" : { "type" : "photometric_light" }, 
+        "s4_G_5" : { "type" : "photometric_light" }, 
+        "s4_G_2" : { "type" : "photometric_light" },
+        "s4_G_1" : { "type" : "photometric_light" },
+        "s4_G_9" : { "type" : "photometric_light" }, 
+        "s4_G_3" : { "type" : "photometric_light" }, 
+        "s4_H1_11" : { "type" : "photometric_light" },
+        "s4_H1_10" : { "type" : "photometric_light" },
+        "s4_H1_5" : { "type" : "photometric_light" }, 
+        "s4_H1_4" : { "type" : "photometric_light" },
+        "par_H1_14" : { "type" : "photometric_light" },
+        "par_H1_13" : { "type" : "photometric_light" },
+        "par_H1_9" : { "type" : "photometric_light" }, 
+        "par_H1_8" : { "type" : "photometric_light" }, 
+        "par_H1_7" : { "type" : "photometric_light" },
+        "par_H1_6" : { "type" : "photometric_light" },
+        "par_H1_2" : { "type" : "photometric_light" }, 
+        "par_H1_1" : { "type" : "photometric_light" }
+	    },
 			"arnoldParamMaps" : {
 				"color" : {
 					"dimension" : 3,

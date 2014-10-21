@@ -253,7 +253,7 @@ JSONNode PhotoPatch::toJSON() {
 		lightNode.push_back(JSONNode("filename", light.second->metadata));
 		lights.push_back(lightNode);
 	}
-	root.push_back(lights.as_array());
+	root.push_back(lights);
 
 	return root;
 }
