@@ -416,7 +416,7 @@ JSONNode ArnoldPatch::toJSON() {
 		lightNode.push_back(JSONNode("type", light.second->metadata));
 		lights.push_back(lightNode);
 	}
-	root.push_back(lights.as_array());
+	root.push_back(lights);
 
 	root.push_back(m_interface.arnoldParameterToJSON());
 
