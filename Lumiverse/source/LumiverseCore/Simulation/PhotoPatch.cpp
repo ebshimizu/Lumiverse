@@ -1,5 +1,7 @@
 
 #include "PhotoPatch.h"
+
+#ifdef USE_ARNOLD
 #include "types/LumiverseFloat.h"
 #include "imageio.h"
 #include <sstream>
@@ -260,3 +262,4 @@ JSONNode PhotoPatch::toJSON() {
     
 
 }
+#endif

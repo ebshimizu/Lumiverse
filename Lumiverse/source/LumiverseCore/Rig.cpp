@@ -123,6 +123,7 @@ void Rig::loadPatches(JSONNode root) {
       patch = (Patch*) new DMXPatch(*i);
       addPatch(nodeName, patch);
     }
+#ifdef USE_ARNOLD
 	else if (patchType == "PhotoPatch") {
 		patch = (Patch*) new PhotoPatch(*i);
 		addPatch(nodeName, patch);
@@ -147,7 +148,6 @@ void Rig::loadPatches(JSONNode root) {
 			d->addMetadataChangedCallback(callback);
 		}
 	}
-#ifdef USE_ARNOLD
     else if (patchType == "ArnoldAnimationPatch") {
 	  i->push_back(*root.find("jsonPath"));
       patch = (Patch*) new ArnoldAnimationPatch(*i);

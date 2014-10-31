@@ -4,7 +4,8 @@
 namespace Lumiverse {
 
 DMXPro2Interface::DMXPro2Interface(string id, int proNum, int out1, int out2) : 
-  m_proNum(proNum), m_connected(0), m_out1Universe(out1), m_out2Universe(out2)
+  m_proNum(proNum), m_connected(0), m_out1Universe(out1), m_out2Universe(out2),
+  m_readTimeout(120), m_writeTimeout(100), m_versionMSB(0), m_versionLSB(0)
 {
   m_ifaceName = "ENTTEC DMX USB PRO MK2";
   setInterfaceId(id);

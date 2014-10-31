@@ -26,7 +26,7 @@ namespace Lumiverse {
     COLOR_LUSTRPLUS,  /*!< Converts a color with RWAGCBI parameters (in that order) to DMX paramters. */
     ORI_TO_FINE       /*!< Converts an orientation to a double-byte DMX value (0-65535) */
   };
-
+#ifdef USE_C11_MAPS
   static unordered_map<int, string> convTypeToString = {
     { FLOAT_TO_SINGLE, "FLOAT_TO_SINGLE" }, { FLOAT_TO_FINE, "FLOAT_TO_FINE" },
     { ENUM, "ENUM" }, { RGB_REPEAT2, "RGB_REPEAT2" }, { RGB_REPEAT3, "RGB_REPEAT3" },
@@ -40,6 +40,41 @@ namespace Lumiverse {
     { "RGB_REPEAT4", RGB_REPEAT4 }, { "COLOR_RGB", COLOR_RGB }, { "COLOR_RGBW", COLOR_RGBW },
     { "ORI_TO_FINE", ORI_TO_FINE }, { "COLOR_LUSTRPLUS", COLOR_LUSTRPLUS }
   };
+#else
+  static string convTypeToString(conversionType t) {
+		if (t == FLOAT_TO_SINGLE) { return "FLOAT_TO_SINGLE"; }
+    else if (t == FLOAT_TO_FINE) { return "FLOAT_TO_FINE"; }
+    else if (t == ENUM) { return "ENUM"; }
+    else if (t == RGB_REPEAT2) { return "RGB_REPEAT2"; }
+    else if (t == RGB_REPEAT3) { return "RGB_REPEAT3"; }
+    else if (t == RGB_REPEAT4) { return "RGB_REPEAT4"; }
+    else if (t == COLOR_RGB) { return "COLOR_RGB"; }
+    else if (t == COLOR_RGBW) { return "COLOR_RGBW"; }
+		else if (t == ORI_TO_FINE) { return "ORI_TO_FINE"; }
+		else if (t == COLOR_LUSTRPLUS) { return "COLOR_LUSTRPLUS"; }
+    else {
+      Logger::log(WARN, "Unknown conversion type. Defaulting to float to single.");
+			return "FLOAT_TO_SINGLE";
+    }
+  }
+
+  static conversionType stringToConvType(string t) {
+		if (t == "FLOAT_TO_SINGLE") { return FLOAT_TO_SINGLE; }
+    else if (t == "FLOAT_TO_FINE") { return FLOAT_TO_FINE; }
+    else if (t == "ENUM") { return ENUM; }
+    else if (t == "RGB_REPEAT2") { return RGB_REPEAT2; }
+    else if (t == "RGB_REPEAT3") { return RGB_REPEAT3; }
+    else if (t == "RGB_REPEAT4") { return RGB_REPEAT4; }
+    else if (t == "COLOR_RGB") { return COLOR_RGB; }
+    else if (t == "COLOR_RGBW") { return COLOR_RGBW; }
+		else if (t == "ORI_TO_FINE") { return ORI_TO_FINE; }
+		else if (t == "COLOR_LUSTRPLUS") { return COLOR_LUSTRPLUS; }
+    else {
+      Logger::log(WARN, "Unknown conversion type. Defaulting to float to single.");
+			return FLOAT_TO_SINGLE;
+    }
+  }
+#endif
 
   /*!
   * \brief Small struct containing information on where the DMX parameter starts and
@@ -81,7 +116,11 @@ namespace Lumiverse {
     * \param t Conversion method as a string.
     */
     patchData(unsigned int addr, string t) : startAddress(addr) {
+#ifdef USE_C11_MAPS
       type = (conversionType) stringToConvType[t];
+#else
+      type = (conversionType) stringToConvType(t);
+#endif
     }
   };
 

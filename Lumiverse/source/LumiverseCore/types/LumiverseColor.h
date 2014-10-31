@@ -24,7 +24,19 @@ namespace Lumiverse {
     BASIC_RGB,   /*!< Color has no basis vectors and assumes a default RGB valued color. Uses the sRGB color space. */
     BASIC_CMY    /*!< Color has no basis vectors and assumes a default CMY subtractive system. */
   };
+	
+  /*! \brief Selects a RGB color space to use in color conversion functions. */
+  enum RGBColorSpace {
+    sRGB,        /*!< sRGB color space. D65 reference white. See http://en.wikipedia.org/wiki/SRGB */
+    sharpRGB	 /* Picture Perfect RGB Rendering Using Spectral Prefiltering */
+  };
 
+  enum ReferenceWhite {
+    D65,        /*< D65 illuminant. */
+    D50,        /*< D50 illuminant. */
+  };
+
+#ifdef USE_C11_MAPS
   /*! \brief Converts ColorMode to a string */
   static unordered_map<int, string> ColorModeToString =
   {
@@ -37,17 +49,6 @@ namespace Lumiverse {
   {
     { "ADDITIVE", ADDITIVE }, { "SUBTRACTIVE", SUBTRACTIVE },
     { "BASIC_RGB", BASIC_RGB }, { "BASIC_CMY", BASIC_CMY }
-  };
-
-  /*! \brief Selects a RGB color space to use in color conversion functions. */
-  enum RGBColorSpace {
-    sRGB,        /*!< sRGB color space. D65 reference white. See http://en.wikipedia.org/wiki/SRGB */
-    sharpRGB	 /* Picture Perfect RGB Rendering Using Spectral Prefiltering */
-  };
-
-  enum ReferenceWhite {
-    D65,        /*< D65 illuminant. */
-    D50,        /*< D50 illuminant. */
   };
 
   /*! \brief RGB to XYZ matrices for color calculations */
@@ -73,6 +74,63 @@ namespace Lumiverse {
     { D65, Eigen::Vector3d(95.047, 100.00, 108.883) },
     { D50, Eigen::Vector3d(96.4212, 100.0, 82.5188) }
   };
+#else
+	// Apparently VS2012 and earlier don't compile the above initialization
+  static string ColorModeToString(ColorMode m) {
+		unordered_map<int, string> ColorModeToString;
+		ColorModeToString[ADDITIVE] = "ADDITIVE";
+		ColorModeToString[SUBTRACTIVE] = "SUBTRACTIVE";
+		ColorModeToString[BASIC_RGB] = "BASIC_RGB";
+		ColorModeToString[BASIC_CMY] = "BASIC_CMY";
+
+		return ColorModeToString[m];
+  }
+
+	static ColorMode StringToColorMode(string s) {
+		unordered_map<string, ColorMode> StringToColorMode;
+		StringToColorMode["ADDITIVE"] = ADDITIVE;
+		StringToColorMode["SUBTRACTIVE"] = SUBTRACTIVE;
+		StringToColorMode["BASIC_RGB"] = BASIC_RGB;
+		StringToColorMode["BASIC_CMY"] = BASIC_CMY;
+
+		return StringToColorMode[s];	
+	}
+
+	static Eigen::Matrix3d RGBToXYZ(RGBColorSpace c) {
+		switch (c) {
+		case sRGB:
+			return (Eigen::Matrix3d() << 0.4124564, 0.3575761, 0.1804375,
+                                   0.2126729, 0.7151522, 0.0721750,
+                                   0.0193339, 0.1191920, 0.9503041).finished();
+		case sharpRGB:
+			return (Eigen::Matrix3d() << 0.8156, 0.0472, 0.1372,
+                                   0.3791, 0.5769, 0.0440,
+                                   -0.0123, 0.0167, 0.9955).finished();
+		default:
+			return Eigen::Matrix3d();
+		}
+	}
+
+	static ReferenceWhite ColorSpaceRefWhite(RGBColorSpace c) {
+		switch(c) {
+		case sRGB:
+			return D65;
+		default:
+			return D65;
+		}
+	}
+
+	static Eigen::Vector3d refWhites(ReferenceWhite c) {
+		switch(c) {
+		case D65:
+			return Eigen::Vector3d(95.047, 100.00, 108.883);
+		case D50:
+			return Eigen::Vector3d(96.4212, 100.0, 82.5188);
+		default:
+			return Eigen::Vector3d();
+		}
+	}
+#endif
 
   /*!
   * \brief This class describes a color.

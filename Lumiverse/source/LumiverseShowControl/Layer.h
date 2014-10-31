@@ -309,6 +309,7 @@ namespace ShowControl {
     mutex m_queue;
   };
 
+#ifdef USE_C11_MAPS
   /*! \brief Enum translation to string for JSON output */
   static unordered_map<Layer::BlendMode, string, std::hash<unsigned int>> BlendModeToString {
       { Layer::BLEND_OPAQUE, "BLEND_OPAQUE" },
@@ -324,6 +325,25 @@ namespace ShowControl {
       { "NULL_INTENSITY", Layer::NULL_INTENSITY },
       { "SELECTED_ONLY", Layer::SELECTED_ONLY }
   };
+#else
+	static string BlendModeToString(Layer::BlendMode b) {
+		switch (b) {
+		case Layer::BLEND_OPAQUE: return "BLEND_OPAQUE";
+		case Layer::NULL_DEFAULT: return "NULL_DEFAULT";
+		case Layer::NULL_INTENSITY: return "NULL_INTENSITY";
+		case Layer::SELECTED_ONLY: return "SELECTED_ONLY";
+		default: return "";
+		}
+	}
+
+	static Layer::BlendMode StringToBlendMode(string b) {
+		if (b == "BLEND_OPAQUE") return Layer::BLEND_OPAQUE;
+		if (b == "NULL_DEFAULT") return Layer::NULL_DEFAULT;
+		if (b == "NULL_INTESITY") return Layer::NULL_INTENSITY;
+		if (b == "SELECTED_ONLY") return Layer::SELECTED_ONLY;
+		return Layer::BLEND_OPAQUE;
+	}
+#endif
 
   // Comparison op overloads
   /*!

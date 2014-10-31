@@ -1,6 +1,5 @@
-
 #include "PhotoAnimationPatch.h"
-
+#ifdef USE_ARNOLD
 #include <sstream>
 
 namespace Lumiverse {
@@ -82,3 +81,4 @@ void PhotoAnimationPatch::reset() {
 }
 
 }
+#endif

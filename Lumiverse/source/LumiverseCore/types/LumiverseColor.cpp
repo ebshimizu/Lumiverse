@@ -1,7 +1,7 @@
-#include "LumiverseColor.h"
-
 #include "lib/clp/ClpSimplex.hpp"
 #include "lib/clp/CoinError.hpp"
+
+#include "LumiverseColor.h"
 
 namespace Lumiverse {
 
@@ -119,7 +119,11 @@ namespace Lumiverse {
     node.push_back(channels);
     node.push_back(basis);
     node.push_back(JSONNode("weight", m_weight));
+#ifdef USE_C11_MAPS
     node.push_back(JSONNode("mode", ColorModeToString[m_mode]));
+#else
+	node.push_back(JSONNode("mode", ColorModeToString(m_mode)));
+#endif
 
     return node;
   }
@@ -227,7 +231,11 @@ namespace Lumiverse {
 
     // Vector is scaled by 1/100 bringing it inline withthe [0,1] range typically used by RGB.
     Eigen::Vector3d XYZvec = Eigen::Vector3d(getX(), getY(), getZ()) / 100;
+#ifdef USE_C11_MAPS
     Eigen::Vector3d rgb = RGBToXYZ[cs].inverse() * XYZvec;
+#else
+    Eigen::Vector3d rgb = RGBToXYZ(cs).inverse() * XYZvec;
+#endif
 
     if (cs == sRGB) {
       rgb[0] = clamp(XYZtosRGBCompand(rgb[0]), 0, 1);
@@ -257,7 +265,11 @@ namespace Lumiverse {
   }
 
   Eigen::Vector3d LumiverseColor::getLab(ReferenceWhite refWhite) {
+#ifdef USE_C11_MAPS
     return getLab(refWhites[refWhite]);
+#else
+    return getLab(refWhites(refWhite));
+#endif
   }
 
   Eigen::Vector3d LumiverseColor::getLab(Eigen::Vector3d refWhite) {
@@ -268,7 +280,11 @@ namespace Lumiverse {
   }
 
   Eigen::Vector3d LumiverseColor::getLCHab(ReferenceWhite refWhite) {
+#ifdef USE_C11_MAPS
     return getLCHab(refWhites[refWhite]);
+#else
+	return getLCHab(refWhites(refWhite));
+#endif
   }
 
   Eigen::Vector3d LumiverseColor::getLCHab(Eigen::Vector3d refWhite) {
@@ -429,7 +445,11 @@ namespace Lumiverse {
       b = sRGBtoXYZCompand(b);
     }
 
+#ifdef USE_C11_MAPS
     Eigen::Matrix3d M = RGBToXYZ[cs];
+#else
+	Eigen::Matrix3d M = RGBToXYZ(cs);
+#endif
     Eigen::Vector3d rgb(r, g, b);
     Eigen::Vector3d XYZ = M * rgb;
 

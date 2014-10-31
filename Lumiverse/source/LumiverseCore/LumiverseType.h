@@ -9,6 +9,16 @@
 #include "Logger.h"
 #include "lib/libjson/libjson.h"
 
+// Color and rotation use unordered_maps with initailizers for convenience
+// Apparently VS2012 didn't fully implement this
+#define USE_C11_MAPS
+
+#ifdef _MSC_VER
+	#if _MSC_VER <= 1700
+		#undef USE_C11_MAPS
+	#endif
+#endif
+
 using namespace std;
 
 namespace Lumiverse {

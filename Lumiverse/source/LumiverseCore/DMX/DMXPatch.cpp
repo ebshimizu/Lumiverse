@@ -256,7 +256,11 @@ JSONNode DMXPatch::deviceMapToJSON(string id, map<string, patchData> data) {
     JSONNode mapping;
     mapping.set_name(d.first);
     mapping.push_back(JSONNode("start", d.second.startAddress));
+#ifdef USE_C11_MAPS
     mapping.push_back(JSONNode("ctype", convTypeToString[d.second.type]));
+#else
+    mapping.push_back(JSONNode("ctype", convTypeToString(d.second.type)));
+#endif
     root.push_back(mapping.as_array());
   }
 

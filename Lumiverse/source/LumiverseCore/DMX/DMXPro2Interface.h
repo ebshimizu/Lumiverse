@@ -127,13 +127,13 @@ namespace Lumiverse {
     // unless there are problems.
 
     // Timeout in microseconds. Too high or too low values discouraged.
-    int m_readTimeout = 120;
+    int m_readTimeout;
 
     // Timeout in microseconds. Too high or too low values discouraged.
-    int m_writeTimeout = 100;
+    int m_writeTimeout;
 
-    int m_versionMSB = 0;
-    int m_versionLSB = 0;
+    int m_versionMSB;
+    int m_versionLSB;
   };
 }
 #endif

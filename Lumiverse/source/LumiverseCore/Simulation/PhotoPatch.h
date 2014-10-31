@@ -7,6 +7,7 @@
 #pragma once
 
 #include "LumiverseCoreConfig.h"
+#ifdef USE_ARNOLD
 
 #include <iostream>
 #include <thread>
@@ -164,5 +165,5 @@ namespace Lumiverse {
 }
 
 
-
+#endif
 #endif
