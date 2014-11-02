@@ -8,7 +8,7 @@ double blackbodySPD(unsigned int nm, unsigned int temp) {
   double c = 2.99792458e8;
   double k = 1.380662e-23;
   double m = nm * (double) 10e-9;
-  double c1 = 2 * M_PI * h * c * c;
+  double c1 = 2.0 * M_PI * h * c * c;
   double c2 = (h * c) / k;
 
   return c1 / (pow(h, 5) * (exp(c2 / (temp * m)) - 1));
@@ -23,7 +23,7 @@ Eigen::Vector3d getApproxColor(string gel, float intens) {
   // We assume a linear ambershift of an incandescent fixture.
   // Assuming that a lamp approaches incandescent (source A) when it gets dim,
   // and approaches the manufacturer's spec of 3250 at full intensity.
-  int temp = (int) (2700 + 550.0 * intens);
+  int temp = (int) (2700 + 550 * intens);
 
   auto color = gelsCoarse[gel];
   Eigen::Vector3d ret(0, 0, 0);
@@ -39,7 +39,7 @@ Eigen::Vector3d getApproxColor(string gel, float intens) {
       // Special case for final element
       double trans = color[i];
       int idx = i * 20;
-      double spd = (blackbodySPD(idx + 360, temp) / norm) * 100;
+      double spd = blackbodySPD(idx + 360, temp);
       
       ret[0] += spd * trans * CIE1964X[idx];
       ret[1] += spd * trans * CIE1964Y[idx];
@@ -49,7 +49,7 @@ Eigen::Vector3d getApproxColor(string gel, float intens) {
       for (int j = 0; j < 20; j++) {
         double trans = color[i] + (color[i + 1] - color[i]) * (double)(j / 20.0);
         int idx = i * 20;
-        double spd = (blackbodySPD(idx + 360, temp) / norm) * 100;
+        double spd = blackbodySPD(idx + 360, temp);
         
         ret[0] += spd * trans * CIE1964X[idx];
         ret[1] += spd * trans * CIE1964Y[idx];

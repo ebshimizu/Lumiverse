@@ -50,10 +50,12 @@ namespace Lumiverse {
   and ending at 740nm.
   */
   static unordered_map<string, vector<double> > gelsCoarse = {
+    { "N/C", { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } },
     { "R02", { 0.69, 0.73, 0.71, 0.65, 0.56, 0.49, 0.47, 0.48, 0.54, 0.68, 0.74, 0.80, 0.84, 0.85, 0.85, 0.86, 0.86, 0.86, 0.86, 0.86} },
   };
 
   static unordered_map<string, double> gelsTrans = {
+    { "N/C", 1 },
     { "R02", 0.78 }
   };
 #endif
