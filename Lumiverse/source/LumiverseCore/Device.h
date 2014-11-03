@@ -293,6 +293,11 @@ namespace Lumiverse {
     vector<string> getParamNames();
 
     /*!
+    \brief Returns true if a specified metadata key exists for this device.
+    */
+    bool metadataExists(string key);
+
+    /*!
     * \brief Retrieve metatata value for a given key.
     *
     * \param key Metadata key
@@ -300,6 +305,14 @@ namespace Lumiverse {
     * \return False if no key exists. True and the value in `val` if it does exist.
     */
     bool getMetadata(string key, string& val);
+
+    /*!
+    \brief Retrieves metatada value for a given key. Will return "" if a key doesn't exist.
+
+    \param key Metadata key.
+    \return The value associated with the key or `""` otherwise.
+    */
+    string getMetadata(string key);
 
     /*!
     * \brief Sets the metadata value for a given key.
@@ -423,6 +436,15 @@ namespace Lumiverse {
     all the same, and the other properties of the device are the same.
     */
     bool isIdentical(Device* d);
+
+    /*!
+    \brief Gets the color for this device if it has a gel assigned to it.
+
+    Note that this function should only be used for devices that are unable to change
+    color with a LumiverseColor paramter.
+    \return The Y-normalized XYZ color of the device based on the gel and intensity.
+    */
+    Eigen::Vector3d getGelColor();
       
   private:
     /*! \brief Sets the id for the device
