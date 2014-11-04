@@ -20,9 +20,9 @@ Eigen::Vector3d getApproxColor(string gel, float intens) {
   }
   
   // We assume a linear ambershift of an incandescent fixture.
-  // Assuming that a lamp approaches incandescent (source A) when it gets dim,
-  // and approaches the manufacturer's spec of 3250 at full intensity.
-  int temp = (int)(2700 + 550 * intens);
+  // Assuming that a lamp approaches incandescent when it gets dim and 
+  // approaches manufacturer spec of 3250K at full brightness.
+  int temp = (int)(2500 + 750 * intens);
 
   auto color = gelsCoarse[gel];
   Eigen::Vector3d ret(0, 0, 0);
@@ -95,6 +95,10 @@ Eigen::Vector3d convXYZtoRGB(Eigen::Vector3d color, RGBColorSpace cs) {
     rgb[1] = XYZtosRGBCompand(rgb[1]);
     rgb[2] = XYZtosRGBCompand(rgb[2]);
   }
+
+  rgb[0] = (rgb[0] < 0) ? 0 : rgb[0];
+  rgb[1] = (rgb[1] < 0) ? 0 : rgb[1];
+  rgb[2] = (rgb[2] < 0) ? 0 : rgb[2];
 
   return rgb;
 }
