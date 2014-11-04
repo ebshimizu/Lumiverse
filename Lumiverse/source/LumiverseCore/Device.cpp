@@ -440,9 +440,21 @@ bool Device::isIdentical(Device* d) {
 
 Eigen::Vector3d Device::getGelColor() {
   // must be exact paramter match.
-  if (metadataExists("gel")) {
-    
+  if (metadataExists("gel") && paramExists("intensity")) {
+    float intens;
+    getParam("intensity", intens);
+    return ColorUtils::getScaledColor(m_metadata["gel"], intens);
   }
+
+  // If no color known, return a N/C gel if intensity exists
+  if (paramExists("intensity")) {
+    float intens;
+    getParam("intensity", intens);
+    return ColorUtils::getScaledColor("N/C", intens);
+  }
+
+  // If everything else fails, return illuminant A
+  return refWhites[A];
 }
 
 JSONNode Device::parametersToJSON() {

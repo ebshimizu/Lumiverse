@@ -229,21 +229,7 @@ namespace Lumiverse {
       return Eigen::Vector3d(m_deviceChannels["Red"], m_deviceChannels["Green"], m_deviceChannels["Blue"]);
     }
 
-    // Vector is scaled by 1/100 bringing it inline withthe [0,1] range typically used by RGB.
-    Eigen::Vector3d XYZvec = Eigen::Vector3d(getX(), getY(), getZ()) / 100;
-#ifdef USE_C11_MAPS
-    Eigen::Vector3d rgb = RGBToXYZ[cs].inverse() * XYZvec;
-#else
-    Eigen::Vector3d rgb = RGBToXYZ(cs).inverse() * XYZvec;
-#endif
-
-    if (cs == sRGB) {
-      rgb[0] = clamp(XYZtosRGBCompand(rgb[0]), 0, 1);
-      rgb[1] = clamp(XYZtosRGBCompand(rgb[1]), 0, 1);
-      rgb[2] = clamp(XYZtosRGBCompand(rgb[2]), 0, 1);
-    }
-
-    return rgb;
+    return ColorUtils::convXYZtoRGB(Eigen::Vector3d(getX(), getY(), getZ()), cs);
   }
 
   void LumiverseColor::setxy(double x, double y, double weight) {
@@ -300,7 +286,7 @@ namespace Lumiverse {
 
   bool LumiverseColor::setColorChannel(string name, double val) {
     if (m_deviceChannels.count(name) > 0) {
-      m_deviceChannels[name] = clamp(val, 0, 1);
+      m_deviceChannels[name] = ColorUtils::clamp(val, 0, 1);
       return true;
     }
     else {
@@ -316,7 +302,7 @@ namespace Lumiverse {
   }
 
   void LumiverseColor::setWeight(double weight) {
-    m_weight = clamp(weight, 0, 1);
+    m_weight = ColorUtils::clamp(weight, 0, 1);
   }
 
   bool LumiverseColor::setRGBRaw(double r, double g, double b, double weight) {
@@ -347,7 +333,7 @@ namespace Lumiverse {
 
   LumiverseColor& LumiverseColor::operator+=(double val) {
     for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
-      m_deviceChannels[it->first] = clamp(it->second + val, 0, 1);
+      m_deviceChannels[it->first] = ColorUtils::clamp(it->second + val, 0, 1);
     }
 
     return *this;
@@ -359,7 +345,7 @@ namespace Lumiverse {
 
   LumiverseColor& LumiverseColor::operator*=(double val) {
     for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
-      m_deviceChannels[it->first] = clamp(it->second * val, 0, 1);
+      m_deviceChannels[it->first] = ColorUtils::clamp(it->second * val, 0, 1);
     }
 
     return *this;
@@ -426,23 +412,15 @@ namespace Lumiverse {
     return ret;
   }
 
-  double LumiverseColor::clamp(double val, double min, double max) {
-    double ret = val;
-    ret = (ret < min) ? min : ret;
-    ret = (ret > max) ? max : ret;
-
-    return ret;
-  }
-
   Eigen::Vector3d LumiverseColor::RGBtoXYZ(double r, double g, double b, RGBColorSpace cs) {
-    r = clamp(r, 0, 1);
-    g = clamp(g, 0, 1);
-    b = clamp(b, 0, 1);
+    r = ColorUtils::clamp(r, 0, 1);
+    g = ColorUtils::clamp(g, 0, 1);
+    b = ColorUtils::clamp(b, 0, 1);
 
     if (cs == sRGB) {
-      r = sRGBtoXYZCompand(r);
-      g = sRGBtoXYZCompand(g);
-      b = sRGBtoXYZCompand(b);
+      r = ColorUtils::sRGBtoXYZCompand(r);
+      g = ColorUtils::sRGBtoXYZCompand(g);
+      b = ColorUtils::sRGBtoXYZCompand(b);
     }
 
 #ifdef USE_C11_MAPS
@@ -454,15 +432,6 @@ namespace Lumiverse {
     Eigen::Vector3d XYZ = M * rgb;
 
     return XYZ;
-  }
-
-  double LumiverseColor::sRGBtoXYZCompand(double val) {
-    // this is some black magic right here but apparently it's a standard.
-    return (val > 0.04045) ? pow(((val + 0.055) / 1.055), 2.4) : val / 12.92;
-  }
-
-  double LumiverseColor::XYZtosRGBCompand(double val) {
-    return (val > 0.0031308) ? (1.055 * pow(val, 1 / 2.4) - 0.055) : val * 12.92;
   }
 
   double LumiverseColor::labf(double val) {

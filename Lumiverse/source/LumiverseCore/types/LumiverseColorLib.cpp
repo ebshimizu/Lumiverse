@@ -4,32 +4,28 @@ namespace Lumiverse {
 namespace ColorUtils{ 
 
 double blackbodySPD(unsigned int nm, unsigned int temp) {
-  double h = 6.626176e-34;
-  double c = 2.99792458e8;
-  double k = 1.380662e-23;
-  double m = nm * (double) 10e-9;
-  double c1 = 2.0 * M_PI * h * c * c;
-  double c2 = (h * c) / k;
-
-  return c1 / (pow(h, 5) * (exp(c2 / (temp * m)) - 1));
+  // For some reason the eqn provided didn't work so I pulled this from the color calculator
+  // at Bruce Lindbloom's site.
+  double C1 = 2.0 * M_PI * 6.626176 * 2.99792458 * 2.99792458;	// * 1.0e-18
+  double C2 = (6.626176 * 2.99792458) / 1.380662;	// * 1.0e-3
+  double lm = nm * 1.0e-3;
+  double lm5 = pow(lm, 5);
+  return C1 / (lm5 * 1.0e-12 * (exp(C2 / (temp * lm * 1.0e-3)) - 1.0));	// -12 = -30 - (-18)
 }
 
 Eigen::Vector3d getApproxColor(string gel, float intens) {
   if (gelsCoarse.count(gel) == 0) {
     Logger::log(ERR, "Gel " + gel + " does not exist in the Lumiverse Color Library.");
-    return Eigen::Vector3d();
+    return refWhites[A];
   }
   
   // We assume a linear ambershift of an incandescent fixture.
   // Assuming that a lamp approaches incandescent (source A) when it gets dim,
   // and approaches the manufacturer's spec of 3250 at full intensity.
-  int temp = (int) (2700 + 550 * intens);
+  int temp = (int)(2700 + 550 * intens);
 
   auto color = gelsCoarse[gel];
   Eigen::Vector3d ret(0, 0, 0);
-
-  // Normalization factor for SPD. SPD will return 100 at 560nm.
-  double norm = blackbodySPD(560, temp);
 
   // For each wavelength, calculate SPD, multiply by transmission, multiply by CMF,
   // keep running sum.
@@ -59,6 +55,73 @@ Eigen::Vector3d getApproxColor(string gel, float intens) {
   }
 
   return ret;
+}
+
+Eigen::Vector3d getXYZTemp(unsigned int temp) {
+  Eigen::Vector3d ret(0, 0, 0);
+  double norm = blackbodySPD(560, temp);
+
+  for (int i = 0; i < 471; i++) {
+    double spd = blackbodySPD(i + 360, temp);
+    ret[0] += spd * CIE1964X[i];
+    ret[1] += spd * CIE1964Y[i];
+    ret[2] += spd * CIE1964Z[i];
+  }
+
+  ret[0] /= ret[1];
+  ret[2] /= ret[1];
+  ret[1] = 1;
+  ret *= 100;
+  return ret;
+}
+
+Eigen::Vector3d getScaledColor(string gel, float intens) {
+  auto color = getApproxColor(gel, intens);
+
+  return Eigen::Vector3d(color[0] / color[1], 1, color[2] / color[1]) * 100;
+}
+
+Eigen::Vector3d convXYZtoRGB(Eigen::Vector3d color, RGBColorSpace cs) {
+  // Vector is scaled by 1/100 bringing it inline withthe [0,1] range typically used by RGB.
+  color /= 100;
+#ifdef USE_C11_MAPS
+  Eigen::Vector3d rgb = RGBToXYZ[cs].inverse() * color;
+#else
+  Eigen::Vector3d rgb = RGBToXYZ(cs).inverse() * color;
+#endif
+
+  if (cs == sRGB) {
+    rgb[0] = XYZtosRGBCompand(rgb[0]);
+    rgb[1] = XYZtosRGBCompand(rgb[1]);
+    rgb[2] = XYZtosRGBCompand(rgb[2]);
+  }
+
+  return rgb;
+}
+
+Eigen::Vector3d normalizeRGB(Eigen::Vector3d rgb) {
+  double maxVal = max(rgb[0], max(rgb[1], rgb[2]));
+  if (maxVal > 1)
+    return rgb /= maxVal;
+  else
+    return rgb;
+}
+
+double clamp(double val, double min, double max) {
+  double ret = val;
+  ret = (ret < min) ? min : ret;
+  ret = (ret > max) ? max : ret;
+
+  return ret;
+}
+
+double sRGBtoXYZCompand(double val) {
+  // this is some black magic right here but apparently it's a standard.
+  return (val > 0.04045) ? pow(((val + 0.055) / 1.055), 2.4) : val / 12.92;
+}
+
+double XYZtosRGBCompand(double val) {
+  return (val > 0.0031308) ? (1.055 * pow(val, 1 / 2.4) - 0.055) : val * 12.92;
 }
 
 }

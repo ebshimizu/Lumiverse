@@ -20,11 +20,86 @@
 #include <math.h>
 
 #include "Logger.h"
-#include "LumiverseTypeUtils.h"
+#include "lib/Eigen/Dense"
 
 using namespace std;
 
 namespace Lumiverse {
+  /*! \brief Selects a RGB color space to use in color conversion functions. */
+  enum RGBColorSpace {
+    sRGB,        /*!< sRGB color space. D65 reference white. See http://en.wikipedia.org/wiki/SRGB */
+    sharpRGB	 /* Picture Perfect RGB Rendering Using Spectral Prefiltering */
+  };
+
+  enum ReferenceWhite {
+    D65,        /*< D65 illuminant. */
+    D50,        /*< D50 illuminant. */
+    A           /*< A illuminant. */
+  };
+
+#ifdef USE_C11_MAPS
+  /*! \brief RGB to XYZ matrices for color calculations */
+  static unordered_map<int, Eigen::Matrix3d> RGBToXYZ =
+  {
+    { sRGB, (Eigen::Matrix3d() << 0.4124564, 0.3575761, 0.1804375,
+                                  0.2126729, 0.7151522, 0.0721750,
+                                  0.0193339, 0.1191920, 0.9503041).finished() },
+    { sharpRGB, (Eigen::Matrix3d() << 0.8156, 0.0472, 0.1372,
+                                      0.3791, 0.5769, 0.0440,
+                                      -0.0123, 0.0167, 0.9955).finished() }
+  };
+
+  /*! \brief Maps Color space to the Reference White it uses */
+  static unordered_map<int, ReferenceWhite> ColorSpaceRefWhite =
+  {
+    { sRGB, D65 }
+  };
+
+  /*! \brief Reference White XYZ coordinates for standard illuminants */
+  static unordered_map<int, Eigen::Vector3d> refWhites =
+  {
+    { D65, Eigen::Vector3d(95.047, 100.00, 108.883) },
+    { D50, Eigen::Vector3d(96.4212, 100.0, 82.5188) },
+    { A, Eigen::Vector3d(109.844, 100.0, 35.55976) }
+  };
+#else
+	// Apparently VS2012 and earlier don't compile the above initialization
+	static Eigen::Matrix3d RGBToXYZ(RGBColorSpace c) {
+		switch (c) {
+		case sRGB:
+			return (Eigen::Matrix3d() << 0.4124564, 0.3575761, 0.1804375,
+                                   0.2126729, 0.7151522, 0.0721750,
+                                   0.0193339, 0.1191920, 0.9503041).finished();
+		case sharpRGB:
+			return (Eigen::Matrix3d() << 0.8156, 0.0472, 0.1372,
+                                   0.3791, 0.5769, 0.0440,
+                                   -0.0123, 0.0167, 0.9955).finished();
+		default:
+			return Eigen::Matrix3d();
+		}
+	}
+
+	static ReferenceWhite ColorSpaceRefWhite(RGBColorSpace c) {
+		switch(c) {
+		case sRGB:
+			return D65;
+		default:
+			return D65;
+		}
+	}
+
+	static Eigen::Vector3d refWhites(ReferenceWhite c) {
+		switch(c) {
+		case D65:
+			return Eigen::Vector3d(95.047, 100.00, 108.883);
+		case D50:
+			return Eigen::Vector3d(96.4212, 100.0, 82.5188);
+		default:
+			return Eigen::Vector3d();
+		}
+	}
+#endif
+
   // All of the following CMFs start at 360nm and go to 830nm
 
   /*! \brief CMF for X coordinate using the proposed CIE 2012 CMF. */
@@ -52,11 +127,13 @@ namespace Lumiverse {
   static unordered_map<string, vector<double> > gelsCoarse = {
     { "N/C", { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } },
     { "R02", { 0.69, 0.73, 0.71, 0.65, 0.56, 0.49, 0.47, 0.48, 0.54, 0.68, 0.74, 0.80, 0.84, 0.85, 0.85, 0.86, 0.86, 0.86, 0.86, 0.86} },
+    { "R51", { 0.68, 0.75, 0.78, 0.78, 0.77, 0.72, 0.67, 0.59, 0.53, 0.48, 0.48, 0.48, 0.56, 0.59, 0.58, 0.67, 0.80, 0.84, 0.85, 0.85} }
   };
 
   static unordered_map<string, double> gelsTrans = {
     { "N/C", 1 },
-    { "R02", 0.78 }
+    { "R02", 0.78 },
+    { "R51", 0.54 }
   };
 #endif
 
@@ -73,12 +150,54 @@ namespace Lumiverse {
     double blackbodySPD(unsigned int nm, unsigned int temp);
 
     /*! \brief Gets the XYZ coordinates of a gel color at a specified intensity.
-    
+
     This function assumes an incandescent source and makes a simple approximation to
     simulate ambershift (see code for details). Uses the CIE1964 CMF.
+    \return Unscaled XYZ value from blackbody calcuation (can be huge) or CIE Illuminant A ref white if gel isn't
+    in the Lumiverse color library.
     */
     Eigen::Vector3d getApproxColor(string gel, float intens = 1.0f);
 
+    /*!
+    \brief Returns the Y-normalized XYZ coordinates of a blackbody radiator with the specified temperature.
+    */
+    Eigen::Vector3d getXYZTemp(unsigned int temp);
+
+    /*!
+    \brief Gets the Y-normalized XYZ coordinates of a gel color at a specified intensity.
+
+    Y-normalized means that Y = 100 and X and Z are scaled relative to Y = 100.
+    */
+    Eigen::Vector3d getScaledColor(string gel, float intens = 1.0f);
+
+    /*!
+    \brief Converts an XYZ value to a RGB value using the specified color space.
+
+    \param color XYZ value to convert. This function assumes that the color is normalized such that Y = 100
+    and will do equations accordingly. Other normalizations may result in unusual results.
+    \param cs Colorspace to convert to.
+    \return Raw RGB value. Note that this value may be out of the normal [0, 1] range.
+    */
+    Eigen::Vector3d convXYZtoRGB(Eigen::Vector3d color, RGBColorSpace cs = sRGB);
+
+    /*!
+    \brief Takes an RGB value and normalizes it to the range [0,1].
+
+    Note that this function is likely a terrible hack and is temporary while
+    we figure out how to use color appearance models.
+    */
+    Eigen::Vector3d normalizeRGB(Eigen::Vector3d rgb);
+
+    /*!
+    \brief Clamps a value between a min and a max
+    */
+    double clamp(double val, double min, double max);
+
+    /*! \brief sRGB value companding function for RGB to XYZ */
+    double sRGBtoXYZCompand(double val);
+
+    /*! \brief sRGB value companding cuntion for XYZ to RGB */
+    double XYZtosRGBCompand(double val);
   }
 }
 

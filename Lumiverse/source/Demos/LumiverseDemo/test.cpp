@@ -8,6 +8,11 @@ using namespace Lumiverse;
 int main(int argc, char**argv) {
   // Logger::setLogFile("OLLlog.txt");
   
+  auto color = ColorUtils::normalizeRGB(ColorUtils::convXYZtoRGB(ColorUtils::getXYZTemp(2856)));
+  cout << color;
+  getch();
+  return 1;
+
   Rig rig("/afs/andrew.cmu.edu/usr1/chenxil/Documents/Lumiverse/Lumiverse/data/arnold_photometric.json");
 
   // Init rig
