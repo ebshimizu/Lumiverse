@@ -214,6 +214,12 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
       // First parse lumiverse type into string. So we can reuse the function for metadata.
       // It's obviously inefficient.
       if (raw->getTypeName() == "float") {
+        if (param == "intensity" && gelsTrans.count(d_ptr->getMetadata("gel")) > 0) {
+          LumiverseFloat* scaledVal = (LumiverseFloat*)LumiverseTypeUtils::copy(raw);
+          *scaledVal *= gelsTrans[d_ptr->getMetadata("gel")];
+          m_interface.setParameter(light_ptr, param, scaledVal->asString());
+        }
+        else 
           m_interface.setParameter(light_ptr, param, ((LumiverseFloat*)raw)->asString());
       }
       else if (raw->getTypeName() == "color") {
