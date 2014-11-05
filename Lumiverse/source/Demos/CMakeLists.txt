@@ -1,2 +1,3 @@
 add_subdirectory(LumiverseDemo)
 add_subdirectory(SpeedTest)
+add_subdirectory(FeatureGenerator)

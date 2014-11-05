@@ -18,7 +18,7 @@ Eigen::Vector3d getApproxColor(string gel, float intens) {
     Logger::log(ERR, "Gel " + gel + " does not exist in the Lumiverse Color Library.");
     return refWhites[A];
   }
-  
+
   // We assume a linear ambershift of an incandescent fixture.
   // Assuming that a lamp approaches incandescent when it gets dim and 
   // approaches manufacturer spec of 3250K at full brightness.
@@ -101,6 +101,14 @@ Eigen::Vector3d convXYZtoRGB(Eigen::Vector3d color, RGBColorSpace cs) {
   rgb[2] = (rgb[2] < 0) ? 0 : rgb[2];
 
   return rgb;
+}
+
+Eigen::Vector3d convXYZtoxyY(Eigen::Vector3d color) {
+  if (color[0] == 0 && color[1] == 0 && color[2] == 0)
+    return Eigen::Vector3d(0, 0, 0);
+
+  double denom = color[0] + color[1] + color[2];
+  return Eigen::Vector3d(color[0] / denom, color[1] / denom, color[1]);
 }
 
 Eigen::Vector3d normalizeRGB(Eigen::Vector3d rgb) {

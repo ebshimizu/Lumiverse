@@ -256,6 +256,11 @@ namespace Lumiverse {
     Eigen::Vector3d convXYZtoRGB(Eigen::Vector3d color, RGBColorSpace cs = sRGB);
 
     /*!
+    \brief Converts an XYZ color to an xyY color.
+    */
+    Eigen::Vector3d convXYZtoxyY(Eigen::Vector3d color);
+
+    /*!
     \brief Takes an RGB value and normalizes it to the range [0,1].
 
     Note that this function is likely a terrible hack and is temporary while
