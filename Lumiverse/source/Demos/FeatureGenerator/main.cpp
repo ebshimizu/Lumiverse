@@ -164,4 +164,6 @@ int main(int argc, char**argv) {
 
     outputFile << "\n";
   }
+
+  outputFile.close();
 }
