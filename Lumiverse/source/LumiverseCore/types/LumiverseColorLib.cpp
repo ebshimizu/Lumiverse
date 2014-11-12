@@ -14,44 +14,65 @@ double blackbodySPD(unsigned int nm, unsigned int temp) {
 }
 
 Eigen::Vector3d getApproxColor(string gel, float intens) {
-  if (gelsCoarse.count(gel) == 0) {
-    Logger::log(ERR, "Gel " + gel + " does not exist in the Lumiverse Color Library.");
-    return refWhites[A];
+  // Multiple gels can be used (use a +)
+  vector<string> gels;
+  size_t gelbrk = gel.find("+");
+  size_t firstchar = 0;
+  while (gelbrk != string::npos) {
+    gels.push_back(gel.substr(firstchar, gelbrk - firstchar));
+    firstchar = gelbrk + 1;
+    gelbrk = gel.find("+", firstchar);
   }
+  gels.push_back(gel.substr(firstchar, string::npos));
 
   // We assume a linear ambershift of an incandescent fixture.
   // Assuming that a lamp approaches incandescent when it gets dim and 
   // approaches manufacturer spec of 3250K at full brightness.
   int temp = (int)(2500 + 750 * intens);
 
-  auto color = gelsCoarse[gel];
   Eigen::Vector3d ret(0, 0, 0);
+  double spectrum[471];
 
-  // For each wavelength, calculate SPD, multiply by transmission, multiply by CMF,
-  // keep running sum.
-  // We'll iterate over the color's data points to make things a bit nicer.
-  for (int i = 0; i < 20; i++) {
-    if (i == 19) {
-      // Special case for final element
-      double trans = color[i];
-      int idx = i * 20;
-      double spd = blackbodySPD(idx + 360, temp);
-      
-      ret[0] += spd * trans * CIE1964X[idx];
-      ret[1] += spd * trans * CIE1964Y[idx];
-      ret[2] += spd * trans * CIE1964Z[idx];
+  // First generate spectrum
+  for (int i = 0; i < 471; i++) {
+    spectrum[i] = blackbodySPD(i + 360, temp);
+  }
+
+  // Then multiply by transmission
+  for (int g = 0; g < gels.size(); g++) {
+    if (gelsCoarse.count(gels[g]) == 0) {
+      Logger::log(WARN, "Gel " + gels[g] + " not found in Lumiverse Color Library. Skipping...");
+      continue;
     }
-    else {
-      for (int j = 0; j < 20; j++) {
-        double trans = color[i] + (color[i + 1] - color[i]) * (double)(j / 20.0);
+    auto color = gelsCoarse[gels[g]];
+
+    // For each wavelength, calculate SPD, multiply by transmission, multiply by CMF,
+    // keep running sum.
+    // We'll iterate over the color's data points to make things a bit nicer.
+    for (int i = 0; i < 20; i++) {
+      if (i == 19) {
+        // Special case for final element
+        double trans = color[i];
         int idx = i * 20;
-        double spd = blackbodySPD(idx + 360, temp);
-        
-        ret[0] += spd * trans * CIE1964X[idx];
-        ret[1] += spd * trans * CIE1964Y[idx];
-        ret[2] += spd * trans * CIE1964Z[idx];
+
+        spectrum[idx] *= trans;
+      }
+      else {
+        for (int j = 0; j < 20; j++) {
+          double trans = color[i] + (color[i + 1] - color[i]) * (double)(j / 20.0);
+          int idx = i * 20 + j;
+
+          spectrum[idx] *= trans;
+        }
       }
     }
+  }
+
+  // Apply CIE functions
+  for (int i = 0; i < 471; i++) {
+    ret[0] += spectrum[i] * CIE1964X[i];
+    ret[1] += spectrum[i] * CIE1964Y[i];
+    ret[2] += spectrum[i] * CIE1964Z[i];
   }
 
   return ret;
@@ -134,6 +155,30 @@ double sRGBtoXYZCompand(double val) {
 
 double XYZtosRGBCompand(double val) {
   return (val > 0.0031308) ? (1.055 * pow(val, 1 / 2.4) - 0.055) : val * 12.92;
+}
+
+double getTotalTrans(string gel) {
+  // Multiple gels can be used (use a +)
+  vector<string> gels;
+  size_t gelbrk = gel.find("+");
+  size_t firstchar = 0;
+  while (gelbrk != string::npos) {
+    gels.push_back(gel.substr(firstchar, gelbrk - firstchar));
+    firstchar = gelbrk + 1;
+    gelbrk = gel.find("+", firstchar);
+  }
+  gels.push_back(gel.substr(firstchar, string::npos));
+
+  double trans = 1.0;
+  for (const auto& g : gels) {
+    if (gelsTrans.count(g) == 0) {
+      Logger::log(WARN, "Gel " + g + " does not exist in the Lumiverse Color Library. Skipping...");
+      continue;
+    }
+    trans *= gelsTrans[g];
+  }
+
+  return trans;
 }
 
 }
