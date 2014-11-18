@@ -24,7 +24,7 @@ private:
   bool runTest(std::function<bool()> t, string testName, int testNum);
 
   // Update when new tests are written.
-  int m_numTests = 9;
+  static const int m_numTests = 9;
 
   // Initialized in PlaybackStart()
   Rig* m_testRig;

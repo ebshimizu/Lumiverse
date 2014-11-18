@@ -262,6 +262,10 @@ vector<string> Device::getParamNames() {
   return keys;
 }
 
+bool Device::metadataExists(string key) {
+  return m_metadata.count(key) > 0;
+}
+
 bool Device::getMetadata(string key, string& val) {
   if (m_metadata.count(key) > 0) {
     val = m_metadata[key];
@@ -269,6 +273,14 @@ bool Device::getMetadata(string key, string& val) {
   }
 
   return false;
+}
+
+string Device::getMetadata(string key) {
+  if (m_metadata.count(key) > 0) {
+    return m_metadata[key];
+  }
+
+  return "";
 }
 
 bool Device::setMetadata(string key, string val) {
@@ -424,6 +436,25 @@ bool Device::isIdentical(Device* d) {
   // We don't check the callback functions since they're more attached
   // to the device rather than intrinsic properties of the device.
   return true;
+}
+
+Eigen::Vector3d Device::getGelColor() {
+  // must be exact paramter match.
+  if (metadataExists("gel") && paramExists("intensity")) {
+    float intens;
+    getParam("intensity", intens);
+    return ColorUtils::getScaledColor(m_metadata["gel"], intens);
+  }
+
+  // If no color known, return a N/C gel if intensity exists
+  if (paramExists("intensity")) {
+    float intens;
+    getParam("intensity", intens);
+    return ColorUtils::getScaledColor("N/C", intens);
+  }
+
+  // If everything else fails, return illuminant A
+  return refWhites[A];
 }
 
 JSONNode Device::parametersToJSON() {

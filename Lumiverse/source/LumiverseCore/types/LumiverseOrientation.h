@@ -18,6 +18,7 @@ namespace Lumiverse {
     DEGREE, RADIAN
   };
 
+#ifdef USE_C11_MAPS
   /*! \brief Converts orientation to string */
   static unordered_map<int, string> oriToString = {
     { DEGREE, "degree" }, { RADIAN, "radian" }
@@ -27,6 +28,25 @@ namespace Lumiverse {
   static unordered_map<string, int> stringToOri = {
     { "degree", DEGREE }, { "radian", RADIAN }
   };
+#else
+  static string oriToString(ORIENTATION_UNIT u) {
+		switch(u) {
+		case DEGREE:
+			return "degree";
+		case RADIAN:
+			return "radian";
+		default:
+			return "";
+		}
+  }
+
+  static ORIENTATION_UNIT stringToOri(string u) {
+		if (u == "degree") return DEGREE;
+		if (u == "radian") return RADIAN;
+
+		return RADIAN;
+  }
+#endif
 
   /*!
   * \brief Defines an orientation in Lumiverse

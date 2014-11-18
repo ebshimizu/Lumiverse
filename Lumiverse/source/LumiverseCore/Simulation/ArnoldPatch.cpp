@@ -209,30 +209,42 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
     // Sets arnold params with device params
     // This process is after parsing metadata, so parameters here can overwrite values from metadata
     for (std::string param : d_ptr->getParamNames()) {
-        LumiverseType *raw = d_ptr->getParam(param);
-        
-        // First parse lumiverse type into string. So we can reuse the function for metadata.
-        // It's obviously inefficient.
-        if (raw->getTypeName() == "float") {
-            m_interface.setParameter(light_ptr, param, ((LumiverseFloat*)raw)->asString());
+      LumiverseType *raw = d_ptr->getParam(param);
+      
+      // First parse lumiverse type into string. So we can reuse the function for metadata.
+      // It's obviously inefficient.
+      if (raw->getTypeName() == "float") {
+        if (param == "intensity") {
+          LumiverseFloat* scaledVal = (LumiverseFloat*)LumiverseTypeUtils::copy(raw);
+          *scaledVal *= (float)(ColorUtils::getTotalTrans(d_ptr->getMetadata("gel")));
+          m_interface.setParameter(light_ptr, param, scaledVal->asString());
         }
-        else if (raw->getTypeName() == "color") {
-            Eigen::Vector3d rgb = ((LumiverseColor*)raw)->getRGB();
-            std::stringstream ss;
-            ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
-            m_interface.setParameter(light_ptr, param, ss.str());
-        }
-		// Assume pan and tilt are named as "pan" and "tilt"
-		else if (raw->getTypeName() == "orientation" &&
-				param == "tilt") {
-			LumiverseOrientation *tilt = (LumiverseOrientation*)raw;
-			LumiverseOrientation *pan = (LumiverseOrientation*)d_ptr->getParam("pan");
+      }
+      else if (raw->getTypeName() == "color") {
+          Eigen::Vector3d rgb = ((LumiverseColor*)raw)->getRGB();
+          std::stringstream ss;
+          ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
+          m_interface.setParameter(light_ptr, param, ss.str());
+      }
+      // Assume pan and tilt are named as "pan" and "tilt"
+      else if (raw->getTypeName() == "orientation" &&
+          param == "tilt") {
+        LumiverseOrientation *tilt = (LumiverseOrientation*)raw;
+        LumiverseOrientation *pan = (LumiverseOrientation*)d_ptr->getParam("pan");
 
-			if (pan == NULL)
-				continue;
+        if (pan == NULL)
+          continue;
 
-			setOrientation(light_ptr, d_ptr, pan, tilt);
-		}
+        setOrientation(light_ptr, d_ptr, pan, tilt);
+      }
+    }
+
+    // If there is no color parameter, use a gel color/incandescent model
+    if (!d_ptr->paramExists("color")) {
+      Eigen::Vector3d rgb = ColorUtils::normalizeRGB(ColorUtils::convXYZtoRGB(d_ptr->getGelColor()));
+      std::stringstream ss;
+      ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
+      m_interface.setParameter(light_ptr, "color", ss.str());
     }
 
 	ArnoldLightRecord *record = (ArnoldLightRecord *)m_lights[light_name];
@@ -257,7 +269,7 @@ void ArnoldPatch::modifyLightColor(Device *d, Eigen::Vector3d white) {
 		rgb = d->getColor()->getRGB(sharpRGB);
 	else {
 		map<string, Eigen::Vector3d> basis;
-		basis["White"] = refWhites[D65];
+    basis["White"] = d->getGelColor(); // Returns D65 if no gel present.
 		map<string, double> channels;
 		channels["White"] = 1;
 		LumiverseColor white(channels, basis, ColorMode::ADDITIVE, 1);

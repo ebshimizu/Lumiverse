@@ -21,7 +21,7 @@ private:
   bool runTest(std::function<bool()> t, string testName, int testNum);
 
   // Update when new tests are written.
-  int m_numTests = 12;
+  static const int m_numTests = 12;
 
   // Initialized in rigStart()
   Rig* m_testRig;

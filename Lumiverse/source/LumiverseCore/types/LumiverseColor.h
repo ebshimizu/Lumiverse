@@ -13,6 +13,7 @@
 #include <memory>
 #include "lib/Eigen/Dense"
 #include "../LumiverseType.h"
+#include "LumiverseColorLib.h"
 
 using namespace std;
 
@@ -25,6 +26,7 @@ namespace Lumiverse {
     BASIC_CMY    /*!< Color has no basis vectors and assumes a default CMY subtractive system. */
   };
 
+#ifdef USE_C11_MAPS
   /*! \brief Converts ColorMode to a string */
   static unordered_map<int, string> ColorModeToString =
   {
@@ -38,42 +40,27 @@ namespace Lumiverse {
     { "ADDITIVE", ADDITIVE }, { "SUBTRACTIVE", SUBTRACTIVE },
     { "BASIC_RGB", BASIC_RGB }, { "BASIC_CMY", BASIC_CMY }
   };
+#else
+  static string ColorModeToString(ColorMode m) {
+		unordered_map<int, string> ColorModeToString;
+		ColorModeToString[ADDITIVE] = "ADDITIVE";
+		ColorModeToString[SUBTRACTIVE] = "SUBTRACTIVE";
+		ColorModeToString[BASIC_RGB] = "BASIC_RGB";
+		ColorModeToString[BASIC_CMY] = "BASIC_CMY";
 
-  /*! \brief Selects a RGB color space to use in color conversion functions. */
-  enum RGBColorSpace {
-    sRGB,        /*!< sRGB color space. D65 reference white. See http://en.wikipedia.org/wiki/SRGB */
-    sharpRGB	 /* Picture Perfect RGB Rendering Using Spectral Prefiltering */
-  };
+		return ColorModeToString[m];
+  }
 
-  enum ReferenceWhite {
-    D65,        /*< D65 illuminant. */
-    D50,        /*< D50 illuminant. */
-  };
+	static ColorMode StringToColorMode(string s) {
+		unordered_map<string, ColorMode> StringToColorMode;
+		StringToColorMode["ADDITIVE"] = ADDITIVE;
+		StringToColorMode["SUBTRACTIVE"] = SUBTRACTIVE;
+		StringToColorMode["BASIC_RGB"] = BASIC_RGB;
+		StringToColorMode["BASIC_CMY"] = BASIC_CMY;
 
-  /*! \brief RGB to XYZ matrices for color calculations */
-  static unordered_map<int, Eigen::Matrix3d> RGBToXYZ =
-  {
-    { sRGB, (Eigen::Matrix3d() << 0.4124564, 0.3575761, 0.1804375,
-                                  0.2126729, 0.7151522, 0.0721750,
-                                  0.0193339, 0.1191920, 0.9503041).finished() },
-    { sharpRGB, (Eigen::Matrix3d() << 0.8156, 0.0472, 0.1372,
-                                      0.3791, 0.5769, 0.0440,
-                                      -0.0123, 0.0167, 0.9955).finished() }
-  };
-
-  /*! \brief Maps Color space to the Reference White it uses */
-  static unordered_map<int, ReferenceWhite> ColorSpaceRefWhite =
-  {
-    { sRGB, D65 }
-  };
-
-  /*! \brief Reference White XYZ coordinates for standard illuminants */
-  static unordered_map<int, Eigen::Vector3d> refWhites =
-  {
-    { D65, Eigen::Vector3d(95.047, 100.00, 108.883) },
-    { D50, Eigen::Vector3d(96.4212, 100.0, 82.5188) }
-  };
-
+		return StringToColorMode[s];	
+	}
+#endif
   /*!
   * \brief This class describes a color.
   *
@@ -397,17 +384,8 @@ namespace Lumiverse {
     /*! \brief Calculates the value of the specified component at current device channel levels. */
     double sumComponent(int i);
 
-    /*! \brief Clamps a value between min and max. Returns the clamped value. */
-    double clamp(double val, double min, double max);
-
     /*! \brief Helper for converting RGB to XYZ */
     Eigen::Vector3d RGBtoXYZ(double r, double g, double b, RGBColorSpace cs);
-
-    /*! \brief sRGB value companding function for RGB to XYZ */
-    double sRGBtoXYZCompand(double val);
-
-    /*! \brief sRGB value companding cuntion for XYZ to RGB */
-    double XYZtosRGBCompand(double val);
 
     /*! \brief Lab f() function.
     * 

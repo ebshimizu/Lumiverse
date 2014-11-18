@@ -39,7 +39,11 @@ namespace ShowControl {
       else if (name == "active")
         m_active = it->as_bool();
       else if (name == "mode")
+#ifdef USE_C11_MAPS
         m_mode = StringToBlendMode[it->as_string()];
+#else
+        m_mode = StringToBlendMode(it->as_string());
+#endif
       else if (name == "opacity")
         m_opacity = it->as_float();
       // Cue list must be matched up one level above.
@@ -450,7 +454,11 @@ namespace ShowControl {
     layer.push_back(JSONNode("priority", m_priority));
     layer.push_back(JSONNode("invertFilter", m_invertFilter));
     layer.push_back(JSONNode("active", m_active));
+#ifdef USE_C11_MAPS
     layer.push_back(JSONNode("mode", BlendModeToString[m_mode]));
+#else
+    layer.push_back(JSONNode("mode", BlendModeToString(m_mode)));
+#endif
     layer.push_back(JSONNode("opacity", m_opacity));
     layer.push_back(JSONNode("currentCue", m_currentCue));
     

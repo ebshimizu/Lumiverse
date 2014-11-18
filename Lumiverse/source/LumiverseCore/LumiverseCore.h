@@ -61,6 +61,7 @@
 #include "types/LumiverseEnum.h"
 #include "types/LumiverseColor.h"
 #include "types/LumiverseTypeUtils.h"
+#include "types/LumiverseColorLib.h"
 #include "DMX/DMXPatch.h"
 #include "DMX/DMXDevicePatch.h"
 #include "DMX/DMXInterface.h"

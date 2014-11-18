@@ -293,8 +293,11 @@ LumiverseType* LumiverseTypeUtils::loadFromJSON(JSONNode node) {
           basis[basisData.name()] = basisVector;
           b++;
         }
-
+#ifdef USE_C11_MAPS
         LumiverseColor* color = new LumiverseColor(channels, basis, StringToColorMode[modeNode->as_string()], weightNode->as_float());
+#else
+        LumiverseColor* color = new LumiverseColor(channels, basis, StringToColorMode(modeNode->as_string()), weightNode->as_float());
+#endif
 
         return (LumiverseType*)color;
       }
@@ -313,10 +316,18 @@ LumiverseType* LumiverseTypeUtils::loadFromJSON(JSONNode node) {
 			LumiverseOrientation* param;
 
 			if (maxNode != node.end() && minNode != node.end()) {
+#ifdef USE_C11_MAPS
 				param = new LumiverseOrientation(valNode->as_float(), (ORIENTATION_UNIT)stringToOri[unitNode->as_string()], defNode->as_float(), maxNode->as_float(), minNode->as_float());
+#else
+				param = new LumiverseOrientation(valNode->as_float(), stringToOri(unitNode->as_string()), defNode->as_float(), maxNode->as_float(), minNode->as_float());
+#endif
 			}
 			else {
+#ifdef USE_C11_MAPS
 				param = new LumiverseOrientation(valNode->as_float(), (ORIENTATION_UNIT)stringToOri[unitNode->as_string()], defNode->as_float());
+#else
+				param = new LumiverseOrientation(valNode->as_float(), stringToOri(unitNode->as_string()), defNode->as_float());
+#endif
 			}
 			return  (LumiverseType*)param;
 		}

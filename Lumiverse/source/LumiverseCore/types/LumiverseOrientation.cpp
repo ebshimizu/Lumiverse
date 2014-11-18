@@ -34,7 +34,11 @@ JSONNode LumiverseOrientation::toJSON(string name) {
   node.set_name(name);
 
   node.push_back(JSONNode("type", getTypeName()));
+#ifdef USE_C11_MAPS
   node.push_back(JSONNode("unit", oriToString[m_unit]));
+#else
+  node.push_back(JSONNode("unit", oriToString(m_unit)));
+#endif
   node.push_back(JSONNode("val", m_val));
   node.push_back(JSONNode("default", m_default));
   node.push_back(JSONNode("max", m_max));

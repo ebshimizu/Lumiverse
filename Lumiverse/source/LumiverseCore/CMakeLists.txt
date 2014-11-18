@@ -76,6 +76,8 @@ set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
 	types/LumiverseOrientation.cpp
 	types/LumiverseTypeUtils.h
 	types/LumiverseTypeUtils.cpp
+    types/LumiverseColorLib.h
+    types/LumiverseColorLib.cpp
     DMX/DMXPatch.h
     DMX/DMXPatch.cpp
     DMX/DMXDevicePatch.h

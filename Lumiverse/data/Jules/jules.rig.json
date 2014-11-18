@@ -1490,6 +1490,41 @@
 				}
 			},
 			"devicePatch" : {
+				"fresnel_E_4" : {
+					"mapType" : "dimmer",
+					"addr" : 1,
+					"universe" : 0
+				},
+				"fresnel_E_8" : {
+					"mapType" : "dimmer",
+					"addr" : 13,
+					"universe" : 0
+				},
+				"fresnel_E1_4" : {
+					"mapType" : "dimmer",
+					"addr" : 15,
+					"universe" : 0
+				},
+				"fresnel_E_15" : {
+					"mapType" : "dimmer",
+					"addr" : 17,
+					"universe" : 0
+				},
+				"fresnel_G_10" : {
+					"mapType" : "dimmer",
+					"addr" : 23,
+					"universe" : 0
+				},
+				"fresnel_E1_2" : {
+					"mapType" : "dimmer",
+					"addr" : 3,
+					"universe" : 0
+				},
+				"fresnel_E_12" : {
+					"mapType" : "dimmer",
+					"addr" : 5,
+					"universe" : 0
+				},
 				"par_H1_1" : {
 					"mapType" : "dimmer",
 					"addr" : 25,
@@ -1502,12 +1537,12 @@
 				},
 				"par_H1_14" : {
 					"mapType" : "dimmer",
-					"addr" : 44,
+					"addr" : 300,
 					"universe" : 0
 				},
 				"par_H1_2" : {
 					"mapType" : "dimmer",
-					"addr" : 25,
+					"addr" : 281,
 					"universe" : 0
 				},
 				"par_H1_6" : {
@@ -1517,7 +1552,7 @@
 				},
 				"par_H1_7" : {
 					"mapType" : "dimmer",
-					"addr" : 27,
+					"addr" : 283,
 					"universe" : 0
 				},
 				"par_H1_8" : {
@@ -1527,7 +1562,7 @@
 				},
 				"par_H1_9" : {
 					"mapType" : "dimmer",
-					"addr" : 26,
+					"addr" : 282,
 					"universe" : 0
 				},
 				"rover1" : {
@@ -1632,6 +1667,11 @@
 				},
 				"s4_G_3" : {
 					"mapType" : "dimmer",
+					"addr" : 7,
+					"universe" : 0
+				},
+				"fresnel_G_4" : {
+					"mapType" : "dimmer",
 					"addr" : 18,
 					"universe" : 0
 				},
@@ -1675,9 +1715,59 @@
 					"addr" : 6,
 					"universe" : 0
 				},
+				"s4_H1_4_seachanger" : {
+					"mapType" : "seachanger",
+					"addr" : 109,
+					"universe" : 1
+				},
+				"s4_H1_11_seachanger" : {
+					"mapType" : "seachanger",
+					"addr" : 119,
+					"universe" : 1
+				},
 				"s4_H1_5" : {
 					"mapType" : "dimmer",
 					"addr" : 8,
+					"universe" : 0
+				},
+				"s4_E_LED2" : {
+					"mapType" : "Lustr+",
+					"addr" : 99,
+					"universe" : 1
+				},
+				"s4_E_LED1" : {
+					"mapType" : "Lustr+",
+					"addr" : 89,
+					"universe" : 1
+				},
+				"upperCyc1" : {
+					"mapType" : "dimmer",
+					"addr" : 43,
+					"universe" : 0
+				},
+				"upperCyc2" : {
+					"mapType" : "dimmer",
+					"addr" : 24,
+					"universe" : 0
+				},
+				"upperCyc3" : {
+					"mapType" : "dimmer",
+					"addr" : 42,
+					"universe" : 0
+				},
+				"lowerCyc1" : {
+					"mapType" : "dimmer",
+					"addr" : 45,
+					"universe" : 0
+				},
+				"lowerCyc2" : {
+					"mapType" : "dimmer",
+					"addr" : 33,
+					"universe" : 0
+				},
+				"lowerCyc3" : {
+					"mapType" : "dimmer",
+					"addr" : 46,
 					"universe" : 0
 				}
 			}
@@ -1690,41 +1780,41 @@
 			"predictive" : 0,
 			"gamma" : 2.2,
 			"lights" : {
-        "s4_E_16" : { "type" : "photometric_light" }, 
-        "s4_E_11" : { "type" : "photometric_light" }, 
-        "s4_E_7" : { "type" : "photometric_light" },
-        "s4_E_3" : { "type" : "photometric_light" },
-        "s4_E_LED1" : { "type" : "photometric_light" },
-        "s4_E_LED2" : { "type" : "photometric_light" },
-        "s4_E1_1" : { "type" : "photometric_light" },
-        "s4_E1_3" : { "type" : "photometric_light" },
-        "s4_BSR_1" : { "type" : "photometric_light" },
-        "s4_BSR_2" : { "type" : "photometric_light" },
-        "s4_BSL_1" : { "type" : "photometric_light" },
-        "s4_BSL_2" : { "type" : "photometric_light" },
-        "s4_G_12" : { "type" : "photometric_light" }, 
-        "s4_G_11" : { "type" : "photometric_light" }, 
-        "s4_G_8" : { "type" : "photometric_light" },
-        "s4_G_7" : { "type" : "photometric_light" },
-        "s4_G_6" : { "type" : "photometric_light" }, 
-        "s4_G_5" : { "type" : "photometric_light" }, 
-        "s4_G_2" : { "type" : "photometric_light" },
-        "s4_G_1" : { "type" : "photometric_light" },
-        "s4_G_9" : { "type" : "photometric_light" }, 
-        "s4_G_3" : { "type" : "photometric_light" }, 
-        "s4_H1_11" : { "type" : "photometric_light" },
-        "s4_H1_10" : { "type" : "photometric_light" },
-        "s4_H1_5" : { "type" : "photometric_light" }, 
-        "s4_H1_4" : { "type" : "photometric_light" },
-        "par_H1_14" : { "type" : "photometric_light" },
-        "par_H1_13" : { "type" : "photometric_light" },
-        "par_H1_9" : { "type" : "photometric_light" }, 
-        "par_H1_8" : { "type" : "photometric_light" }, 
-        "par_H1_7" : { "type" : "photometric_light" },
-        "par_H1_6" : { "type" : "photometric_light" },
-        "par_H1_2" : { "type" : "photometric_light" }, 
-        "par_H1_1" : { "type" : "photometric_light" }
-	    },
+		        "s4_E_16" : { "type" : "photometric_light" }, 
+		        "s4_E_11" : { "type" : "photometric_light" }, 
+		        "s4_E_7" : { "type" : "photometric_light" },
+		        "s4_E_3" : { "type" : "photometric_light" },
+		        "s4_E_LED1" : { "type" : "photometric_light" },
+		        "s4_E_LED2" : { "type" : "photometric_light" },
+		        "s4_E1_1" : { "type" : "photometric_light" },
+		        "s4_E1_3" : { "type" : "photometric_light" },
+		        "s4_BSR_1" : { "type" : "photometric_light" },
+		        "s4_BSR_2" : { "type" : "photometric_light" },
+		        "s4_BSL_1" : { "type" : "photometric_light" },
+		        "s4_BSL_2" : { "type" : "photometric_light" },
+		        "s4_G_12" : { "type" : "photometric_light" }, 
+		        "s4_G_11" : { "type" : "photometric_light" }, 
+		        "s4_G_8" : { "type" : "photometric_light" },
+		        "s4_G_7" : { "type" : "photometric_light" },
+		        "s4_G_6" : { "type" : "photometric_light" }, 
+		        "s4_G_5" : { "type" : "photometric_light" }, 
+		        "s4_G_2" : { "type" : "photometric_light" },
+		        "s4_G_1" : { "type" : "photometric_light" },
+		        "s4_G_9" : { "type" : "photometric_light" }, 
+		        "s4_G_3" : { "type" : "photometric_light" }, 
+		        "s4_H1_11" : { "type" : "photometric_light" },
+		        "s4_H1_10" : { "type" : "photometric_light" },
+		        "s4_H1_5" : { "type" : "photometric_light" }, 
+		        "s4_H1_4" : { "type" : "photometric_light" },
+		        "par_H1_14" : { "type" : "photometric_light" },
+		        "par_H1_13" : { "type" : "photometric_light" },
+		        "par_H1_9" : { "type" : "photometric_light" }, 
+		        "par_H1_8" : { "type" : "photometric_light" }, 
+		        "par_H1_7" : { "type" : "photometric_light" },
+		        "par_H1_6" : { "type" : "photometric_light" },
+		        "par_H1_2" : { "type" : "photometric_light" }, 
+		        "par_H1_1" : { "type" : "photometric_light" }
+		    },
 			"arnoldParamMaps" : {
 				"color" : {
 					"dimension" : 3,

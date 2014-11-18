@@ -1,6 +1,6 @@
-
 #include "SimulationAnimationPatch.h"
 
+#ifdef USE_ARNOLD
 #include <sstream>
 
 namespace Lumiverse {
@@ -298,3 +298,4 @@ void SimulationAnimationPatch::workerLoop() {
 }
 
 }
+#endif
