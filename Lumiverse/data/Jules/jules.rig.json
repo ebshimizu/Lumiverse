@@ -47,7 +47,7 @@
 				"filename" : "S4jr26Deg.575X-115v_LM6302_07.IES",
 				"lookat" : "0.908, -2.0, 1.604",
 				"pan" : "0",
-				"position" : "2.599, 1.6, 3.619",
+				"position" : "2.599, 1.63, 3.619",
 				"samples" : "3",
 				"tilt" : "0.0",
 				"up" : "0, -1, 0",
@@ -1686,7 +1686,7 @@
 			"type" : "ArnoldAnimationPatch",
 		    "frameDirectory" : "J:/Lumiverse/Lumiverse/source/Test/movie/",
 			"sceneFile" : "Jules.ass",
-			"pluginDir" : "C:\/lib\/Lumiverse\/lib\/arnold\/plugin;C:\/solidangle\/mtoadeploy\/2015\/shaders\/",
+			"pluginDir" : "J:/LumiverseInstall/lib/arnold/plugin;C:/lib/Lumiverse/lib/arnold/plugin;C:/solidangle/mtoadeploy/2015/shaders/",
 			"predictive" : 0,
 			"gamma" : 2.2,
 			"lights" : {

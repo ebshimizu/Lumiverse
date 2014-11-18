@@ -135,6 +135,9 @@ void SimulationPatch::init() {
 void SimulationPatch::close() {
     interruptRender();
     // close files
+	for (auto & record : m_lights) {
+		record.second->clear();
+	}
 }
 
 JSONNode SimulationPatch::toJSON() {

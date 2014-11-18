@@ -276,8 +276,8 @@ void ArnoldInterface::init() {
     // Starts a arnold session
     AiBegin();
 
-	//AiMsgSetLogFileName("J:/Lumiverse/Lumiverse/data/Jules/LOG");
-	//AiMsgSetLogFileFlags(AI_LOG_ALL);
+	AiMsgSetLogFileName("J:/Lumiverse/Lumiverse/data/Jules/LOG");
+	AiMsgSetLogFileFlags(AI_LOG_ALL);
 
 	// Keeps directory of plugins absolute.
 	AiLoadPlugins(m_plugin_dir.c_str());
@@ -343,7 +343,7 @@ void ArnoldInterface::close() {
 
 	// Couple up begin-end would avoid errors caused by a single call to end.
 	if (m_open) {
-		AiBegin();
+		//AiBegin();
 
 		AiEnd();
 	}

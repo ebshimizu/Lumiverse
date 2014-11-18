@@ -40,6 +40,10 @@ namespace Lumiverse {
 		  light = NULL;
 	  }
 
+	  virtual void clear() {
+		  light = NULL;
+	  }
+
       AtNode *light;
   };
     

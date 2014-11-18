@@ -23,8 +23,10 @@ gaussian_filter
 persp_camera
 {
   name persp
-  position 1.68 -1.0 7
-  look_at 1.68 -1.0 0
+  position 0.908 -1.0 7
+  look_at 0.908 -1.1 0
+  ###position 1.68 -1.0 7
+  ###look_at 1.68 -1.0 0
   up 0 1 0
   fov 60
 }

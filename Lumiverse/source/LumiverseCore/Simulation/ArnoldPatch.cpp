@@ -394,7 +394,7 @@ void ArnoldPatch::init() {
 }
 
 void ArnoldPatch::close() {
-    interruptRender();
+	SimulationPatch::close();
     m_interface.close();
 }
 
