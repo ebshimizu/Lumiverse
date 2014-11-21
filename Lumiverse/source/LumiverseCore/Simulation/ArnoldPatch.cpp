@@ -187,18 +187,32 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
 	if (!light_ptr)
         return ;
 
-    // TODO: mesh_light
     for (std::string meta : d_ptr->getMetadataKeyNames()) {
         std::string value;
 
 		// Set fixed position with metadata
 		// Assume we are using degree
-		if (meta == "pan") {
+		if (meta == "pan" && d_ptr->metadataExists("tilt")) {
 			d_ptr->getMetadata(meta, value);
 			std::string tilt_str;
 			d_ptr->getMetadata("tilt", tilt_str);
 
 			setOrientation(light_ptr, d_ptr, value, tilt_str);
+		}
+		else if (meta == "gobo" && d_ptr->metadataExists("gobo_file") &&
+			d_ptr->metadataExists("deg")) {
+			std::string file;
+			d_ptr->getMetadata("gobo_file", file);
+
+			std::string deg_str;
+			d_ptr->getMetadata("deg", deg_str);
+
+			float deg;
+
+			std::istringstream iss_deg(deg_str);
+			iss_deg >> deg;
+
+			m_interface.addGobo(light_ptr, file, deg);
 		}
 		else {
 			d_ptr->getMetadata(meta, value);
@@ -402,6 +416,7 @@ void ArnoldPatch::init() {
 	for (auto light : m_lights) {
 		m_lights[light.first]->init();
 	}
+	
     //m_interface.init();
 }
 

@@ -269,6 +269,17 @@ void ArnoldInterface::updateSurfaceColor(Eigen::Vector3d white) {
 	}
 }
 
+void ArnoldInterface::addGobo(AtNode *light_ptr, std::string file, float deg) {
+	AtNode *gobo = AiNode("photometric_gobo");
+	std::string name(AiNodeGetStr(light_ptr, "name"));
+	AiNodeSetStr(gobo, "name", (name + "_gobo").c_str());
+
+	AiNodeSetStr(gobo, "filename", toRelativePath(file).c_str());
+	AiNodeSetFlt(gobo, "deg", deg);
+
+	AiNodeSetPtr(light_ptr, "filters", gobo);
+}
+
 void ArnoldInterface::init() {
     // TODO : to use env var (different apis for linux and win)
     AiLicenseSetServer("pike.graphics.cs.cmu.edu", 5053);

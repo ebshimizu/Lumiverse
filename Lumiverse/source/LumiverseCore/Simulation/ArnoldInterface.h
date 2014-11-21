@@ -299,6 +299,8 @@ namespace Lumiverse {
 	*/
 	bool isOpen() { return m_open; }
       
+	void addGobo(AtNode *light_ptr, std::string file, float deg);
+
   private:
     /*!
     * \brief Helper function to sets a arnold non-array parameter.
@@ -352,7 +354,8 @@ namespace Lumiverse {
 		// May add more conditions to this line in the future.
 		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
 		if ((!str.empty() && str[0] == '.') ||
-			((str.find(".ies") != std::string::npos || str.find(".ass") != std::string::npos) &&
+			((str.find(".ies") != std::string::npos || str.find(".ass") != std::string::npos
+			|| str.find(".jpg") != std::string::npos) &&
 			(str.find("/") == std::string::npos && str.find("\\") == std::string::npos)))
 			return true;
 		return false;
