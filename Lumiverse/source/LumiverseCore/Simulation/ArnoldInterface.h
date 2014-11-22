@@ -299,7 +299,7 @@ namespace Lumiverse {
 	*/
 	bool isOpen() { return m_open; }
       
-	void addGobo(AtNode *light_ptr, std::string file, float deg);
+	void addGobo(AtNode *light_ptr, std::string file, float deg, float rot);
 
   private:
     /*!

@@ -200,19 +200,28 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
 			setOrientation(light_ptr, d_ptr, value, tilt_str);
 		}
 		else if (meta == "gobo" && d_ptr->metadataExists("gobo_file") &&
-			d_ptr->metadataExists("deg")) {
+			d_ptr->metadataExists("degree")) {
 			std::string file;
 			d_ptr->getMetadata("gobo_file", file);
 
 			std::string deg_str;
-			d_ptr->getMetadata("deg", deg_str);
+			d_ptr->getMetadata("degree", deg_str);
 
 			float deg;
 
 			std::istringstream iss_deg(deg_str);
 			iss_deg >> deg;
 
-			m_interface.addGobo(light_ptr, file, deg);
+			float rot = 0;
+			if (d_ptr->metadataExists("gobo_rotation")) {
+				std::string rot_str;
+				d_ptr->getMetadata("gobo_rotation", rot_str);
+				
+				std::istringstream iss_rot(rot_str);
+				iss_rot >> rot;
+			}
+
+			m_interface.addGobo(light_ptr, file, deg, rot);
 		}
 		else {
 			d_ptr->getMetadata(meta, value);

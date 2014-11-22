@@ -27,7 +27,8 @@ int main(int argc, char**argv) {
 	AiNodeSetStr(gobo, "name", (name + "_gobo").c_str());
 
 	AiNodeSetStr(gobo, "filename", "J:/gobo/000202_L.jpg");
-	AiNodeSetFlt(gobo, "deg", 25);
+	AiNodeSetFlt(gobo, "degree", 25);
+	AiNodeSetFlt(gobo, "rotation", 90);
 
 	AiNodeSetPtr(light_ptr, "filters", gobo);
 	/*

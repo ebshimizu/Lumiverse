@@ -13,7 +13,7 @@ namespace {
 		return acosf(v.y);
 	}
 
-	inline static void computeUV(AtShaderGlobals *sg, float deg) {
+	inline static void computeUV(AtShaderGlobals *sg, float deg, float rot) {
 		// https://bitbucket.org/anderslanglands/alshaders/overview
 		AtMatrix lightToWorld, worldToLight;
 		AiNodeGetMatrix(sg->Lp, "matrix", lightToWorld);
@@ -22,6 +22,13 @@ namespace {
 		// get the major axis of the light in local space
 		AtVector L;
 		AiM4VectorByMatrixMult(&L, worldToLight, &sg->Ld);
+
+		// rotate the coordinate
+		AtMatrix lightRotation;
+		AtVector L_torot = L;
+		AiM4RotationY(lightRotation, rot);
+		AiM4VectorByMatrixMult(&L, lightRotation, &L_torot);
+
 		// just in case the user scaled the light
 		L = AiV3Normalize(L);
 
@@ -61,7 +68,8 @@ node_loader
 node_parameters
 {
 	AiParameterStr("filename", "J:/gobo/000202_L.jpg");
-	AiParameterFlt("deg", 50);
+	AiParameterFlt("degree", 50);
+	AiParameterFlt("rotation", 0);
 }
     
 node_initialize
@@ -97,9 +105,10 @@ shader_evaluate
 	float orig_u = sg->u;
 	float orig_v = sg->v;
 
-	float deg = AiNodeGetFlt(node, "deg");
+	float deg = AiNodeGetFlt(node, "degree");
+	float rot = AiNodeGetFlt(node, "rotation");
 
-	computeUV(sg, deg * AI_PI / 180);
+	computeUV(sg, deg * AI_PI / 180, rot);
 
 	AtRGBA rgba = AiTextureHandleAccess(sg, handle, &params, &success);
 	if (success)

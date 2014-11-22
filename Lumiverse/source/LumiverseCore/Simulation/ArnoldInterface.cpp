@@ -269,13 +269,14 @@ void ArnoldInterface::updateSurfaceColor(Eigen::Vector3d white) {
 	}
 }
 
-void ArnoldInterface::addGobo(AtNode *light_ptr, std::string file, float deg) {
+void ArnoldInterface::addGobo(AtNode *light_ptr, std::string file, float deg, float rot) {
 	AtNode *gobo = AiNode("photometric_gobo");
 	std::string name(AiNodeGetStr(light_ptr, "name"));
 	AiNodeSetStr(gobo, "name", (name + "_gobo").c_str());
 
 	AiNodeSetStr(gobo, "filename", toRelativePath(file).c_str());
-	AiNodeSetFlt(gobo, "deg", deg);
+	AiNodeSetFlt(gobo, "degree", deg);
+	AiNodeSetFlt(gobo, "rotation", rot);
 
 	AiNodeSetPtr(light_ptr, "filters", gobo);
 }
