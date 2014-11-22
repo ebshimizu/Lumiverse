@@ -108,7 +108,7 @@ shader_evaluate
 	float deg = AiNodeGetFlt(node, "degree");
 	float rot = AiNodeGetFlt(node, "rotation");
 
-	computeUV(sg, deg * AI_PI / 180, rot);
+	computeUV(sg, deg * AI_PI / 360, rot);
 
 	AtRGBA rgba = AiTextureHandleAccess(sg, handle, &params, &success);
 	if (success)
