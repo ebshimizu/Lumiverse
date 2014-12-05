@@ -28,7 +28,7 @@ Eigen::Vector3d getApproxColor(string gel, float intens) {
   // We assume a linear ambershift of an incandescent fixture.
   // Assuming that a lamp approaches incandescent when it gets dim and 
   // approaches manufacturer spec of 3250K at full brightness.
-  int temp = (int)(2500 + 750 * intens);
+  int temp = (int)(1800 + 1450 * intens);
 
   Eigen::Vector3d ret(0, 0, 0);
   double spectrum[471];
