@@ -145,6 +145,28 @@ namespace Lumiverse {
     LumiverseType* getParam(string param);
 
     /*!
+    \brief Returns a pointer to the LumiverseFloat paramter.
+
+    Gives direct access to a floating point paramter.
+    \param param Parameter name
+    \return Pointer to the LumiverseFloat object associated with the paramteter.
+    `nullptr` is returned if the parameter doesn't exist or is not a float.
+    \sa LumiverseFloat, LumiverseType
+    */
+    LumiverseFloat* getFloat(string param);
+
+    /*!
+    \brief Returns a pointer to a LumiverseEnum paramters.
+
+    Gives direct access to a enum paramters.
+    \param param Paramter name
+    \return Pointer to the LumiverseEnum object associated with the parameter.
+    `nullptr` is returned if the paramter doesn't exist or is not an enum.
+    \sa LumiverseEnum, LumiverseType
+    */
+    LumiverseEnum* getEnum(string param);
+
+    /*!
     * \brief Gets a pointer to a LumiverseColor parameter.
     *
     * Gives direct access to a color parameter. Probably the easiest way to
@@ -284,7 +306,7 @@ namespace Lumiverse {
     * \brief Get the number of parameters in the device.
     * \return Number of parameters in the device.
     */
-    unsigned int numParams();
+    size_t numParams();
 
     /*!
     * \brief Get list of parameter names in the device.
@@ -347,7 +369,7 @@ namespace Lumiverse {
     /*!
     * \brief Get the number of metadata keys in the Device.
     */
-    unsigned int numMetadataKeys();
+    size_t numMetadataKeys();
 
     /*!
     * \brief Gets list of metadata keys the device currently has values for.

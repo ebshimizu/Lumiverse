@@ -183,7 +183,7 @@ IF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
 	SET(CMAKE_SWIG_FLAGS "")
 
 	SET_SOURCE_FILES_PROPERTIES(LumiverseCore.i PROPERTIES CPLUSPLUS ON)
-	SET_SOURCE_FILES_PROPERTIES(LumiverseCore.i PROPERTIES SWIG_FLAGS "-includeall")
+	SET_SOURCE_FILES_PROPERTIES(LumiverseCore.i PROPERTIES SWIG_FLAGS "")
 	
 	IF (LumiverseCore_PYTHON_BINDINGS)
 		MESSAGE("Including python bindings...")
@@ -192,7 +192,7 @@ IF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
 
 		SWIG_ADD_MODULE(lumiversepython python ${LUMIVERSE_CORE_SOURCE} LumiverseCore.i)
 
-		SWIG_LINK_LIBRARIES(lumiversepython ${PYTHON_LIBRARY} libjson clp)
+		SWIG_LINK_LIBRARIES(lumiversepython ${PYTHON_LIBRARY} ftd2xx libjson clp)
 	ENDIF (LumiverseCore_PYTHON_BINDINGS)
 
 	IF (LumiverseCore_CSHARP_BINDINGS)

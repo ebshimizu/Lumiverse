@@ -240,3 +240,4 @@ Lumiverse/source/LumiverseCore/LumiverseCoreConfig.h
 
 *.psd
 Lumiverse/source/LumiverseCore/lib/arnold/plugin/BufferDriver.dll
+Lumiverse/source/Demos/LumiverseDemo/LumiverseDemoConfig.h

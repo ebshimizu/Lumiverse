@@ -294,11 +294,11 @@ namespace Lumiverse {
     return val;
   }
 
-  inline LumiverseOrientation operator+(LumiverseOrientation& lhs, LumiverseOrientation& rhs) {
-    LumiverseOrientation val = LumiverseOrientation(lhs);
-    val += rhs.valAsUnit(val.getUnit());
-    return val;
-  }
+  //inline LumiverseOrientation operator+(LumiverseOrientation& lhs, LumiverseOrientation& rhs) {
+  //  LumiverseOrientation val = LumiverseOrientation(lhs);
+  //  val += rhs.valAsUnit(val.getUnit());
+  //  return val;
+  //}
 
   // Apparently clang needs this form of the overload to make it happy
   inline LumiverseOrientation operator+(LumiverseOrientation lhs, LumiverseOrientation rhs) {

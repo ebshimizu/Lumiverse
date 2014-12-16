@@ -27,11 +27,11 @@ IF(LumiverseCore_INCLUDE_ARNOLD)
 ENDIF(LumiverseCore_INCLUDE_ARNOLD)
 
 configure_file (
-  "LumiverseDemoConfig.h.in"
-  "Demos/LumiverseDemo/LumiverseDemoConfig.h"
+  "${CMAKE_CURRENT_LIST_DIR}/LumiverseDemoConfig.h.in"
+  "${CMAKE_CURRENT_LIST_DIR}/LumiverseDemoConfig.h"
 )
 
 include_directories("Demos/LumiverseDemo")
 
-add_executable (Demo test.cpp)
+add_executable (Demo test.cpp LumiverseDemoConfig.h)
 target_link_libraries(Demo LumiverseCore)

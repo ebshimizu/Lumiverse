@@ -451,7 +451,7 @@ namespace Lumiverse {
       vector<int> indices;
 
       // Number of variables equal to number of basis vectors.
-      int numCols = m_basisVectors.size();
+      int numCols = (int)m_basisVectors.size();
       model.resize(0, numCols);
 
       // Maximize c1 + c2 + c3... equivalent to minimize -(c1 + c2 + c3...)

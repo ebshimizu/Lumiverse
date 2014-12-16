@@ -117,4 +117,8 @@ void DynamicDeviceSet::setQuery(string query) {
 string DynamicDeviceSet::getQuery() {
   return m_query;
 }
+
+bool DynamicDeviceSet::isQueryNull() {
+  return m_query == "";
+}
 }

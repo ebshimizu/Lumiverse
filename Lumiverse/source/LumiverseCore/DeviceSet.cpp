@@ -194,7 +194,7 @@ DeviceSet DeviceSet::parseChannelSelector(string selector, bool filter) {
   string invert = matches[1];
   bool eq = (invert.size() > 0) ? false : true;
 
-  size_t first, second;
+  unsigned int first, second;
   stringstream(matches[2]) >> first;
 
   string secondStr = matches[3];
@@ -203,7 +203,7 @@ DeviceSet DeviceSet::parseChannelSelector(string selector, bool filter) {
 
     if (first > second) {
       // Flip channel ranges if the first value is greater than the second value
-      size_t tmp = first;
+      unsigned int tmp = first;
       first = second;
       second = tmp;
     }
@@ -221,17 +221,17 @@ DeviceSet DeviceSet::parseChannelSelector(string selector, bool filter) {
   // Inverted range
   else {
     if (secondStr.size() == 0) {
-      size_t lowerEnd = first - 1;
-      size_t upperStart = first + 1;
-      size_t maxChan = m_rig->m_devicesByChannel.rbegin()->first;
+      unsigned int lowerEnd = first - 1;
+      unsigned int upperStart = first + 1;
+      unsigned int maxChan = m_rig->m_devicesByChannel.rbegin()->first;
 
       return (filter) ? this->remove(0, lowerEnd).remove(upperStart, maxChan) : this->add(0, lowerEnd).add(upperStart, maxChan);
     }
     else
     {
-      size_t lowerEnd = first - 1;
-      size_t upperStart = second + 1;
-      size_t maxChan = m_rig->m_devicesByChannel.rbegin()->first;
+      unsigned int lowerEnd = first - 1;
+      unsigned int upperStart = second + 1;
+      unsigned int maxChan = m_rig->m_devicesByChannel.rbegin()->first;
 
       return (filter) ? this->remove(0, lowerEnd).remove(upperStart, maxChan) : this->add(0, lowerEnd).add(upperStart, maxChan);
     }

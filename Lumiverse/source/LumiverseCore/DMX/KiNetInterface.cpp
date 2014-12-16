@@ -57,7 +57,7 @@ void KiNetInterface::init() {
     free(m_buffer);
 
   m_buffer = (unsigned char*)malloc(getBufferSize() * sizeof(unsigned char));
-  memset(m_buffer, getBufferSize(), 0);
+  memset(m_buffer, (int)getBufferSize(), 0);
   for (int c = 0; c < getNumChannels(); c++)
   {
     memcpy(m_buffer + c * getPacketSize(), getHeaderBytes(), getHeaderSize());
@@ -105,7 +105,7 @@ void KiNetInterface::init() {
     if (sock == -1)
       continue;
 
-    if (::connect(sock, pr->ai_addr, pr->ai_addrlen) == 0)
+    if (::connect(sock, pr->ai_addr, (int)pr->ai_addrlen) == 0)
       break;
 
 #ifdef _WIN32
@@ -150,7 +150,7 @@ void KiNetInterface::sendDMX(unsigned char* data, unsigned int universe) {
   for (int channel = 0; channel < getNumChannels(); channel++)
   {
     memcpy(m_buffer + getHeaderSize(), data, 512);
-    send(m_socket, (char *)m_buffer + getPacketSize() * channel, getPacketSize(), 0);
+    send(m_socket, (char *)m_buffer + getPacketSize() * channel, (int)getPacketSize(), 0);
   }
 }
 

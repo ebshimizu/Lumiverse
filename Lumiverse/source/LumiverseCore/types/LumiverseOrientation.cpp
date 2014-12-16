@@ -99,9 +99,9 @@ float LumiverseOrientation::asUnit(ORIENTATION_UNIT valUnit, float val, ORIENTAT
   if (valUnit == targetUnit)
     return val;
   else if (valUnit == DEGREE && targetUnit == RADIAN)
-    return val * M_PI / 180.0f;
+    return val * (float)M_PI / 180.0f;
   else if (valUnit == RADIAN && targetUnit == DEGREE)
-    return val * 180.0f / M_PI;
+    return val * 180.0f / (float)M_PI;
   else {
     Logger::log(ERR, "Unknown orientation unit specified: " + targetUnit);
     return val;

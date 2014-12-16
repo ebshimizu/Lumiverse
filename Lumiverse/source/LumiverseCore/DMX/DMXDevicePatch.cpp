@@ -117,7 +117,7 @@ void DMXDevicePatch::floatToFine(unsigned char* data, unsigned int address, floa
 void DMXDevicePatch::toEnum(unsigned char* data, unsigned int address, LumiverseEnum* val) {
   // It should be noted here that this function currently expects that the range of the enum
   // is within the DMX value.
-  unsigned short cvt = (unsigned char)val->getRangeVal();
+  unsigned char cvt = (unsigned char)val->getRangeVal();
   setDMXVal(data, address, cvt);
 }
 

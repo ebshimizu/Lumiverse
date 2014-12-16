@@ -66,13 +66,48 @@ LumiverseType* Device::getParam(string param) {
   return nullptr;
 }
 
-LumiverseColor* Device::getColor(string param) {
-  if (m_parameters.count(param) > 0) {
-      if (m_parameters[param]->getTypeName() == "color") {
-          return (LumiverseColor*)(m_parameters[param]);
-      }
+LumiverseFloat* Device::getFloat(string param) {
+  auto ret = getParam(param);
+  if (ret != nullptr) {
+    if (ret->getTypeName() == "float") {
+      return (LumiverseFloat*)(ret);
+    }
+    else {
+      stringstream ss;
+      ss << "Parameter " << param << " is not a LumiverseFloat";
+      Logger::log(WARN, ss.str());
+    }
   }
+  return nullptr;
+}
 
+LumiverseEnum* Device::getEnum(string param) {
+  auto ret = getParam(param);
+  if (ret != nullptr) {
+    if (ret->getTypeName() == "enum") {
+      return (LumiverseEnum*)(ret);
+    }
+    else {
+      stringstream ss;
+      ss << "Parameter " << param << " is not a LumiverseEnum";
+      Logger::log(WARN, ss.str());
+    }
+  }
+  return nullptr;
+}
+
+LumiverseColor* Device::getColor(string param) {
+  auto ret = getParam(param);
+  if (ret != nullptr) {
+    if (ret->getTypeName() == "color") {
+      return (LumiverseColor*)(ret);
+    }
+    else {
+      stringstream ss;
+      ss << "Parameter " << param << " is not a LumiverseColor";
+      Logger::log(WARN, ss.str());
+    }
+  }
   return nullptr;
 }
 
@@ -217,6 +252,18 @@ bool Device::setColorRGB(string param, double r, double g, double b, double weig
     
   return true;
 }
+
+bool Device::setColorChannel(string param, string channel, double val) {
+  if (m_parameters.count(param) == 0 ||
+      m_parameters[param]->getTypeName() != "color") {
+      return false;
+  }
+
+  ((LumiverseColor*)m_parameters[param])->setColorChannel(channel, val);
+  
+  onParameterChanged();
+  return true;
+}
     
 void Device::copyParamByValue(string param, LumiverseType* source) {
     LumiverseType *target = getParam(param);
@@ -249,7 +296,7 @@ bool Device::paramExists(string param) {
   return (m_parameters.count(param) > 0);
 }
 
-unsigned int Device::numParams() {
+size_t Device::numParams() {
   return m_parameters.size();
 }
 
@@ -323,7 +370,7 @@ void Device::clearAllMetadata() {
   onMetadataChanged();
 }
 
-unsigned int Device::numMetadataKeys() {
+size_t Device::numMetadataKeys() {
   return m_metadata.size();
 }
 
@@ -376,17 +423,17 @@ JSONNode Device::toJSON() {
 }
 
 int Device::addParameterChangedCallback(DeviceCallbackFunction func) {
-    size_t id = m_onParameterChangedFunctions.size();
+    int id = (int)m_onParameterChangedFunctions.size();
     m_onParameterChangedFunctions[id] = func;
 
     return id;
 }
 
 int Device::addMetadataChangedCallback(DeviceCallbackFunction func) {
-    size_t id = m_onMetadataChangedFunctions.size();
+    int id = (int)m_onMetadataChangedFunctions.size();
     m_onMetadataChangedFunctions[id] = func;
 
-    return id;
+    return (int)id;
 }
     
 void Device::deleteParameterChangedCallback(int id) {
