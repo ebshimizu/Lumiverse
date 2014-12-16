@@ -327,16 +327,16 @@ int main(int argc, char**argv) {
   // Teting out attribute transfer using scene 10 -> scene 37 testing for attribute 2 (dark)
   // We assume the rig is pre-initialized to scene 10.
   pb.getProgrammer()->clearAndReset();
-  Cue* c = pb.getCueList("Scenes")->getCue(37);
-  optimizeSection(rig, *c, "$angle=front right[$Area=2]", "$angle=front right[$Area=1]");
-  optimizeSection(rig, *c, "$angle=front[$Area=2]", "$angle=front[$Area=1]");
-  optimizeSection(rig, *c, "$angle=front left[$Area=2]", "$angle=front left[$Area=1]");
-  optimizeSection(rig, *c, "$angle=high side right[$Area=2]", "$angle=high side right[$Area=1]");
-  optimizeSection(rig, *c, "$angle=high side left[$Area=2]", "$angle=high side left[$Area=1]");
-  optimizeSection(rig, *c, "$angle=top[$Area=2]", "$angle=top[$Area=1]");
-  optimizeSection(rig, *c, "$angle=back right[$Area=2]", "$angle=back right[$Area=1]");
-  optimizeSection(rig, *c, "$angle=back[$Area=2]", "$angle=back[$Area=1]");
-  optimizeSection(rig, *c, "$angle=back left[$Area=2]", "$angle=back left[Area=1]");
+  Cue* c = pb.getCueList("Scenes")->getCue(5);
+  optimizeSection(rig, *c, "$angle=front right[$Area=1]", "$angle=front right[$Area=2]");
+  optimizeSection(rig, *c, "$angle=front[$Area=1]", "$angle=front[$Area=2]");
+  optimizeSection(rig, *c, "$angle=front left[$Area=1]", "$angle=front left[$Area=2]");
+  optimizeSection(rig, *c, "$angle=high side right[$Area=1]", "$angle=high side right[$Area=2]");
+  optimizeSection(rig, *c, "$angle=high side left[$Area=1]", "$angle=high side left[$Area=2]");
+  optimizeSection(rig, *c, "$angle=top[$Area=1]", "$angle=top[$Area=2]");
+  optimizeSection(rig, *c, "$angle=back right[$Area=1]", "$angle=back right[$Area=2]");
+  optimizeSection(rig, *c, "$angle=back[$Area=1]", "$angle=back[$Area=2]");
+  optimizeSection(rig, *c, "$angle=back left[$Area=1]", "$angle=back left[Area=2]");
   optimizeSection(rig, *c, "$angle=side left", "$angle=side left");
   optimizeSection(rig, *c, "$angle=side right", "$angle=side right");
 
