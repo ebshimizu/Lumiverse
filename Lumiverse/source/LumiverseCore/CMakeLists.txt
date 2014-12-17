@@ -2,6 +2,7 @@ include_directories("${CMAKE_CURRENT_LIST_DIR}/types"
   "${CMAKE_CURRENT_LIST_DIR}/DMX"
   "${CMAKE_CURRENT_LIST_DIR}/lib/libjson"
   "${CMAKE_CURRENT_LIST_DIR}/lib/ftd2xx"
+  "${CMAKE_CURRENT_LIST_DIR}/lib/libartnet"
   "${CMAKE_CURRENT_LIST_DIR}/lib/Eigen"
   "${CMAKE_CURRENT_LIST_DIR}/lib/clp"
   "${CMAKE_CURRENT_LIST_DIR}/lib/clp/CoinUtils"
@@ -13,6 +14,7 @@ set (LumiverseCore_VERSION_MAJOR 1)
 set (LumiverseCore_VERSION_MINOR 1)
 set (LumiverseCore_INCLUDE_DMXPRO2INTERFACE ON CACHE BOOL "Build LumiverseCore with Enttec USB DMX Pro Mk II Driver")
 set (LumiverseCore_INCLUDE_KINET ON CACHE BOOL "Build LumiverseCore with KiNet Driver")
+set (LumiverseCore_INCLUDE_ARTNET ON CACHE BOOL "Build LumiverseCore with ArtNet Driver")
 set (LumiverseCore_PYTHON_BINDINGS ON CACHE BOOL "Build LumiverseCore bindings for Python")
 set (LumiverseCore_CSHARP_BINDINGS OFF CACHE BOOL "Build LumiverseCore bindings for C#")
 
@@ -24,6 +26,10 @@ ENDIF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 IF (LumiverseCore_INCLUDE_KINET)
     SET (LumiverseCore_USE_KINET "#define USE_KINET")
 ENDIF (LumiverseCore_INCLUDE_KINET)
+
+IF (LumiverseCore_INCLUDE_ARTNET)
+    SET (LumiverseCore_USE_ARTNET "#define USE_ARTNET")
+ENDIF (LumiverseCore_INCLUDE_ARTNET)
 
 configure_file (
   "${CMAKE_CURRENT_LIST_DIR}/LumiverseCoreConfig.h.in"
@@ -85,6 +91,8 @@ set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
     DMX/DMXInterface.h
 	DMX/KiNetInterface.h
 	DMX/KiNetInterface.cpp
+    DMX/ArtNetInterface.h
+    DMX/ArtNetInterface.cpp
 	Simulation/SimulationPatch.h
 	Simulation/SimulationPatch.cpp
 	Simulation/SimulationAnimationPatch.h
@@ -139,6 +147,11 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
         target_link_libraries(LumiverseCoreShared ftd2xx)
     ENDIF(APPLE)
 ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+
+IF (LumiverseCore_INCLUDE_ARTNET)
+    target_link_libraries(LumiverseCore libartnet)
+    target_link_libraries(LumiverseCoreShared libartnet)
+ENDIF (LumiverseCore_INCLUDE_ARTNET)
 
 # Simulation module needs libpng to output png
 IF (LumiverseCore_INCLUDE_ARNOLD)

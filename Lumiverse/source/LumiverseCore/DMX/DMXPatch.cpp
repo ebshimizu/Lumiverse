@@ -28,7 +28,7 @@ void DMXPatch::loadJSON(const JSONNode data) {
         auto type = iface->find("type");
 
         if (type != iface->end()) {
-          // Currently the only supported type is the DMX Pro Mk 2 Interface
+          // Currently the only supported physical type is the DMX Pro Mk 2 Interface
           if (type->as_string() == "DMXPro2Interface") {
 #ifdef USE_DMXPRO2
             auto proNumNode = iface->find("proNum");
@@ -42,10 +42,10 @@ void DMXPatch::loadJSON(const JSONNode data) {
 
             Logger::log(INFO, "Added DMX USB Pro Mk 2 Interface");
 #else
-            Logger::log(WARN, "LumverseCore built without DMX Pro Mk II Interface, cannot add interface in Rig");
+            Logger::log(WARN, "LumverseCore built without DMX Pro Mk II support. Skipping interface...");
 #endif
           }
-          if (type->as_string() == "KiNetInterface") {
+          else if (type->as_string() == "KiNetInterface") {
 #ifdef USE_KINET
             auto host = iface->find("host");
             auto port = iface->find("port");
@@ -60,7 +60,25 @@ void DMXPatch::loadJSON(const JSONNode data) {
             ss << "Added KiNet Interface \"" << iface->name() << "\" with host " << host->as_string();
             Logger::log(INFO, ss.str());
 #else
-            Logger::log(WARN, "LumverseCore built without KiNet Interface, cannot add interface in Rig");
+            Logger::log(WARN, "LumverseCore built without KiNet support. Skipping interface...");
+#endif
+          }
+          else if (type->as_string() == "ArtNetInterface") {
+#ifdef USE_ARTNET
+            auto ip = iface->find("ip");
+            auto broad = iface->find("broadcast");
+            auto verb = iface->find("verbose");
+            
+            if (ip != iface->end() && broad != iface->end() && verb != iface->end()) {
+              ArtNetInterface* intface = new ArtNetInterface(iface->name(), ip->as_string(), broad->as_string(), verb->as_bool());
+              ifaceMap[iface->name()] = (DMXInterface*)intface;
+            }
+
+            stringstream ss;
+            ss << "Added ArtNet Interface \"" << iface->name() << "\" with ip " << ip->as_string();
+            Logger::log(INFO, ss.str());
+#else
+            Logger::log(WARN, "LumiverseCore built without ArtNet support. Skipping interface...")
 #endif
           }
           else {

@@ -6,7 +6,7 @@ using namespace std;
 using namespace Lumiverse;
 
 int main(int argc, char**argv) {
-  Rig rig("E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/movingLights.json");
+  Rig rig("C:/Users/eshimizu/Documents/Lumiverse/Core/Lumiverse/data/movingLights.rig.json");
 
   // Init rig
   rig.init();

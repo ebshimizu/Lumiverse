@@ -17,6 +17,10 @@
 #include "KiNetInterface.h"
 #endif
 
+#ifdef USE_ARTNET
+#include "ArtNetInterface.h"
+#endif
+
 #include "../Patch.h"
 #include "DMXDevicePatch.h"
 #include "DMXInterface.h"
