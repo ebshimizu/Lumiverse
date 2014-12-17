@@ -78,7 +78,7 @@ void DMXPatch::loadJSON(const JSONNode data) {
             ss << "Added ArtNet Interface \"" << iface->name() << "\" with ip " << ip->as_string();
             Logger::log(INFO, ss.str());
 #else
-            Logger::log(WARN, "LumiverseCore built without ArtNet support. Skipping interface...")
+            Logger::log(WARN, "LumiverseCore built without ArtNet support. Skipping interface...");
 #endif
           }
           else {

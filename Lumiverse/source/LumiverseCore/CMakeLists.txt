@@ -91,8 +91,6 @@ set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
     DMX/DMXInterface.h
 	DMX/KiNetInterface.h
 	DMX/KiNetInterface.cpp
-    DMX/ArtNetInterface.h
-    DMX/ArtNetInterface.cpp
 	Simulation/SimulationPatch.h
 	Simulation/SimulationPatch.cpp
 	Simulation/SimulationAnimationPatch.h
@@ -102,11 +100,14 @@ set (LUMIVERSE_CORE_SOURCE LumiverseCoreConfig.h
 	Simulation/PhotoAnimationPatch.h
 	Simulation/PhotoAnimationPatch.cpp)
 
+set (ACTIVE_LIBRARIES libjson clp)
+
 # CMake is a bit weird and wants this defined here instead of inside the ftd2xx folder
 # Add relevant files to build if using DMXPRO2
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
     SET (LumiverseCore_USE_DMXPRO2 "#define USE_DMXPRO2" STRING)
 	SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE} DMX/DMXPro2Interface.h DMX/pro_driver.h DMX/DMXPro2Interface.cpp)
+    SET (ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ftd2xx)
 ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 
 # Add Arnold simulation code
@@ -122,11 +123,16 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
     Simulation/ArnoldParameterVector.h)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
+IF (LumiverseCore_INCLUDE_ARTNET)
+    SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE}
+        DMX/ArtNetInterface.h
+        DMX/ArtNetInterface.cpp)
+    SET (ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} libartnet)
+ENDIF (LumiverseCore_INCLUDE_ARTNET)
+
 # Build the libraries
 add_library(LumiverseCore ${LUMIVERSE_CORE_SOURCE})
 add_library(LumiverseCoreShared SHARED ${LUMIVERSE_CORE_SOURCE})
-target_link_libraries(LumiverseCore libjson clp)
-target_link_libraries(LumiverseCoreShared libjson clp)
 add_subdirectory(lib)
 
 # DMXPRO2 Interface build settings
@@ -135,25 +141,17 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
         add_library(ftd2xx STATIC IMPORTED)
         set_property(TARGET ftd2xx PROPERTY IMPORTED_LOCATION
             ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/ftd2xx/ftd2xx.lib)
-        target_link_libraries(LumiverseCore ftd2xx)
-        target_link_libraries(LumiverseCoreShared ftd2xx)
     ENDIF(WIN32)
 
     IF(APPLE)
         add_library(ftd2xx SHARED IMPORTED)
         set_property(TARGET ftd2xx PROPERTY IMPORTED_LOCATION
             ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/ftd2xx/libftd2xx.1.2.2.dylib)
-        target_link_libraries(LumiverseCore ftd2xx)
-        target_link_libraries(LumiverseCoreShared ftd2xx)
     ENDIF(APPLE)
 ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 
-IF (LumiverseCore_INCLUDE_ARTNET)
-    target_link_libraries(LumiverseCore libartnet)
-    target_link_libraries(LumiverseCoreShared libartnet)
-ENDIF (LumiverseCore_INCLUDE_ARTNET)
-
 # Simulation module needs libpng to output png
+# Build with Arnold SDK (ai)
 IF (LumiverseCore_INCLUDE_ARNOLD)
 	find_package(PNG REQUIRED)
 
@@ -162,28 +160,22 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
 			${PNG_INCLUDE_DIRS}
 		)
 
-		target_link_libraries( LumiverseCore ${PNG_LIBRARIES})
-		target_link_libraries( LumiverseCoreShared ${PNG_LIBRARIES})
+		SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${PNG_LIBRARIES})
 	ENDIF(PNG_FOUND)
-ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
-# Build with Arnold SDK (ai)
-IF (LumiverseCore_INCLUDE_ARNOLD)
     IF(WIN32)
         add_library(ai STATIC IMPORTED)
         set_property(TARGET ai PROPERTY IMPORTED_LOCATION
             ${LumiverseCore_ARNOLD_PATH}/bin/ai.lib)
-        target_link_libraries(LumiverseCore ai)
-        target_link_libraries(LumiverseCoreShared ai)
     ENDIF(WIN32)
 
     IF(APPLE)
         add_library(ai SHARED IMPORTED)
         set_property(TARGET ai PROPERTY IMPORTED_LOCATION
             ${LumiverseCore_ARNOLD_PATH}/bin/libai.dylib)
-        target_link_libraries(LumiverseCore ai)
-        target_link_libraries(LumiverseCoreShared ai)
     ENDIF(APPLE)
+
+    SET (ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ai)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
 # Time for fun other library binding generation time
@@ -205,16 +197,19 @@ IF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
 
 		SWIG_ADD_MODULE(lumiversepython python ${LUMIVERSE_CORE_SOURCE} LumiverseCore.i)
 
-		SWIG_LINK_LIBRARIES(lumiversepython ${PYTHON_LIBRARY} ftd2xx libjson clp)
+		SWIG_LINK_LIBRARIES(lumiversepython ${PYTHON_LIBRARY} ${ACTIVE_LIBRARIES})
 	ENDIF (LumiverseCore_PYTHON_BINDINGS)
 
 	IF (LumiverseCore_CSHARP_BINDINGS)
 		MESSAGE("Including C# bindings...")
 		SWIG_ADD_MODULE(lumiversecsharp csharp ${LUMIVERSE_CORE_SOURCE} LumiverseCore.i)
 
-		SWIG_LINK_LIBRARIES(lumiversecsharp ftd2xx libjson clp)
+		SWIG_LINK_LIBRARIES(lumiversecsharp ${ACTIVE_LIBRARIES})
 	ENDIF (LumiverseCore_CSHARP_BINDINGS)
 ENDIF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
+
+target_link_libraries(LumiverseCore ${ACTIVE_LIBRARIES})
+target_link_libraries(LumiverseCoreShared libjson ${ACTIVE_LIBRARIES})
 
 # Installation time
 FILE(GLOB corefiles ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
@@ -253,13 +248,11 @@ FILE(GLOB pngfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/libpng/*.h)
 INSTALL(FILES ${pngfiles} DESTINATION include/lib/libpng)
 
 IF (LumiverseCore_INCLUDE_ARNOLD)
+    FILE(GLOB arnoldfiles ${LumiverseCore_ARNOLD_PATH}/include/*.h)
+    INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold/include)
 
-FILE(GLOB arnoldfiles ${LumiverseCore_ARNOLD_PATH}/include/*.h)
-INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold/include)
-
-FILE(GLOB arnoldbinfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/arnold/bin/*)
-INSTALL(FILES ${arnoldbinfiles} DESTINATION lib)
-
+    FILE(GLOB arnoldbinfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/arnold/bin/*)
+    INSTALL(FILES ${arnoldbinfiles} DESTINATION lib)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
 INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
