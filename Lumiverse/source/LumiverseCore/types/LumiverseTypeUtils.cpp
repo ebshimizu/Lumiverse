@@ -1,4 +1,5 @@
 #include "LumiverseTypeUtils.h"
+#include <cmath>
 
 namespace Lumiverse {
  
@@ -152,14 +153,14 @@ Eigen::Matrix3f LumiverseTypeUtils::getRotationMatrix(Eigen::Vector3f lookat, Ei
 	Eigen::Vector3f def_lookat(0.0f, -1.0f, 0.0f);
 	Eigen::Vector3f def_axis = lookat.cross(def_lookat);
 	def_axis.normalize();
-	Eigen::AngleAxisf reset_rot = Eigen::AngleAxisf(std::acosf(def_lookat.dot(lookat)), def_axis);
+	Eigen::AngleAxisf reset_rot = Eigen::AngleAxisf(acos(def_lookat.dot(lookat)), def_axis);
 
 	// Pan
 	Eigen::Vector3f pan_reset_axis = up.cross(lookat);
 	pan_reset_axis.normalize();
-	Eigen::AngleAxisf pan_reset_rot = Eigen::AngleAxisf(std::acosf(up.dot(lookat)), pan_reset_axis);
+	Eigen::AngleAxisf pan_reset_rot = Eigen::AngleAxisf(acos(up.dot(lookat)), pan_reset_axis);
 	up = reset_rot * up;
-	Eigen::AngleAxisf pan_rot = Eigen::AngleAxisf(pan.valAsUnit(RADIAN), up);
+    Eigen::AngleAxisf pan_rot = Eigen::AngleAxisf(pan.valAsUnit(RADIAN), up);
 
 	// Tilt
 	tilt_axis = reset_rot * tilt_axis;

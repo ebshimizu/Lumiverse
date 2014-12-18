@@ -46,10 +46,10 @@ IF(APPLE)
     SET(CLANG_FLAGS "${CLANG_FLAGS} -Wno-deprecated-register -Wno-extra-tokens")
     
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_FLAGS}")
-ELSEIF(UNIX)
+ELSEIF(UNIX OR LINUX)
     SET(GCC_FLAGS "-std=c++11 -pthread -fPIC")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_FLAGS}")
-    MESSAGE("Adding -std=c++11 to g++ flags")
+    MESSAGE("Detected platform Unix: Adding -std=c++11 to g++ flags")
 ENDIF(APPLE)
 
 # TODO: Bug with machine:x86 linker option

@@ -29,20 +29,20 @@ add_library (LumiverseShowControl
 	Playback.h
 	Layer.h
 	Programmer.h
-    Snapshot.h
+  Snapshot.h
 	Cue.cpp
 	CueList.cpp
 	Playback.cpp
 	Layer.cpp
 	Programmer.cpp
-    Snapshot.cpp
-    LumiverseShowControl.h)
+  Snapshot.cpp
+  LumiverseShowControl.h)
 
 add_executable (PlaybackDemo
 	CueLightDemo.cpp)
 
-target_link_libraries(PlaybackDemo LumiverseCore)
-target_link_libraries(PlaybackDemo LumiverseShowControl)
+target_link_libraries(LumiverseShowControl LumiverseCore)
+target_link_libraries(PlaybackDemo LumiverseCore LumiverseShowControl)
 
 FILE(GLOB cuefiles ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 INSTALL(FILES ${cuefiles} DESTINATION include/LumiverseShowControl)

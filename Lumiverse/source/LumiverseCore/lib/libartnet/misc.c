@@ -19,7 +19,7 @@
                            Lutz Hillebrand (ilLUTZminator)
  */
 
-#if HAVE_CONFIG_H
+#ifndef WIN32
 #  include <config.h>
 #endif
 
@@ -28,13 +28,13 @@
 #include <stdarg.h>	
 #include <stdio.h>
 
-#if HAVE_ENDIAN_H
+#ifdef HAVE_ENDIAN_H
 # include <endian.h>
 #else
 # ifdef HAVE_PPC_ENDIAN_H
 #  include <ppc/endian.h>
 # else
-#  if WIN32 // ### LH - port to win32
+#  ifdef WIN32 // ### LH - port to win32
 //#   pragma message ("### LH Selfmade endian.h included")
 #   include "endian.h"
 #  else

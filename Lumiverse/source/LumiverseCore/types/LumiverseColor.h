@@ -11,6 +11,7 @@
 #include <cmath>
 #include <mutex>
 #include <memory>
+#include <float.h>
 #include "lib/Eigen/Dense"
 #include "../LumiverseType.h"
 #include "LumiverseColorLib.h"

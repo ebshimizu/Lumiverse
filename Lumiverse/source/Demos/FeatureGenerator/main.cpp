@@ -346,7 +346,11 @@ int main(int argc, char**argv) {
   pb.save("C:/Users/eshimizu/Dropbox/10-701_project/data/MLData_transfer.playback.json", true);
 
   cout << "Done\n";
+  #ifndef WIN32
+  getchar();
+  #else
   getch();
+  #endif
 
   // Overwrite file each time we run this.
   //ofstream outputFile;

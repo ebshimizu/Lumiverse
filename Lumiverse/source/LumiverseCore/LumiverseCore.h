@@ -82,6 +82,10 @@
 #include "DMX/KiNetInterface.h"
 #endif
 
+#ifdef USE_ARTNET
+#include "DMX/ArtNetInterface.h"
+#endif
+
 #ifdef USE_ARNOLD
 #include <png.h>
 #include "Simulation/ArnoldPatch.h"

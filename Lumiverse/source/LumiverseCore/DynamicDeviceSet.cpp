@@ -87,11 +87,13 @@ string DynamicDeviceSet::info() {
 }
 
 bool DynamicDeviceSet::hasSameIds(DynamicDeviceSet& devices) {
-  return getDeviceSet().hasSameIds(devices.getDeviceSet());
+  DeviceSet other = devices.getDeviceSet();
+  return getDeviceSet().hasSameIds(other);
 }
 
 bool DynamicDeviceSet::hasSameDevices(DynamicDeviceSet& devices) {
-  return getDeviceSet().hasSameDevices(devices.getDeviceSet());
+  DeviceSet other = devices.getDeviceSet();
+  return getDeviceSet().hasSameDevices(other);
 }
 
 bool DynamicDeviceSet::contains(Device* d) {

@@ -213,20 +213,22 @@ bool TypeTests::oriTests() {
     ret = false;
   }
 
-  o += LumiverseOrientation(90);
+  LumiverseOrientation o2(90);
+  o += o2;
   if (o.getVal() != 270) {
     cout << "+= op error. Expected: 270. Received: " << o.getVal() << "\n";
     ret = false;
   }
 
   o.setVal(0);
-  o += LumiverseOrientation(M_PI, RADIAN);
+  LumiverseOrientation o3(M_PI, RADIAN);
+  o += o3;
   if (o.getVal() != 180) {
     cout << "+= op error for differnt units. Expected: 180. Received: " << o.getVal() << "\n";
     ret = false;
   }
 
-  o -= LumiverseOrientation(M_PI, RADIAN);
+  o -= o3;
   if (o.getVal() != 0) {
     cout << "-= op error for different units. Expected: 0. Received: " << o.getVal() << "\n";
     ret = false;
@@ -245,12 +247,14 @@ bool TypeTests::oriTests() {
     ret = false;
   }
 
-  if (!(o < LumiverseOrientation(M_PI, RADIAN))) {
+  LumiverseOrientation t(M_PI, RADIAN);
+  if (!(o < t)) {
     cout << "< comparison op error. Claimed 90deg > PI rad\n";
     ret = false;
   }
 
-  if (!(o == LumiverseOrientation(M_PI_2, RADIAN))) {
+  LumiverseOrientation t2(M_PI_2, RADIAN);
+  if (!(o == t2 )) {
     cout << "== equality op error. Claimed 90deg != PI/2 rad\n";
     ret = false;
   }
