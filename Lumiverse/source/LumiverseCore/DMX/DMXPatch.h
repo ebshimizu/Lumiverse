@@ -185,6 +185,12 @@ namespace Lumiverse {
     void patchDevice(string id, DMXDevicePatch* patch);
 
     /*!
+    \brief Gets a DMXDevicePatch for the specified Device.
+    \return DMXDevicePatch for the device. Nullptr if the patch doesn't exist.
+    */
+    DMXDevicePatch* getDevicePatch(string id);
+
+    /*!
     * \brief Adds a device map to the Patch's database of mappings.
     *
     * This function will REPLACE a map that already exists.
@@ -227,6 +233,12 @@ namespace Lumiverse {
     * \return True on success, false on failure
     */
     bool setRawData(unsigned int universe, vector<unsigned char> univData);
+
+    /*!
+    \brief Gets the size in DMX addresses of the specified device map.
+    \return Size of specified device map in terms of bytes (DMX addresses). Returns -1 if map does not exist.
+    */
+    size_t sizeOfDeviceMap(string id);
 
   private:
     /*!

@@ -163,6 +163,11 @@ namespace Lumiverse {
     Patch* getPatch(string id);
 
     /*!
+    \brief Returns the map of ID to Patch held by the Rig.
+    */
+    const map<string, Patch*>& getPatches() { return m_patches; }
+
+    /*!
     * \brief Gets a patch from a rig and treats it as a DMXPatch.
     *
     * Use carefully. The rig does not guarantee that the requested patch is actually

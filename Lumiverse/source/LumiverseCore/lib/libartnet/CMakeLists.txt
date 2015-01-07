@@ -26,4 +26,7 @@ add_library(libartnet
 	transmit.c
 )
 
+FILE(GLOB artnetfiles ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+INSTALL(FILES ${artnetfiles} DESTINATION include/lib/libartnet)
+
 INSTALL(TARGETS libartnet ARCHIVE DESTINATION lib)

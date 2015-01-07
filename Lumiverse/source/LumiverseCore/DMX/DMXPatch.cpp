@@ -344,6 +344,10 @@ void DMXPatch::patchDevice(string id, DMXDevicePatch* patch) {
   m_patch[id] = patch;
 }
 
+DMXDevicePatch* DMXPatch::getDevicePatch(string id) {
+  return (m_patch.count(id) == 0) ? nullptr : m_patch[id];
+}
+
 void DMXPatch::addDeviceMap(string id, map<string, patchData> deviceMap) {
   m_deviceMaps[id] = deviceMap; // Replaces existing maps.
 }
@@ -382,6 +386,53 @@ bool DMXPatch::setRawData(unsigned int universe, vector<unsigned char> univData)
   }
 
   return true;
+}
+
+size_t DMXPatch::sizeOfDeviceMap(string id) {
+  if (m_deviceMaps.count(id) == 0)
+    return -1;
+
+  unsigned int max = 0;
+  conversionType maxType = FLOAT_TO_SINGLE;
+  for (auto pd : m_deviceMaps[id]) {
+    if (pd.second.startAddress > max) {
+      max = pd.second.startAddress;
+      maxType = pd.second.type;
+    }
+  }
+
+  switch (maxType) {
+  case (FLOAT_TO_SINGLE) :
+  case (ENUM) :
+    max += 1;
+    break;
+  case (FLOAT_TO_FINE) :
+  case (ORI_TO_FINE) :
+    max += 2;
+    break;
+  case (COLOR_RGB) :
+    max += 3;
+    break;
+  case (COLOR_RGBW) :
+    max += 4;
+    break;
+  case (COLOR_LUSTRPLUS) :
+    max += 7;
+    break;
+  case (RGB_REPEAT2) :
+    max += 3 * 2;
+    break;
+  case (RGB_REPEAT3) :
+    max += 3 * 3;
+    break;
+  case (RGB_REPEAT4) :
+    max += 3 * 4;
+    break;
+  default:
+    break;
+  }
+
+  return max;
 }
 
 }
