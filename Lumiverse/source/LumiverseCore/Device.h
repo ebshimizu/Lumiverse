@@ -345,12 +345,19 @@ namespace Lumiverse {
     */
     bool setMetadata(string key, string val);
 
-	/*!
-	* \brief Deletes the metadata entry for a given key.
-	*
-	* \param key Metadata key
-	*/
-	void deleteMetadata(string key);
+    /*!
+    * \brief Deletes the metadata entry for a given key.
+    *
+    * \param key Metadata key
+    */
+    void deleteMetadata(string key);
+
+    /*!
+    \brief Deletes a parameter from the device.
+
+    Be careful when calling this while the Rig is active.
+    */
+    void deleteParameter(string key);
 
     /*!
     * \brief Erases all values in the metadata fields

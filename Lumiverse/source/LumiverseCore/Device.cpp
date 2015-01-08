@@ -354,6 +354,15 @@ void Device::deleteMetadata(string key) {
 	}
 }
 
+void Device::deleteParameter(string key) {
+  if (m_parameters.count(key) != 0) {
+    delete m_parameters[key];
+    m_parameters.erase(key);
+
+    onParameterChanged();
+  }
+}
+
 void Device::clearMetadataValues() {
   for (auto& kv : m_metadata) {
     kv.second = "";
