@@ -284,6 +284,32 @@ namespace Lumiverse {
     return Eigen::Vector3d(lab[0], C, H);
   }
 
+  bool LumiverseColor::addColorChannel(string name) {
+    if (m_deviceChannels.count(name) == 0) {
+      m_deviceChannels[name] = 0;
+      return true;
+    }
+    else {
+      stringstream ss;
+      ss << "Color already has a channel named " << name;
+      Logger::log(WARN, ss.str());
+      return false;
+    }
+  }
+
+  bool LumiverseColor::deleteColorChannel(string name) {
+    if (m_deviceChannels.count(name) > 0) {
+      m_deviceChannels.erase(name);
+      return true;
+    }
+    else {
+      stringstream ss;
+      ss << "Color does not have a channel named " << name;
+      Logger::log(WARN, ss.str());
+      return false;
+    }
+  }
+
   bool LumiverseColor::setColorChannel(string name, double val) {
     if (m_deviceChannels.count(name) > 0) {
       m_deviceChannels[name] = ColorUtils::clamp(val, 0, 1);
@@ -387,6 +413,32 @@ namespace Lumiverse {
     }
 
     return (channelsNull && (m_weight == 1));
+  }
+
+  void LumiverseColor::changeMode(ColorMode newMode) {
+    m_mode = newMode;
+
+    if (newMode == BASIC_RGB || newMode == BASIC_CMY) {
+      m_deviceChannels.clear();
+      m_basisVectors.clear();
+    }
+
+    initMode();
+  }
+
+  void LumiverseColor::setBasisVector(string channel, double x, double y, double z) {
+    m_basisVectors[channel] = Eigen::Vector3d(x, y, z);
+  }
+
+  void LumiverseColor::removeBasisVector(string channel) {
+    m_basisVectors.erase(channel);
+  }
+
+  Eigen::Vector3d LumiverseColor::getBasisVector(string channel) {
+    if (m_basisVectors.count(channel) > 0)
+      return m_basisVectors[channel];
+    else
+      return Eigen::Vector3d(0, 0, 0);
   }
 
   int LumiverseColor::cmpHue(LumiverseColor& other, ReferenceWhite refWhite) {

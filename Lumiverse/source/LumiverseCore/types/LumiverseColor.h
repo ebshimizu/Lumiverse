@@ -251,6 +251,19 @@ namespace Lumiverse {
     Eigen::Vector3d getLCHab(Eigen::Vector3d refWhite);
 
     /*!
+    \brief Adds a color channel to the LumiverseColor.
+    \return true on success, false otherwise.
+    */
+    bool addColorChannel(string name);
+
+    /*!
+    \brief Deletes a color channel from the LumiverseColor
+    
+    \return true on success, false if channel named doesn't exist.
+    */
+    bool deleteColorChannel(string name);
+
+    /*!
     * \brief Directly sets the value of a light parameter.
     *
     * Available parameters are defined by the user, though common ones will
@@ -353,6 +366,46 @@ namespace Lumiverse {
     int cmpHue(LumiverseColor& other, ReferenceWhite refWhite = D65);
 
     virtual bool isDefault();
+
+    /*!
+    \brief Changes the mode of this color
+
+    When changing from Additive or subtractive to a Basic mode, all existing data gets deleted.
+    Use with care.
+    */
+    void changeMode(ColorMode newMode);
+
+    /*!
+    \brief Gets the mode of the color
+    */
+    ColorMode getMode() { return m_mode; }
+
+    /*!
+    \brief Sets the value of a basis vector.
+
+    If a vector does not already exists, this will create a basis vector.
+    */
+    void setBasisVector(string channel, double x, double y, double z);
+
+    /*!
+    \brief Removes a basis vector from the color.
+    
+    Note that if the set of basis vectors does not match the set of color channels,
+    some color calculations will not work correctly.
+    */
+    void removeBasisVector(string channel);
+
+    /*!
+    \brief Returns the basis vector for the given color channel.
+
+    If it does not exist, a zero vector will be returned.
+    */
+    Eigen::Vector3d getBasisVector(string channel);
+
+    /*!
+    \brief Returns the map of channel name to basis vector
+    */
+    const map<string, Eigen::Vector3d>& getBasisVectors() { return m_basisVectors; }
 
   private:
     /*! \brief Parameter that controls the overall values of the device channels.
