@@ -289,6 +289,14 @@ vector<string> LumiverseEnum::getVals() {
   return vals;
 }
 
+int LumiverseEnum::getHighestStartValue() {
+  if (m_startToName.size() == 0)
+    return -1;
+
+  auto end = m_startToName.rbegin();
+  return end->first;
+}
+
 void LumiverseEnum::setTweakWithMode() {
   switch (m_mode)
   {

@@ -289,6 +289,18 @@ namespace Lumiverse {
     InterpolationMode getInterpMode() { return m_interpMode; }
 
     /*!
+    \brief Returns the maximum numeric value this LumiverseEnum can take
+    */
+    int getRangeMax() { return m_rangeMax; }
+
+    /*!
+    \brief Sets the maximum numeric value this LumiverseEnum can take.
+
+    Setting this to a value below the highest valued option in the LumiverseEnum results in undefined behavior.
+    */
+    void setRangeMax(int newMax) { m_rangeMax = newMax; }
+
+    /*!
     * \brief Does a linear interpolation based on the interpolation mode.
     *
     * The object this function is called on is treated as the left hand side.
@@ -321,6 +333,8 @@ namespace Lumiverse {
 
     /*!
     \brief Gets a list of all the possible values the enumeration can take
+
+    This list is sorted by enumeration option start value.
     */
     vector<string> getVals();
 
@@ -333,6 +347,14 @@ namespace Lumiverse {
     \brief Returns a reference to the map of range starts to values
     */
     const map<int, string>& getStartToVals() { return m_startToName; }
+
+    /*!
+    \brief Gets the highest start value for an enumeration option.
+
+    This should be a value less than m_rangeMax if the enumeration is formatted correctly.
+    \return Value of the key with the higest starting value. -1 if there are no keys currently in the enumeration.
+    */
+    int getHighestStartValue();
 
   private:
     /*!
