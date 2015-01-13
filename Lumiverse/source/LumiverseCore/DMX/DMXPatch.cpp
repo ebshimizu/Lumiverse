@@ -311,6 +311,14 @@ void DMXPatch::assignInterface(DMXInterface* iface, unsigned int universe) {
   }
 }
 
+bool DMXPatch::addInterface(DMXInterface* iface) {
+  if (m_interfaces.count(iface->getInterfaceId()) > 0)
+    return false;
+
+  m_interfaces[iface->getInterfaceId()] = iface;
+  return true;
+}
+
 void DMXPatch::deleteInterface(string id) {
   // Close and delete the interface
   m_interfaces[id]->closeInt();
@@ -319,6 +327,13 @@ void DMXPatch::deleteInterface(string id) {
   // Remove from the patch maps
   m_interfaces.erase(id);
   m_ifacePatch.erase(id);
+}
+
+DMXInterface* DMXPatch::getInterface(string id) {
+  if (m_interfaces.count(id) > 0)
+    return m_interfaces[id];
+
+  return nullptr;
 }
 
 void DMXPatch::moveInterface(string id, unsigned int universeFrom, unsigned int universeTo) {

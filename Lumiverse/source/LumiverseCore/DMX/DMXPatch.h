@@ -137,12 +137,24 @@ namespace Lumiverse {
     void assignInterface(DMXInterface* iface, unsigned int universe);
 
     /*!
+    \brief Adds an interface to the DMXPatch without assigning it to a universe.
+
+    \return true on success, false if an interface with the same name already exists.
+    */
+    bool addInterface(DMXInterface* iface);
+
+    /*!
     * \brief Deletes an interface with id "id" from the patch.
     *
     * Note that this will unmap ALL universes mapped to this interface and deallocate it.
     * \param id Interface ID to delete.
     */
     void deleteInterface(string id);
+
+    /*!
+    \brief Returns a DMXInterface for editing. 
+    */
+    DMXInterface* getInterface(string id);
 
     /*!
     * \brief Moves an interface from a specified universe to a specified universe.
