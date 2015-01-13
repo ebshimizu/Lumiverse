@@ -342,7 +342,7 @@ LumiverseEnum::Mode LumiverseEnum::stringToMode(string input) {
 }
 
 string LumiverseEnum::interpModeAsString() {
-  switch (m_mode)
+  switch (m_interpMode)
   {
   case SNAP:
     return "SNAP";
