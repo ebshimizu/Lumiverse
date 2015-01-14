@@ -71,6 +71,12 @@ namespace Lumiverse {
 
     virtual string getInterfaceType() { return "KiNetInterface"; }
   
+    string getIP() { return m_host; }
+    void setIP(string ip) { m_host = ip; }
+
+    int getPort() { return m_port; }
+    void setPort(int port) { m_port = port; }
+
     size_t getHeaderSize() const { return m_headerSize; }
     size_t getDataSize() const { return m_dataSize; }
     size_t getNumChannels() const { return m_numChannels; }
@@ -80,11 +86,8 @@ namespace Lumiverse {
 
   private:
     string m_host;
-
     int m_port;
-
     bool m_connected;
-
     int m_socket;
 
     unsigned char* m_buffer;

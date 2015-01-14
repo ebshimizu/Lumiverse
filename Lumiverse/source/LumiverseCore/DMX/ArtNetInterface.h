@@ -55,6 +55,12 @@ namespace Lumiverse {
     virtual JSONNode toJSON();
 
     virtual string getInterfaceType() { return "ArtNetInterface"; }
+
+    string getIP() { return m_ip; }
+    void setIP(string ip) { m_ip = ip; }
+
+    string getBroadcast() { return m_broadcast; }
+    void setBroadcast(string bc) { m_broadcast = bc; }
   
   private:
     void initUniverse(int universe);

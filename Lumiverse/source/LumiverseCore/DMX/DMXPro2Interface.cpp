@@ -105,8 +105,10 @@ void DMXPro2Interface::reset() {
 }
 
 void DMXPro2Interface::closeInt() {
-  if (m_deviceHandle != NULL)
+  if (m_deviceHandle != NULL) {
     FT_Close(m_deviceHandle);
+    m_connected = false;
+  }
 }
 
 JSONNode DMXPro2Interface::toJSON() {

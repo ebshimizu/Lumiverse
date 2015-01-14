@@ -311,6 +311,19 @@ void DMXPatch::assignInterface(DMXInterface* iface, unsigned int universe) {
   }
 }
 
+void DMXPatch::removeInterface(unsigned int universe, string id) {
+  vector<multimap<string, unsigned int>::iterator> toRemove;
+  for (auto it = m_ifacePatch.begin(); it != m_ifacePatch.end(); it++) {
+    if (it->second == universe && (it->first == id || id == "")) {
+      toRemove.push_back(it);
+    }
+  }
+
+  for (const auto& val : toRemove) {
+    m_ifacePatch.erase(val);
+  }
+}
+
 bool DMXPatch::addInterface(DMXInterface* iface) {
   if (m_interfaces.count(iface->getInterfaceId()) > 0)
     return false;
@@ -448,6 +461,14 @@ size_t DMXPatch::sizeOfDeviceMap(string id) {
   }
 
   return max;
+}
+
+vector<string> DMXPatch::getInterfaceIDs() {
+  vector<string> ids;
+  for (const auto& kvp : m_interfaces) {
+    ids.push_back(kvp.first);
+  }
+  return ids;
 }
 
 }

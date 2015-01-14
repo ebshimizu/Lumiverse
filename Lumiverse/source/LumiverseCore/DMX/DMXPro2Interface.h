@@ -104,6 +104,15 @@ namespace Lumiverse {
     // port2 - 0 = disabled, 1 = enabled for DMX, 2 = enabled for MIDI In and Out
     void setPorts(uint8_t port1, uint8_t port2);
 
+    int getProNum() { return m_proNum; }
+    void setProNum(int proNum) { m_proNum = proNum; }
+
+    void setOut1Universe(int u) { m_out1Universe = u; }
+    int getOut1Universe() { return m_out1Universe; }
+
+    void setOut2Universe(int u) { m_out2Universe = u; }
+    int getOut2Universe() { return m_out2Universe; }
+
   private:
     // Specifies which DMX PRO interface numnber is controlled by this instance
     int m_proNum;

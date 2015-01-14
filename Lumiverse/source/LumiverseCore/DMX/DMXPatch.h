@@ -137,6 +137,12 @@ namespace Lumiverse {
     void assignInterface(DMXInterface* iface, unsigned int universe);
 
     /*!
+    \brief Removes all interfaces from the selected universe
+    Optionally specify a specific interface to remvoe from the universe.
+    */
+    void removeInterface(unsigned int universe, string id = "");
+
+    /*!
     \brief Adds an interface to the DMXPatch without assigning it to a universe.
 
     \return true on success, false if an interface with the same name already exists.
@@ -251,6 +257,11 @@ namespace Lumiverse {
     \return Size of specified device map in terms of bytes (DMX addresses). Returns -1 if map does not exist.
     */
     size_t sizeOfDeviceMap(string id);
+
+    /*!
+    \brief Returns a list of the interface IDs used by this patch.
+    */
+    vector<string> getInterfaceIDs();
 
   private:
     /*!
