@@ -68,6 +68,11 @@ namespace Lumiverse {
     */
     Device(Device* other);
 
+    /*!
+    \brief Copies a Device, but with a different ID
+    */
+    Device(string id, Device* other);
+
     /*! 
     * \brief Destroys a device.
     */
