@@ -158,6 +158,14 @@ JSONNode SimulationPatch::toJSON() {
 
 	return root;
 }
+
+void SimulationPatch::deleteDevice(string id) {
+  if (m_lights.count(id) > 0) {
+    m_lights[id]->clear();
+    delete m_lights[id];
+    m_lights.erase(id);
+  }
+}
     
 void SimulationPatch::rerender() {
     // Given at least one light exists

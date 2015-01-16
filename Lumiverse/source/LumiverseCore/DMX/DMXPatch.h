@@ -111,6 +111,8 @@ namespace Lumiverse {
     */
     virtual string getType() { return "DMXPatch"; }
 
+    virtual void deleteDevice(string id);
+
     // Gets a mapping of device parameters to addresses for the patch type.
     // This is the full patch map.
     // Entries should look something like "deviceId.paramName -> 1 / 25" (DMX example)

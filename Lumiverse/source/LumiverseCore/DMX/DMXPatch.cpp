@@ -285,6 +285,10 @@ JSONNode DMXPatch::deviceMapToJSON(string id, map<string, patchData> data) {
   return root;
 }
 
+void DMXPatch::deleteDevice(string id) {
+  m_patch.erase(id);
+}
+
 void DMXPatch::assignInterface(DMXInterface* iface, unsigned int universe) {
   string id = iface->getInterfaceId();
 

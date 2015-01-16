@@ -338,6 +338,11 @@ void Rig::deleteDevice(string id) {
   // Find the device in the vector and delete it. Yay vectors.
   m_devices.erase(find(m_devices.begin(), m_devices.end(), m_devicesById[id]));
 
+  // delete the Device from the patches
+  for (const auto& p : m_patches) {
+    p.second->deleteDevice(id);
+  }
+
   // Delete the memory used by the device using the id->device map
   delete m_devicesById[id];
   m_devicesById.erase(id);

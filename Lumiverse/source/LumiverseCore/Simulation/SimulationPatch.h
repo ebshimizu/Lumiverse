@@ -99,6 +99,8 @@ namespace Lumiverse {
     */
     virtual string getType() { return "SimulationPatch"; }
       
+    virtual void deleteDevice(string id);
+
     /*!
     * \brief Gets the width of result.
     *

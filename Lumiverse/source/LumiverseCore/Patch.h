@@ -71,6 +71,13 @@ namespace Lumiverse {
     * \return String representing the type of the Patch
     */
     virtual string getType() = 0;
+
+    /*!
+    \brief Called when a device is deleted from the Rig.
+
+    Patches should clean up information about the device in question.
+    */
+    virtual void deleteDevice(string id) = 0;
       
     // Gets a mapping of device parameters to addresses for the patch type.
     // This is the full patch map.
