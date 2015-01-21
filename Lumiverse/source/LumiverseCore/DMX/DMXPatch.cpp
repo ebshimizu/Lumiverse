@@ -286,6 +286,7 @@ JSONNode DMXPatch::deviceMapToJSON(string id, map<string, patchData> data) {
 }
 
 void DMXPatch::deleteDevice(string id) {
+  delete m_patch[id];
   m_patch.erase(id);
 }
 
