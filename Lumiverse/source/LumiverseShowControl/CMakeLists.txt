@@ -24,18 +24,19 @@ IF(LumiverseCore_INCLUDE_ARNOLD)
 ENDIF(LumiverseCore_INCLUDE_ARNOLD)
 
 add_library (LumiverseShowControl
-	Cue.h
-	CueList.h
-	Playback.h
-	Layer.h
-	Programmer.h
+  Cue.h
+  CueList.h
+  Playback.h
+  Layer.h
+  Programmer.h
   Snapshot.h
-	Cue.cpp
-	CueList.cpp
-	Playback.cpp
-	Layer.cpp
-	Programmer.cpp
+  Cue.cpp
+  CueList.cpp
+  Playback.cpp
+  Layer.cpp
+  Programmer.cpp
   Snapshot.cpp
+  Timeline.h
   LumiverseShowControl.h)
 
 add_executable (PlaybackDemo

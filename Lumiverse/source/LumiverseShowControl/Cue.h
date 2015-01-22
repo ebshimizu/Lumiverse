@@ -1,3 +1,4 @@
+#define _CUE_H_
 #ifndef _CUE_H_
 #define _CUE_H_
 
@@ -21,45 +22,45 @@ event that you want to run timlines back to back that pick up automatically from
 the last timeline left off, so if you update any cue in the sequence, the changes propagate correctly.
 For this to be used effectively, the cue transition time is recommended to be 0.
 */
-struct Keyframe {
-  /*! \brief Time at which this keyframe is located. t=0 is start of timeline. */
-  float t;
-
-  /*!
-  \brief Value of the keyframe at time t.
-  */
-  shared_ptr<Lumiverse::LumiverseType> val;
-
-  /*!
-  \brief If true, the value of this keyframe will be pulled from the previous cue in the transition.
-  
-  Note that the keyframe will still have a value, but it won't be used unless there is no previous cue.
-  */
-  bool usePreviousValue;
-
-  // Planned interpolation mode selection here. Additional parameters probably needed
-  // once this thing gets activated
-  // enum interpMode
-
-  bool operator<(Keyframe other) const {
-    return t < other.t;
-  }
-
-  /*! \brief Empty constructor */
-  Keyframe() { }
-
-  /*!
-  \brief Constructor with all values filled in.
-  \param time Keyframe temporal location
-  \param v Value at specified time
-  \param uct Use Cue Timing (see useCueTiming member variable)
-  */
-  Keyframe(float time, shared_ptr<Lumiverse::LumiverseType> v, bool upv) :
-    t(time), val(v), usePreviousValue(upv) { }
-
-  /*! \brief Creates a keyframe from a JSON node. */
-  Keyframe(JSONNode node);
-};
+//struct Keyframe {
+//  /*! \brief Time at which this keyframe is located. t=0 is start of timeline. */
+//  float t;
+//
+//  /*!
+//  \brief Value of the keyframe at time t.
+//  */
+//  shared_ptr<Lumiverse::LumiverseType> val;
+//
+//  /*!
+//  \brief If true, the value of this keyframe will be pulled from the previous cue in the transition.
+//  
+//  Note that the keyframe will still have a value, but it won't be used unless there is no previous cue.
+//  */
+//  bool usePreviousValue;
+//
+//  // Planned interpolation mode selection here. Additional parameters probably needed
+//  // once this thing gets activated
+//  // enum interpMode
+//
+//  bool operator<(Keyframe other) const {
+//    return t < other.t;
+//  }
+//
+//  /*! \brief Empty constructor */
+//  Keyframe() { }
+//
+//  /*!
+//  \brief Constructor with all values filled in.
+//  \param time Keyframe temporal location
+//  \param v Value at specified time
+//  \param uct Use Cue Timing (see useCueTiming member variable)
+//  */
+//  Keyframe(float time, shared_ptr<Lumiverse::LumiverseType> v, bool upv) :
+//    t(time), val(v), usePreviousValue(upv) { }
+//
+//  /*! \brief Creates a keyframe from a JSON node. */
+//  Keyframe(JSONNode node);
+//};
 
 /*!
 \brief A cue stores data for a particular look (called a cue)
