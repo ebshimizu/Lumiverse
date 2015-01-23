@@ -37,6 +37,8 @@ add_library (LumiverseShowControl
   Programmer.cpp
   Snapshot.cpp
   Timeline.h
+  Timeline.cpp
+  Keyframe.h
   LumiverseShowControl.h)
 
 add_executable (PlaybackDemo

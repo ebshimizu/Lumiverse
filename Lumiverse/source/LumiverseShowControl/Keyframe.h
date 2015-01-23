@@ -30,7 +30,7 @@ struct Keyframe {
   shared_ptr<Lumiverse::LumiverseType> val;
 
   /*!
-  \brief If true, the value of this keyframe will be pulled from the previous cue in the transition.
+  \brief If true, the value of this keyframe will be pulled from the state of the layer when playback starts. 
 
   Note that the keyframe will still have a value, but it won't be used unless there is no previous cue.
   */
@@ -55,6 +55,11 @@ struct Keyframe {
   */
   Keyframe(size_t time, shared_ptr<Lumiverse::LumiverseType> v, bool upv) :
     t(time), val(v), useCurrentState(upv) { }
+
+  /*!
+  \brief Constructor creates a blank keyframe at specified time
+  */
+  Keyframe(size_t time) : t(time) { }
 
   /*! \brief Creates a keyframe from a JSON node. */
   Keyframe(JSONNode node);

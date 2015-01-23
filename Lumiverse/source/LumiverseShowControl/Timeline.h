@@ -20,8 +20,23 @@ of this, this keyframe is typically used only at the beginning of timelines.
 */
 class Timeline {
 public:
+  /*!
+  \brief Creates an empty timeline
+  */
   Timeline();
 
+  Timeline(JSONNode data);
+
+  /*!
+  \brief Copies a timeline.
+  */
+  Timeline(const Timeline& other);
+
+  void operator=(const Timeline& other);
+
+  /*!
+  \brief Deletes a timeline
+  */
   ~Timeline();
 
   /*!
@@ -30,41 +45,45 @@ public:
   string getTimelineKey(Device* d, string paramName);
 
   /*!
-  \brief Gets the keyframes for a given identifier and time. Read-only.
+  \brief Gets the keyframe for a given identifier and time. Read-only.
+
+  Note that if the keyframe doesn't exist, you will receive an invalid keyframe.
   */
   Keyframe getKeyframe(string identifier, size_t time);
 
   /*!
-  \brief Gets the keyframes for a given device and time.
+  \brief Gets the keyframes for a given device and time. Read-only.
+
+  If a keyframe doesn't exist for the parameter, it will be empty. 
   */
-  map<string, Keyframe*> getKeyframes(Device* d, size_t time);
+  map<string, Keyframe> getKeyframes(Device* d, size_t time);
 
   /*!
   \brief Gets the keyframes for the entire timeline.
   */
-  map<string, set<Keyframe> >& const getAllKeyframes();
+  map<string, map<size_t, Keyframe> >& const getAllKeyframes();
 
   /*!
   \brief Sets the value for the specified keyframe.
 
   This function will overwrite existing keyframes without warning.
   */
-  void setKeyframe(string identifier, size_t time, LumiverseType* data);
+  void setKeyframe(string identifier, size_t time, LumiverseType* data, bool ucs = false);
 
   /*!
   \brief Sets the value of the keyframes for all parameters of the given device.
   */
-  void setKeyframe(Device* d, size_t time);
+  void setKeyframe(Device* d, size_t time, bool ucs = false);
 
   /*!
   \brief Stores a keyframe from a rig
   */
-  void setKeyframes(Rig* rig, size_t time);
+  void setKeyframe(Rig* rig, size_t time, bool ucs = false);
 
   /*!
   \brief Stores a keyframe for a group of selected devices
   */
-  void setKeyframes(DeviceSet devices, size_t time);
+  void setKeyframe(DeviceSet devices, size_t time, bool ucs = false);
 
   /*!
   \brief Deletes the keyframe with the specified identifier at the specified time.
@@ -88,7 +107,7 @@ public:
   \param time Time in microseconds to get the value.
   \return A LumiverseType value for the specified time in the timeline.
   */
-  shared_ptr<LumiverseType*> getValueAtTime(string identifier, size_t time);
+  shared_ptr<LumiverseType> getValueAtTime(string identifier, size_t time);
 
   /*!
   \brief Gets the length of the timeline based on stored keyframes.
@@ -109,12 +128,16 @@ private:
   */
   bool _lengthIsUpdated;
 
+  // right so the map should at some point be changed to a specialized data structure that meets
+  // the following properties:
+  // -given a time, can find the first and next keyframes (if they exist) as quickly as possible
+  // -can handle insertions and deletions quickly (doesn't have to be as fast as possible)
   /*!
   \brief Map from unique identifier to timeline keyframes.
 
   The unique identifier for device parameter pair is: [deviceID]:[paramName]
   */
-  map<string, set<Keyframe> > _timelineData;
+  map<string, map<size_t, Keyframe> > _timelineData;
 };
 
 }
