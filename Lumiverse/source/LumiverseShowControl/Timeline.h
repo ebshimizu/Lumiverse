@@ -10,7 +10,7 @@ namespace Lumiverse {
 namespace ShowControl {
 
 /*!
-\brief A Timeline is a list of device parameter values at artitrary times
+\brief A Timeline is a list of device parameter values at arbitrary times
 
 Lumiverse Timelines should be familiar to anyone who's used a timeline based system before.
 The one difference to highlight specifically is the addition of a new keyframe data type called
@@ -25,6 +25,11 @@ public:
   */
   Timeline();
 
+  /*!
+  \brief Load a Timeline from JSON data.
+
+  \param data JSONNode containing a timeline.
+  */
   Timeline(JSONNode data);
 
   /*!
@@ -113,6 +118,11 @@ public:
   \brief Gets the length of the timeline based on stored keyframes.
   */
   size_t getLength();
+
+  /*!
+  \brief Gets the JSON representation of the timeline object.
+  */
+  JSONNode toJSON();
 
 private:
   /*!

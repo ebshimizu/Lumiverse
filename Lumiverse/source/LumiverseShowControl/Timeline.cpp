@@ -39,13 +39,13 @@ void Timeline::setKeyframe(string identifier, size_t time, LumiverseType* data, 
   _lengthIsUpdated = false;
 }
 
-void Timeline::setKeyframe(Device* d, size_t time, bool ucs = false) {
+void Timeline::setKeyframe(Device* d, size_t time, bool ucs) {
   for (const auto& param : d->getParamNames()) {
     setKeyframe(getTimelineKey(d, param), time, d->getParam(param), ucs);
   }
 }
 
-void Timeline::setKeyframe(Rig* rig, size_t time, bool ucs = false) {
+void Timeline::setKeyframe(Rig* rig, size_t time, bool ucs) {
   for (const auto& d : rig->getAllDevices().getDevices()) {
     setKeyframe(d, time, ucs);
   }

@@ -7,8 +7,7 @@
 #include <chrono>
 
 #include <LumiverseCore.h>
-#include "Cue.h"
-#include "CueList.h"
+#include "Timeline.h"
 #include "Layer.h"
 #include "Programmer.h"
 
@@ -16,14 +15,14 @@ namespace Lumiverse {
 namespace ShowControl{
 
   /*!
-  \brief A playback object manages layers and coordinates their actions and updates.
+  \brief A playback object manages layers, timelines, and coordinates their actions and updates.
 
   Playbacks are typically attached to the main update loop in Rig and
   are limited in their update speed according to the speed of the Rig update loop.
   You can choose to run a Playback in a separate thread, though you'll need to
   create that thread yourself and call update() manually.
 
-  Playbacks manage a series of Layers, which can each have cues running on them.
+  Playbacks manage a series of Layers, which can each have timelines running on them.
   The layers are updated by the Playback and then flattened down and sent to the Rig
   during each call to Playback::update().
   */
@@ -101,42 +100,28 @@ namespace ShowControl{
     void deleteLayer(string name);
 
     /*!
-    \brief Adds a cue list to the Playback
+    \brief Add a Timeline to the Playback.
 
-    If a list already exists with the same name, this function will return false.
-    \param cueList Cue list to add.
+    \param id Timeline identifier, must be unique
+    \param tl Timeline object to add
+    \return true on success, false if a timeline with the given id already exists.
     */
-    bool addCueList(shared_ptr<CueList> cueList);
+    bool addTimeline(string id, shared_ptr<Timeline> tl);
 
     /*!
-    \brief Retrieves a cue list from the Playback
-    \param id Cue list id.
-    \return Pointer to specified cue list. nullptr if cue list doesn't exist. 
+    \brief Deletes a Timeline from the Playback.
+
+    \param id Timeline identifier
     */
-    shared_ptr<CueList> getCueList(string id);
+    void deleteTimeline(string id);
 
     /*!
-    \brief Deletes a cue list from the Playback
+    \brief Gets a timeline from the Playback.
+
+    \param id Timeline identifier
+    \return Shared Pointer to the requested Timeline object. nullptr if Timeline doesn't exist.
     */
-    void deleteCueList(string id);
-
-    /*!
-    \brief Assigns a cue list to a layer
-
-    If one of the specified items doesn't exist, nothing will happen and this
-    function will return false.
-    \param cueListId Cue list identifier
-    \param layerName Name of the layer to assign the cue list to.
-    \param resetCurrenCue Set to true to reset the current cue of the layer (resets to -1)
-    */
-    bool addCueListToLayer(string cueListId, string layerName, bool resetCurrentCue = true);
-
-    /*!
-    \brief Removes a cue list assigned to a particular layer.
-
-    \param layerName Name of the layer
-    */
-    void removeCueListFromLayer(string layerName);
+    shared_ptr<Timeline> getTimeline(string id);
 
     /*!
     \brief Binds the update function for this playback to the Rig's update function.
@@ -179,24 +164,21 @@ namespace ShowControl{
     /*! \brief Returns a pointer to the rig. */
     Rig* getRig() { return m_rig; }
 
-    /*! \brief Returns a list of the cue list names contained in the Playback. */
-    vector<string> getCueListNames();
-
     /*! \brief Returns a list of the layer names contained in the Playback. */
     vector<string> getLayerNames();
+
+    /*!
+    \brief Returns a list of Timeline ids contained in the Playback.
+
+    \return List of Timeline ids. Should be sorted according to C++ standard library string comparison.
+    */
+    vector<string> getTimelineNames();
 
     /*! \brief Returns a reference to the layers in the Playback. */
     const map<string, shared_ptr<Layer> >& getLayers() { return m_layers; }
 
     /*! \brief Loads data from a JSON object */
     bool loadJSON(JSONNode node);
-
-    /*!
-    \brief Returns the number of cue lists contained in this Playback object.
-
-    \return Number of cue lists.
-    */
-    int getNumCueLists();
 
     /*!
     \brief Returns the number of layers contained in this Playback object.
@@ -284,9 +266,6 @@ namespace ShowControl{
     /*! \brief Map of layer names to layers. */
     map<string, shared_ptr<Layer> > m_layers;
 
-    /*! \brief Map of cue lists. */
-    map<string, shared_ptr<CueList> > m_cueLists;
-
     /*! \brief Copy of all devices in the rig. Current state of the playback. */
     map<string, Device*> m_state;
 
@@ -295,6 +274,9 @@ namespace ShowControl{
 
     /*! \brief Stores named dynamic groups (DynamicDeviceSets) created by the user. */
     map<string, DynamicDeviceSet> m_dynGroups;
+
+    /*! \brief Map of */
+    map<string, shared_ptr<Timeline> > m_timelines;
 
     // Does the updating of the rig while running.
     // unique_ptr<thread> m_updateLoop;

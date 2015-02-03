@@ -4,8 +4,7 @@
 #pragma once
 
 #include "LumiverseCore.h"
-#include "CueList.h"
-#include "Cue.h"
+#include "Timeline.h"
 
 #include <memory>
 #include <chrono>
@@ -14,12 +13,11 @@
 namespace Lumiverse {
 namespace ShowControl {
 
-  /*! \brief Data that tracks the progress of a cue and stores the data used in the cue transition. */
+  /*! \brief Data that tracks the progress of a Timeline. */
   struct PlaybackData {
-    chrono::time_point<chrono::high_resolution_clock> start;    // Cue start time. More accurate to take difference between now and start instead of summing.
+    chrono::time_point<chrono::high_resolution_clock> start;    // Timeline start time. More accurate to take difference between now and start instead of summing.
     map<string, set<string> > activeParams;
-    Cue targetCue;
-    Cue previousCue;
+    string timelineID;
   };
 
   /*!
@@ -75,18 +73,38 @@ namespace ShowControl {
     /*! \brief Destroys a layer */
     ~Layer();
 
-    /*! 
-    \brief Assigns a cue list to the layer.
+    /*!
+    \brief Plays a Timeline on the layer.
 
-    The layer will automatically go to the first cue in the list.
+    This is the main function to actually get things to animate. You can hand in any Timeline you
+    want as long as it's in the Playback object.
+
+    Layers can play multiple timelines back at once, however there won't be much in the way of intelligent
+    blending. System should do a latest takes precedence merge for multiple timelines.
     */
-    void setCueList(shared_ptr<CueList> list, bool resetCurrentCue = true);
+    void play(string id);
 
-    /*! \brief Removes the active cue list from the layer. Layer will reset to defaults. */
-    void removeCueList();
+    /*!
+    \brief Pauses playback of the current Timeline.
 
-    /*! \brief Checks if the current Layer has a cue list attached. */
-    bool hasCueList() { return m_cueList != nullptr; }
+    If there are no Timelines being played back, this function does nothing.
+    */
+    void pause();
+
+    /*!
+    \brief Resumes playback of the current Timeline.
+
+    Note that if there are no Timelines being played back, this function does nothing.
+    */
+    void resume();
+
+    /*!
+    \brief Stops and clears all current playback information from the Layer.
+
+    The Layer state will remain in whatever state the Timeline it was playing left it.
+    Calling this with no active playbacks will have no effect.
+    */
+    void stop();
 
     /*! \brief Gets the layer's blend mode */
     BlendMode getMode() { return m_mode; }
@@ -154,11 +172,12 @@ namespace ShowControl {
     /*! \brief Gets the priority. */
     int getPriority() { return m_priority; }
 
-    /*! \brief Gets the cue list. */
-    const shared_ptr<CueList>& getCueList() { return m_cueList; }
+    /*!
+    \brief Returns the ID of the Timeline currently being played on the Layer.
 
-    /*! \brief Gets the current cue. */
-    float getCurrentCue() { return m_currentCue; }
+    \return ID of the Timeline that's being played back.
+    */
+    string getCurrentTimeline();
 
     /*!
     \brief Gets the layer state.
@@ -166,47 +185,6 @@ namespace ShowControl {
     The layer state can be manipulated through this map.
     */
     map<string, Device*>& getLayerState() { return m_layerState; }
-
-    /*!
-    \brief Goes to the next cue in the cue list if a cue list exists in the layer.
-
-    Equivalent to a go button for a submaster on a light board.
-    */
-    void go();
-
-    /*!
-    \brief Goes back a cue in the cue list if a cue list exists in the layer.
-
-    Equivalent to a back button for a submaster on a light board.
-    */
-    void back();
-
-    // The cue adding process has changed a bit in this version of the Playback system.
-    // Cues now must be added to a CueList which must then be added to an active Layer
-    // for them to have any effect on the actual rig. It might seem like a bunch of
-    // extra unnecessary steps, but it should make running muiltiple simultaneous
-    // cue stacks easier.
-
-    /*!
-    \brief Goes to the specified cue in a cue list.
-
-    \param num The cue number to go to. If the cue doesn't exist, the layer will not change.
-    \param up Upfade. Defaults to 3s.
-    \param down Downfade. Defaults to 3s.
-    \param delay Delay. Defaults to 0s.
-    */
-    void goToCue(float num, float up = 3, float down = 3, float delay = 0);
-
-    /*!
-    \brief NOTE: NOT UPDATED YET USE WITH CAUTION
-    Sets the layer state to the state at the specified time in a cue.
-
-    This seeks to a position in a timeline. If time is greater than the length of the cue,
-    it will be clamped to the beginning of the next cue (if one exists).
-    \param num Cue number
-    \param time Location to seek to
-    */
-    void goToCueAtTime(float num, float time);
 
     /*!
     \brief Updates the Layer. If cues a running, the cues get updated.
@@ -273,8 +251,10 @@ namespace ShowControl {
     /*! \brief If using BLEND_OPAQUE, the opacity of the layer. */
     float m_opacity;
 
-    /*! \brief Selected CueList if the layer is using one. */
-    shared_ptr<CueList> m_cueList;
+    /*!
+    \brief Stores the ID of the most recently played back timeline.
+    */
+    id m_lastPlayedTimeline;
 
     /*! \brief Copies the devices and does other Layer initialization */
     void init(Rig* rig);

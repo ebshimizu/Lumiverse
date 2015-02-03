@@ -158,46 +158,25 @@ namespace ShowControl {
     }
   }
 
-  bool Playback::addCueList(shared_ptr<CueList> cueList) {
-    if (m_cueLists.count(cueList->getName()) == 0) {
-      m_cueLists[cueList->getName()] = cueList;
-      return true;
-    }
-    else {
-      stringstream ss;
-      ss << "Playback already has a cue list named " << cueList->getName();
-      Logger::log(ERR, ss.str());
-      return false;
-    }
-  }
-
-  shared_ptr<CueList> Playback::getCueList(string id) {
-    if (m_cueLists.count(id) > 0) {
-      return m_cueLists[id];
-    }
-
-    return nullptr;
-  }
-
-  void Playback::deleteCueList(string id) {
-    if (m_cueLists.count(id) > 0) {
-      m_cueLists.erase(id);
-    }
-  }
-
-  bool Playback::addCueListToLayer(string cueListId, string layerName, bool resetCurrentCue) {
-    if (m_layers.count(layerName) > 0 && m_cueLists.count(cueListId) > 0) {
-      m_layers[layerName]->setCueList(m_cueLists[cueListId], resetCurrentCue);
+  bool Playback::addTimeline(string id, shared_ptr<Timeline> tl) {
+    if (m_timelines.count(id) == 0) {
+      m_timelines[id] = tl;
       return true;
     }
 
     return false;
   }
 
-  void Playback::removeCueListFromLayer(string layerName) {
-    if (m_layers.count(layerName) > 0) {
-      m_layers[layerName]->removeCueList();
+  void Playback::deleteTimeline(string id) {
+    m_timelines.erase(id);
+  }
+
+  shared_ptr<Timeline> Playback::getTimeline(string id) {
+    if (m_timelines.count(id) > 0) {
+      return m_timelines[id];
     }
+
+    return nullptr;
   }
 
   bool Playback::attachToRig(int pid) {
@@ -242,11 +221,11 @@ namespace ShowControl {
     // Easy stuff first
     pb.push_back(JSONNode("grandmaster", m_grandmaster));
 
-    // Cue Lists first.
+    // Timelines first.
     JSONNode lists;
-    lists.set_name("cueLists");
+    lists.set_name("timelines");
 
-    for (auto& kvp : m_cueLists) {
+    for (auto& kvp : m_timelines) {
       lists.push_back(kvp.second->toJSON());
     }
     pb.push_back(lists);
@@ -284,20 +263,20 @@ namespace ShowControl {
     return root;
   }
 
-  vector<string> Playback::getCueListNames() {
+  vector<string> Playback::getLayerNames() {
     vector<string> names;
 
-    for (const auto& kvp : m_cueLists) {
+    for (const auto& kvp : m_layers) {
       names.push_back(kvp.first);
     }
 
     return names;
   }
 
-  vector<string> Playback::getLayerNames() {
+  vector<string> Playback::getTimelineNames() {
     vector<string> names;
 
-    for (const auto& kvp : m_layers) {
+    for (const auto& kvp : m_timelines) {
       names.push_back(kvp.first);
     }
 
@@ -336,7 +315,7 @@ namespace ShowControl {
 
   bool Playback::loadJSON(JSONNode node) {
     m_layers.clear();
-    m_cueLists.clear();
+    m_timelines.clear();
 
     auto data = node.find("playback");
     if (data == node.end()) {
@@ -353,14 +332,14 @@ namespace ShowControl {
       m_grandmaster = gm->as_float();
     }
     
-    auto cueLists = data->find("cueLists");
+    auto cueLists = data->find("timelines");
     if (cueLists == data->end()) {
-      Logger::log(INFO, "No cue lists found for Playback.");
+      Logger::log(INFO, "No timelines found for Playback.");
     }
     else {
       auto it = cueLists->begin();
       while (it != cueLists->end()) {
-        m_cueLists[it->name()] = shared_ptr<CueList>(new CueList(*it));
+        m_timelines[it->name()] = shared_ptr<Timeline>(new Timeline(*it));
 
         it++;
       }
@@ -375,11 +354,12 @@ namespace ShowControl {
       while (it != layers->end()) {
         m_layers[it->name()] = shared_ptr<Layer>(new Layer(*it));
 
-        auto cueList = it->find("cueList");
-        if (cueList != it->end()) {
+        // TODO: Change how layers find what's assigned to them
+        //auto cueList = it->find("cueList");
+        //if (cueList != it->end()) {
           // Got a cue list to assign
-          addCueListToLayer(cueList->as_string(), it->name(), false);
-        }
+        //  addCueListToLayer(cueList->as_string(), it->name(), false);
+        //}
 
         it++;
       }
@@ -420,10 +400,6 @@ namespace ShowControl {
     }
 
     return true;
-  }
-
-  int Playback::getNumCueLists() {
-    return m_cueLists.size();
   }
 
   int Playback::getNumLayers() {
