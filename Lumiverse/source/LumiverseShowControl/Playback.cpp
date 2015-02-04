@@ -352,7 +352,7 @@ namespace ShowControl {
     else {
       auto it = layers->begin();
       while (it != layers->end()) {
-        m_layers[it->name()] = shared_ptr<Layer>(new Layer(*it));
+        m_layers[it->name()] = shared_ptr<Layer>(new Layer(const_cast<Playback*>(this), *it));
 
         // TODO: Change how layers find what's assigned to them
         //auto cueList = it->find("cueList");

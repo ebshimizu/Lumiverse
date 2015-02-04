@@ -11,9 +11,11 @@
 #include "Layer.h"
 #include "Programmer.h"
 
+
 namespace Lumiverse {
 namespace ShowControl{
-
+  class Layer;
+  
   /*!
   \brief A playback object manages layers, timelines, and coordinates their actions and updates.
 

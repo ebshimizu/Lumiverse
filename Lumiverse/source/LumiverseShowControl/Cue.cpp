@@ -1,4 +1,5 @@
 #include "Cue.h"
+#ifndef _CUE_H_
 
 namespace Lumiverse {
 namespace ShowControl {
@@ -557,3 +558,5 @@ bool Cue::paramIsActive(Cue* previousCue, string device, string param, float t) 
 
 }
 }
+
+#endif

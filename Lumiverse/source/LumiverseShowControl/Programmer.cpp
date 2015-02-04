@@ -213,10 +213,10 @@ void Programmer::blend(map<string, Device*> state) {
   m_progMutex.unlock();
 }
 
-Cue Programmer::getCue(float upfade, float downfade, float delay) {
-  Cue cue(m_devices, upfade, downfade, delay);
-  return cue;
-}
+//Cue Programmer::getCue(float upfade, float downfade, float delay) {
+//  Cue cue(m_devices, upfade, downfade, delay);
+// return cue;
+//}
 
 void Programmer::captureFromRig(DeviceSet devices) {
   for (Device* d : devices.getDevices()) {

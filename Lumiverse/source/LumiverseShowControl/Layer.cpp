@@ -3,35 +3,33 @@
 namespace Lumiverse {
 namespace ShowControl {
 
-  Layer::Layer(Rig* rig, string name, int priority, BlendMode mode) : m_mode(mode),
-    m_name(name), m_priority(priority)
+  Layer::Layer(Rig* rig, Playback* pb, string name, int priority, BlendMode mode) : m_mode(mode),
+    m_name(name), m_priority(priority), m_pb(pb)
   {
     m_opacity = 1;
     init(rig);
   }
 
-  Layer::Layer(Rig* rig, string name, int priority, float opacity) : m_mode(BLEND_OPAQUE),
-    m_opacity(opacity), m_name(name), m_priority(priority)
+  Layer::Layer(Rig* rig, Playback* pb, string name, int priority, float opacity) : m_mode(BLEND_OPAQUE),
+    m_opacity(opacity), m_name(name), m_priority(priority), m_pb(pb)
   {
     init(rig);
   }
 
-  Layer::Layer(Rig* rig, string name, int priority, DeviceSet set) : m_mode(SELECTED_ONLY),
-    m_selectedDevices(set), m_name(name), m_priority(priority)
+  Layer::Layer(Rig* rig, Playback* pb, string name, int priority, DeviceSet set) : m_mode(SELECTED_ONLY),
+    m_selectedDevices(set), m_name(name), m_priority(priority), m_pb(pb)
   {
     m_opacity = 1;
     init(rig);
   }
 
-  Layer::Layer(JSONNode node) {
+  Layer::Layer(Playback* pb, JSONNode node) : m_pb(pb) {
     auto it = node.begin();
     while (it != node.end()) {
       string name = it->name();
 
       if (name == "name")
         m_name = it->as_string();
-      else if (name == "currentCue")
-        m_currentCue = it->as_float();
       else if (name == "priority")
         m_priority = it->as_int();
       else if (name == "invertFilter")
@@ -70,7 +68,8 @@ namespace ShowControl {
 
     m_active = false;
     m_invertFilter = false;
-    m_currentCue = -1;  // People can't have negative cue numbers, so we'll use -1 to mean no active cue.
+    m_pause = false;
+    m_stop = false;
   }
 
   Layer::~Layer() {
@@ -78,18 +77,6 @@ namespace ShowControl {
     for (auto kvp : m_layerState) {
       delete m_layerState[kvp.first];
     }
-  }
-
-  void Layer::setCueList(shared_ptr<CueList> list, bool resetCurrentCue) {
-    m_cueList = list;
-
-    if (resetCurrentCue)
-      m_currentCue = -1;
-  }
-
-  void Layer::removeCueList() {
-    m_cueList = nullptr;
-    m_currentCue = -1;
   }
 
   void Layer::setOpacity(float val) {
@@ -129,169 +116,28 @@ namespace ShowControl {
     m_selectedDevices = m_selectedDevices.select("");
   }
 
-  void Layer::go() {
-    if (hasCueList()) {
-      if (m_currentCue >= 0) {
-        Cue* firstCue = m_cueList->getCue(m_currentCue);
-        Cue* nextCue = m_cueList->getNextCue(m_currentCue);
+  void Layer::play(string id) {
+    // TODO: update current state keyframes
+    m_lastPlayedTimeline = id;
 
-        if (firstCue != nullptr && nextCue != nullptr) {
-          m_currentCue = m_cueList->getNextCueNum(m_currentCue);
-          goToCue(firstCue, nextCue, false);
-        }
-        else {
-          stringstream ss;
-          ss << "Layer " << m_name << "Cannot go to next cue from cue " << m_currentCue;
-          Logger::log(ERR, ss.str());
-        }
-      }
-      else if (m_currentCue < 0) {
-        goToCue(m_cueList->getFirstCueNum());
-      }
-    }
-    else {
-      stringstream ss;
-      ss << "Layer " << m_name << " cannot go to next cue because it has no assigned cue list.";
-      Logger::log(ERR, ss.str());
-    }
+    PlaybackData pbd;
+    pbd.timelineID = id;
+    pbd.complete = false;
+    pbd.start = chrono::high_resolution_clock::now();
+
+    m_queuedPlayback.push_back(pbd);
   }
 
-  void Layer::back() {
-    if (hasCueList()) {
-      Cue* firstCue = m_cueList->getCue(m_currentCue);
-      Cue* nextCue = m_cueList->getPrevCue(m_currentCue);
-
-      if (firstCue != nullptr && nextCue != nullptr) {
-        m_currentCue = m_cueList->getPrevCueNum(m_currentCue);
-        goToCue(firstCue, nextCue, false);
-      }
-      else {
-        stringstream ss;
-        ss << "Layer " << m_name << " cannot go to previous cue from cue " << m_currentCue;
-        Logger::log(ERR, ss.str());
-      }
-    }
-    else {
-      stringstream ss;
-      ss << "Layer " << m_name << " cannot go to previous cue because it has no assigned cue list.";
-      Logger::log(ERR, ss.str());
-    }
+  void Layer::pause() {
+    m_pause = true;
   }
 
-  void Layer::goToCue(float num, float up, float down, float delay) {
-    if (hasCueList()) {
-      Cue* nextCue = m_cueList->getCue(num);
-      
-      if (nextCue != nullptr) {
-        Cue tempCue(m_layerState, up, down, delay);
-        m_currentCue = num;
-        goToCue(&tempCue, nextCue, true);
-      }
-      else {
-        stringstream ss;
-        ss << "Layer " << m_name << "Cannot go to cue " << num;
-        Logger::log(ERR, ss.str());
-      }
-    }
-    else {
-      stringstream ss;
-      ss << "Layer " << m_name << " cannot go to cue because it has no assigned cue list.";
-      Logger::log(ERR, ss.str());
-    }
+  void Layer::resume() {
+    m_pause = false;
   }
 
-  void Layer::goToCue(Cue* first, Cue* next, bool assert) {
-    PlaybackData pbData;
-
-    // Running a cue is as simple as running the keyframes in it
-    // We do this by tracking which parameters actually need to be animated, then asking the
-    // cue for their values at the right time.
-    pbData.activeParams = diff(first, next, assert);
-
-    // This should copy the cue data over into the playback object.
-    // This is slow, however if something changes while the cue is running, playback won't be affected.
-    // Later versions of this library may attempt to optimize/compress this part.
-    pbData.targetCue = *next;
-    pbData.previousCue = *first;
-    pbData.start = chrono::high_resolution_clock::now();
-
-    stringstream ss;
-    ss << "Layer " << m_name << " began a cue playback at " << chrono::duration_cast<chrono::seconds>(pbData.start.time_since_epoch()).count();
-    Logger::log(LDEBUG, ss.str());
-
-    lock_guard<mutex> lock(m_queue);
-    m_queuedPlayback.push_back(pbData);
-  }
-
-  void Layer::goToCueAtTime(float num, float time) {
-    if (hasCueList()) {
-      Cue* currentCue = m_cueList->getCue(num);
-
-      if (time > currentCue->getLength()) {
-        stringstream ss;
-        ss << "Cannot seek to time " << time << " in cue " << num << " (length: " << currentCue->getLength() << ")";
-        Logger::log(WARN, ss.str());
-        return;
-      }
-
-      if (currentCue != nullptr) {
-        m_currentCue = num;
-        Cue* nextCue = m_cueList->getNextCue(num);
-        if (nextCue == nullptr) {
-          // If there is no next cue, we stick to the one that does exist if the cue is
-          // not a standalone cue.
-          if (m_cueList->getCue(num)->getType() != Cue::STANDALONE) {
-            goToCue(num, 0.01f, 0.01f, 0);
-            return;
-          }
-        }
-
-        // TODO: This section needs to be updated to use the new cue functions.
-        // Interpolation time. For the seek function, we just pull all the relevant values,
-        // and then interpolate between them.
-
-        map<string, map<string, set<Keyframe> > >& currentData = currentCue->getCueData();
-        map<string, map<string, set<Keyframe> > >& nextData = nextCue->getCueData();
-        float cueTime = time;
-
-        // For each device
-        for (auto& device : m_layerState) {
-          // For each parameter
-          for (auto& param : device.second->getRawParameters()) {
-            // Find the relevant keyframes.
-            Keyframe current;
-            Keyframe next;
-            bool nextFound = false;
-
-            for (auto keyframe = currentData[device.first][param.first].begin(); keyframe != currentData[device.first][param.first].end();) {
-              // We know that keyframes are ordered in ascending order, so the first one that's greater
-              // than cueTime is the "next" keyframe.
-              if (keyframe->t > cueTime) {
-                next = *keyframe;
-                current = *prev(keyframe);
-                nextFound = true;
-                break;
-              }
-
-              ++keyframe;
-            }
-
-            // If we didn't find a next keyframe, we ended up at the end. Time to clamp to nextCue values
-            if (!nextFound) {
-              Keyframe nextCue = *(nextData[device.first][param.first].begin());
-              LumiverseTypeUtils::copyByVal(nextCue.val.get(), param.second);
-            }
-            else {
-              // Otherwise, do a lerp between keyframes.
-              // First need to convert the cueTime to a position from 0-1
-              float t = (cueTime - current.t) / (next.t - current.t);
-              shared_ptr<Lumiverse::LumiverseType> lerped = LumiverseTypeUtils::lerp(current.val.get(), next.val.get(), t);
-              LumiverseTypeUtils::copyByVal(lerped.get(), param.second);
-            }
-          }
-        }
-      }
-    }
+  void Layer::stop() {
+    m_stop = true;
   }
 
   void Layer::update(chrono::time_point<chrono::high_resolution_clock> updateStart) {
@@ -299,57 +145,57 @@ namespace ShowControl {
     m_queue.lock();
     if (m_queuedPlayback.size() > 0) {
       for (auto p : m_queuedPlayback) {
-        m_playbackData.push_back(p);
+        m_playbackData[p.timelineID] = p;
       }
       m_queuedPlayback.clear();
     }
     m_queue.unlock();
 
-    // Update playback data and set layer state if there is anything currently active
-    // Note that in the event of conflicts this would be a Latest Takes Precedence system
-    if (m_playbackData.size() > 0) {
-      auto pb = m_playbackData.begin();
+    vector<string> toDelete;
 
-      // Here's how this works.
-      // - For each active parameter, get the value at the given time.
-      // - Set the value in the layer state to the returned value.
-      // - Check if a parameter is active after the end of the update (to make sure we clamp to the right value)
-      while (pb != m_playbackData.end()) {
-        float cueTime = chrono::duration_cast<chrono::milliseconds>(updateStart - pb->start).count() / 1000.0f;
+    if (m_stop) {
+      m_playbackData.clear();
+    }
+    else {
+      // something something pause logic
 
-        auto devices = pb->activeParams.begin();
 
-        // Plan is to go through each active parameter, and ask the cue to give us the value
-        // at the specified time.
-        while (devices != pb->activeParams.end()) {
-          auto parameter = devices->second.begin();
-          while (parameter != devices->second.end()) {
-            shared_ptr<LumiverseType> val = pb->targetCue.getValueAtTime(&pb->previousCue, devices->first, *parameter, cueTime);
+      // Update playback data and set layer state if there is anything currently active
+      // Note that in the event of conflicts this would be a Latest Takes Precedence system
+      if (m_playbackData.size() > 0) {
+        for (const auto& pbd : m_playbackData) {
 
-            LumiverseTypeUtils::copyByVal(val.get(), m_layerState[devices->first]->getParam(*parameter));
+          // Here's how this works.
+          // - For each device, for each paramter, get the value at the given time.
+          // - Set the value in the layer state to the returned value.
+          // - End playback if the timeline says it's done.
+          shared_ptr<Timeline> tl = m_pb->getTimeline(pbd.second.timelineID);
+          size_t t = chrono::duration_cast<chrono::milliseconds>(updateStart - pbd.second.start).count();
 
-            // Check to see if we need to keep updating this param.
-            if (!pb->targetCue.paramIsActive(&pb->previousCue, devices->first, *parameter, cueTime))
-              pb->activeParams[devices->first].erase(parameter++);
-            else
-              ++parameter;
+          for (const auto& device : m_layerState) {
+            for (const auto& param : device.second->getParamNames()) {
+              shared_ptr<LumiverseType> val = tl->getValueAtTime(tl->getTimelineKey(device.second, param), t);
+
+              // A value of nullptr indicates that the Timeline doesn't have any data for the specified device/paramter pair.
+              if (val == nullptr) {
+                continue;
+              }
+
+              LumiverseTypeUtils::copyByVal(val.get(), m_layerState[device.first]->getParam(param));
+            }
           }
 
-          if (pb->activeParams[devices->first].size() == 0) {
-            // Delete the device entry if no more things are active
-            pb->activeParams.erase(devices++);
-          }
-          else {
-            devices++;
+          if (tl->isDone(t)) {
+            toDelete.push_back(pbd.first);
           }
         }
 
-        ++pb;
+        if (toDelete.size() > 0) {
+          for (auto d : toDelete) {
+            m_playbackData.erase(d);
+          }
+        }
       }
-
-      // Delete things that no longer have active keyframes.
-      m_playbackData.erase(std::remove_if(m_playbackData.begin(), m_playbackData.end(),
-        [](PlaybackData p) { return p.activeParams.size() == 0; }), m_playbackData.end());
     }
   }
 
@@ -419,33 +265,6 @@ namespace ShowControl {
     }
   }
 
-  map<string, set<string> > Layer::diff(Cue* a, Cue* b, bool assert) {
-    map<string, set<string> > data;
-
-    // The entire rig is stored, so comparison from a to be should be sufficient.
-    map<string, map<string, set<Keyframe> > >& cueAData = a->getCueData();
-    map<string, map<string, set<Keyframe> > >& cueBData = b->getCueData();
-
-    // For all devices
-    for (auto& it : cueAData) {
-      // For all parameters in a device
-      for (auto& param : it.second) {
-        // The conditions for not animating a parameter are that it has one keyframe, and the
-        // values in the keyframes are identical and we're not asserting this cue
-        if (!assert && param.second.size() == 1 &&
-          LumiverseTypeUtils::equals(param.second.begin()->val.get(), cueBData[it.first][param.first].begin()->val.get())) {
-          continue;
-        }
-        else {
-          // We add the parameter to the set of active parameters.
-          data[it.first].insert(param.first);
-        }
-      }
-    }
-
-    return data;
-  }
-
   JSONNode Layer::toJSON() {
     JSONNode layer;
     layer.set_name(m_name);
@@ -460,14 +279,7 @@ namespace ShowControl {
     layer.push_back(JSONNode("mode", BlendModeToString(m_mode)));
 #endif
     layer.push_back(JSONNode("opacity", m_opacity));
-    layer.push_back(JSONNode("currentCue", m_currentCue));
-    
-    if (hasCueList()) {
-      layer.push_back(JSONNode("cueList", m_cueList->getName()));
-    }
-    else {
-      layer.push_back(JSONNode("cueList", "null"));
-    }
+    layer.push_back(JSONNode("lastPlayedTimeline", m_lastPlayedTimeline));
 
     // Copy state
     JSONNode layerState;
@@ -494,7 +306,8 @@ namespace ShowControl {
       kvp.second->reset();
     }
 
-    m_currentCue = -1;
+    m_lastPlayedTimeline = "";
+    // stop/pause logic?
   }
   
 }

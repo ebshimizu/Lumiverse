@@ -18,9 +18,7 @@ struct Keyframe {
   /*!
   \brief Time at which this keyframe is located. t=0 is start of timeline.
 
-  The time is stored in terms of microseconds (10e-6).
-  That resolution for time is a bit excessive but in the event that such resolution is needed,
-  it will be available.
+  The time is stored in terms of milliseconds (10e-3).
   */
   size_t t;
 

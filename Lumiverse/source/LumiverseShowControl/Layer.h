@@ -5,6 +5,7 @@
 
 #include "LumiverseCore.h"
 #include "Timeline.h"
+#include "Playback.h"
 
 #include <memory>
 #include <chrono>
@@ -12,12 +13,14 @@
 
 namespace Lumiverse {
 namespace ShowControl {
-
+  class Playback;
+  
   /*! \brief Data that tracks the progress of a Timeline. */
   struct PlaybackData {
     chrono::time_point<chrono::high_resolution_clock> start;    // Timeline start time. More accurate to take difference between now and start instead of summing.
     map<string, set<string> > activeParams;
     string timelineID;
+    bool complete;
   };
 
   /*!
@@ -47,14 +50,14 @@ namespace ShowControl {
     By default the Layer will be set to NULL_DEFAULT, essentially ignoring all
     parameters in the layer when it's constructed. A layer is set to inactive on construction.
     */
-    Layer(Rig* rig, string name, int priority, BlendMode mode = NULL_DEFAULT);
+    Layer(Rig* rig, Playback* pb, string name, int priority, BlendMode mode = NULL_DEFAULT);
 
     /*!
     \brief Constructs a Layer using the BLEND_OPAQUE mode with specified opacity.
 
     Creates an empty layer using the selected opacity.
     */
-    Layer(Rig* rig, string name, int priority, float opacity);
+    Layer(Rig* rig, Playback* pb, string name, int priority, float opacity);
 
     /*!
     \brief Constructs a Layer using the SELECTED_ONLY mode with specified devices.
@@ -63,12 +66,12 @@ namespace ShowControl {
     contain all other devices in the rig, but will only look at the selected set
     when flattening.
     */
-    Layer(Rig* rig, string name, int priority, DeviceSet set);
+    Layer(Rig* rig, Playback* pb, string name, int priority, DeviceSet set);
 
     /*!
     \brief Constructs a Layer from a JSON node.
     */
-    Layer(JSONNode node);
+    Layer(Playback* pb, JSONNode node);
 
     /*! \brief Destroys a layer */
     ~Layer();
@@ -85,14 +88,14 @@ namespace ShowControl {
     void play(string id);
 
     /*!
-    \brief Pauses playback of the current Timeline.
+    \brief Pauses playback of the current Timeline(s).
 
     If there are no Timelines being played back, this function does nothing.
     */
     void pause();
 
     /*!
-    \brief Resumes playback of the current Timeline.
+    \brief Resumes playback of the current Timeline(s).
 
     Note that if there are no Timelines being played back, this function does nothing.
     */
@@ -173,11 +176,11 @@ namespace ShowControl {
     int getPriority() { return m_priority; }
 
     /*!
-    \brief Returns the ID of the Timeline currently being played on the Layer.
+    \brief Returns the ID of the Timeline most being played on the Layer.
 
     \return ID of the Timeline that's being played back.
     */
-    string getCurrentTimeline();
+    string getRecentTimeline();
 
     /*!
     \brief Gets the layer state.
@@ -230,6 +233,13 @@ namespace ShowControl {
     */
     set<string> m_parameterFilter;
 
+    /*!
+    \brief Playback object associated with the Layer.
+
+    This object contains the Timeline objects used by the Layer during playback.
+    */
+    Playback* m_pb;
+
     /*! \brief Layer Name */
     string m_name;
 
@@ -251,26 +261,24 @@ namespace ShowControl {
     /*! \brief If using BLEND_OPAQUE, the opacity of the layer. */
     float m_opacity;
 
-    /*!
-    \brief Stores the ID of the most recently played back timeline.
+    /*! \brief Indicates if playback is paused on this layer. */
+    bool m_pause;
+
+    /*! \brief Indicates that the Layer is stopping playback.
+    
+    This allows the update function to finish a full update and then clear the playback queue.
     */
-    id m_lastPlayedTimeline;
+    bool m_stop;
+
+    /*!
+    \brief Stores the ID of the most recently played back Timeline.
+    */
+    string m_lastPlayedTimeline;
 
     /*! \brief Copies the devices and does other Layer initialization */
     void init(Rig* rig);
 
-    /*! \brief Current cue in the cue list. */
-    float m_currentCue;
-
-    /*!
-    \brief Goes to an arbitrary cue from an arbitrary cue.
-
-    \param first Starting cue.
-    \param next Cue to end up in at the end.
-    \param assert Asserts that at the end of the transition, the Rig state is exactly Next
-    */
-    void goToCue(Cue* first, Cue* next, bool assert);
-
+    // unsure if this function should remain in this rework.
     /*!
     \brief Returns the set of parameters to animate.
 
@@ -278,10 +286,16 @@ namespace ShowControl {
     \param b Ending Cue.
     \param assert Make sure that the Rig state at cue B is exactly cue B
     */
-    map<string, set<string> > diff(Cue* a, Cue* b, bool assert = false);
+    //map<string, set<string> > diff(Cue* a, Cue* b, bool assert = false);
 
-    /*! \brief Stores the data used during playback. */
-    vector<PlaybackData> m_playbackData;
+    /*!
+    \brief Stores the data used during playback.
+    
+    Requires an ID. Pulled from PlaybackData.timelineID.
+    A side-effect of this is that no timeline can be played back multiple times
+    on the same Layer at once. This seems like a reasonable restriction.
+    */
+    map<string, PlaybackData> m_playbackData;
 
     /*! \brief Queue for adding playback data to the update loop. */
     vector<PlaybackData> m_queuedPlayback;

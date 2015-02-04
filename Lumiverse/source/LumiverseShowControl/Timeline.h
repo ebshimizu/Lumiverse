@@ -66,7 +66,7 @@ public:
   /*!
   \brief Gets the keyframes for the entire timeline.
   */
-  map<string, map<size_t, Keyframe> >& const getAllKeyframes();
+  map<string, map<size_t, Keyframe> >& getAllKeyframes();
 
   /*!
   \brief Sets the value for the specified keyframe.
@@ -109,7 +109,7 @@ public:
   \brief Returns the value of the specified parameter for the specified device at the specified time.
 
   \param identifier [deviceID]:[paramName] for the desired device and parameter
-  \param time Time in microseconds to get the value.
+  \param time Time in milliseconds to get the value.
   \return A LumiverseType value for the specified time in the timeline.
   */
   shared_ptr<LumiverseType> getValueAtTime(string identifier, size_t time);
@@ -123,6 +123,18 @@ public:
   \brief Gets the JSON representation of the timeline object.
   */
   JSONNode toJSON();
+
+  /*!
+  \brief Indicates if the Timeline has no more keyframes after the specified time.
+
+  Note that in the event of nested timelines, this function will recursively call isDone().
+  For a Timeline to be completely done, every sub-timeline must also be done. In the event of loops,
+  this function might never return true.
+
+  \param time Time to check for done-ness
+  \return true if the Timeline has no keyframes specified after the given time.
+  */
+  bool isDone(size_t time);
 
 private:
   /*!

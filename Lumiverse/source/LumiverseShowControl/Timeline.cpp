@@ -7,6 +7,10 @@ Timeline::Timeline() {
 
 }
 
+Timeline::Timeline(JSONNode data) {
+  // TODO: fill in later
+}
+
 Timeline::~Timeline() {
   // delete all the things
 }
@@ -27,9 +31,11 @@ map<string, Keyframe> Timeline::getKeyframes(Device* d, size_t time) {
     }
     ret[param] = _timelineData[getTimelineKey(d, param)][time];
   }
+
+  return ret;
 }
 
-map<string, map<size_t, Keyframe> >& const Timeline::getAllKeyframes() {
+map<string, map<size_t, Keyframe> >& Timeline::getAllKeyframes() {
   _lengthIsUpdated = false;
   return _timelineData;
 }
@@ -46,9 +52,7 @@ void Timeline::setKeyframe(Device* d, size_t time, bool ucs) {
 }
 
 void Timeline::setKeyframe(Rig* rig, size_t time, bool ucs) {
-  for (const auto& d : rig->getAllDevices().getDevices()) {
-    setKeyframe(d, time, ucs);
-  }
+  setKeyframe(rig->getAllDevices(), time, ucs);
 }
 
 void Timeline::setKeyframe(DeviceSet devices, size_t time, bool ucs) {
@@ -105,8 +109,21 @@ shared_ptr<LumiverseType> Timeline::getValueAtTime(string identifier, size_t tim
   // at the time of timeline run initialization.
 
   // Otherwise we have our keyframes and can now do some ops.
-  float a = (time - first.t) / (next.t - first.t);
+  float a = (float)(time - first.t) / (float)(next.t - first.t);
   return LumiverseTypeUtils::lerp(first.val.get(), next.val.get(), a);
+}
+
+JSONNode Timeline::toJSON() {
+  // TODO: Fill in the blanks
+  return JSONNode();
+}
+
+bool Timeline::isDone(size_t time) {
+  // TODO: when nested timelines get added this will be more complicated.
+  if (time > getLength())
+    return true;
+
+  return false;
 }
 
 size_t Timeline::getLength() {

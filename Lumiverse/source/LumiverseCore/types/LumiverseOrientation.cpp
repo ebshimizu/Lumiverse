@@ -92,7 +92,7 @@ inline void LumiverseOrientation::clamp() {
 }
 
 float LumiverseOrientation::asPercent() {
-  return (-m_min + m_val) / (m_max - m_min);
+  return m_val / (m_max - m_min);
 }
 
 float LumiverseOrientation::asUnit(ORIENTATION_UNIT valUnit, float val, ORIENTATION_UNIT targetUnit) {

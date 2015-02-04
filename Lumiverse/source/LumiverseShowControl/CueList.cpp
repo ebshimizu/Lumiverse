@@ -1,4 +1,5 @@
 #include "CueList.h"
+#ifndef _CUELIST_H_
 
 namespace Lumiverse {
 namespace ShowControl {
@@ -186,3 +187,5 @@ JSONNode CueList::toJSON() {
 
 }
 }
+
+#endif
