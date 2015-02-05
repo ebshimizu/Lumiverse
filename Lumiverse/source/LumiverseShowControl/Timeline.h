@@ -136,6 +136,14 @@ public:
   */
   bool isDone(size_t time);
 
+  /*!
+  \brief Takes a state from the layer and updates the keyframes marked with 
+  "Use Current State"
+
+  \param state Layer state
+  */
+  void setCurrentState(map<string, Device*>& state);
+
 private:
   /*!
   \brief Stores the length of the timeline.
@@ -160,6 +168,11 @@ private:
   The unique identifier for device parameter pair is: [deviceID]:[paramName]
   */
   map<string, map<size_t, Keyframe> > _timelineData;
+
+  /*!
+  \brief Updates the Keyframes marked as "Use Current State" in the Timeline's data 
+  */
+  void updateKeyframeState(Device* d, string paramName);
 };
 
 }

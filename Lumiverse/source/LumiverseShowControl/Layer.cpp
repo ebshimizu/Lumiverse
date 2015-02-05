@@ -118,6 +118,10 @@ namespace ShowControl {
 
   void Layer::play(string id) {
     // TODO: update current state keyframes
+    // An assumption is made that each timeline isn't being played back multiple times at once
+    m_pb->getTimeline(id)->setCurrentState(m_layerState);
+    // for dynamic timelines we'll have to think of something else to transfer state.
+
     m_lastPlayedTimeline = id;
 
     PlaybackData pbd;

@@ -126,6 +126,23 @@ bool Timeline::isDone(size_t time) {
   return false;
 }
 
+void Timeline::setCurrentState(map<string, Device*>& state) {
+  for (const auto& d : state) {
+    for (const auto& p : d.second->getParamNames()) {
+      updateKeyframeState(d.second, p);
+    }
+  }
+}
+
+void Timeline::updateKeyframeState(Device* d, string paramName) {
+  string id = getTimelineKey(d, paramName);
+  for (auto& kf : _timelineData[id]) {
+    if (kf.second.useCurrentState) {
+      kf.second.val = shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(d->getParam(paramName)));
+    }
+  }
+}
+
 size_t Timeline::getLength() {
   if (_lengthIsUpdated) {
     return _length;

@@ -48,10 +48,10 @@ int main(int argc, char**argv) {
   cue1->setKeyframe(&rig, 5000, false);
 
   shared_ptr<Timeline> cue2(new Timeline());
-  cue2->setKeyframe(&rig, 0, true);
   color->setxy(0.3f, 0.3f);
   inno.setParam("pan", 302);
   inno.setParam("tilt", 120);
+  cue2->setKeyframe(&rig, 0, true);
   cue2->setKeyframe(&rig, 5000, false);
 
   //Cue cue2(&rig, 3);
