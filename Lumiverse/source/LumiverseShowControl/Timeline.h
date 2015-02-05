@@ -106,6 +106,67 @@ public:
   void deleteKeyframe(DeviceSet devices, size_t time);
 
   /*!
+  \brief Adds a new event to the end of the timeline
+
+  Id is needed for this to allow easy access to end events.
+  \param id Identifier for the end event.
+  \param e Event to add
+  \return true on success, false if an event with the given ID alreay exists.
+  */
+  bool addEndEvent(string id, shared_ptr<Event> e);
+
+  /*!
+  \brief Deletes an end event
+
+  \param id Identifier for the event to delete.
+  */
+  void deleteEndEvent(string id);
+
+  /*!
+  \brief Adds an Event to the Timeline
+
+  \param time Time to execute the Event
+  \param e Event to add.
+  */
+  bool addEvent(size_t time, shared_ptr<Event> e);
+
+  /*!
+  \brief Deletes Events from the Timeline
+
+  If an ID is not specified, this function will delete all events at the specified time
+  \param time Time to delete the events at
+  \param id Optional identifier for the Event to delete.
+  */
+  void deleteEvent(size_t time, string id = "");
+
+  /*!
+  \brief Gets Events at the specified time.
+
+  If an ID is specified, the vector will contain only the specified Event (if it exists).
+  \param time Time to get Events
+  \param id Optional identifier to get a specific Event.
+  */
+  vector<shared_ptr<Event> > getEvents(size_t time, string id = "");
+
+  /*!
+  \brief Gets an end Event.
+
+  \param id Identifier for the desired ID.
+  \return Specified Event if it exists. nullptr if it does not exist.
+  */
+  shared_ptr<Event> getEndEvent(string id);
+
+  /*!
+  \brief Returns the multimap containing the Events for this Timeline.
+  */
+  multimap<size_t, shared_ptr<Event> >& getAllEvents();
+
+  /*!
+  \brief Returns the end Events for this Timeline
+  */
+  map<string, shared_ptr<Event> >& getAllEndEvents();
+
+  /*!
   \brief Returns the value of the specified parameter for the specified device at the specified time.
 
   \param identifier [deviceID]:[paramName] for the desired device and parameter
@@ -168,6 +229,19 @@ private:
   The unique identifier for device parameter pair is: [deviceID]:[paramName]
   */
   map<string, map<size_t, Keyframe> > _timelineData;
+
+  /*!
+  \brief List of events and times that the events happen.
+  */
+  multimap<size_t, shared_ptr<Event> > _events;
+
+  /*!
+  \brief List of events to call at the end.
+
+  Use this when you know you want something to happen at the end and don't want
+  to continuously update keyframes.
+  */
+  map<string, shared_ptr<Event> > _endEvents;
 
   /*!
   \brief Updates the Keyframes marked as "Use Current State" in the Timeline's data 

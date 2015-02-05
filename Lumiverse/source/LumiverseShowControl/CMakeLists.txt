@@ -39,6 +39,7 @@ add_library (LumiverseShowControl
   Timeline.h
   Timeline.cpp
   Keyframe.h
+  Keyframe.cpp
   LumiverseShowControl.h)
 
 add_executable (PlaybackDemo

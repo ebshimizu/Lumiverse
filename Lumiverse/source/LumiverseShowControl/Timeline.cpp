@@ -78,6 +78,74 @@ void Timeline::deleteKeyframe(DeviceSet devices, size_t time) {
   }
 }
 
+bool Timeline::addEndEvent(string id, shared_ptr<Event> e) {
+  if (_endEvents.count(id) > 0) {
+    return false;
+  }
+
+  _endEvents[id] = e;
+  return true;
+}
+
+void Timeline::deleteEndEvent(string id) {
+  _endEvents.erase(id);
+}
+
+bool Timeline::addEvent(size_t time, shared_ptr<Event> e) {
+  _events.insert(pair<size_t, shared_ptr<Event> >(time, e));
+  return true;
+}
+
+void Timeline::deleteEvent(size_t time, string id) {
+  if (id != "") {
+    // get all elements in range
+    auto r = _events.equal_range(time);
+    for (auto it = r.first; it != r.second; ) {
+      if (it->second->_id == id) {
+        it = _events.erase(it);
+      }
+      else {
+        ++it;
+      }
+    }
+  }
+  else {
+    _events.erase(time);
+  }
+}
+
+vector<shared_ptr<Event> > Timeline::getEvents(size_t time, string id) {
+  vector<shared_ptr<Event> > ret;
+  
+  auto r = _events.equal_range(time);
+  for (auto it = r.first; it != r.second; it++) {
+    if (id != "") {
+      if (id == it->second->_id) {
+        ret.push_back(it->second);
+      }
+    }
+    else {
+      ret.push_back(it->second);
+    }
+  }
+}
+
+shared_ptr<Event> Timeline::getEndEvent(string id) {
+  if (_endEvents.count(id) == 0) {
+    return nullptr;
+  }
+
+  return _endEvents[id];
+}
+
+multimap<size_t, shared_ptr<Event> >& Timeline::getAllEvents() {
+  return _events;
+}
+
+map<string, shared_ptr<Event> >& Timeline::getAllEndEvents() {
+  return _endEvents;
+}
+
 shared_ptr<LumiverseType> Timeline::getValueAtTime(string identifier, size_t time) {
   // get the keyframes if they exist, otherwise return null immediately.
   if (_timelineData.count(identifier) == 0)

@@ -64,7 +64,7 @@ struct Keyframe {
 };
 
 /*!
-\brief Events are special keyframes that trigger events when encountered.
+\brief Events are special keyframes that call other functions when encountered.
 
 Events can really be used anywhere to do anything within the limits of the program.
 There are a few pre-defied event classes to make certain common tasks easier (such
@@ -72,13 +72,40 @@ as start playback on Layer, go to next timeline,
 */
 class Event {
 public:
-  Event(size_t time, function<void()> cb);
-  ~Event();
+  Event(function<void()> cb, string id = "");
+  virtual ~Event();
 
-  void execute();
+  /*!
+  \brief Executes the event. 
 
-  size_t time;
-  function<void()> callback;
+  Subclasses of Event can do additional things but the base class just calls _callback().
+  */
+  virtual void execute();
+
+  /*!
+  \brief If there are any things that need to be reset when the Timeline starts,
+  this function will do that.
+
+  Use case for this function is designed for loops of a finite duration, for example.
+  */
+  virtual void reset();
+
+  /*!
+  \brief Changes the callback function.
+  \param cb Callback function to execute.
+  */
+  virtual void setCallback(function<void()> cb);
+
+  /*!
+  \brief Optional identifier to make it easier to delete and find Events.
+  */
+  string _id;
+
+private:
+  /*!
+  \brief Callback function to execute when the Event is encountered.
+  */
+  function<void()> _callback;
 };
 
 }
