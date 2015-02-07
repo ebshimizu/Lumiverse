@@ -181,6 +181,15 @@ shared_ptr<LumiverseType> Timeline::getValueAtTime(string identifier, size_t tim
   return LumiverseTypeUtils::lerp(first.val.get(), next.val.get(), a);
 }
 
+void Timeline::executeEvents(size_t prevTime, size_t currentTime) {
+  auto low = _events.upper_bound(prevTime);
+  auto high = _events.upper_bound(currentTime);
+
+  for (auto it = low; it != high; it++) {
+    it->second->execute();
+  }
+}
+
 JSONNode Timeline::toJSON() {
   // TODO: Fill in the blanks
   return JSONNode();

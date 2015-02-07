@@ -176,6 +176,19 @@ public:
   shared_ptr<LumiverseType> getValueAtTime(string identifier, size_t time);
 
   /*!
+  \brief Executes the events between the specified times
+
+  Since we don't want Events to execute more than once per play through,
+  we need the previous time to ensure proper execution. This should be maintained by the
+  Layer.
+  Executes events in the range (low, high]
+
+  \param prevTime Last time of update.
+  \param currentTime Current update time
+  */
+  void executeEvents(size_t prevTime, size_t currentTime);
+
+  /*!
   \brief Gets the length of the timeline based on stored keyframes.
   */
   size_t getLength();
