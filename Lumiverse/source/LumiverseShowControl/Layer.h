@@ -271,6 +271,13 @@ namespace ShowControl {
     bool m_stop;
 
     /*!
+    \brief Stores the previous loop start time in milliseconds.
+
+    Can be used to calculate elapsed time since last loop.
+    */
+    chrono::time_point<chrono::high_resolution_clock> m_previousLoopStart;
+
+    /*!
     \brief Stores the ID of the most recently played back Timeline.
     */
     string m_lastPlayedTimeline;

@@ -4,7 +4,7 @@ namespace Lumiverse {
 namespace ShowControl {
 
 Timeline::Timeline() {
-
+  _loops = 1;
 }
 
 Timeline::Timeline(JSONNode data) {
@@ -37,12 +37,14 @@ map<string, Keyframe> Timeline::getKeyframes(Device* d, size_t time) {
 
 map<string, map<size_t, Keyframe> >& Timeline::getAllKeyframes() {
   _lengthIsUpdated = false;
+  _loopLengthIsUpdated = false;
   return _timelineData;
 }
 
 void Timeline::setKeyframe(string identifier, size_t time, LumiverseType* data, bool ucs) {
   _timelineData[identifier][time] = Keyframe(time, shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(data)), ucs);
   _lengthIsUpdated = false;
+  _loopLengthIsUpdated = false;
 }
 
 void Timeline::setKeyframe(Device* d, size_t time, bool ucs) {
@@ -64,6 +66,7 @@ void Timeline::setKeyframe(DeviceSet devices, size_t time, bool ucs) {
 void Timeline::deleteKeyframe(string identifier, size_t time) {
   _timelineData[identifier].erase(time);
   _lengthIsUpdated = false;
+  _loopLengthIsUpdated = false;
 }
 
 void Timeline::deleteKeyframe(Device* d, size_t time) {
@@ -128,6 +131,8 @@ vector<shared_ptr<Event> > Timeline::getEvents(size_t time, string id) {
       ret.push_back(it->second);
     }
   }
+
+  return ret;
 }
 
 shared_ptr<Event> Timeline::getEndEvent(string id) {
@@ -150,6 +155,8 @@ shared_ptr<LumiverseType> Timeline::getValueAtTime(string identifier, size_t tim
   // get the keyframes if they exist, otherwise return null immediately.
   if (_timelineData.count(identifier) == 0)
     return nullptr;
+
+  time = getLoopTime(time);
 
   auto keyframes = _timelineData[identifier];
   Keyframe first;
@@ -182,12 +189,33 @@ shared_ptr<LumiverseType> Timeline::getValueAtTime(string identifier, size_t tim
 }
 
 void Timeline::executeEvents(size_t prevTime, size_t currentTime) {
+  prevTime = getLoopTime(prevTime);
+  currentTime = getLoopTime(currentTime);
+
   auto low = _events.upper_bound(prevTime);
   auto high = _events.upper_bound(currentTime);
+
+  if (low == _events.end()) {
+    return;
+  }
 
   for (auto it = low; it != high; it++) {
     it->second->execute();
   }
+}
+
+void Timeline::executeEndEvents() {
+  for (const auto& kvp : _endEvents) {
+    kvp.second->execute();
+  }
+}
+
+int Timeline::getLoops() {
+  return _loops;
+}
+
+void Timeline::setLoops(int loops) {
+  _loops = loops;
 }
 
 JSONNode Timeline::toJSON() {
@@ -225,6 +253,37 @@ size_t Timeline::getLength() {
     return _length;
   }
   else {
+    if (_loops == -1) {
+      // this should be max int in whatever unsigned int representation is used for size_t.
+      return -1;
+    }
+    else {
+      size_t time = 0;
+
+      // the hard way.
+      // Go through and find the maximum time that a keyframe is set to.
+      for (const auto& id : _timelineData) {
+        // Get the last keyframe, this is sorted.
+        auto lastKeyframe = id.second.rbegin()->first;
+
+        // Time is equal to transition time + largest keyframe time.
+        time = (lastKeyframe > time) ? lastKeyframe : time;
+      }
+
+      _length = time * _loops;
+
+      // Cache it.
+      _lengthIsUpdated = true;
+      return _length;
+    }
+  }
+}
+
+size_t Timeline::getLoopLength() {
+  if (_loopLengthIsUpdated) {
+    return _loopLength;
+  }
+  else {
     size_t time = 0;
 
     // the hard way.
@@ -237,12 +296,26 @@ size_t Timeline::getLength() {
       time = (lastKeyframe > time) ? lastKeyframe : time;
     }
 
-    _length = time;
+    _loopLength = time;
 
     // Cache it.
-    _lengthIsUpdated = true;
-    return _length;
+    _loopLengthIsUpdated = true;
+    return _loopLength;
   }
+}
+
+size_t Timeline::getLoopTime(size_t time) {
+  // determine where we are in the loop
+  int loopNum = (int)(time / getLoopLength());
+  if (loopNum >= _loops) {
+    // if we've exceeded our number of loops, set to the end keyframe.
+    time = getLoopLength();
+  }
+  else {
+    time -= loopNum * getLoopLength();
+  }
+
+  return time;
 }
 
 }

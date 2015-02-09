@@ -145,6 +145,8 @@ namespace ShowControl {
   }
 
   void Layer::update(chrono::time_point<chrono::high_resolution_clock> updateStart) {
+    auto loopTime = updateStart - m_previousLoopStart;
+
     // Grab waiting playback objects from the queue
     m_queue.lock();
     if (m_queuedPlayback.size() > 0) {
@@ -160,10 +162,13 @@ namespace ShowControl {
     if (m_stop) {
       m_playbackData.clear();
     }
+    else if (m_pause) {
+      // Need to update the start time by the diff of previous and current loop.
+      for (auto& pbd : m_playbackData) {
+        pbd.second.start += loopTime;
+      }
+    }
     else {
-      // something something pause logic
-
-
       // Update playback data and set layer state if there is anything currently active
       // Note that in the event of conflicts this would be a Latest Takes Precedence system
       if (m_playbackData.size() > 0) {
@@ -175,6 +180,7 @@ namespace ShowControl {
           // - End playback if the timeline says it's done.
           shared_ptr<Timeline> tl = m_pb->getTimeline(pbd.second.timelineID);
           size_t t = chrono::duration_cast<chrono::milliseconds>(updateStart - pbd.second.start).count();
+          size_t tp = chrono::duration_cast<chrono::milliseconds>(m_previousLoopStart - pbd.second.start).count();
 
           for (const auto& device : m_layerState) {
             for (const auto& param : device.second->getParamNames()) {
@@ -189,8 +195,11 @@ namespace ShowControl {
             }
           }
 
+          tl->executeEvents(tp, t);
+
           if (tl->isDone(t)) {
             toDelete.push_back(pbd.first);
+            tl->executeEndEvents();
           }
         }
 
@@ -201,6 +210,8 @@ namespace ShowControl {
         }
       }
     }
+
+    m_previousLoopStart = updateStart;
   }
 
   void Layer::blend(map<string, Device*> currentState) {

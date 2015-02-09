@@ -17,6 +17,13 @@ The one difference to highlight specifically is the addition of a new keyframe d
 "Use Current State." When this keyframe value is present, the state of the layer the timeline is
 being played on will be used as the "current state" whenever this keyframe is encountered. Because
 of this, this keyframe is typically used only at the beginning of timelines.
+
+Timelines may also loop a specified number of times. Setting the loop parameter to -1 indicates an infinite loop.
+
+In addition to Keyframes, a Timeline may contain Events. Events are arbitrary actions called
+at the specified times. Events are executed on every loop, or at the very end of the Timeline (after all loops
+are complete).
+\sa Event
 */
 class Timeline {
 public:
@@ -189,9 +196,37 @@ public:
   void executeEvents(size_t prevTime, size_t currentTime);
 
   /*!
+  \brief Executes all end events in the timeline's list.
+  */
+  void executeEndEvents();
+
+  /*!
+  \brief Returns the looping setting for this timeline.
+
+  \return Number of loops the timeline is set to do.
+  */
+  int getLoops();
+
+  /*!
+  \brief Set the number of loops the timeline should execute.
+
+  If set to -1, the timeline will loop forever.
+  */
+  void setLoops(int loops);
+
+  /*!
   \brief Gets the length of the timeline based on stored keyframes.
+
+  /return Length of timeline, max size_t 
   */
   size_t getLength();
+
+  /*!
+  \brief Gets the length of the timeline for a single loop.
+
+  This is equal to getLength() for timelines with a loop paramter of 1.
+  */
+  size_t getLoopLength();
 
   /*!
   \brief Gets the JSON representation of the timeline object.
@@ -228,9 +263,28 @@ private:
   size_t _length;
 
   /*!
+  \brief Stores the loop length of the timleine.
+
+  Calculated as needed and cached.
+  */
+  size_t _loopLength;
+  
+  /*!
+  \brief Describes how many times the timeline should loop.
+
+  A value of -1 means "loop forever"
+  */
+  int _loops;
+
+  /*!
   \brief Indicates if the timeline's length is updated.
   */
   bool _lengthIsUpdated;
+
+  /*!
+  \brief Indicates if the timeline's loop length is updated.
+  */
+  bool _loopLengthIsUpdated;
 
   // right so the map should at some point be changed to a specialized data structure that meets
   // the following properties:
@@ -260,6 +314,11 @@ private:
   \brief Updates the Keyframes marked as "Use Current State" in the Timeline's data 
   */
   void updateKeyframeState(Device* d, string paramName);
+
+  /*!
+  \brief Returns the time adjusted for the number of loops the timeline can perfrom.
+  */
+  size_t getLoopTime(size_t time);
 };
 
 }

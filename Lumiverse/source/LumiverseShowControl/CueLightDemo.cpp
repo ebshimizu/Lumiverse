@@ -47,6 +47,11 @@ int main(int argc, char**argv) {
 
   cue1->setKeyframe(&rig, 5000, false);
 
+  inno.setParam("intensity", 0.0f);
+  cue1->setKeyframe(&rig, 10000);
+  cue1->setLoops(2);
+  cue1->addEvent(2500, shared_ptr<Event>(new Event([](){ cout << "HELLO FRIEND\n"; }, "test")));
+
   shared_ptr<Timeline> cue2(new Timeline());
   color->setxy(0.3f, 0.3f);
   inno.setParam("pan", 302);
@@ -98,6 +103,10 @@ int main(int argc, char**argv) {
   cout << "Layers ready.";
   getchar();
   layer1->play("cue1");
+  getchar();
+  layer1->pause();
+  getchar();
+  layer1->resume();
   getchar();
   layer1->play("cue2");
   //this_thread::sleep_for(chrono::seconds(5));
