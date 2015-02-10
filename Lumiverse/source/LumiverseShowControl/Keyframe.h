@@ -34,6 +34,16 @@ struct Keyframe {
   */
   bool useCurrentState;
 
+  /*!
+  \brief If not blank, this keyframe pulls its value from the given keyframe at the given offset.
+  */
+  string timelineID;
+
+  /*!
+  \brief Start time for the Timeline referenced by timelineID.
+  */
+  size_t timelineOffset;
+
   // Planned interpolation mode selection here. Additional parameters probably needed
   // once this thing gets activated
   // enum interpMode
@@ -53,6 +63,17 @@ struct Keyframe {
   */
   Keyframe(size_t time, shared_ptr<Lumiverse::LumiverseType> v, bool upv) :
     t(time), val(v), useCurrentState(upv) { }
+
+  /*!
+  \brief Constructs a nested Timeline Keyframe
+
+  This type of keyframe pulls its value from the specified timeline starting at the given offset time
+  \param time Keyframe temporal location
+  \param id Timeline id
+  \param offset Start time for the timeline referenced by id.
+  */
+  Keyframe(size_t time, string id, size_t offset) :
+    t(time), timelineID(id), timelineOffset(offset) { }
 
   /*!
   \brief Constructor creates a blank keyframe at specified time

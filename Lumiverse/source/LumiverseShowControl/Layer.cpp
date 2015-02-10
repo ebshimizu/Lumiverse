@@ -184,7 +184,7 @@ namespace ShowControl {
 
           for (const auto& device : m_layerState) {
             for (const auto& param : device.second->getParamNames()) {
-              shared_ptr<LumiverseType> val = tl->getValueAtTime(tl->getTimelineKey(device.second, param), t);
+              shared_ptr<LumiverseType> val = tl->getValueAtTime(tl->getTimelineKey(device.second, param), t, m_pb->getTimelines());
 
               // A value of nullptr indicates that the Timeline doesn't have any data for the specified device/paramter pair.
               if (val == nullptr) {
@@ -197,7 +197,7 @@ namespace ShowControl {
 
           tl->executeEvents(tp, t);
 
-          if (tl->isDone(t)) {
+          if (tl->isDone(t, m_pb->getTimelines())) {
             toDelete.push_back(pbd.first);
             tl->executeEndEvents();
           }

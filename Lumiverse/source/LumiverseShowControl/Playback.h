@@ -126,6 +126,11 @@ namespace ShowControl{
     shared_ptr<Timeline> getTimeline(string id);
 
     /*!
+    \brief Returns the map of all Timelines contained in the Playback
+    */
+    map<string, shared_ptr<Timeline> >& getTimelines();
+
+    /*!
     \brief Binds the update function for this playback to the Rig's update function.
     \param pid ID to assign to the function. Defaults to 1. Must be positive.
     \return True on success, false on failure

@@ -40,24 +40,22 @@ int main(int argc, char**argv) {
   inno.setParam("pan", 270);
 
   shared_ptr<Timeline> cue1(new Timeline());
-  cue1->setKeyframe(&rig, 0, true);
+  cue1->setKeyframe(&rig, 0, false);
 
   color->setxy(0.45f, 0.45f);
-  inno.setParam("intensity", 1.0f);
 
-  cue1->setKeyframe(&rig, 5000, false);
+  cue1->setKeyframe(&rig, 1000, false);
 
-  inno.setParam("intensity", 0.0f);
-  cue1->setKeyframe(&rig, 10000);
-  cue1->setLoops(2);
-  cue1->addEvent(2500, shared_ptr<Event>(new Event([](){ cout << "HELLO FRIEND\n"; }, "test")));
+  color->setxy(0.40f, 0.45f);
+  cue1->setKeyframe(&rig, 2000);
+  cue1->setLoops(-1);
 
   shared_ptr<Timeline> cue2(new Timeline());
-  color->setxy(0.3f, 0.3f);
-  inno.setParam("pan", 302);
-  inno.setParam("tilt", 120);
+  inno.setParam("intensity", 1.0f);
   cue2->setKeyframe(&rig, 0, true);
   cue2->setKeyframe(&rig, 5000, false);
+  cue2->setKeyframe("inno:color", 0, "cue1", 0);
+  cue2->setKeyframe("inno:color", 5000, "cue1", 5000);
 
   //Cue cue2(&rig, 3);
   //list1->storeCue(2, cue2);
@@ -102,13 +100,8 @@ int main(int argc, char**argv) {
 
   cout << "Layers ready.";
   getchar();
-  layer1->play("cue1");
-  getchar();
-  layer1->pause();
-  getchar();
-  layer1->resume();
-  getchar();
   layer1->play("cue2");
+  getchar();
   //this_thread::sleep_for(chrono::seconds(5));
 
   while (1) {

@@ -63,6 +63,24 @@ void Timeline::setKeyframe(DeviceSet devices, size_t time, bool ucs) {
   }
 }
 
+void Timeline::setKeyframe(string identifier, size_t time, string timelineID, size_t offset) {
+  _timelineData[identifier][time] = Keyframe(time, timelineID, offset);
+  _lengthIsUpdated = false;
+  _loopLengthIsUpdated = false;
+}
+
+void Timeline::setKeyframe(Device* d, size_t time, string timelineID, size_t offset) {
+  for (const auto& param : d->getParamNames()) {
+    setKeyframe(getTimelineKey(d, param), time, timelineID, offset);
+  }
+}
+
+void Timeline::setKeyframe(DeviceSet devices, size_t time, string timelineID, size_t offset) {
+  for (const auto& d : devices.getDevices()) {
+    setKeyframe(d, time, timelineID, offset);
+  }
+}
+
 void Timeline::deleteKeyframe(string identifier, size_t time) {
   _timelineData[identifier].erase(time);
   _lengthIsUpdated = false;
@@ -96,14 +114,14 @@ void Timeline::deleteEndEvent(string id) {
 
 bool Timeline::addEvent(size_t time, shared_ptr<Event> e) {
   _events.insert(pair<size_t, shared_ptr<Event> >(time, e));
-  return true;
+return true;
 }
 
 void Timeline::deleteEvent(size_t time, string id) {
   if (id != "") {
     // get all elements in range
     auto r = _events.equal_range(time);
-    for (auto it = r.first; it != r.second; ) {
+    for (auto it = r.first; it != r.second;) {
       if (it->second->_id == id) {
         it = _events.erase(it);
       }
@@ -119,7 +137,7 @@ void Timeline::deleteEvent(size_t time, string id) {
 
 vector<shared_ptr<Event> > Timeline::getEvents(size_t time, string id) {
   vector<shared_ptr<Event> > ret;
-  
+
   auto r = _events.equal_range(time);
   for (auto it = r.first; it != r.second; it++) {
     if (id != "") {
@@ -151,7 +169,7 @@ map<string, shared_ptr<Event> >& Timeline::getAllEndEvents() {
   return _endEvents;
 }
 
-shared_ptr<LumiverseType> Timeline::getValueAtTime(string identifier, size_t time) {
+shared_ptr<LumiverseType> Timeline::getValueAtTime(string identifier, size_t time, map<string, shared_ptr<Timeline> >& tls) {
   // get the keyframes if they exist, otherwise return null immediately.
   if (_timelineData.count(identifier) == 0)
     return nullptr;
@@ -177,7 +195,16 @@ shared_ptr<LumiverseType> Timeline::getValueAtTime(string identifier, size_t tim
   if (!nextFound) {
     // We are at the end of the defined keyframes, so return the value of the most
     // recent keyframe
-    return keyframes.rbegin()->second.val;
+    auto last = keyframes.rbegin()->second;
+
+    if (last.timelineID != "") {
+      if (tls.count(last.timelineID) > 0) {
+        return tls[last.timelineID]->getValueAtTime(identifier, time - last.t + last.timelineOffset, tls);
+      }
+      else return nullptr;
+    }
+
+    return last.val;
   }
 
   // Note that in the instance when we use the current state, that value is pre-filled
@@ -185,7 +212,26 @@ shared_ptr<LumiverseType> Timeline::getValueAtTime(string identifier, size_t tim
 
   // Otherwise we have our keyframes and can now do some ops.
   float a = (float)(time - first.t) / (float)(next.t - first.t);
-  return LumiverseTypeUtils::lerp(first.val.get(), next.val.get(), a);
+
+  shared_ptr<LumiverseType> x = first.val;
+  shared_ptr<LumiverseType> y = next.val;
+
+  // Check if any keyframe references timelines
+  // If no such timeline exists in the playback, return nullptr (indicate to layer to skip value for this)
+  if (first.timelineID != "") {
+    if (tls.count(first.timelineID) > 0) {
+      x = tls[first.timelineID]->getValueAtTime(identifier, time - first.t + first.timelineOffset, tls);
+    }
+    else return nullptr;
+  }
+  if (next.timelineID != "") {
+    if (tls.count(next.timelineID) > 0) {
+      y = tls[next.timelineID]->getValueAtTime(identifier, time - next.t + next.timelineOffset, tls);
+    }
+    else return nullptr;
+  }
+
+  return LumiverseTypeUtils::lerp(x.get(), y.get(), a);
 }
 
 void Timeline::executeEvents(size_t prevTime, size_t currentTime) {
@@ -223,10 +269,31 @@ JSONNode Timeline::toJSON() {
   return JSONNode();
 }
 
-bool Timeline::isDone(size_t time) {
+bool Timeline::isDone(size_t time, map<string, shared_ptr<Timeline> >& tls) {
   // TODO: when nested timelines get added this will be more complicated.
-  if (time > getLength())
+  // Automatically return false if set to infinite loop.
+  if (_loops == -1)
+    return false;
+
+  if (time > getLength()) {
+    // Before returning true, check to see if any timelines are still running
+    // in the end keyframes
+    for (const auto& id : _timelineData) {
+      auto lastKeyframe = id.second.rbegin()->second;
+
+      if (lastKeyframe.timelineID != "") {
+        if (tls.count(lastKeyframe.timelineID) > 0) {
+          if (!tls[lastKeyframe.timelineID]->isDone(time - lastKeyframe.t + lastKeyframe.timelineOffset, tls)) {
+            return false;
+          }
+        }
+      }
+
+    }
+    
     return true;
+    
+  }
 
   return false;
 }
@@ -307,9 +374,9 @@ size_t Timeline::getLoopLength() {
 size_t Timeline::getLoopTime(size_t time) {
   // determine where we are in the loop
   int loopNum = (int)(time / getLoopLength());
-  if (loopNum >= _loops) {
+  if (_loops != -1 && loopNum >= _loops) {
     // if we've exceeded our number of loops, set to the end keyframe.
-    time = getLoopLength();
+    return time;
   }
   else {
     time -= loopNum * getLoopLength();

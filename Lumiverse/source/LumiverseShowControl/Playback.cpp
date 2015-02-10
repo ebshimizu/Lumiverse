@@ -179,6 +179,10 @@ namespace ShowControl {
     return nullptr;
   }
 
+  map<string, shared_ptr<Timeline> >& Playback::getTimelines() {
+    return m_timelines;
+  }
+
   bool Playback::attachToRig(int pid) {
     // Bind update function to rig update function
     if (pid > 0 && m_rig->addFunction(pid, [&]() { this->update(); })) {

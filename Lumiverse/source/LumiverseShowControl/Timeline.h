@@ -98,6 +98,23 @@ public:
   void setKeyframe(DeviceSet devices, size_t time, bool ucs = false);
 
   /*!
+  \brief Stores a nested timeline Keyframe for a particular identifier
+  */
+  void setKeyframe(string identifier, size_t time, string timelineID, size_t offset = 0);
+
+  /*!
+  \brief Stores a nested timeline Keyframe for a device.
+
+  
+  */
+  void setKeyframe(Device* d, size_t time, string timelineID, size_t offset = 0);
+
+  /*!
+  \brief Stores a nested timeline Keyframe for a group of selected devices
+  */
+  void setKeyframe(DeviceSet devices, size_t time, string timelineID, size_t offset = 0);
+
+  /*!
   \brief Deletes the keyframe with the specified identifier at the specified time.
   */
   void deleteKeyframe(string identifier, size_t time);
@@ -180,7 +197,7 @@ public:
   \param time Time in milliseconds to get the value.
   \return A LumiverseType value for the specified time in the timeline.
   */
-  shared_ptr<LumiverseType> getValueAtTime(string identifier, size_t time);
+  shared_ptr<LumiverseType> getValueAtTime(string identifier, size_t time, map<string, shared_ptr<Timeline> >& tls);
 
   /*!
   \brief Executes the events between the specified times
@@ -243,7 +260,7 @@ public:
   \param time Time to check for done-ness
   \return true if the Timeline has no keyframes specified after the given time.
   */
-  bool isDone(size_t time);
+  bool isDone(size_t time, map<string, shared_ptr<Timeline> >& tls);
 
   /*!
   \brief Takes a state from the layer and updates the keyframes marked with 
