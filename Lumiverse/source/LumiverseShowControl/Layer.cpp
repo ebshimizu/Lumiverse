@@ -138,6 +138,7 @@ namespace ShowControl {
 
   void Layer::resume() {
     m_pause = false;
+    m_stop = false;
   }
 
   void Layer::stop() {

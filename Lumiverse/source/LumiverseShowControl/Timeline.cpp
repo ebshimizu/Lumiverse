@@ -322,22 +322,12 @@ size_t Timeline::getLength() {
   else {
     if (_loops == -1) {
       // this should be max int in whatever unsigned int representation is used for size_t.
-      return -1;
+      _length = -1;
+      _lengthIsUpdated = true;
+      return _length;
     }
     else {
-      size_t time = 0;
-
-      // the hard way.
-      // Go through and find the maximum time that a keyframe is set to.
-      for (const auto& id : _timelineData) {
-        // Get the last keyframe, this is sorted.
-        auto lastKeyframe = id.second.rbegin()->first;
-
-        // Time is equal to transition time + largest keyframe time.
-        time = (lastKeyframe > time) ? lastKeyframe : time;
-      }
-
-      _length = time * _loops;
+      _length = getLoopLength() * _loops;
 
       // Cache it.
       _lengthIsUpdated = true;
@@ -361,6 +351,11 @@ size_t Timeline::getLoopLength() {
 
       // Time is equal to transition time + largest keyframe time.
       time = (lastKeyframe > time) ? lastKeyframe : time;
+    }
+
+    // also check events
+    if (_events.size() > 0) {
+      time = (_events.rbegin()->first > time) ? _events.rbegin()->first : time;
     }
 
     _loopLength = time;

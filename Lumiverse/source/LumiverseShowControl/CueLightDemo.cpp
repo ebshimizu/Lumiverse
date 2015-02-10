@@ -56,6 +56,12 @@ int main(int argc, char**argv) {
   cue2->setKeyframe(&rig, 5000, false);
   cue2->setKeyframe("inno:color", 0, "cue1", 0);
   cue2->setKeyframe("inno:color", 5000, "cue1", 5000);
+  cue2->addEvent(10000, shared_ptr<Event>(new Event([layer1](){ layer1->stop(); layer1->play("cue3"); layer1->resume(); })));
+
+  shared_ptr<Timeline> cue3(new Timeline());
+  inno.setParam("intensity", 0.0f);
+  cue3->setKeyframe(&rig, 0, true);
+  cue3->setKeyframe(&rig, 5000, false);
 
   //Cue cue2(&rig, 3);
   //list1->storeCue(2, cue2);
@@ -71,6 +77,7 @@ int main(int argc, char**argv) {
   //pb.addCueList(list2);
   pb.addTimeline("cue1", cue1);
   pb.addTimeline("cue2", cue2);
+  pb.addTimeline("cue3", cue3);
 
   // Add layer to playback
   pb.addLayer(layer1);
