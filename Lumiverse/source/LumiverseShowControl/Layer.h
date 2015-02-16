@@ -25,20 +25,22 @@ namespace ShowControl {
   };
 
   /*!
-  \brief A Layer stores a state of the Rig.
+  \brief A Layer stores a state of the Rig and allow animation of lighting devices through Timelines.
   
-  Layers can contain a CueList, a static state, or an Effect (effects to
-  be added later). Layers maintain their current state, blend mode, and
+  Layers maintain their current state, blend mode, and
   visibility settings. The Playback object will interpret these settings
   and perform the appropriate functions to flatten the layers.
   Layers work by creating duplicates of the devices in a Rig 
   and manipulating their state.
+
+  Layers may only play one Timeline at a time.
+  \sa Timeline 
   */
   class Layer
   {
   public:
     enum BlendMode {
-      BLEND_OPAQUE,   /*!< Blend all devices. */
+      BLEND_OPAQUE,   /*!< Bl0end all devices. */
       NULL_DEFAULT,   /*!< Ignores parameters that are left at the default values */
       NULL_INTENSITY, /*!< Ignores devices with intensity set to 0. If devices have no intensity, they will be active. */
       SELECTED_ONLY   /*!< Uses a DeviceSet to determine which devices to affect using normal blending. */
