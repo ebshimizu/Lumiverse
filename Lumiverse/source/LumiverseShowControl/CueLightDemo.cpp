@@ -108,7 +108,8 @@ int main(int argc, char**argv) {
   cout << "Layers ready.";
   getchar();
   layer1->play("cue2");
-  getchar();
+  //getchar();
+  //layer1->play("cue3");
   //this_thread::sleep_for(chrono::seconds(5));
 
   while (1) {

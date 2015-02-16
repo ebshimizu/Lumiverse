@@ -70,6 +70,8 @@ namespace ShowControl {
     m_invertFilter = false;
     m_pause = false;
     m_stop = false;
+    m_playbackData = nullptr;
+    m_queuedPlayback = nullptr;
   }
 
   Layer::~Layer() {
@@ -117,19 +119,39 @@ namespace ShowControl {
   }
 
   void Layer::play(string id) {
-    // TODO: update current state keyframes
     // An assumption is made that each timeline isn't being played back multiple times at once
-    m_pb->getTimeline(id)->setCurrentState(m_layerState);
-    // for dynamic timelines we'll have to think of something else to transfer state.
+    // grab relevant data from current playback object
+    string tlID = "";
+    size_t time = 0;
+
+    // Locking to make sure playback data doesn't get deleted from under our noses.
+    m_queue.lock();
+    
+    if (m_playbackData != nullptr) {
+      tlID = m_playbackData->timelineID;
+      time = chrono::duration_cast<chrono::milliseconds>(m_playbackData->elapsed - m_playbackData->start).count();
+    }
+
+    m_pb->getTimeline(id)->setCurrentState(m_layerState, m_pb->getTimeline(tlID), time);
+
+    m_queue.unlock();
 
     m_lastPlayedTimeline = id;
 
-    PlaybackData pbd;
-    pbd.timelineID = id;
-    pbd.complete = false;
-    pbd.start = chrono::high_resolution_clock::now();
+    PlaybackData* pbd = new PlaybackData();;
+    pbd->timelineID = id;
+    pbd->complete = false;
+    pbd->start = chrono::high_resolution_clock::now();
+    pbd->elapsed = pbd->start;
 
-    m_queuedPlayback.push_back(pbd);
+    // Delete anything in the up next slot if we got something there
+    if (m_queuedPlayback != nullptr) {
+      delete m_queuedPlayback;
+    }
+
+    m_queue.lock();
+    m_queuedPlayback = pbd;
+    m_queue.unlock();
   }
 
   void Layer::pause() {
@@ -150,65 +172,61 @@ namespace ShowControl {
 
     // Grab waiting playback objects from the queue
     m_queue.lock();
-    if (m_queuedPlayback.size() > 0) {
-      for (auto p : m_queuedPlayback) {
-        m_playbackData[p.timelineID] = p;
-      }
-      m_queuedPlayback.clear();
+    if (m_queuedPlayback != nullptr) {
+      m_playbackData = m_queuedPlayback;
+      m_queuedPlayback = nullptr;
     }
     m_queue.unlock();
 
-    vector<string> toDelete;
-
     if (m_stop) {
-      m_playbackData.clear();
+      if (m_playbackData != nullptr) {
+        delete m_playbackData;
+      }
     }
     else if (m_pause) {
       // Need to update the start time by the diff of previous and current loop.
-      for (auto& pbd : m_playbackData) {
-        pbd.second.start += loopTime;
+      if (m_playbackData != nullptr) {
+        m_playbackData->start += loopTime;
       }
     }
     else {
       // Update playback data and set layer state if there is anything currently active
       // Note that in the event of conflicts this would be a Latest Takes Precedence system
-      if (m_playbackData.size() > 0) {
-        for (const auto& pbd : m_playbackData) {
+      if (m_playbackData != nullptr) {
+        m_playbackData->elapsed += loopTime;
 
-          // Here's how this works.
-          // - For each device, for each paramter, get the value at the given time.
-          // - Set the value in the layer state to the returned value.
-          // - End playback if the timeline says it's done.
-          shared_ptr<Timeline> tl = m_pb->getTimeline(pbd.second.timelineID);
-          size_t t = chrono::duration_cast<chrono::milliseconds>(updateStart - pbd.second.start).count();
-          size_t tp = chrono::duration_cast<chrono::milliseconds>(m_previousLoopStart - pbd.second.start).count();
+        // Here's how this works.
+        // - For each device, for each paramter, get the value at the given time.
+        // - Set the value in the layer state to the returned value.
+        // - End playback if the timeline says it's done.
+        shared_ptr<Timeline> tl = m_pb->getTimeline(m_playbackData->timelineID);
+        size_t t = chrono::duration_cast<chrono::milliseconds>(updateStart - m_playbackData->start).count();
+        size_t tp = chrono::duration_cast<chrono::milliseconds>(m_previousLoopStart - m_playbackData->start).count();
 
-          for (const auto& device : m_layerState) {
-            for (const auto& param : device.second->getParamNames()) {
-              shared_ptr<LumiverseType> val = tl->getValueAtTime(tl->getTimelineKey(device.second, param), t, m_pb->getTimelines());
+        for (const auto& device : m_layerState) {
+          for (const auto& param : device.second->getParamNames()) {
+            shared_ptr<LumiverseType> val = tl->getValueAtTime(tl->getTimelineKey(device.second, param), t, m_pb->getTimelines());
 
-              // A value of nullptr indicates that the Timeline doesn't have any data for the specified device/paramter pair.
-              if (val == nullptr) {
-                continue;
-              }
-
-              LumiverseTypeUtils::copyByVal(val.get(), m_layerState[device.first]->getParam(param));
+            // A value of nullptr indicates that the Timeline doesn't have any data for the specified device/paramter pair.
+            if (val == nullptr) {
+              continue;
             }
-          }
 
-          tl->executeEvents(tp, t);
-
-          if (tl->isDone(t, m_pb->getTimelines())) {
-            toDelete.push_back(pbd.first);
-            tl->executeEndEvents();
+            LumiverseTypeUtils::copyByVal(val.get(), m_layerState[device.first]->getParam(param));
           }
         }
 
-        if (toDelete.size() > 0) {
-          for (auto d : toDelete) {
-            m_playbackData.erase(d);
-          }
+        tl->executeEvents(tp, t);
+
+        // this is not optimal. at the moment the locking is necessary due to c++ stl container
+        // access issues in some of the timeline methods (iterators getting reset, etc.)
+        m_queue.lock();
+        if (tl->isDone(t, m_pb->getTimelines())) {
+          tl->executeEndEvents();
+          delete m_playbackData;
+          m_playbackData = nullptr;
         }
+        m_queue.unlock();
       }
     }
 

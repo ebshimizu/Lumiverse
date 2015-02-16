@@ -268,7 +268,20 @@ public:
 
   \param state Layer state
   */
-  void setCurrentState(map<string, Device*>& state);
+  void setCurrentState(map<string, Device*>& state, shared_ptr<Timeline> active, size_t time);
+
+  /*!
+  \brief Gets the keyframe closest to happen at or before the given time.
+
+  \param identifier Keyframe identifier
+  \param time Time to get the closest keyframe.
+  */
+  Keyframe getPreviousKeyframe(string identifier, size_t time);
+
+  /*!
+  \brief Returns the time adjusted for the number of loops the timeline can perfrom.
+  */
+  size_t getLoopTime(size_t time);
 
 private:
   /*!
@@ -330,12 +343,7 @@ private:
   /*!
   \brief Updates the Keyframes marked as "Use Current State" in the Timeline's data 
   */
-  void updateKeyframeState(Device* d, string paramName);
-
-  /*!
-  \brief Returns the time adjusted for the number of loops the timeline can perfrom.
-  */
-  size_t getLoopTime(size_t time);
+  void updateKeyframeState(Device* d, string paramName, shared_ptr<Timeline> tl, size_t time);
 };
 
 }

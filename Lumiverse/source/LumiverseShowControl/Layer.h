@@ -21,6 +21,7 @@ namespace ShowControl {
     map<string, set<string> > activeParams;
     string timelineID;
     bool complete;
+    chrono::time_point<chrono::high_resolution_clock> elapsed;
   };
 
   /*!
@@ -298,14 +299,12 @@ namespace ShowControl {
     /*!
     \brief Stores the data used during playback.
     
-    Requires an ID. Pulled from PlaybackData.timelineID.
-    A side-effect of this is that no timeline can be played back multiple times
-    on the same Layer at once. This seems like a reasonable restriction.
+    Layers can only play back one timeline at a time.
     */
-    map<string, PlaybackData> m_playbackData;
-
-    /*! \brief Queue for adding playback data to the update loop. */
-    vector<PlaybackData> m_queuedPlayback;
+    PlaybackData* m_playbackData;
+    
+    /*! \brief Next timeline to run. */
+    PlaybackData* m_queuedPlayback;
 
     mutex m_queue;
   };

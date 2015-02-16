@@ -298,21 +298,67 @@ bool Timeline::isDone(size_t time, map<string, shared_ptr<Timeline> >& tls) {
   return false;
 }
 
-void Timeline::setCurrentState(map<string, Device*>& state) {
+void Timeline::setCurrentState(map<string, Device*>& state, shared_ptr<Timeline> active, size_t time) {
   for (const auto& d : state) {
     for (const auto& p : d.second->getParamNames()) {
-      updateKeyframeState(d.second, p);
+      updateKeyframeState(d.second, p, active, time);
     }
   }
 }
 
-void Timeline::updateKeyframeState(Device* d, string paramName) {
+void Timeline::updateKeyframeState(Device* d, string paramName, shared_ptr<Timeline> tl, size_t time) {
   string id = getTimelineKey(d, paramName);
   for (auto& kf : _timelineData[id]) {
     if (kf.second.useCurrentState) {
-      kf.second.val = shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(d->getParam(paramName)));
+      // check for active subtimelines
+      if (tl != nullptr) {
+        Keyframe activeKeyframe = tl->getPreviousKeyframe(getTimelineKey(d, paramName), time);
+        if (activeKeyframe.timelineID != "") {
+          kf.second.timelineID = activeKeyframe.timelineID;
+          kf.second.timelineOffset = tl->getLoopTime(time) - activeKeyframe.t + activeKeyframe.timelineOffset + kf.second.t;
+        }
+        else {
+          kf.second.val = shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(d->getParam(paramName)));
+        }
+      }
+      else {
+        kf.second.val = shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(d->getParam(paramName)));
+      }
     }
   }
+}
+
+Keyframe Timeline::getPreviousKeyframe(string identifier, size_t time) {
+  // at the moment this function is horribly slow.
+  // TODO: update keyframe datastructure to access elements faster.
+
+  // get the keyframes if they exist, otherwise return null immediately.
+  time = getLoopTime(time);
+
+  auto keyframes = _timelineData[identifier];
+  Keyframe first;
+  Keyframe next;
+  bool nextFound = false;
+
+  for (auto keyframe = keyframes.begin(); keyframe != keyframes.end();) {
+    if (keyframe->first > time) {
+      next = keyframe->second;
+      first = prev(keyframe)->second;
+      nextFound = true;
+      break;
+    }
+
+    ++keyframe;
+  }
+
+  if (!nextFound) {
+    // We are at the end of the defined keyframes, so return the value of the most
+    // recent keyframe
+    auto last = keyframes.rbegin()->second;
+    return last;
+  }
+
+  return first;
 }
 
 size_t Timeline::getLength() {
