@@ -269,7 +269,7 @@ JSONNode Timeline::toJSON() {
   return JSONNode();
 }
 
-bool Timeline::isDone(size_t time, map<string, shared_ptr<AbstractTimeline> >& tls) {
+bool Timeline::isDone(size_t time, map<string, shared_ptr<Timeline> >& tls) {
   // TODO: when nested timelines get added this will be more complicated.
   // Automatically return false if set to infinite loop.
   if (_loops == -1)
@@ -298,7 +298,7 @@ bool Timeline::isDone(size_t time, map<string, shared_ptr<AbstractTimeline> >& t
   return false;
 }
 
-void Timeline::setCurrentState(map<string, Device*>& state, shared_ptr<AbstractTimeline> active, size_t time) {
+void Timeline::setCurrentState(map<string, Device*>& state, shared_ptr<Timeline> active, size_t time) {
   for (const auto& d : state) {
     for (const auto& p : d.second->getParamNames()) {
       updateKeyframeState(d.second, p, active, time);
@@ -306,7 +306,7 @@ void Timeline::setCurrentState(map<string, Device*>& state, shared_ptr<AbstractT
   }
 }
 
-void Timeline::updateKeyframeState(Device* d, string paramName, shared_ptr<AbstractTimeline> tl, size_t time) {
+void Timeline::updateKeyframeState(Device* d, string paramName, shared_ptr<Timeline> tl, size_t time) {
   string id = getTimelineKey(d, paramName);
   for (auto& kf : _timelineData[id]) {
     if (kf.second.useCurrentState) {

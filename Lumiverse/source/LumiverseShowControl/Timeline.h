@@ -5,7 +5,6 @@
 
 #include "LumiverseCore.h"
 #include "Keyframe.h"
-#include "AbstractTimeline.h"
 
 namespace Lumiverse {
 namespace ShowControl {
@@ -26,7 +25,7 @@ at the specified times. Events are executed on every loop, or at the very end of
 are complete).
 \sa Event
 */
-class Timeline : AbstractTimeline {
+class Timeline {
 public:
   /*!
   \brief Creates an empty timeline
@@ -105,6 +104,8 @@ public:
 
   /*!
   \brief Stores a nested timeline Keyframe for a device.
+
+  
   */
   void setKeyframe(Device* d, size_t time, string timelineID, size_t offset = 0);
 
@@ -196,7 +197,7 @@ public:
   \param time Time in milliseconds to get the value.
   \return A LumiverseType value for the specified time in the timeline.
   */
-  virtual shared_ptr<LumiverseType> getValueAtTime(string identifier, size_t time, map<string, shared_ptr<Timeline> >& tls);
+  shared_ptr<LumiverseType> getValueAtTime(string identifier, size_t time, map<string, shared_ptr<Timeline> >& tls);
 
   /*!
   \brief Executes the events between the specified times
@@ -235,7 +236,7 @@ public:
 
   /return Length of timeline, max size_t 
   */
-  virtual size_t getLength() override;
+  size_t getLength();
 
   /*!
   \brief Gets the length of the timeline for a single loop.
@@ -259,7 +260,7 @@ public:
   \param time Time to check for done-ness
   \return true if the Timeline has no keyframes specified after the given time.
   */
-  virtual bool isDone(size_t time, map<string, shared_ptr<AbstractTimeline> >& tls) override;
+  bool isDone(size_t time, map<string, shared_ptr<Timeline> >& tls);
 
   /*!
   \brief Takes a state from the layer and updates the keyframes marked with 
@@ -267,7 +268,7 @@ public:
 
   \param state Layer state
   */
-  virtual void setCurrentState(map<string, Device*>& state, shared_ptr<AbstractTimeline> active, size_t time) override;
+  void setCurrentState(map<string, Device*>& state, shared_ptr<Timeline> active, size_t time);
 
   /*!
   \brief Gets the keyframe closest to happen at or before the given time.
@@ -342,7 +343,7 @@ private:
   /*!
   \brief Updates the Keyframes marked as "Use Current State" in the Timeline's data 
   */
-  void updateKeyframeState(Device* d, string paramName, shared_ptr<AbstractTimeline> tl, size_t time);
+  void updateKeyframeState(Device* d, string paramName, shared_ptr<Timeline> tl, size_t time);
 };
 
 }
