@@ -269,8 +269,44 @@ void Timeline::setLoops(int loops) {
 }
 
 JSONNode Timeline::toJSON() {
-  // TODO: Fill in the blanks
-  return JSONNode();
+  JSONNode timeline;
+  timeline.push_back(JSONNode("type", getTimelineTypeName()));
+  timeline.push_back(JSONNode("loops", _loops));
+  
+  // timeline data
+  JSONNode keyframes;
+  keyframes.set_name("keyframes");
+  for (auto& kvp : _timelineData) {
+    JSONNode kfList;
+    kfList.set_name(kvp.first);
+    for (auto& kfs : kvp.second) {
+      JSONNode keyframe = kfs.second.toJSON();
+      stringstream ss;
+      ss << kfs.first;
+      keyframe.set_name(ss.str());
+      kfList.push_back(keyframe);
+    }
+    keyframes.push_back(kfList);
+  }
+  timeline.push_back(keyframes);
+
+  JSONNode events;
+  events.set_name("events");
+  for (auto& kvp : _events) {
+    events.push_back(kvp.second->toJSON());
+  }
+  timeline.push_back(events);
+
+  JSONNode endEvents;
+  endEvents.set_name("endEvents");
+  for (auto& kvp : _endEvents) {
+    JSONNode endEvent = kvp.second->toJSON();
+    endEvent.set_name(kvp.first);
+    endEvents.push_back(endEvent);
+  }
+  timeline.push_back(endEvents);
+
+  return timeline;
 }
 
 bool Timeline::isDone(size_t time, map<string, shared_ptr<Timeline> >& tls) {

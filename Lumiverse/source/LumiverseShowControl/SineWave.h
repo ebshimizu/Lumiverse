@@ -62,6 +62,11 @@ namespace ShowControl {
     */
     virtual string getTimelineTypeName() override { return "sinewave"; }
 
+    /*!
+    \brief Converts this timeline to a JSON node.
+    */
+    virtual JSONNode toJSON() override;
+
   private:
     /*! \brief Period of the sine wave */
     float _period;

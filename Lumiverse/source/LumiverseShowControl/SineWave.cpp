@@ -68,5 +68,17 @@ namespace ShowControl {
     return _period * 1000;
   }
 
+  JSONNode SineWave::toJSON() {
+    JSONNode wave;
+    wave.push_back(JSONNode("type", getTimelineTypeName()));
+    wave.push_back(JSONNode("period", _period));
+    wave.push_back(JSONNode("magnitude", _magnitude));
+    wave.push_back(JSONNode("phase", _phase));
+    wave.push_back(JSONNode("offset", _offset));
+    wave.push_back(JSONNode("mode", _mode));
+
+    return wave;
+  }
+
 }
 }

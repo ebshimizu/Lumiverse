@@ -230,7 +230,9 @@ namespace ShowControl {
     lists.set_name("timelines");
 
     for (auto& kvp : m_timelines) {
-      lists.push_back(kvp.second->toJSON());
+      JSONNode timeline = kvp.second->toJSON();
+      timeline.set_name(kvp.first);
+      lists.push_back(timeline);
     }
     pb.push_back(lists);
 

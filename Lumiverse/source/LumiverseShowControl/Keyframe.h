@@ -82,6 +82,9 @@ struct Keyframe {
 
   /*! \brief Creates a keyframe from a JSON node. */
   Keyframe(JSONNode node);
+
+  /*! \brief Returns the JSON representation of this keyframe. */
+  JSONNode toJSON();
 };
 
 /*!
@@ -89,7 +92,11 @@ struct Keyframe {
 
 Events can really be used anywhere to do anything within the limits of the program.
 There are a few pre-defied event classes to make certain common tasks easier (such
-as start playback on Layer, go to next timeline, 
+as start playback on Layer, go to next timeline, etc.)
+
+Note that these generic events are inherently unable to be serialized (std::function objects
+have to default serialization method) so if you are using these kinds of Events, it may 
+be better to leave your show as a script instead of outputted to a JSON file.
 */
 class Event {
 public:
@@ -121,6 +128,16 @@ public:
   \brief Optional identifier to make it easier to delete and find Events.
   */
   string _id;
+
+  /*!
+  \brief Returns the typename of this Event.
+  */
+  virtual string getType() { return "event"; }
+
+  /*!
+  \brief While this object may not be able to serialize itself, other Event types may be able to.
+  */
+  virtual JSONNode toJSON();
 
 private:
   /*!
