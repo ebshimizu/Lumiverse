@@ -297,6 +297,19 @@ int LumiverseEnum::getHighestStartValue() {
   return end->first;
 }
 
+int LumiverseEnum::getLowestStartValue() {
+  if (m_startToName.size() == 0)
+    return 0;
+
+  auto first = m_startToName.begin();
+  return first->first;
+}
+
+float LumiverseEnum::asPercent() {
+  float val = getRangeVal();
+  return (val - getLowestStartValue()) / (m_rangeMax - getLowestStartValue());
+}
+
 void LumiverseEnum::setTweakWithMode() {
   switch (m_mode)
   {

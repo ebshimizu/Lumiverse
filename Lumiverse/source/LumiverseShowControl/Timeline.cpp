@@ -5,6 +5,8 @@ namespace ShowControl {
 
 Timeline::Timeline() {
   _loops = 1;
+  _lengthIsUpdated = false;
+  _loopLengthIsUpdated = false;
 }
 
 Timeline::Timeline(JSONNode data) {
@@ -169,7 +171,9 @@ map<string, shared_ptr<Event> >& Timeline::getAllEndEvents() {
   return _endEvents;
 }
 
-shared_ptr<LumiverseType> Timeline::getValueAtTime(string identifier, size_t time, map<string, shared_ptr<Timeline> >& tls) {
+shared_ptr<LumiverseType> Timeline::getValueAtTime(Device* d, string paramName, size_t time, map<string, shared_ptr<Timeline> >& tls) {
+  string identifier = getTimelineKey(d, paramName);
+
   // get the keyframes if they exist, otherwise return null immediately.
   if (_timelineData.count(identifier) == 0)
     return nullptr;
@@ -199,7 +203,7 @@ shared_ptr<LumiverseType> Timeline::getValueAtTime(string identifier, size_t tim
 
     if (last.timelineID != "") {
       if (tls.count(last.timelineID) > 0) {
-        return tls[last.timelineID]->getValueAtTime(identifier, time - last.t + last.timelineOffset, tls);
+        return tls[last.timelineID]->getValueAtTime(d, paramName, time - last.t + last.timelineOffset, tls);
       }
       else return nullptr;
     }
@@ -220,13 +224,13 @@ shared_ptr<LumiverseType> Timeline::getValueAtTime(string identifier, size_t tim
   // If no such timeline exists in the playback, return nullptr (indicate to layer to skip value for this)
   if (first.timelineID != "") {
     if (tls.count(first.timelineID) > 0) {
-      x = tls[first.timelineID]->getValueAtTime(identifier, time - first.t + first.timelineOffset, tls);
+      x = tls[first.timelineID]->getValueAtTime(d, paramName, time - first.t + first.timelineOffset, tls);
     }
     else return nullptr;
   }
   if (next.timelineID != "") {
     if (tls.count(next.timelineID) > 0) {
-      y = tls[next.timelineID]->getValueAtTime(identifier, time - next.t + next.timelineOffset, tls);
+      y = tls[next.timelineID]->getValueAtTime(d, paramName, time - next.t + next.timelineOffset, tls);
     }
     else return nullptr;
   }
@@ -270,7 +274,6 @@ JSONNode Timeline::toJSON() {
 }
 
 bool Timeline::isDone(size_t time, map<string, shared_ptr<Timeline> >& tls) {
-  // TODO: when nested timelines get added this will be more complicated.
   // Automatically return false if set to infinite loop.
   if (_loops == -1)
     return false;

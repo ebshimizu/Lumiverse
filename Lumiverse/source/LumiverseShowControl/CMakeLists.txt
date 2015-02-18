@@ -40,6 +40,8 @@ add_library (LumiverseShowControl
   Timeline.cpp
   Keyframe.h
   Keyframe.cpp
+  SineWave.h
+  SineWave.cpp
   LumiverseShowControl.h)
 
 add_executable (PlaybackDemo

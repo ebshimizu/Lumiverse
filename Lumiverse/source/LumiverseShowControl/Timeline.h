@@ -23,6 +23,10 @@ Timelines may also loop a specified number of times. Setting the loop parameter 
 In addition to Keyframes, a Timeline may contain Events. Events are arbitrary actions called
 at the specified times. Events are executed on every loop, or at the very end of the Timeline (after all loops
 are complete).
+
+Subclasses of timelines are allowed, and encouraged for certain applications. Note that you do not have
+to override all functions, but probably should at least override getValueAtTime(). Subclasses
+have access to all the keyframe functions and data structures, but do not have to use them
 \sa Event
 */
 class Timeline {
@@ -49,7 +53,7 @@ public:
   /*!
   \brief Deletes a timeline
   */
-  ~Timeline();
+  virtual ~Timeline();
 
   /*!
   \brief Gets the identifier used to refer to a device-parameter keyframe set.
@@ -104,8 +108,6 @@ public:
 
   /*!
   \brief Stores a nested timeline Keyframe for a device.
-
-  
   */
   void setKeyframe(Device* d, size_t time, string timelineID, size_t offset = 0);
 
@@ -197,7 +199,7 @@ public:
   \param time Time in milliseconds to get the value.
   \return A LumiverseType value for the specified time in the timeline.
   */
-  shared_ptr<LumiverseType> getValueAtTime(string identifier, size_t time, map<string, shared_ptr<Timeline> >& tls);
+  virtual shared_ptr<LumiverseType> getValueAtTime(Device* d, string paramName, size_t time, map<string, shared_ptr<Timeline> >& tls);
 
   /*!
   \brief Executes the events between the specified times
@@ -210,45 +212,45 @@ public:
   \param prevTime Last time of update.
   \param currentTime Current update time
   */
-  void executeEvents(size_t prevTime, size_t currentTime);
+  virtual void executeEvents(size_t prevTime, size_t currentTime);
 
   /*!
   \brief Executes all end events in the timeline's list.
   */
-  void executeEndEvents();
+  virtual void executeEndEvents();
 
   /*!
   \brief Returns the looping setting for this timeline.
 
   \return Number of loops the timeline is set to do.
   */
-  int getLoops();
+  virtual int getLoops();
 
   /*!
   \brief Set the number of loops the timeline should execute.
 
   If set to -1, the timeline will loop forever.
   */
-  void setLoops(int loops);
+  virtual void setLoops(int loops);
 
   /*!
   \brief Gets the length of the timeline based on stored keyframes.
 
   /return Length of timeline, max size_t 
   */
-  size_t getLength();
+  virtual size_t getLength();
 
   /*!
   \brief Gets the length of the timeline for a single loop.
 
   This is equal to getLength() for timelines with a loop paramter of 1.
   */
-  size_t getLoopLength();
+  virtual size_t getLoopLength();
 
   /*!
   \brief Gets the JSON representation of the timeline object.
   */
-  JSONNode toJSON();
+  virtual JSONNode toJSON();
 
   /*!
   \brief Indicates if the Timeline has no more keyframes after the specified time.
@@ -260,7 +262,7 @@ public:
   \param time Time to check for done-ness
   \return true if the Timeline has no keyframes specified after the given time.
   */
-  bool isDone(size_t time, map<string, shared_ptr<Timeline> >& tls);
+  virtual bool isDone(size_t time, map<string, shared_ptr<Timeline> >& tls);
 
   /*!
   \brief Takes a state from the layer and updates the keyframes marked with 
@@ -268,7 +270,7 @@ public:
 
   \param state Layer state
   */
-  void setCurrentState(map<string, Device*>& state, shared_ptr<Timeline> active, size_t time);
+  virtual void setCurrentState(map<string, Device*>& state, shared_ptr<Timeline> active, size_t time);
 
   /*!
   \brief Gets the keyframe closest to happen at or before the given time.
@@ -281,7 +283,12 @@ public:
   /*!
   \brief Returns the time adjusted for the number of loops the timeline can perfrom.
   */
-  size_t getLoopTime(size_t time);
+  virtual size_t getLoopTime(size_t time);
+
+  /*!
+  \brief Used for identifying different kinds of timelines.
+  */
+  virtual string getTimelineTypeName() { return "timeline"; }
 
 private:
   /*!

@@ -205,7 +205,7 @@ namespace ShowControl {
 
         for (const auto& device : m_layerState) {
           for (const auto& param : device.second->getParamNames()) {
-            shared_ptr<LumiverseType> val = tl->getValueAtTime(tl->getTimelineKey(device.second, param), t, m_pb->getTimelines());
+            shared_ptr<LumiverseType> val = tl->getValueAtTime(device.second, param, t, m_pb->getTimelines());
 
             // A value of nullptr indicates that the Timeline doesn't have any data for the specified device/paramter pair.
             if (val == nullptr) {

@@ -1,9 +1,6 @@
 #include <string>
 #include "LumiverseCore.h"
-#include "Cue.h"
-#include "CueList.h"
-#include "Layer.h"
-#include "Playback.h"
+#include "LumiverseShowControl.h"
 
 #ifdef USE_ARNOLD
 #include "Simulation/ArnoldAnimationPatch.h"
@@ -39,24 +36,26 @@ int main(int argc, char**argv) {
   inno.setParam("tilt", 135);
   inno.setParam("pan", 270);
 
-  shared_ptr<Timeline> cue1(new Timeline());
-  cue1->setKeyframe(&rig, 0, false);
-
-  color->setxy(0.45f, 0.45f);
-
-  cue1->setKeyframe(&rig, 1000, false);
-
-  color->setxy(0.40f, 0.45f);
-  cue1->setKeyframe(&rig, 2000);
+  shared_ptr<Timeline> cue1 = shared_ptr<Timeline>(new SineWave(3, 0.5, 0, 0.5));
   cue1->setLoops(-1);
+  //shared_ptr<Timeline> cue1(new Timeline());
+  //cue1->setKeyframe(&rig, 0, false);
+
+  //color->setxy(0.45f, 0.45f);
+
+  //cue1->setKeyframe(&rig, 1000, false);
+
+  //color->setxy(0.40f, 0.45f);
+  //cue1->setKeyframe(&rig, 2000);
+  //cue1->setLoops(-1);
 
   shared_ptr<Timeline> cue2(new Timeline());
-  inno.setParam("intensity", 1.0f);
+  inno.setParam("intensity", 0.0f);
   cue2->setKeyframe(&rig, 0, true);
   cue2->setKeyframe(&rig, 5000, false);
-  cue2->setKeyframe("inno:color", 0, "cue1", 0);
-  cue2->setKeyframe("inno:color", 5000, "cue1", 5000);
-  cue2->addEvent(10000, shared_ptr<Event>(new Event([layer1](){ layer1->stop(); layer1->play("cue3"); layer1->resume(); })));
+  cue2->setKeyframe("inno:pan", 0, "cue1", 0);
+  cue2->setKeyframe("inno:pan", 5000, "cue1", 5000);
+  //cue2->addEvent(10000, shared_ptr<Event>(new Event([layer1](){ layer1->stop(); layer1->play("cue3"); layer1->resume(); })));
 
   shared_ptr<Timeline> cue3(new Timeline());
   inno.setParam("intensity", 0.0f);

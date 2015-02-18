@@ -5,3 +5,4 @@
 #include "Programmer.h"
 #include "Playback.h"
 #include "Snapshot.h"
+#include "SineWave.h"

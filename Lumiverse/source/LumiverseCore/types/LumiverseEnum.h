@@ -322,6 +322,19 @@ namespace Lumiverse {
     */
     float getRangeVal();
 
+    /*!
+    \brief Sets the value of the LumiverseFloat proportionally
+    */
+    void setValAsPercent(float val) { setVal(val * (m_rangeMax - getLowestStartValue()) + getLowestStartValue()); }
+
+    /*!
+    \brief Gets the value of the enum in terms of a percentage.
+
+    Example: if the range of the enum is [0,255] and the current numeric value is 127,
+    this returns .498
+    */
+    float asPercent();
+
     // Operator overrides woo
     void operator=(string name);
     void operator=(const LumiverseEnum& val);
@@ -355,6 +368,11 @@ namespace Lumiverse {
     \return Value of the key with the higest starting value. -1 if there are no keys currently in the enumeration.
     */
     int getHighestStartValue();
+
+    /*!
+    \brief Gets the lowest start value for an enumeration option.
+    */
+    int getLowestStartValue();
 
   private:
     /*!
