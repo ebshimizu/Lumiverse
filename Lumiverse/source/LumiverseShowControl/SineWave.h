@@ -45,6 +45,13 @@ namespace ShowControl {
     */
     SineWave(float period = 1, float magnitude = 0.5, float phase = 0, float offset = 0.5,  Mode mode = ABS);
     
+    /*!
+    \brief Loads a SineWave effect from a JSONNode.
+
+    If there are missing values in the JSONNode, the default values will be filled in.
+    */
+    SineWave(JSONNode node);
+
     ~SineWave();
 
     /*!

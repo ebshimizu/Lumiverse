@@ -351,6 +351,11 @@ private:
   \brief Updates the Keyframes marked as "Use Current State" in the Timeline's data 
   */
   void updateKeyframeState(Device* d, string paramName, shared_ptr<Timeline> tl, size_t time);
+
+  /*!
+  \brief Initializes the timeline with the given JSONNode's data.
+  */
+  void loadJSON(JSONNode node);
 };
 
 }

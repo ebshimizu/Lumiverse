@@ -10,7 +10,14 @@ Timeline::Timeline() {
 }
 
 Timeline::Timeline(JSONNode data) {
-  // TODO: fill in later
+  loadJSON(data);
+}
+
+Timeline::Timeline(const Timeline& other) {
+  _loops = other._loops;
+  _timelineData = other._timelineData;
+  _events = other._events;
+  _endEvents = other._endEvents;
 }
 
 Timeline::~Timeline() {
@@ -293,7 +300,9 @@ JSONNode Timeline::toJSON() {
   JSONNode events;
   events.set_name("events");
   for (auto& kvp : _events) {
-    events.push_back(kvp.second->toJSON());
+    JSONNode e = kvp.second->toJSON();
+    e.push_back(JSONNode("t", (unsigned long)kvp.first));
+    events.push_back(e);
   }
   timeline.push_back(events);
 
@@ -463,6 +472,95 @@ size_t Timeline::getLoopTime(size_t time) {
   }
 
   return time;
+}
+
+void Timeline::loadJSON(JSONNode node) {
+  auto type = node.find("type");
+  if (type == node.end()) {
+    Logger::log(ERR, "Can't load timeline. Unknown type.");
+    return;
+  }
+  else {
+    if (type->as_string() != getTimelineTypeName()) {
+      Logger::log(ERR, "Can't loat timeline. Type \"" + type->as_string() + "\" is not a \"timeline\"");
+      return;
+    }
+  }
+
+  auto loops = node.find("loops");
+  if (loops == node.end()) {
+    _loops = 1;
+  }
+  else {
+    _loops = loops->as_int();
+  }
+
+  auto keyframes = node.find("keyframes");
+  if (keyframes == node.end()) {
+    Logger::log(WARN, "No keyframes found in timeline.");
+  }
+  else {
+    auto ident = keyframes->begin();
+    // Loop over identifiers
+    while (ident != keyframes->end()) {
+      string identifier = ident->name();
+
+      // loop over keyframes in each identifier
+      auto kfList = ident->begin();
+      while (kfList != ident->end()) {
+        Keyframe kf(*kfList);
+        _timelineData[identifier][kf.t] = kf;
+        kfList++;
+      }
+      ident++;
+    }
+  }
+
+  auto events = node.find("events");
+  if (events == node.end()) {
+    // We don't really need to note anything here
+    // but we'll leave the option here.
+  }
+  else {
+    auto e = events->begin();
+    while (e != events->end()) {
+      auto type = e->find("type");
+      auto time = e->find("time");
+      if (type != e->end() && time != e->end()) {
+        string t = type->as_string();
+        if (t == "event") {
+          _events.insert(pair<size_t, shared_ptr<Event> >(time->as_int(), shared_ptr<Event>(new Event(*e))));
+        }
+      }
+      else {
+        Logger::log(ERR, "Unable to add event. Cannot determine type or time.");
+      }
+
+      e++;
+    }
+  }
+
+  auto endEvents = node.find("endEvents");
+  if (endEvents == node.end()) {
+    // No notice needed, but maybe something here later
+  }
+  else {
+    auto e = endEvents->begin();
+    while (e != endEvents->end()) {
+      auto type = e->find("type");
+      if (type != e->end()) {
+        string t = type->as_string();
+        if (t == "event") {
+          _endEvents[e->name()] = shared_ptr<Event>(new Event(*e));
+        }
+      }
+      else {
+        Logger::log(ERR, "Unable to add end event. Cannot determine type or time.");
+      }
+
+      e++;
+    }
+  }
 }
 
 }

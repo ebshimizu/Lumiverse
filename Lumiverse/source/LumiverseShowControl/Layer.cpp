@@ -167,6 +167,10 @@ namespace ShowControl {
     m_stop = true;
   }
 
+  string Layer::getRecentTimeline() {
+    return m_lastPlayedTimeline;
+  }
+
   void Layer::update(chrono::time_point<chrono::high_resolution_clock> updateStart) {
     auto loopTime = updateStart - m_previousLoopStart;
 

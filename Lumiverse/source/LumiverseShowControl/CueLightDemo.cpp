@@ -13,7 +13,7 @@ using namespace Lumiverse::ShowControl;
 int main(int argc, char**argv) {
   Rig rig("C:/Users/eshimizu/Documents/Lumiverse/Core/Lumiverse/data/movingLights_DMX.rig.json");
 
-  Playback pb(&rig);
+  Playback pb(&rig, "C:/Users/eshimizu/Documents/Lumiverse/test.playback.json");
   pb.attachToRig();
 
   shared_ptr<Layer> layer1(new Layer(&rig, &pb, "layer1", 1));
@@ -103,6 +103,7 @@ int main(int argc, char**argv) {
 
   getchar();
   pb.getProgrammer()->clearAndReset();
+  pb.save("C:/Users/eshimizu/Documents/Lumiverse/test.playback.json", true);
 
   cout << "Layers ready.";
   getchar();

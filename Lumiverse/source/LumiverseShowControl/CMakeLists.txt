@@ -23,7 +23,7 @@ IF(LumiverseCore_INCLUDE_ARNOLD)
 	ENDIF(PNG_FOUND)
 ENDIF(LumiverseCore_INCLUDE_ARNOLD)
 
-add_library (LumiverseShowControl
+set (LUMIVERSE_SHOW_CONTROL_SOURCE
   Cue.h
   CueList.h
   Playback.h
@@ -43,6 +43,10 @@ add_library (LumiverseShowControl
   SineWave.h
   SineWave.cpp
   LumiverseShowControl.h)
+
+add_library (LumiverseShowControl
+  ${LUMIVERSE_SHOW_CONTROL_SOURCE}
+)
 
 add_executable (PlaybackDemo
 	CueLightDemo.cpp)

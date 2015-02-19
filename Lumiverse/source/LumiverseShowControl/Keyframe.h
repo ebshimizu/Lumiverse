@@ -95,12 +95,20 @@ There are a few pre-defied event classes to make certain common tasks easier (su
 as start playback on Layer, go to next timeline, etc.)
 
 Note that these generic events are inherently unable to be serialized (std::function objects
-have to default serialization method) so if you are using these kinds of Events, it may 
+have no default serialization method) so if you are using these kinds of Events, it may 
 be better to leave your show as a script instead of outputted to a JSON file.
 */
 class Event {
 public:
   Event(function<void()> cb, string id = "");
+
+  /*!
+  \brief Loads an Event from a JSONNode.
+
+  Loads as much of an event as it can, which really isn't that much.
+  */
+  Event(JSONNode node);
+
   virtual ~Event();
 
   /*!

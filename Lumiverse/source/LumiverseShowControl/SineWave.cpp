@@ -8,6 +8,48 @@ namespace ShowControl {
     
   }
 
+  SineWave::SineWave(JSONNode node) {
+    auto period = node.find("period");
+    if (period == node.end()) {
+      _period = 1;
+    }
+    else {
+      _period = period->as_float();
+    }
+
+    auto magnitude = node.find("magnitude");
+    if (magnitude == node.end()) {
+      _magnitude = 0.5;
+    }
+    else {
+      _magnitude = magnitude->as_float();
+    }
+
+    auto phase = node.find("phase");
+    if (phase == node.end()) {
+      _phase = 0;
+    }
+    else {
+      _phase = phase->as_float();
+    }
+
+    auto offset = node.find("offset");
+    if (offset == node.end()) {
+      _offset = 0.5;
+    }
+    else {
+      _offset = offset->as_float();
+    }
+
+    auto mode = node.find("mode");
+    if (mode == node.end()) {
+      _mode = ABS;
+    }
+    else {
+      _mode = (Mode)mode->as_int();
+    }
+  }
+
   SineWave::~SineWave() {
     // nothing at the moment.
   }

@@ -1,4 +1,5 @@
 #include "Playback.h"
+#include "SineWave.h"
 
 namespace Lumiverse {
 namespace ShowControl {
@@ -221,6 +222,9 @@ namespace ShowControl {
 
     JSONNode pb;
     pb.set_name("playback");
+    stringstream ss;
+    ss << LumiverseCore_VERSION_MAJOR << "." << LumiverseCore_VERSION_MINOR;
+    pb.push_back(JSONNode("version", ss.str()));
 
     // Easy stuff first
     pb.push_back(JSONNode("grandmaster", m_grandmaster));
@@ -329,6 +333,22 @@ namespace ShowControl {
       return false;
     }
 
+    auto version = data->find("version");
+    if (version == data->end()) {
+      Logger::log(WARN, "Loading data from unknown version of Lumiverse. Load may not complete correctly.");
+    }
+    else {
+      string ver = version->as_string();
+      stringstream ss(ver);
+      float verNum;
+      ss >> verNum;
+
+      if (verNum < 2.0) {
+        Logger::log(WARN, "Playbacks older than version 2 cannot be loaded.");
+        return false;
+      }
+    }
+
     auto gm = data->find("grandmaster");
     if (gm == data->end()) {
       Logger::log(INFO, "No Grandmaster value found, defaulting to 1.");
@@ -338,15 +358,24 @@ namespace ShowControl {
       m_grandmaster = gm->as_float();
     }
     
-    auto cueLists = data->find("timelines");
-    if (cueLists == data->end()) {
+    auto timelines = data->find("timelines");
+    if (timelines == data->end()) {
       Logger::log(INFO, "No timelines found for Playback.");
     }
     else {
-      auto it = cueLists->begin();
-      while (it != cueLists->end()) {
-        m_timelines[it->name()] = shared_ptr<Timeline>(new Timeline(*it));
-
+      auto it = timelines->begin();
+      while (it != timelines->end()) {
+        auto type = it->find("type");
+        if (type != it->end()) {
+          string t = type->as_string();
+          if (t == "timeline") {
+            m_timelines[it->name()] = shared_ptr<Timeline>(new Timeline(*it));
+          }
+          else if (t == "sinewave") {
+            m_timelines[it->name()] = shared_ptr<Timeline>(new SineWave(*it));
+          }
+        }
+        Logger::log(INFO, "Loaded timeline " + it->name());
         it++;
       }
     }
