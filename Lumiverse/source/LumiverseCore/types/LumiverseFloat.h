@@ -18,7 +18,7 @@ namespace Lumiverse {
   * Overloads for comparison ops and arithmetic ops are located in Lumiverse namespace.
   * \sa Lumiverse
   */
-  class LumiverseFloat : LumiverseType
+  class LumiverseFloat : public LumiverseType
   {
   public:
     /*!

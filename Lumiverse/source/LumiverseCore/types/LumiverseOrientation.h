@@ -58,7 +58,7 @@ namespace Lumiverse {
   * functions for getting rotation specfic data.
   * \sa Lumiverse
   */
-  class LumiverseOrientation : LumiverseType
+  class LumiverseOrientation : public LumiverseType
   {
   public:
     /*!

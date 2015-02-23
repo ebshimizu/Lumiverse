@@ -40,7 +40,7 @@ namespace Lumiverse {
   * the numeric value would be 75.
   * \sa Lumiverse, LumiverseType
   */
-  class LumiverseEnum : LumiverseType
+  class LumiverseEnum : public LumiverseType
   {
   public:
     /*!

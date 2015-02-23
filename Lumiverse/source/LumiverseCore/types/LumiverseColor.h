@@ -80,7 +80,7 @@ namespace Lumiverse {
   * When intializing BASIC* type Colors, you'll find that it's easier to create
   * them programmatically instead of defining them in a Rig file.
   */
-  class LumiverseColor : LumiverseType {
+  class LumiverseColor : public LumiverseType {
   public:
     /*! \brief Constructs a color. Default color is Black.
     *

@@ -345,38 +345,43 @@ namespace ShowControl {
 	}
 #endif
 
-  // Comparison op overloads
-  /*!
-  \brief Compares two layer priorities for equality.
-  \return True if the priorities of the two layers are equal.
-  */
-  inline bool operator==(Layer& lhs, Layer& rhs) {
-    return (lhs.getPriority() == rhs.getPriority());
-  }
 
-  inline bool operator!=(Layer& lhs, Layer& rhs) {
-    return !(lhs == rhs);
-  }
+}
 
-  /*!
-  \brief Compares two layer priorities for order.
-  \return True if the priority of lhs is lower than the priority for rhs.
-  */
-  inline bool operator<(Layer& lhs, Layer& rhs) {
-    return (lhs.getPriority() < rhs.getPriority());
-  }
+// Note that for some reason when generating SWIG bindings, having these outside of the Lumiverse
+// Namespace (they were in Lumiverse::ShowControl) causes some problems with SWIG's intermediate code
+// generator.
+// Comparison op overloads
+/*!
+\brief Compares two layer priorities for equality.
+\return True if the priorities of the two layers are equal.
+*/
+inline bool operator==(ShowControl::Layer& lhs, ShowControl::Layer& rhs) {
+  return (lhs.getPriority() == rhs.getPriority());
+}
 
-  inline bool operator>(Layer& lhs, Layer& rhs) {
-    return rhs < lhs;
-  }
+inline bool operator!=(ShowControl::Layer& lhs, ShowControl::Layer& rhs) {
+  return !(lhs == rhs);
+}
 
-  inline bool operator<=(Layer& lhs, Layer& rhs) {
-    return !(lhs > rhs);
-  }
+/*!
+\brief Compares two layer priorities for order.
+\return True if the priority of lhs is lower than the priority for rhs.
+*/
+inline bool operator<(ShowControl::Layer& lhs, ShowControl::Layer& rhs) {
+  return (lhs.getPriority() < rhs.getPriority());
+}
 
-  inline bool operator>=(Layer& lhs, Layer& rhs) {
-    return !(lhs < rhs);
-  }
+inline bool operator>(ShowControl::Layer& lhs, ShowControl::Layer& rhs) {
+  return rhs < lhs;
+}
+
+inline bool operator<=(ShowControl::Layer& lhs, ShowControl::Layer& rhs) {
+  return !(lhs > rhs);
+}
+
+inline bool operator>=(ShowControl::Layer& lhs, ShowControl::Layer& rhs) {
+  return !(lhs < rhs);
 }
 }
 
