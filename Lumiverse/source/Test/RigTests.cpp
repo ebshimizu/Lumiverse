@@ -180,7 +180,7 @@ bool RigTests::queryID() {
   expected = expected.add("s41");
 
   // single id
-  if (!m_testRig->query("s41").hasSameDevices(expected)) {
+  if (!m_testRig->select("s41").hasSameDevices(expected)) {
     cout << "Failed to select single device from query\n";
     ret = false;
   }
@@ -188,7 +188,7 @@ bool RigTests::queryID() {
   // multiple ids
   expected = expected.add("s42").add("s43");
 
-  if (!m_testRig->query("s41,s42,s43").hasSameDevices(expected)) {
+  if (!m_testRig->select("s41,s42,s43").hasSameDevices(expected)) {
     cout << "Failed to select multiple devices by id from query\n";
     ret = false;
   }
@@ -197,13 +197,13 @@ bool RigTests::queryID() {
   // These tests will cause the current version of Lumiverse to fail the tests,
   // and should go away once this feature is implemented.
   // Negation
-  if (m_testRig->query("!s41").size() != 49) {
+  if (m_testRig->select("!s41").size() != 49) {
     cout << "[UNIMPLEMENTED] Failed to select devices by id negation\n";
     ret = false;
   }
 
   // Multiple negation
-  if (m_testRig->query("![s41, s42, s43]").size() != 47) {
+  if (m_testRig->select("![s41, s42, s43]").size() != 47) {
     cout << "[UNIMPLEMENTED] Failed to select devices by multiple id negation\n";
     ret = false;
   }
@@ -211,7 +211,7 @@ bool RigTests::queryID() {
   // IDs and channels
   expected.clear();
   expected = expected.select("s41,par1");
-  if (!m_testRig->query("s41,#2").hasSameDevices(expected)) {
+  if (!m_testRig->select("s41,#2").hasSameDevices(expected)) {
     cout << "Unable to combine id selector with other selectors\n";
     ret = false;
   }
@@ -226,7 +226,7 @@ bool RigTests::queryChannel() {
   expected = expected.add("s41");
 
   // Single channel
-  if (!m_testRig->query("#1").hasSameDevices(expected)) {
+  if (!m_testRig->select("#1").hasSameDevices(expected)) {
     cout << "Failed to select single channel with query\n";
     ret = false;
   }
@@ -234,7 +234,7 @@ bool RigTests::queryChannel() {
   // Channel Range
   expected.clear();
   expected = expected.select("s41, par1");
-  if (!m_testRig->query("#1-2").hasSameDevices(expected)) {
+  if (!m_testRig->select("#1-2").hasSameDevices(expected)) {
     cout << "Failed to select multiple channels with query\n";
     ret = false;
   }
@@ -242,13 +242,13 @@ bool RigTests::queryChannel() {
   // Multiple channels
   expected.clear();
   expected = expected.select("s41, s42");
-  if (!m_testRig->query("#1,#3").hasSameDevices(expected)) {
+  if (!m_testRig->select("#1,#3").hasSameDevices(expected)) {
     cout << "Failed to select multiple non-continuous channels\n";
     ret = false;
   }
 
   // Channel negation
-  if (m_testRig->query("!#1-2").size() != 48) {
+  if (m_testRig->select("!#1-2").size() != 48) {
     cout << "Failed to select channels by negation\n";
     ret = false;
   }
@@ -263,7 +263,7 @@ bool RigTests::queryMetadata() {
   expected = expected.select("s41,s43,s413,s414,s415");
 
   // Equality (=)
-  if (!m_testRig->query("$color=R02").hasSameDevices(expected)) {
+  if (!m_testRig->select("$color=R02").hasSameDevices(expected)) {
     cout << "Failed to select devices by metadata equality\n";
     ret = false;
   }
@@ -271,7 +271,7 @@ bool RigTests::queryMetadata() {
   // *= (contains)
   expected.clear();
   expected = expected.select("#7-10,#27-30");
-  if (!m_testRig->query("$color*=L1").hasSameDevices(expected)) {
+  if (!m_testRig->select("$color*=L1").hasSameDevices(expected)) {
     cout << "Failed to select devices by metadata contains\n";
     ret = false;
   }
@@ -279,37 +279,37 @@ bool RigTests::queryMetadata() {
   //$= (ends with)
   expected.clear();
   expected = expected.select("#11-12,#31-32");
-  if (!m_testRig->query("$angle$=op").hasSameDevices(expected)) {
+  if (!m_testRig->select("$angle$=op").hasSameDevices(expected)) {
     cout << "Failed to select devices by metadata ends with\n";
     ret = false;
   }
   
   //^= (starts with)
-  if (!m_testRig->query("$angle^=to").hasSameDevices(expected)) {
+  if (!m_testRig->select("$angle^=to").hasSameDevices(expected)) {
     cout << "Failed to select devices by metadata starts with\n";
     ret = false;
   }
   
   //!= (is not)
-  if (m_testRig->query("$area!=2").size() != 24) {
+  if (m_testRig->select("$area!=2").size() != 24) {
     cout << "Failed to select devices by metadata not equal to\n";
     ret = false;
   }
 
   // ! *= (does not contain)
-  if (m_testRig->query("!$color*=L1").size() != 36) {
+  if (m_testRig->select("!$color*=L1").size() != 36) {
     cout << "Failed to select devices by metadata does not contain\n";
     ret = false;
   }
 
   // ! $= (does not end with)
-  if (m_testRig->query("!$angle^=to").size() != 40) {
+  if (m_testRig->select("!$angle^=to").size() != 40) {
     cout << "Failed to select devices by metadata does not end with\n";
     ret = false;
   }
 
   // ! ^= (does not start with)
-  if (m_testRig->query("!$angle^=to").size() != 40) {
+  if (m_testRig->select("!$angle^=to").size() != 40) {
     cout << "Failed to select devices by metadata does not start with\n";
     ret = false;
   }
@@ -325,7 +325,7 @@ bool RigTests::queryParameter() {
   DeviceSet expected(m_testRig);
   // =
   expected = expected.add("s47");
-  if (!m_testRig->query("@intensity=1.0f").hasSameDevices(expected)) {
+  if (!m_testRig->select("@intensity=1.0f").hasSameDevices(expected)) {
     cout << "Failed to select devices by parameter equality\n";
     ret = false;
   }
@@ -333,13 +333,13 @@ bool RigTests::queryParameter() {
   expected.clear();
   // >=
   expected = expected.select("s47,s46, par5, par6");
-  if (!m_testRig->query("@intensity>=0.5f").hasSameDevices(expected)) {
+  if (!m_testRig->select("@intensity>=0.5f").hasSameDevices(expected)) {
     cout << "Failed to select devices by parameter >=\n";
     ret = false;
   }
 
   // <=
-  if (m_testRig->query("@intensity<=0.5f").size() != 43) {
+  if (m_testRig->select("@intensity<=0.5f").size() != 43) {
     cout << "Failed to select devices by parameter <=\n";
     ret = false;
   }
@@ -354,7 +354,7 @@ bool RigTests::queryMixed() {
   DeviceSet expected(m_testRig);
 
   expected = expected.select("s48,s420,s41,par1,s42,s44");
-  if (!m_testRig->query("$color=R80,#1-3,s44").hasSameDevices(expected)) {
+  if (!m_testRig->select("$color=R80,#1-3,s44").hasSameDevices(expected)) {
     cout << "Failed to select devices with mixed query\n";
     ret = false;
   }
@@ -367,21 +367,21 @@ bool RigTests::queryFilter() {
 
   DeviceSet expected(m_testRig);
   expected = expected.select("par10, s414");
-  if (!m_testRig->query("$area=1[$angle=front]").hasSameDevices(expected)) {
+  if (!m_testRig->select("$area=1[$angle=front]").hasSameDevices(expected)) {
     cout << "Failed to filter devices based on metadata\n";
     ret = false;
   }
 
 
   expected = expected.add("s4LED2").add("s413").add("par9").add("s415").add("par11");
-  if (!m_testRig->query("$area=1[$angle*=front]").hasSameDevices(expected)) {
+  if (!m_testRig->select("$area=1[$angle*=front]").hasSameDevices(expected)) {
     cout << "Failed to filter devices based on metadata contains\n";
     ret = false;
   }
 
   expected.clear();
   expected = expected.add("s42");
-  if (!m_testRig->query("#1-10[$color=L201]").hasSameDevices(expected)) {
+  if (!m_testRig->select("#1-10[$color=L201]").hasSameDevices(expected)) {
     cout << "Failed to filter devices from channel selection with metadata equals\n";
     ret = false;
   }

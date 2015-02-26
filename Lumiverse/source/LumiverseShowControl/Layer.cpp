@@ -56,6 +56,9 @@ namespace ShowControl {
 
       it++;
     }
+
+    m_playbackData = nullptr;
+    m_queuedPlayback = nullptr;
   }
 
   void Layer::init(Rig* rig) {
@@ -185,6 +188,7 @@ namespace ShowControl {
     if (m_stop) {
       if (m_playbackData != nullptr) {
         delete m_playbackData;
+        m_playbackData = nullptr;
       }
     }
     else if (m_pause) {

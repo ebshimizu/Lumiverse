@@ -23,16 +23,16 @@ int main(int argc, char**argv) {
   Logger::setLogLevel(ERR);
   Rig* rig = new Rig("../../../data/movingLightsStress.rig.json");
   Playback* pb = new Playback(rig);
-  pb->addLayer(shared_ptr<Layer>(new Layer(rig, "layer 1", 1)));
-  pb->addLayer(shared_ptr<Layer>(new Layer(rig, "layer 2", 1)));
-  pb->addLayer(shared_ptr<Layer>(new Layer(rig, "layer 3", 1)));
-  pb->addLayer(shared_ptr<Layer>(new Layer(rig, "layer 4", 1)));
-  pb->addLayer(shared_ptr<Layer>(new Layer(rig, "layer 5", 1)));
-  pb->addLayer(shared_ptr<Layer>(new Layer(rig, "layer 6", 1)));
-  pb->addLayer(shared_ptr<Layer>(new Layer(rig, "layer 7", 1)));
-  pb->addLayer(shared_ptr<Layer>(new Layer(rig, "layer 8", 1)));
-  pb->addLayer(shared_ptr<Layer>(new Layer(rig, "layer 9", 1)));
-  pb->addLayer(shared_ptr<Layer>(new Layer(rig, "layer 10", 1)));
+  pb->addLayer(shared_ptr<Layer>(new Layer(rig, pb, "layer 1", 1)));
+  pb->addLayer(shared_ptr<Layer>(new Layer(rig, pb, "layer 2", 1)));
+  pb->addLayer(shared_ptr<Layer>(new Layer(rig, pb, "layer 3", 1)));
+  pb->addLayer(shared_ptr<Layer>(new Layer(rig, pb, "layer 4", 1)));
+  pb->addLayer(shared_ptr<Layer>(new Layer(rig, pb, "layer 5", 1)));
+  pb->addLayer(shared_ptr<Layer>(new Layer(rig, pb, "layer 6", 1)));
+  pb->addLayer(shared_ptr<Layer>(new Layer(rig, pb, "layer 7", 1)));
+  pb->addLayer(shared_ptr<Layer>(new Layer(rig, pb, "layer 8", 1)));
+  pb->addLayer(shared_ptr<Layer>(new Layer(rig, pb, "layer 9", 1)));
+  pb->addLayer(shared_ptr<Layer>(new Layer(rig, pb, "layer 10", 1)));
 
   start = chrono::high_resolution_clock::now();
 

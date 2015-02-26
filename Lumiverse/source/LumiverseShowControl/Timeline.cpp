@@ -179,6 +179,9 @@ map<string, shared_ptr<Event> >& Timeline::getAllEndEvents() {
 }
 
 shared_ptr<LumiverseType> Timeline::getValueAtTime(Device* d, string paramName, size_t time, map<string, shared_ptr<Timeline> >& tls) {
+  if (d == nullptr)
+    return nullptr;
+
   string identifier = getTimelineKey(d, paramName);
 
   // get the keyframes if they exist, otherwise return null immediately.

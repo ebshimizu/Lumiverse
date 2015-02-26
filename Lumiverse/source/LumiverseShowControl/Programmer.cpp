@@ -38,7 +38,7 @@ void Programmer::setParam(DeviceSet selection, string param, LumiverseType* val)
 }
 
 void Programmer::setParam(string selection, string param, LumiverseType* val) {
-  setParam(m_rig->query(selection), param, val);
+  setParam(m_rig->select(selection), param, val);
 }
 
 void Programmer::setParam(DeviceSet selection, string param, float val) {
@@ -121,33 +121,33 @@ void Programmer::setColorRGBRaw(DeviceSet selection, string param, double r, dou
 }
 
 void Programmer::setParam(string selection, string param, float val) {
-  setParam(m_rig->query(selection), param, val);
+  setParam(m_rig->select(selection), param, val);
 }
 
 void Programmer::setParam(string selection, string param, string val, float val2) {
-  setParam(m_rig->query(selection), param, val, val2);
+  setParam(m_rig->select(selection), param, val, val2);
 }
 
 void Programmer::setParam(string selection, string param, string channel, double val) {
-  setParam(m_rig->query(selection), param, channel, val);
+  setParam(m_rig->select(selection), param, channel, val);
 }
 
 void Programmer::setParam(string selection, string param, double x, double y, double weight) {
-  setParam(m_rig->query(selection), param, x, y, weight);
+  setParam(m_rig->select(selection), param, x, y, weight);
 }
 
 void Programmer::setParam(string selection, string param, string val, float val2,
   LumiverseEnum::Mode mode, LumiverseEnum::InterpolationMode interpMode)
 {
-  setParam(m_rig->query(selection), param, val, val2, mode, interpMode);
+  setParam(m_rig->select(selection), param, val, val2, mode, interpMode);
 }
 
 void Programmer::setColorRGB(string selection, string param, double r, double g, double b, double weight, RGBColorSpace cs) {
-  setColorRGB(m_rig->query(selection), param, r, g, b, weight, cs);
+  setColorRGB(m_rig->select(selection), param, r, g, b, weight, cs);
 }
 
 void Programmer::setColorRGBRaw(string selection, string param, double r, double g, double b, double weight) {
-  setColorRGBRaw(m_rig->query(selection), param, r, g, b, weight);
+  setColorRGBRaw(m_rig->select(selection), param, r, g, b, weight);
 }
 
 Device* Programmer::operator[](string id) {
@@ -217,6 +217,13 @@ void Programmer::blend(map<string, Device*> state) {
 //  Cue cue(m_devices, upfade, downfade, delay);
 // return cue;
 //}
+
+void Programmer::writeToTimeline(shared_ptr<Timeline> tl, size_t time, bool ucs) {
+  for (const auto kvp : m_devices) {
+    tl->setKeyframe(kvp.second, time, ucs);
+  }
+}
+
 
 void Programmer::captureFromRig(DeviceSet devices) {
   for (Device* d : devices.getDevices()) {

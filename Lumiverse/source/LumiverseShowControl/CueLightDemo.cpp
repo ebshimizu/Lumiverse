@@ -26,7 +26,7 @@ int main(int argc, char**argv) {
 
   rig.init();
 
-  DeviceSet inno = rig.query("inno");
+  DeviceSet inno = rig.select("inno");
 
   LumiverseColor* color = (LumiverseColor*)rig.getDevice("inno")->getParam("color");
   color->setxy(0.4, 0.4);

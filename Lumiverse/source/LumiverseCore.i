@@ -1,4 +1,5 @@
-%module lumiversepython
+%module(directors="1") lumiversepython
+%feature("director");
 
 %include "typemaps.i"
 %include "windows.i"

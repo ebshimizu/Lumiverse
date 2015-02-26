@@ -19,7 +19,7 @@ DynamicDeviceSet::~DynamicDeviceSet() {
 }
 
 DeviceSet DynamicDeviceSet::getDeviceSet() {
-  return m_rig->query(m_query);
+  return m_rig->select(m_query);
 }
 
 void DynamicDeviceSet::reset() {

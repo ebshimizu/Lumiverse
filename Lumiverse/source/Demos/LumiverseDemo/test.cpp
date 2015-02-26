@@ -29,7 +29,7 @@ int main(int argc, char**argv) {
     getline(cin, input);
 
     if (input.substr(0, 7) == "select ") {
-      current = rig.query(input.substr(7));
+      current = rig.select(input.substr(7));
 
       cout << "Query returned " << current.size() << " devices.\n";
     }

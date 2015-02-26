@@ -4,7 +4,7 @@
 #pragma once
 
 #include "Rig.h"
-#include "Cue.h"
+#include "Timeline.h"
 
 namespace Lumiverse {
 namespace ShowControl {
@@ -167,6 +167,11 @@ public:
   \param delay Delay in seconds
   */
   //Cue getCue(float upfade = 3, float downfade = 3, float delay = 0);
+
+  /*!
+  \brief Writes the programmer's current values to a timeline at the specified time.
+  */
+  void writeToTimeline(shared_ptr<Timeline> tl, size_t time, bool ucs = false);
 
   /*!
   \brief Captures the selected devices and copies their current values from the rig.

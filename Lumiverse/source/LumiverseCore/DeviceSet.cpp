@@ -315,7 +315,7 @@ DeviceSet DeviceSet::add(Device* device) {
 
 DeviceSet DeviceSet::add(string query) {
   DeviceSet newSet(*this);
-  newSet.addSet(m_rig->query(query));
+  newSet.addSet(m_rig->select(query));
   
   return newSet;
 }
@@ -394,7 +394,7 @@ DeviceSet DeviceSet::remove(Device* device) {
 
 DeviceSet DeviceSet::remove(string query) {
   DeviceSet newSet(*this);
-  newSet.removeSet(m_rig->query(query));
+  newSet.removeSet(m_rig->select(query));
   
   return newSet;
 }

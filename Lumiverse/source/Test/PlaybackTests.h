@@ -36,9 +36,9 @@ private:
   // changed, more tests should be added.
   bool playbackSetup();
   bool createLayer();
-  bool createCueList();
-  bool createCue();
-  bool checkCue();
+  bool createTimelines();
+  bool programTimelines();
+  bool checkTimeline();
   bool playCue();
   bool layerToggle();
   bool snapshot();

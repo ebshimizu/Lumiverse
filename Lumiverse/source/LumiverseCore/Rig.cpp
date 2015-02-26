@@ -438,7 +438,7 @@ Device* Rig::operator[](string id) {
   return getDevice(id);
 }
 
-DeviceSet Rig::query(string q) {
+DeviceSet Rig::select(string q) {
   DeviceSet working(this);
   return working.select(q);
 }

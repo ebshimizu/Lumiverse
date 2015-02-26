@@ -218,7 +218,7 @@ namespace Lumiverse {
     * \return DeviceSet containing all devices matching the query string.
     * \sa DeviceSet, DeviceSet::select()
     */
-    DeviceSet query(string q);
+    DeviceSet select(string q);
 
     /*!
     * \brief Shorthand for getChannel(unsigned int)

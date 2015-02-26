@@ -190,7 +190,7 @@ namespace Lumiverse {
     * 
     * \return Set of Device* contained by the DynamicDeviceSet
     */
-    inline const set<Device *>& getDevices() { return m_rig->query(m_query).getDevices(); }
+    inline const set<Device *>& getDevices() { return m_rig->select(m_query).getDevices(); }
 
     /*!
     * \brief Gets a copy of the list of the IDs contained by this DynamicDeviceSet
@@ -226,7 +226,7 @@ namespace Lumiverse {
     * \brief Returns the number of devices in the DynamicDeviceSet
     * \return Number of devices in the set.
     */
-    inline size_t size() { return m_rig->query(m_query).size(); }
+    inline size_t size() { return m_rig->select(m_query).size(); }
 
     /*!
     \brief Returns true if the device sets have the same number of devices
