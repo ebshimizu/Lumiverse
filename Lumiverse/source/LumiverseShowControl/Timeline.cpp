@@ -191,6 +191,11 @@ shared_ptr<LumiverseType> Timeline::getValueAtTime(Device* d, string paramName, 
   time = getLoopTime(time);
 
   auto keyframes = _timelineData[identifier];
+
+  // If the id has a keyframe map, but no keyframes, we do nothing and return null.
+  if (keyframes.size() == 0)
+    return nullptr;
+
   Keyframe first;
   Keyframe next;
   bool nextFound = false;
@@ -198,7 +203,16 @@ shared_ptr<LumiverseType> Timeline::getValueAtTime(Device* d, string paramName, 
   for (auto keyframe = keyframes.begin(); keyframe != keyframes.end();) {
     if (keyframe->first > time) {
       next = keyframe->second;
-      first = prev(keyframe)->second;
+
+      // Special case if they keyframe we found is after the current time but there is no keyframe
+      // before the keyframe we found. Example: no keyframe at t = 0 but keyframe at t = 1200, with
+      // t currently equal to 50.
+      if (keyframe == keyframes.begin()) {
+        first = next;
+      }
+      else {
+        first = prev(keyframe)->second;
+      }
       nextFound = true;
       break;
     }
@@ -330,6 +344,9 @@ bool Timeline::isDone(size_t time, map<string, shared_ptr<Timeline> >& tls) {
     // Before returning true, check to see if any timelines are still running
     // in the end keyframes
     for (const auto& id : _timelineData) {
+      if (id.second.size() == 0)
+        continue;
+
       auto lastKeyframe = id.second.rbegin()->second;
 
       if (lastKeyframe.timelineID != "") {
