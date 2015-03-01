@@ -444,7 +444,13 @@ size_t Timeline::getLoopLength() {
     // Go through and find the maximum time that a keyframe is set to.
     for (const auto& id : _timelineData) {
       // Get the last keyframe, this is sorted.
-      auto lastKeyframe = id.second.rbegin()->first;
+      auto last = id.second.rbegin();
+      
+      // if there's nothing there continue, we might segfault otherwise
+      if (last == id.second.rend())
+        continue;
+      
+      auto lastKeyframe = last->first;
 
       // Time is equal to transition time + largest keyframe time.
       time = (lastKeyframe > time) ? lastKeyframe : time;
