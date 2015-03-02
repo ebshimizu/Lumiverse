@@ -224,6 +224,13 @@ void Programmer::writeToTimeline(shared_ptr<Timeline> tl, size_t time, bool ucs)
   }
 }
 
+void Programmer::writeToTimeline(DeviceSet d, shared_ptr<Timeline> tl, size_t time, bool ucs) {
+  auto devices = d.getDevices();
+  for (const auto& d : devices) {
+    tl->setKeyframe(m_devices[d->getId()], time, ucs);
+  }
+}
+
 
 void Programmer::captureFromRig(DeviceSet devices) {
   for (Device* d : devices.getDevices()) {
