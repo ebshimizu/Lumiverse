@@ -122,6 +122,9 @@ void KiNetInterface::init() {
   }
 
   m_port = ((sockaddr_in*)(pr->ai_addr))->sin_port;
+  stringstream ss;
+  ss << "KiNetInterface initialized on " << m_host << ":" << m_port << "\n";
+  Logger::log(INFO, ss.str());
 
   freeaddrinfo(pResult);
 
