@@ -100,7 +100,7 @@ namespace Lumiverse {
     LumiverseColor(map<string, Eigen::Vector3d> basis, ColorMode mode = ADDITIVE);
 
     /*! \brief Constructor for loading from JSON data */
-    LumiverseColor(map<string, double> params, map<string, Eigen::Vector3d> basis, ColorMode mode, double weight);
+    LumiverseColor(unordered_map<string, double> params, map<string, Eigen::Vector3d> basis, ColorMode mode, double weight);
 
     /*! \brief Copy constructor (from generic LumiverseType) */
     LumiverseColor(LumiverseType* other);
@@ -314,7 +314,7 @@ namespace Lumiverse {
     /*! \brief Gets the current values for the color parameters.
     * \return m_deviceChannels map
     */
-    map<string, double> getColorParams() { return m_deviceChannels; }
+    unordered_map<string, double> getColorParams() { return m_deviceChannels; }
 
     /*! \brief Gets the weight. */
     double getWeight() { return m_weight; }
@@ -427,7 +427,7 @@ namespace Lumiverse {
     * from XYZ. Any time you change a value, this map gets recalculated.
     * The map is automatically populated based on the specified basis vectors.
     */
-    map<string, double> m_deviceChannels;
+    unordered_map<string, double> m_deviceChannels;
 
     /*! \brief Basis vectors for each LED source in the light. Represented in XYZ. */
     map<string, Eigen::Vector3d> m_basisVectors;

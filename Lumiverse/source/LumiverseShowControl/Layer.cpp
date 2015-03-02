@@ -292,10 +292,15 @@ namespace ShowControl {
               continue;
             }
 
-            // Generic alpha blending formula is res = src * opacity + dest * (1 - opacity)
-            // Looks an awful lot like a lerp no?
-            shared_ptr<LumiverseType> res = LumiverseTypeUtils::lerp(dest, src, m_opacity);
-            LumiverseTypeUtils::copyByVal(res.get(), dest);
+            if (m_opacity >= 1) {
+              LumiverseTypeUtils::copyByVal(src, dest);
+            }
+            else {
+              // Generic alpha blending formula is res = src * opacity + dest * (1 - opacity)
+              // Looks an awful lot like a lerp no?
+              shared_ptr<LumiverseType> res = LumiverseTypeUtils::lerp(dest, src, m_opacity);
+              LumiverseTypeUtils::copyByVal(res.get(), dest);
+            }
           }
         }
       }

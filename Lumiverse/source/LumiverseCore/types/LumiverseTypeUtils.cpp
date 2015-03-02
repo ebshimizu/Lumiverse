@@ -272,7 +272,7 @@ LumiverseType* LumiverseTypeUtils::loadFromJSON(JSONNode node) {
         weightNode != node.end() && modeNode != node.end())
       {
         // Get the channel data into a map
-        map<string, double> channels;
+        unordered_map<string, double> channels;
         JSONNode::const_iterator c = channelsNode->begin();
 
         while (c != channelsNode->end()) {

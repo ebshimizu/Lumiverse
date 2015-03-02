@@ -17,7 +17,7 @@ namespace Lumiverse {
     m_basisVectors = basis;
   }
 
-  LumiverseColor::LumiverseColor(map<string, double> params, map<string, Eigen::Vector3d> basis, ColorMode mode, double weight) {
+  LumiverseColor::LumiverseColor(unordered_map<string, double> params, map<string, Eigen::Vector3d> basis, ColorMode mode, double weight) {
     m_weight = weight;
     m_mode = mode;
 
@@ -38,7 +38,10 @@ namespace Lumiverse {
       m_mode = otherColor->m_mode;
 
       m_mapMutex.lock();
-      m_deviceChannels = otherColor->m_deviceChannels;
+      m_deviceChannels.clear();
+      for (const auto& kvp : otherColor->m_deviceChannels) {
+        m_deviceChannels[kvp.first] = kvp.second;
+      }
       m_basisVectors = otherColor->m_basisVectors;
       m_mapMutex.unlock();
     }
@@ -49,7 +52,10 @@ namespace Lumiverse {
     m_mode = other->m_mode;
 
     m_mapMutex.lock();
-    m_deviceChannels = other->m_deviceChannels;
+    m_deviceChannels.clear();
+    for (const auto& kvp : other->m_deviceChannels) {
+      m_deviceChannels[kvp.first] = kvp.second;
+    }
     m_basisVectors = other->m_basisVectors;
     m_mapMutex.unlock();
   }
@@ -59,7 +65,10 @@ namespace Lumiverse {
     m_mode = other.m_mode;
 
     m_mapMutex.lock();
-    m_deviceChannels = other.m_deviceChannels;
+    m_deviceChannels.clear();
+    for (const auto& kvp : other.m_deviceChannels) {
+      m_deviceChannels[kvp.first] = kvp.second;
+    }
     m_basisVectors = other.m_basisVectors;
     m_mapMutex.unlock();
   }
@@ -86,7 +95,7 @@ namespace Lumiverse {
     // Resets the color channels to 0.
     m_weight = 1;
 
-    for (map<string, double>::iterator it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
+    for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
       it->second = 0;
     }
   }
@@ -350,11 +359,13 @@ namespace Lumiverse {
   void LumiverseColor::operator=(LumiverseColor& other) {
     m_weight = other.m_weight;
     m_mode = other.m_mode;
-    
+
     m_mapMutex.lock();
-    m_deviceChannels = other.m_deviceChannels;
+    for (const auto& kvp : other.m_deviceChannels) {
+      m_deviceChannels[kvp.first] = kvp.second;
+    }
     m_basisVectors = other.m_basisVectors;
-    m_mapMutex.unlock();
+    m_mapMutex.unlock();;
   }
 
   LumiverseColor& LumiverseColor::operator+=(double val) {
