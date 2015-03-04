@@ -220,46 +220,46 @@ target_link_libraries(LumiverseCore ${ACTIVE_LIBRARIES})
 target_link_libraries(LumiverseCoreShared libjson ${ACTIVE_LIBRARIES})
 
 # Installation time
-FILE(GLOB corefiles ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+FILE(GLOB corefiles ${PROJECT_SOURCE_DIR}/LumiverseCore/*.h)
 INSTALL(FILES ${corefiles} DESTINATION include)
 
-FILE(GLOB typefiles ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_SOURCE_DIR}/LumiverseCore/types/*.h)
+FILE(GLOB typefiles ${PROJECT_SOURCE_DIR}/LumiverseCore/${PROJECT_SOURCE_DIR}/LumiverseCore/types/*.h)
 INSTALL(FILES ${typefiles} DESTINATION include/types)
 
-FILE(GLOB dmxfiles ${CMAKE_CURRENT_SOURCE_DIR}/DMX/*.h)
+FILE(GLOB dmxfiles ${PROJECT_SOURCE_DIR}/LumiverseCore/DMX/*.h)
 INSTALL(FILES ${dmxfiles} DESTINATION include/DMX)
 
-FILE(GLOB simulationfiles ${CMAKE_CURRENT_SOURCE_DIR}/Simulation/*.h)
+FILE(GLOB simulationfiles ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/*.h)
 INSTALL(FILES ${simulationfiles} DESTINATION include/Simulation)
 
-FILE(GLOB jsonfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/*.h)
+FILE(GLOB jsonfiles ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/libjson/*.h)
 INSTALL(FILES ${jsonfiles} DESTINATION include/lib/libjson)
 
-FILE(GLOB jsoninternal ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Source/*.h)
+FILE(GLOB jsoninternal ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/libjson/_internal/Source/*.h)
 INSTALL(FILES ${jsoninternal} DESTINATION include/lib/libjson/_internal/Source)
 
-FILE(GLOB jsoninternal2 ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Source/JSONDefs/*.h)
+FILE(GLOB jsoninternal2 ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/libjson/_internal/Source/JSONDefs/*.h)
 INSTALL(FILES ${jsoninternal2} DESTINATION include/lib/libjson/_internal/Source/JSONDefs)
 
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Dependencies/libbase64++/libbase64++.h
+INSTALL(FILES ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/libjson/_internal/Dependencies/libbase64++/libbase64++.h
 	DESTINATION include/lib/libjson/_internal/Dependencies/libbase64++)
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/libjson/_internal/Dependencies/mempool++/mempool.h
+INSTALL(FILES ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/libjson/_internal/Dependencies/mempool++/mempool.h
 	DESTINATION include/lib/libjson/_internal/Dependencies/mempool)
 
-FILE(GLOB clpfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/lib/clp/*.h)
+FILE(GLOB clpfiles ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/clp/*.hpp ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/clp/*.h)
 INSTALL(FILES ${clpfiles} DESTINATION include/lib/clp)
 
-FILE(GLOB pngbinfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/libpng/*.lib)
+FILE(GLOB pngbinfiles ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/libpng/*.lib)
 INSTALL(FILES ${pngbinfiles} DESTINATION lib)
 
-FILE(GLOB pngfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/libpng/*.h)
+FILE(GLOB pngfiles ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/libpng/*.h)
 INSTALL(FILES ${pngfiles} DESTINATION include/lib/libpng)
 
 IF (LumiverseCore_INCLUDE_ARNOLD)
     FILE(GLOB arnoldfiles ${LumiverseCore_ARNOLD_PATH}/include/*.h)
     INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold/include)
 
-    FILE(GLOB arnoldbinfiles ${CMAKE_CURRENT_SOURCE_DIR}/lib/arnold/bin/*)
+    FILE(GLOB arnoldbinfiles ${LumiverseCore_ARNOLD_PATH}/bin/*)
     INSTALL(FILES ${arnoldbinfiles} DESTINATION lib)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
@@ -267,7 +267,7 @@ INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
 INSTALL(TARGETS LumiverseCoreShared DESTINATION lib)
 
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
-    FILE(GLOB pro2files ${CMAKE_CURRENT_SOURCE_DIR}/lib/ftd2xx/*.H)
+    FILE(GLOB pro2files ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/ftd2xx/*.H)
     INSTALL(FILES ${pro2files} DESTINATION include/lib/ftd2xx)
     # You'll have to copy over the right file for ftd2xx to use it properly until I
     # can get this library replaced.
