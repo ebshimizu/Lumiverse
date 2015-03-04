@@ -72,11 +72,12 @@ bool Device::getParam(string param, float& val) {
 }
 
 LumiverseType* Device::getParam(string param) {
-  if (m_parameters.count(param) > 0) {
-    return m_parameters[param];
+  try {
+    return m_parameters.at(param);
   }
-
-  return nullptr;
+  catch (exception e) {
+    return nullptr;
+  }
 }
 
 LumiverseFloat* Device::getFloat(string param) {
@@ -279,30 +280,29 @@ bool Device::setColorChannel(string param, string channel, double val) {
 }
     
 void Device::copyParamByValue(string param, LumiverseType* source) {
-    LumiverseType *target = getParam(param);
+  LumiverseType *target = m_parameters[param];
     
-	// Skips this copy if the target value equals the current value
-    if (!LumiverseTypeUtils::areSameType(source, target) ||
-		LumiverseTypeUtils::equals(target, source))
-        return;
+	// Skips this copy if types don't match.
+  if (!LumiverseTypeUtils::areSameType(source, target))
+    return;
     
-    if (source->getTypeName() == "float") {
-        *((LumiverseFloat*)target) = *((LumiverseFloat*)source);
-    }
-    else if (source->getTypeName() == "enum") {
-        *((LumiverseEnum*)target) = *((LumiverseEnum*)source);
-    }
-    else if (source->getTypeName() == "color") {
-        *((LumiverseColor*)target) = *((LumiverseColor*)source);
-    }
+  if (source->getTypeName() == "float") {
+    *((LumiverseFloat*)target) = *((LumiverseFloat*)source);
+  }
+  else if (source->getTypeName() == "enum") {
+    *((LumiverseEnum*)target) = *((LumiverseEnum*)source);
+  }
+  else if (source->getTypeName() == "color") {
+    *((LumiverseColor*)target) = *((LumiverseColor*)source);
+  }
 	else if (source->getTypeName() == "orientation") {
 		*((LumiverseOrientation*)target) = *((LumiverseOrientation*)source);
 	}
-    else {
-        return;
-    }
+  else {
+      return;
+  }
     
-    onParameterChanged();
+  onParameterChanged();
 }
     
 bool Device::paramExists(string param) {

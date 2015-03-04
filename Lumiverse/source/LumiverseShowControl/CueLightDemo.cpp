@@ -10,112 +10,93 @@ using namespace std;
 using namespace Lumiverse;
 using namespace Lumiverse::ShowControl;
 
-int main(int argc, char**argv) {
-  Rig rig("C:/Users/eshimizu/Documents/Lumiverse/Core/Lumiverse/data/movingLights_DMX.rig.json");
+std::chrono::time_point<std::chrono::system_clock, std::chrono::system_clock::duration> start;
+std::chrono::time_point<std::chrono::system_clock, std::chrono::system_clock::duration> loopEnd;
+float fps;
 
-  Playback pb(&rig, "C:/Users/eshimizu/Documents/Lumiverse/test.playback.json");
+void getFPS() {
+  loopEnd = chrono::high_resolution_clock::now();
+
+  float elapsed = chrono::duration_cast<chrono::milliseconds>(loopEnd - start).count() / 1000.0f;
+  fps = 1 / elapsed;
+  start = loopEnd;
+}
+
+int main(int argc, char**argv) {
+	//Logger::setLogLevel(ERR);
+  Rig rig("C:/Users/eshimizu/Documents/Lumiverse/Core/Lumiverse/source/LumiverseShowControl/PBridge.rig.json");
+
+  Playback pb(&rig);
   pb.attachToRig();
 
   shared_ptr<Layer> layer1(new Layer(&rig, &pb, "layer1", 1));
-  shared_ptr<Layer> layer2(new Layer(&rig, &pb, "layer2", 2));
 
   layer1->setMode(Layer::BLEND_OPAQUE);
   layer1->activate();
-  layer2->activate();
-  layer2->setOpacity(1);
+
+  start = chrono::high_resolution_clock::now();
+  rig.addFunction(2, std::function<void()>(getFPS));
 
   rig.init();
-
-  DeviceSet inno = rig.select("inno");
-
-  LumiverseColor* color = (LumiverseColor*)rig.getDevice("inno")->getParam("color");
-  color->setxy(0.4, 0.4);
-
-  inno.setParam("intensity", 0.0f);
-  inno.setParam("shutter", "OPEN");
-  inno.setParam("tilt", 135);
-  inno.setParam("pan", 270);
-
-  shared_ptr<Timeline> cue1 = shared_ptr<Timeline>(new SineWave(3, 0.5, 0, 0.5));
-  cue1->setLoops(-1);
-  //shared_ptr<Timeline> cue1(new Timeline());
-  //cue1->setKeyframe(&rig, 0, false);
-
-  //color->setxy(0.45f, 0.45f);
-
-  //cue1->setKeyframe(&rig, 1000, false);
-
-  //color->setxy(0.40f, 0.45f);
-  //cue1->setKeyframe(&rig, 2000);
-  //cue1->setLoops(-1);
-
-  shared_ptr<Timeline> cue2(new Timeline());
-  inno.setParam("intensity", 0.0f);
-  cue2->setKeyframe(&rig, 0, true);
-  cue2->setKeyframe(&rig, 5000, false);
-  cue2->setKeyframe("inno:pan", 0, "cue1", 0);
-  cue2->setKeyframe("inno:pan", 5000, "cue1", 5000);
-  //cue2->addEvent(10000, shared_ptr<Event>(new Event([layer1](){ layer1->stop(); layer1->play("cue3"); layer1->resume(); })));
-
-  shared_ptr<Timeline> cue3(new Timeline());
-  inno.setParam("intensity", 0.0f);
-  cue3->setKeyframe(&rig, 0, true);
-  cue3->setKeyframe(&rig, 5000, false);
-
-  //Cue cue2(&rig, 3);
-  //list1->storeCue(2, cue2);
-
-  //inno.reset();
-  //inno.setParam("pan", 0.5f);
-
-  //Cue cue3(&rig);
-  //list2->storeCue(1, cue3);
-
-  // Add cue list to playback
-  //pb.addCueList(list1);
-  //pb.addCueList(list2);
-  pb.addTimeline("cue1", cue1);
-  pb.addTimeline("cue2", cue2);
-  pb.addTimeline("cue3", cue3);
+  pb.start();
 
   // Add layer to playback
   pb.addLayer(layer1);
-  pb.addLayer(layer2);
+  pb.getProgrammer()->clearAndReset();
 
-  // Add cue list to layer
-
-  // Prepare playback
-  pb.start();
   rig.run();
 
-  // Test keyframe insertion
-  //DeviceSet chan1 = rig.query("#1");
-  //chan1.setParam("intensity", 0.0f);
-  //list1.getCue(1)->insertKeyframe(4, chan1);
-  //list1.getCue(1)->insertKeyframe(5, chan1);
-
-  //chan1.setParam("intensity", 1.0f);
-  //list1.getCue(1)->insertKeyframe(4.5f, chan1);
-
-  // Test keyframe overwrite
-  //chan1.setParam("intensity", 0.0f);
-  //list1.getCue(1)->insertKeyframe(4.5f, chan1);
-
-  getchar();
-  pb.getProgrammer()->clearAndReset();
-  pb.save("C:/Users/eshimizu/Documents/Lumiverse/test.playback.json", true);
-
-  cout << "Layers ready.";
-  getchar();
-  layer1->play("cue2");
-  //getchar();
-  //layer1->play("cue3");
-  //this_thread::sleep_for(chrono::seconds(5));
-
+  cout << "Text to Lighting converter. Enter some text and watch the bridge react.\n";
   while (1) {
-    float val;
-    rig["inno"]->getParam("intensity", val);
-    cout << "inno Intensity: " << val << "\n";
-    this_thread::sleep_for(chrono::milliseconds(10));
+    cout << ">> ";
+
+    string input;
+    getline(cin, input);
+
+		// Create a timeline to work with.
+		pb.deleteTimeline("anim");
+		shared_ptr<Timeline> anim(new Timeline());
+		pb.addTimeline("anim", anim);
+
+		vector<char> chars(input.begin(), input.end());
+
+		size_t time = 0;
+		for (const auto& c : chars) {
+			// Effect is fade up and fade down to random color in 1 second. Will overlap.
+			// Doubles of characters will cause some interesting effects. 
+
+			cout << "Processing: " << c;
+			// There should be a way to do this in blind however there is no function to do
+			// that yet.
+			pb.getProgrammer()->clearAndReset();
+			int chanNum1 = ((int)c % 114) + 1;
+			int chanNum2 = ((int)c*47 % 114) + 1;
+			cout << " (" << chanNum1 << ") (" << chanNum2 << ")\n";
+
+
+			DeviceSet panel = rig.getChannel(chanNum1);
+			panel.add(chanNum2);
+			float r = ((float)(rand() % 100)) / 100.0;
+			float g = ((float)(rand() % 100)) / 100.0;
+			float b = ((float)(rand() % 100)) / 100.0;
+      cout << "(" << r << ", " << g << ", " << b << ")\n";
+      pb.getProgrammer()->writeToTimeline(panel, anim, time);
+			pb.getProgrammer()->setColorRGBRaw(panel, "color", r, g, b, 1);
+      pb.getProgrammer()->writeToTimeline(panel, anim, time + 200);
+			pb.getProgrammer()->setColorRGBRaw(panel, "color", r, g, b, 0);
+      pb.getProgrammer()->writeToTimeline(panel, anim, time + 2000);
+
+			time += 200;
+		}
+
+		pb.getProgrammer()->clearAndReset();
+		cout << "Show created, playing back...\n";
+    getchar();
+		pb.getLayer("layer1")->play("anim");
+
+    while (1) {
+      std::cout << "FPS: " << fps << "\n";
+      this_thread::sleep_for(chrono::milliseconds(100));
+    }
   }
 }

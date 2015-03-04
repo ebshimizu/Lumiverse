@@ -425,47 +425,41 @@ size_t DMXPatch::sizeOfDeviceMap(string id) {
   if (m_deviceMaps.count(id) == 0)
     return -1;
 
-  unsigned int max = 0;
-  conversionType maxType = FLOAT_TO_SINGLE;
+  unsigned int size = 0;
   for (auto pd : m_deviceMaps[id]) {
-    if (pd.second.startAddress > max) {
-      max = pd.second.startAddress;
-      maxType = pd.second.type;
+    switch (pd.second.type) {
+    case (FLOAT_TO_SINGLE) :
+    case (ENUM) :
+      size += 1;
+      break;
+    case (FLOAT_TO_FINE) :
+    case (ORI_TO_FINE) :
+      size += 2;
+      break;
+    case (COLOR_RGB) :
+      size += 3;
+      break;
+    case (COLOR_RGBW) :
+      size += 4;
+      break;
+    case (COLOR_LUSTRPLUS) :
+      size += 7;
+      break;
+    case (RGB_REPEAT2) :
+      size += 3 * 2;
+      break;
+    case (RGB_REPEAT3) :
+      size += 3 * 3;
+      break;
+    case (RGB_REPEAT4) :
+      size += 3 * 4;
+      break;
+    default:
+      break;
     }
   }
 
-  switch (maxType) {
-  case (FLOAT_TO_SINGLE) :
-  case (ENUM) :
-    max += 1;
-    break;
-  case (FLOAT_TO_FINE) :
-  case (ORI_TO_FINE) :
-    max += 2;
-    break;
-  case (COLOR_RGB) :
-    max += 3;
-    break;
-  case (COLOR_RGBW) :
-    max += 4;
-    break;
-  case (COLOR_LUSTRPLUS) :
-    max += 7;
-    break;
-  case (RGB_REPEAT2) :
-    max += 3 * 2;
-    break;
-  case (RGB_REPEAT3) :
-    max += 3 * 3;
-    break;
-  case (RGB_REPEAT4) :
-    max += 3 * 4;
-    break;
-  default:
-    break;
-  }
-
-  return max;
+  return size;
 }
 
 vector<string> DMXPatch::getInterfaceIDs() {

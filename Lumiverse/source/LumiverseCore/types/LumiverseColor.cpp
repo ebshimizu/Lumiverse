@@ -364,7 +364,7 @@ namespace Lumiverse {
     for (const auto& kvp : other.m_deviceChannels) {
       m_deviceChannels[kvp.first] = kvp.second;
     }
-    m_basisVectors = other.m_basisVectors;
+    //m_basisVectors = other.m_basisVectors;
     m_mapMutex.unlock();;
   }
 

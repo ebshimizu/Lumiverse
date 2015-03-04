@@ -257,7 +257,9 @@ namespace ShowControl {
     }
 
     for (auto& device : active) {
-      if (currentState.count(device.first) > 0) {
+      try {
+        auto d = currentState.at(device.first);
+
         // Time to start dealin with layer specific blend modes.
         if (m_mode == NULL_INTENSITY) {
           // Skip devices with intensity 0
@@ -272,7 +274,7 @@ namespace ShowControl {
         for (auto& param : device.second->getRawParameters()) {
           string paramName = param.first;
           LumiverseType* src = param.second;
-          LumiverseType* dest = currentState[device.first]->getParam(param.first);
+          LumiverseType* dest = d->getParam(param.first);
           
           if (dest == nullptr) {
             // Don't do anything if the destination doesn't have an existing value.
@@ -304,7 +306,7 @@ namespace ShowControl {
           }
         }
       }
-      else {
+      catch (exception e) {
         stringstream ss;
         ss << "State given to layer " << m_name << " does not contain a device with id " << device.first;
         Logger::log(WARN, ss.str());

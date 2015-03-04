@@ -183,83 +183,83 @@ shared_ptr<LumiverseType> Timeline::getValueAtTime(Device* d, string paramName, 
     return nullptr;
 
   string identifier = getTimelineKey(d, paramName);
-
-  // get the keyframes if they exist, otherwise return null immediately.
-  if (_timelineData.count(identifier) == 0)
-    return nullptr;
-
   time = getLoopTime(time);
 
-  auto keyframes = _timelineData[identifier];
+  try {
+    auto keyframes = _timelineData.at(identifier);
 
-  // If the id has a keyframe map, but no keyframes, we do nothing and return null.
-  if (keyframes.size() == 0)
-    return nullptr;
+    // If the id has a keyframe map, but no keyframes, we do nothing and return null.
+    if (keyframes.size() == 0)
+      return nullptr;
 
-  Keyframe first;
-  Keyframe next;
-  bool nextFound = false;
+    Keyframe first;
+    Keyframe next;
+    bool nextFound = false;
 
-  for (auto keyframe = keyframes.begin(); keyframe != keyframes.end();) {
-    if (keyframe->first > time) {
-      next = keyframe->second;
+    for (auto keyframe = keyframes.begin(); keyframe != keyframes.end();) {
+      if (keyframe->first > time) {
+        next = keyframe->second;
 
-      // Special case if they keyframe we found is after the current time but there is no keyframe
-      // before the keyframe we found. Example: no keyframe at t = 0 but keyframe at t = 1200, with
-      // t currently equal to 50.
-      if (keyframe == keyframes.begin()) {
-        first = next;
+        // Special case if they keyframe we found is after the current time but there is no keyframe
+        // before the keyframe we found. Example: no keyframe at t = 0 but keyframe at t = 1200, with
+        // t currently equal to 50.
+        if (keyframe == keyframes.begin()) {
+          first = next;
+        }
+        else {
+          first = prev(keyframe)->second;
+        }
+        nextFound = true;
+        break;
       }
-      else {
-        first = prev(keyframe)->second;
-      }
-      nextFound = true;
-      break;
+
+      ++keyframe;
     }
 
-    ++keyframe;
-  }
+    if (!nextFound) {
+      // We are at the end of the defined keyframes, so return the value of the most
+      // recent keyframe
+      auto last = keyframes.rbegin()->second;
 
-  if (!nextFound) {
-    // We are at the end of the defined keyframes, so return the value of the most
-    // recent keyframe
-    auto last = keyframes.rbegin()->second;
+      if (last.timelineID != "") {
+        if (tls.count(last.timelineID) > 0) {
+          return tls[last.timelineID]->getValueAtTime(d, paramName, time - last.t + last.timelineOffset, tls);
+        }
+        else return nullptr;
+      }
 
-    if (last.timelineID != "") {
-      if (tls.count(last.timelineID) > 0) {
-        return tls[last.timelineID]->getValueAtTime(d, paramName, time - last.t + last.timelineOffset, tls);
+      return last.val;
+    }
+
+    // Note that in the instance when we use the current state, that value is pre-filled
+    // at the time of timeline run initialization.
+
+    // Otherwise we have our keyframes and can now do some ops.
+    float a = (float)(time - first.t) / (float)(next.t - first.t);
+
+    shared_ptr<LumiverseType> x = first.val;
+    shared_ptr<LumiverseType> y = next.val;
+
+    // Check if any keyframe references timelines
+    // If no such timeline exists in the playback, return nullptr (indicate to layer to skip value for this)
+    if (first.timelineID != "") {
+      if (tls.count(first.timelineID) > 0) {
+        x = tls[first.timelineID]->getValueAtTime(d, paramName, time - first.t + first.timelineOffset, tls);
+      }
+      else return nullptr;
+    }
+    if (next.timelineID != "") {
+      if (tls.count(next.timelineID) > 0) {
+        y = tls[next.timelineID]->getValueAtTime(d, paramName, time - next.t + next.timelineOffset, tls);
       }
       else return nullptr;
     }
 
-    return last.val;
+    return LumiverseTypeUtils::lerp(x.get(), y.get(), a);
   }
-
-  // Note that in the instance when we use the current state, that value is pre-filled
-  // at the time of timeline run initialization.
-
-  // Otherwise we have our keyframes and can now do some ops.
-  float a = (float)(time - first.t) / (float)(next.t - first.t);
-
-  shared_ptr<LumiverseType> x = first.val;
-  shared_ptr<LumiverseType> y = next.val;
-
-  // Check if any keyframe references timelines
-  // If no such timeline exists in the playback, return nullptr (indicate to layer to skip value for this)
-  if (first.timelineID != "") {
-    if (tls.count(first.timelineID) > 0) {
-      x = tls[first.timelineID]->getValueAtTime(d, paramName, time - first.t + first.timelineOffset, tls);
-    }
-    else return nullptr;
+  catch (exception e) {
+    return nullptr;
   }
-  if (next.timelineID != "") {
-    if (tls.count(next.timelineID) > 0) {
-      y = tls[next.timelineID]->getValueAtTime(d, paramName, time - next.t + next.timelineOffset, tls);
-    }
-    else return nullptr;
-  }
-
-  return LumiverseTypeUtils::lerp(x.get(), y.get(), a);
 }
 
 void Timeline::executeEvents(size_t prevTime, size_t currentTime) {
