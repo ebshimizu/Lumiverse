@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 2.6)
 
 project (Lumiverse)
 set (LUMIVERSE_DOCS ON CACHE BOOL "Generate Documentation Project (requires Doxygen)")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../cmake/modules")
 
 # defaulting to release build
 IF (NOT CMAKE_BUILD_TYPE)
@@ -42,6 +43,7 @@ set (LumiverseCore_INCLUDE_DMXPRO2INTERFACE ON CACHE BOOL "Build LumiverseCore w
 set (LumiverseCore_INCLUDE_KINET ON CACHE BOOL "Build LumiverseCore with KiNet Driver")
 set (LumiverseCore_INCLUDE_ARTNET ON CACHE BOOL "Build LumiverseCore with ArtNet Driver")
 set (LumiverseCore_PYTHON_BINDINGS ON CACHE BOOL "Build LumiverseCore bindings for Python")
+set (LumiverseCore_INCLUDE_OLA ON CACHE BOOL "Build LumiverseCore with OLA Driver")
 set (LumiverseCore_CSHARP_BINDINGS OFF CACHE BOOL "Build LumiverseCore bindings for C#")
 
 # Config interface options
@@ -56,6 +58,10 @@ ENDIF (LumiverseCore_INCLUDE_KINET)
 IF (LumiverseCore_INCLUDE_ARTNET)
     SET (LumiverseCore_USE_ARTNET "#define USE_ARTNET")
 ENDIF (LumiverseCore_INCLUDE_ARTNET)
+
+IF (LumiverseCore_INCLUDE_OLA)
+    SET (LumiverseCore_USE_OLA "#define USE_OLA")
+ENDIF (LumiverseCore_INCLUDE_OLA)
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/LumiverseCore/LumiverseCoreConfig.h.in"
@@ -161,12 +167,23 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
   )
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
+# Add ArtNet code if used
 IF (LumiverseCore_INCLUDE_ARTNET)
     SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE}
       ${PROJECT_SOURCE_DIR}/LumiverseCore/DMX/ArtNetInterface.h
       ${PROJECT_SOURCE_DIR}/LumiverseCore/DMX/ArtNetInterface.cpp)
     SET (ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} libartnet)
 ENDIF (LumiverseCore_INCLUDE_ARTNET)
+
+# Add OLA code if used
+IF (LumiverseCore_INCLUDE_OLA)
+  find_package(OLA REQUIRED)
+  include_directories(${OLA_INCLUDE_DIR})
+  set(ACTIVE_LIVRARIES ${ACTIVE_LIBRARIES} ${OLA_LIBRARIES})
+  SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE}
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/DMX/OLAInterface.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/DMX/OLAInterface.cpp)
+ENDIF (LumiverseCore_INCLUDE_OLA)
 
 # Build the libraries
 add_library(LumiverseCore ${LUMIVERSE_CORE_SOURCE})

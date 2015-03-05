@@ -225,7 +225,7 @@ namespace Lumiverse {
     /*!
     * \brief Ensures that the value of this float is between min and max.
     */
-    inline void clamp();
+    void clamp();
 
     /*!
     * \brief Returns the specified value as the specified unit.
