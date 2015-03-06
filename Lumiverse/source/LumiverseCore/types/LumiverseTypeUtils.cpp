@@ -128,7 +128,7 @@ shared_ptr<LumiverseType> LumiverseTypeUtils::lerp(LumiverseType* lhs, Lumiverse
     return nullptr;
 }
 
-inline bool LumiverseTypeUtils::areSameType(LumiverseType* lhs, LumiverseType* rhs) {
+bool LumiverseTypeUtils::areSameType(LumiverseType* lhs, LumiverseType* rhs) {
   if (lhs == nullptr || rhs == nullptr)
     return false;
   if (lhs->getTypeName() != rhs->getTypeName())

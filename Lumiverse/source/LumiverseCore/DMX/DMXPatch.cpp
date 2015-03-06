@@ -1,5 +1,26 @@
 #include "DMXPatch.h"
-#include "DMXPatch.h"
+
+#ifdef USE_KINET
+#ifdef _WIN32
+// I don't really know why I need this, but apparently the windows socket
+// includes get really weird.
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include "KiNetInterface.h"
+#endif
+
+#ifdef USE_ARTNET
+#include "ArtNetInterface.h"
+#endif
+
+#ifdef USE_DMXPRO2
+#include "DMXPro2Interface.h"
+#endif
+
+#ifdef USE_OLA
+#include "OLAInterface.h"
+#endif
+
 namespace Lumiverse {
 
 DMXPatch::DMXPatch() {
@@ -79,6 +100,17 @@ void DMXPatch::loadJSON(const JSONNode data) {
             Logger::log(INFO, ss.str());
 #else
             Logger::log(WARN, "LumiverseCore built without ArtNet support. Skipping interface...");
+#endif
+          }
+          else if (type->as_string() == "OLAInterface") {
+#ifdef USE_OLA
+            OLAInterface* intface = new OLAInterface(iface->name());
+            ifaceMap[iface->name()] = (DMXInterface*) intface;
+            stringstream ss;
+            ss << "Added OLA Interface \"" << iface->name();
+            Logger::log(INFO, ss.str());
+#else
+            Logger::log(WARN, "LumiverseCore built without OLA support. Skipping interface...");
 #endif
           }
           else {

@@ -14,7 +14,7 @@ ENDIF (NOT WIN32)
 
 IF (UNIX OR LINUX)
 	SET(CMAKE_C_FLAGS "-fPIC")
-  MESSAGE("Detected platform Unix: compiling libartner with -fPIC")
+  MESSAGE("Detected platform Unix: compiling libartnet with -fPIC")
 ENDIF (UNIX OR LINUX)
 	
 add_library(libartnet

@@ -8,27 +8,10 @@
 
 #include "LumiverseCoreConfig.h"
 
-#ifdef USE_KINET
-#ifdef _WIN32
-// I don't really know why I need this, but apparently the windows socket
-// includes get really weird.
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include "KiNetInterface.h"
-#endif
-
-#ifdef USE_ARTNET
-#include "ArtNetInterface.h"
-#endif
-
 #include "../Patch.h"
 #include "DMXDevicePatch.h"
 #include "DMXInterface.h"
 #include "../lib/libjson/libjson.h"
-
-#ifdef USE_DMXPRO2
-#include "DMXPro2Interface.h"
-#endif
 
 #include <iostream>
 

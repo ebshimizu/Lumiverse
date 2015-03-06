@@ -19,30 +19,25 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <set>
+#include <unordered_map>
 
 namespace Lumiverse {
   /*!
-  * \brief Provides an interface to an ArtNet system
+  * \brief Provides an interface to an OLA server
   *
-  * Uses libartnet to provide ArtNet communication.
-  * ArtNet broadcasts via UDP on a specified subnet. The user is responsible for picking
-  * the right IPs to make the system work. This particular interface specifically sends out DMX ArtNet
-  * packets. 
+  * This class uses the streaming client version of OLA.
+  * As such, it doesn't utilize any of the more advanced RDMA features of OLA
+  * at the moment.
   */
   class OLAInterface : public DMXInterface
   {
   public:
     /*!
-    * \brief Creates a new ArtNet Interface
+    * \brief Creates a new OLA Interface
     *
     * \param id Identifier for this interface
-    * \param ip IP address for this ArtNet Node
-    * \param broadcast Broadcast address
-    * \param verbose Set to true to enable detailed logging to stdout
-    * \param protocolType Tells this interface which interface to use.
     */
-    OLAInterface(string id, string ip, string broadcast = "", bool verbose = false);
+    OLAInterface(string id);
 
     ~OLAInterface();
 
@@ -56,16 +51,21 @@ namespace Lumiverse {
 
     virtual JSONNode toJSON();
 
-    virtual string getInterfaceType() { return "ArtNetInterface"; }
+    virtual string getInterfaceType() { return "OLAInterface"; }
   
   private:
     /*!
-    \brief List of universes used by ArtNet.
+    \brief List of universes used by OLA
 
     Universes are initialized the first time they get
-    encountered in the update process. 
+    encountered in the update process.
     */
-    set<int> m_universes;
+    unordered_map<unsigned int, ola::DmxBuffer> _universes;
+
+    /*!
+    \brief Connection to the OLA server.
+    */
+    ola::client::StreamingClient _olaClient;
   };
 }
 

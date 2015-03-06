@@ -71,7 +71,7 @@ namespace Lumiverse {
     * 
     * \return True if lhs and rhs are not null and both the same type
     */
-    inline bool areSameType(LumiverseType* lhs, LumiverseType* rhs);
+    bool areSameType(LumiverseType* lhs, LumiverseType* rhs);
 
     Eigen::Matrix3f getRotationMatrix(Eigen::Vector3f lookat, Eigen::Vector3f up, LumiverseOrientation pan, LumiverseOrientation tilt);
 
