@@ -86,8 +86,6 @@ namespace Lumiverse {
     /*!
     \brief Multiplies a parameter by a constant value (typically from 0 to 1, but no limits
     are enforced in this function).
-
-    The scaling is done inline, as in this function directly modifies the value passed in.
     \param val LumiverseType to scale.
     \param scale The scaling factor.
     */

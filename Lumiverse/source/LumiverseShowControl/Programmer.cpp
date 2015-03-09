@@ -301,6 +301,8 @@ bool Programmer::loadJSON(JSONNode data) {
   else {
     captured = DeviceSet(m_rig, *c);
   }
+
+  return true;
 }
 
 void Programmer::addCaptured(DeviceSet set) {
