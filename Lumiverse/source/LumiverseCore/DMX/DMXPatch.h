@@ -122,6 +122,11 @@ namespace Lumiverse {
     void assignInterface(DMXInterface* iface, unsigned int universe);
 
     /*!
+    \brief Assigns an interface already in the Patch to a universe.
+    */
+    void assignInterface(string iface, unsigned int universe);
+
+    /*!
     \brief Removes all interfaces from the selected universe
     Optionally specify a specific interface to remvoe from the universe.
     */

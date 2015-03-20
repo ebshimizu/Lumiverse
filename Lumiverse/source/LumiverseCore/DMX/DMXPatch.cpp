@@ -348,6 +348,15 @@ void DMXPatch::assignInterface(DMXInterface* iface, unsigned int universe) {
   }
 }
 
+void DMXPatch::assignInterface(string id, unsigned int universe) {
+  if (m_interfaces.count(id) == 0) {
+    Logger::log(ERR, "No interface with id " + id + " found in DMXPatch object.");
+    return;
+  }
+
+  assignInterface(m_interfaces[id], universe);
+}
+
 void DMXPatch::removeInterface(unsigned int universe, string id) {
   vector<multimap<string, unsigned int>::iterator> toRemove;
   for (auto it = m_ifacePatch.begin(); it != m_ifacePatch.end(); it++) {
