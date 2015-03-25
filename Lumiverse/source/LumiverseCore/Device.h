@@ -200,6 +200,36 @@ namespace Lumiverse {
     bool setParam(string param, LumiverseType* val);
 
     /*!
+    \brief Sets a parameter to a floating point value.
+    \sa setParam(string, LumiverseType*)
+    */
+    bool setParam(string param, LumiverseFloat* val) { return setParam(param, (LumiverseType*)val); }
+
+    /*!
+    \brief Sets a parameter to an enumeration type.
+    \sa setParam(string, LumiverseType*)
+    */
+    bool setParam(string param, LumiverseEnum* val) { return setParam(param, (LumiverseType*)val); }
+    
+    /*!
+    \brief Sets a parameter to a color value.
+    \sa setParam(string, LumiverseType*)
+    */
+    bool setParam(string param, LumiverseColor* val) { return setParam(param, (LumiverseType*)val); }
+    
+    /*!
+    \brief Sets a parameter to a orientation value.
+    \sa setParam(string, LumiverseType*)
+    */
+    bool setParam(string param, LumiverseOrientation* val) { return setParam(param, (LumiverseType*)val); }
+
+    // Mainly used for the python version of Lumiverse. 
+    bool setParam(string param, shared_ptr<LumiverseFloat>* val);
+    bool setParam(string param, shared_ptr<LumiverseEnum>* val);
+    bool setParam(string param, shared_ptr<LumiverseColor>* val);
+    bool setParam(string param, shared_ptr<LumiverseOrientation>* val);
+
+    /*!
     * \brief Sets the value of a LumiverseFloat or LumiverseOrientation parameter
     *
     * This function will not create a new parameter if the key doesn't exist.

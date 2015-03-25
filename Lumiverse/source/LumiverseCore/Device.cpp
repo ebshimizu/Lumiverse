@@ -145,6 +145,21 @@ bool Device::setParam(string param, LumiverseType* val) {
   return ret;
 }
 
+bool Device::setParam(string param, shared_ptr<LumiverseFloat>* val) {
+  return setParam(param, LumiverseTypeUtils::copy(val->get()));
+}
+
+bool Device::setParam(string param, shared_ptr<LumiverseEnum>* val) {
+  return setParam(param, LumiverseTypeUtils::copy(val->get()));
+}
+
+bool Device::setParam(string param, shared_ptr<LumiverseColor>* val) {
+  return setParam(param, LumiverseTypeUtils::copy(val->get()));
+}
+
+bool Device::setParam(string param, shared_ptr<LumiverseOrientation>* val) {
+  return setParam(param, LumiverseTypeUtils::copy(val->get()));
+}
 
 bool Device::setParam(string param, float val) {
   bool ret = true;
