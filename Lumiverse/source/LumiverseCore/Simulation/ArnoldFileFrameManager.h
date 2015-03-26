@@ -51,6 +51,11 @@ namespace Lumiverse {
 		 */
 		virtual void dump(time_t time, float *frame, size_t width, size_t height);
 
+    /*!
+    \brief Saves the specified image buffer to a file.
+    */
+    void saveToFile(string file, float *frame, size_t width, size_t height);
+
 		/*!
 		 * \brief Returns the frame buffer pointed by the current cursor.
 		 *

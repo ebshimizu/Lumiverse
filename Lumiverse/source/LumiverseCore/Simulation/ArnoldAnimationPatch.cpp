@@ -124,6 +124,53 @@ void ArnoldAnimationPatch::reset() {
 	SimulationAnimationPatch::reset(interrupt);
 }
 
+void ArnoldAnimationPatch::disableContinuousRenderMode() {
+  m_mode = SimulationAnimationMode::STOPPED;
+}
+
+void ArnoldAnimationPatch::enableContinuousRenderMode() {
+  m_mode = SimulationAnimationMode::INTERACTIVE;
+}
+
+void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string filename) {
+  if (m_mode != SimulationAnimationMode::STOPPED)
+    disableContinuousRenderMode();
+
+  FrameDeviceInfo frame;
+
+  // Fulls time and mode for frame info.
+  createFrameInfoHeader(frame);
+  createFrameInfoBody(devices, frame);
+
+  std::stringstream ss;
+  ss << "Rendering single frame: " << frame.time;
+  Logger::log(LDEBUG, ss.str());
+
+  // Interrupts the current rendering if in the interactive mode.
+  if (m_mode == SimulationAnimationMode::INTERACTIVE ||
+    m_mode == SimulationAnimationMode::RECORDING) {
+    interruptRender();
+  }
+
+  // Render immediately.
+  if (!m_interface.isOpen())
+    m_interface.init();
+
+  updateLight(frame.devices);
+  bool success = ArnoldPatch::renderLoop();
+
+  if (success) {
+    unsigned char *bytes = new unsigned char[getWidth() * getHeight() * 4];
+    floats_to_bytes(bytes, getBufferPointer(), getWidth(), getHeight());
+
+    if (!imageio_save_image(filename.c_str(), bytes, getWidth(), getHeight())) {
+      std::stringstream err_ss;
+      err_ss << "Error to write png: " << filename;
+      Logger::log(ERR, err_ss.str());
+    }
+  }
+}
+
 void ArnoldAnimationPatch::createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame) {
 	for (Device *d : devices) {
 		// Checks if the device is connect to this patch

@@ -293,7 +293,7 @@ void ArnoldPatch::modifyLightColor(Device *d, Eigen::Vector3d white) {
 	else {
 		map<string, Eigen::Vector3d> basis;
     basis["White"] = d->getGelColor(); // Returns D65 if no gel present.
-		map<string, double> channels;
+		unordered_map<string, double> channels;
 		channels["White"] = 1;
 		LumiverseColor white(channels, basis, ColorMode::ADDITIVE, 1);
 		white.setColorChannel("White", 1);

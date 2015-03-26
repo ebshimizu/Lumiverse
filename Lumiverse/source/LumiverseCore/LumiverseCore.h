@@ -67,13 +67,6 @@
 #include "DMX/DMXInterface.h"
 #include "lib/libjson/libjson.h"
 
-#include "Simulation/SimulationPatch.h"
-#include "Simulation/SimulationAnimationPatch.h"
-#include "Simulation/PhotoPatch.h"
-#include "Simulation/PhotoAnimationPatch.h"
-#include "Simulation/ArnoldFrameManager.h"
-#include "Simulation/ArnoldMemoryFrameManager.h"
-
 #ifdef USE_DMXPRO2
 #include "DMX/DMXPro2Interface.h"
 #endif
@@ -90,4 +83,10 @@
 #include <png.h>
 #include "Simulation/ArnoldPatch.h"
 #include "Simulation/ArnoldAnimationPatch.h"
+#include "Simulation/SimulationPatch.h"
+#include "Simulation/SimulationAnimationPatch.h"
+#include "Simulation/PhotoPatch.h"
+#include "Simulation/PhotoAnimationPatch.h"
+#include "Simulation/ArnoldFrameManager.h"
+#include "Simulation/ArnoldMemoryFrameManager.h"
 #endif

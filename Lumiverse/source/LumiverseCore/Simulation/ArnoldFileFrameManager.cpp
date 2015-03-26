@@ -30,6 +30,17 @@ void ArnoldFileFrameManager::dump(time_t time, float *frame, size_t width, size_
 	m_prev_frame = floor_frame;
 }
 
+void ArnoldFileFrameManager::saveToFile(string file, float *frame, size_t width, size_t height) {
+  unsigned char *bytes = new unsigned char[width * height * 4];
+  floats_to_bytes(bytes, frame, width, height);
+
+  if (!imageio_save_image(file.c_str(), bytes, width, height)) {
+    std::stringstream err_ss;
+    err_ss << "Error to write png: " << file;
+    Logger::log(ERR, err_ss.str());
+  }
+}
+
 bool ArnoldFileFrameManager::fileExists(std::string fileName) const {
 	FILE *fp = fopen(fileName.c_str(), "rb");
 	if (!fp)

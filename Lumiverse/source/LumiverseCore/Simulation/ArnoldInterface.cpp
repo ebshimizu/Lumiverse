@@ -288,7 +288,7 @@ void ArnoldInterface::init() {
     // Starts a arnold session
     AiBegin();
 
-	AiMsgSetLogFileName("J:/Lumiverse/Lumiverse/data/Jules/LOG");
+    AiMsgSetLogFileName("C:/Users/eshimizu/Documents/Lumiverse Shows/Jules/arnold.log");
 	AiMsgSetLogFileFlags(AI_LOG_ALL);
 
 	// Keeps directory of plugins absolute.
