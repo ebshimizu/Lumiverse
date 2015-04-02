@@ -1,85 +1,41 @@
 #include <string>
-#include "LumiverseDemoConfig.h"
 #include "LumiverseCore.h"
 
 using namespace std;
 using namespace Lumiverse;
 
 int main(int argc, char**argv) {
-  Rig rig("/home/falindrith/Documents/lumiverse/Lumiverse/data/movingLights.rig.json");
+  // Creates an empty rig.
+  Rig rig("C:/Users/eshimizu/Documents/Lumiverse/Core/Lumiverse/data/Jules/MLData.rig.json");
 
-  // Init rig
-  rig.init();
+  // Select a single ID
+  DeviceSet singleID = rig.select("fresnel_E1_2");
+  cout << singleID.info() << "\n";
 
-  // Test extra funcs
-  // rig.addFunction([]() { cout << "Testing additional functions\n"; });
+  // Select multiple IDs
+  DeviceSet multipleIDs = rig.select("fresnel_E1_2, s4_E_7");
+  cout << multipleIDs.info() << "\n";
 
-  rig.run();
+  // Select a channel range
+  // Select a single channel with #[number], for example rig.select("#10")
+  DeviceSet channels = rig.select("#1-10");
+  cout << channels.info() << "\n";
 
-  // Loop for stuff
-  cout << "Lumiverse Test Command Line\n";
-  cout << "Available commands: select [query], set [parameter]=[value], reset, info [device id], info selected\n";
-  cout << "Only floating point parameters are currently supported.\n";
-  DeviceSet current;
+  // Select using metadata
+  DeviceSet area1 = rig.select("$Area=1");
+  cout << area1.info() << "\n";
 
-  while (1) {
-    cout << ">> ";
+  // Select using metadata starts with
+  DeviceSet startswith = rig.select("$filename^=S4 Fresnel");
+  cout << startswith.info() << "\n";
 
-    string input;
-    getline(cin, input);
+  // Select all lights in area 2 with gel L201
+  DeviceSet areaFilter = rig.select("$Area=2[$gel=L201]");
+  cout << areaFilter.info() << "\n";
 
-    if (input.substr(0, 7) == "select ") {
-      current = rig.select(input.substr(7));
+  // Select all lights in area 2 with gel L201 or L135
+  DeviceSet areaFilter2 = rig.select("$Area=2[$gel=L201|$gel=L135]");
+  cout << areaFilter2.info() << "\n";
 
-      cout << "Query returned " << current.size() << " devices.\n";
-    }
-    else if (input.substr(0, 5) == "reset") {
-      current.reset();
-    }
-    else if (input.substr(0, 13) == "info selected") {
-      cout << current.info() << "\n";
-    }
-    else if (input.substr(0, 5) == "info ") {
-      string id = input.substr(5);
-
-      cout << rig.getDevice(id)->toString() << "\n";
-    }
-    else if (input.substr(0, 4) == "set ") {
-      // Set float
-      regex paramRegex("(\\w+)=(\\d*\\.\?\\d*)([f])");
-      string param = input.substr(4);
-      smatch matches;
-
-      regex_match(param, matches, paramRegex);
-
-      if (matches.size() != 4) {
-        // Try to set an enumeration
-        regex paramRegex("(\\w+)=([\\w_\\s\\b]+),\?(\\d*\\.\?\\d*)");
-        string param = input.substr(4);
-        smatch matches;
-
-        regex_match(param, matches, paramRegex);
-
-        if (matches.size() != 4) {
-          cout << "Invalid set command\n";
-        }
-
-        string key = matches[1];
-        string val = matches[2].str();
-
-        float val2 = -1.0f;
-        if (matches[3].length() > 0) {
-          stringstream(matches[3]) >> val2;
-        }
-
-        current.setParam(key, val, val2);
-      }
-
-      string key = matches[1];
-      float val;
-      stringstream(matches[2]) >> val;
-
-      current.setParam(key, val);
-    }
-  }
+  getchar();
 }

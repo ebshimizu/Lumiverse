@@ -240,7 +240,7 @@ target_link_libraries(LumiverseCoreShared libjson ${ACTIVE_LIBRARIES})
 FILE(GLOB corefiles ${PROJECT_SOURCE_DIR}/LumiverseCore/*.h)
 INSTALL(FILES ${corefiles} DESTINATION include)
 
-FILE(GLOB typefiles ${PROJECT_SOURCE_DIR}/LumiverseCore/${PROJECT_SOURCE_DIR}/LumiverseCore/types/*.h)
+FILE(GLOB typefiles ${PROJECT_SOURCE_DIR}/LumiverseCore/types/*.h)
 INSTALL(FILES ${typefiles} DESTINATION include/types)
 
 FILE(GLOB dmxfiles ${PROJECT_SOURCE_DIR}/LumiverseCore/DMX/*.h)

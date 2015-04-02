@@ -9,6 +9,7 @@ namespace Lumiverse {
     // Initialize color   
     reset();
     initMode();
+    m_basisVectors = map<string, Eigen::Vector3d>();
   }
 
   LumiverseColor::LumiverseColor(map<string, Eigen::Vector3d> basis, ColorMode mode) : m_mode(mode) {
