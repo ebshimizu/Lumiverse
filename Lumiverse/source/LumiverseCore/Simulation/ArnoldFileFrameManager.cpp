@@ -7,7 +7,7 @@ ArnoldFileFrameManager::~ArnoldFileFrameManager() {
 }
 
 void ArnoldFileFrameManager::dump(time_t time, float *frame, size_t width, size_t height) {
-	size_t floor_frame = (float)time * m_fps / 1000;
+	size_t floor_frame = (float)time * m_fps /*/ 1000*/;
 	unsigned char *bytes = new unsigned char[width * height * 4];
 	floats_to_bytes(bytes, frame, width, height);
 	char digits[7];
@@ -16,7 +16,8 @@ void ArnoldFileFrameManager::dump(time_t time, float *frame, size_t width, size_
 		sprintf(digits, "%06d", i);
 
 		std::stringstream ss;
-		ss << "\\" << digits << ".png";
+		//ss << "\\" << digits << ".png";
+		ss << digits << ".png";
 		std::string file = m_frame_path;
 		file.append(ss.str());
 		

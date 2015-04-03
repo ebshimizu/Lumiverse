@@ -98,6 +98,7 @@ bool Device::setParam(string param, LumiverseType* val) {
 
 
 bool Device::setParam(string param, float val) {
+
   bool ret = true;
 
   // Checks param type
@@ -109,8 +110,10 @@ bool Device::setParam(string param, float val) {
       return false;
   }
     
-  if (m_parameters[param]->getTypeName() == "float")
-    *((LumiverseFloat *)m_parameters[param]) = val;
+  if (m_parameters[param]->getTypeName() == "float"){
+	  *((LumiverseFloat *)m_parameters[param]) = val;
+	  Logger::log(INFO, "setParam "+m_id + param+to_string(val));
+  }
   else 
     *((LumiverseOrientation *)m_parameters[param]) = val;
 
@@ -378,7 +381,7 @@ JSONNode Device::toJSON() {
 int Device::addParameterChangedCallback(DeviceCallbackFunction func) {
     size_t id = m_onParameterChangedFunctions.size();
     m_onParameterChangedFunctions[id] = func;
-
+	Logger::log(INFO, "addParameterChangedCallback id="+to_string(id)+"size="+to_string(m_onParameterChangedFunctions.size()));
     return id;
 }
 
@@ -541,7 +544,9 @@ void Device::loadParams(const JSONNode data) {
 }
     
 void Device::onParameterChanged() {
+	Logger::log(INFO, "onParameterChanged m_onParameterChangedFunctions.size()="+to_string(m_onParameterChangedFunctions.size()));
     for (const auto& kvp : m_onParameterChangedFunctions) {
+		Logger::log(INFO, this->getId() + " onParameterChanged");
         kvp.second(this);
     }
 }

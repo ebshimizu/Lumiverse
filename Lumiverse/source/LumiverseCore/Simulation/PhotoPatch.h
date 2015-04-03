@@ -40,7 +40,7 @@ namespace Lumiverse {
 
 		float intensity;
 		Eigen::Vector3f color;
-		float *photo;
+		float *photo;// should be the path of the saved images
 	};
 
   /*!
@@ -119,7 +119,7 @@ namespace Lumiverse {
 	*/
 	//virtual float getPercentage() const { return m_interface.getPercentage(); }
 
-  protected:
+  //protected:
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.
     * This function updates light node for renderer.
@@ -148,10 +148,13 @@ namespace Lumiverse {
 
 	virtual void bindRenderLoop() override;
 
+	void interruptRender();
+
 	float *m_blend;
 
 	int m_height;
 	int m_width;
+
 
   private:
 
@@ -160,6 +163,8 @@ namespace Lumiverse {
 	bool blendFloat(float* blended, float* light, float intensity, Eigen::Vector3f color);
 
 	float *m_blend_buffer;
+
+	std::string m_default_path;
 
   };
 }

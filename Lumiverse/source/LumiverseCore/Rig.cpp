@@ -125,6 +125,7 @@ void Rig::loadPatches(JSONNode root) {
     }
 #ifdef USE_ARNOLD
 	else if (patchType == "PhotoPatch") {
+		i->push_back(*root.find("jsonPath"));
 		patch = (Patch*) new PhotoPatch(*i);
 		addPatch(nodeName, patch);
 
@@ -137,6 +138,7 @@ void Rig::loadPatches(JSONNode root) {
 		}
 	}
 	else if (patchType == "PhotoAnimationPatch") {
+		i->push_back(*root.find("jsonPath"));
 		patch = (Patch*) new PhotoAnimationPatch(*i);
 		addPatch(nodeName, patch);
 
@@ -161,7 +163,7 @@ void Rig::loadPatches(JSONNode root) {
       }
     }
     else if (patchType == "ArnoldPatch") {
-	  i->push_back(*i->find("jsonPath"));
+	  i->push_back(*root.find("jsonPath"));
       patch = (Patch*) new ArnoldPatch(*i);
       addPatch(nodeName, patch);
         

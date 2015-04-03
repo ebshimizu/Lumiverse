@@ -446,7 +446,7 @@ namespace Lumiverse {
     */
     Eigen::Vector3d getGelColor();
       
-  private:
+ // private:
     /*! \brief Sets the id for the device
     *
     * Note that this is private because changing the unique ID after creation

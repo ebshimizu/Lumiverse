@@ -1,0 +1,1431 @@
+{
+	"playback" : {
+		"grandmaster" : 1,
+		"cueLists" : {},
+		"layers" : {},
+		"groups" : {},
+		"dynamic_groups" : {},
+		"programmer" : {
+			"devices" : {
+				"fresnel_E1_2" : {
+					"channel" : 4,
+					"type" : "6\" Fresnel",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.712, 1.6, 0.098",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"fresnel_E1_4" : {
+					"channel" : 24,
+					"type" : "6\" Fresnel",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.712, 1.6, 0.098",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"fresnel_E_12" : {
+					"channel" : 6,
+					"type" : "6\" Fresnel",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.712, 1.6, 0.098",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"fresnel_E_15" : {
+					"channel" : 26,
+					"type" : "6\" Fresnel",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.712, 1.6, 0.098",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"fresnel_E_4" : {
+					"channel" : 2,
+					"type" : "6\" Fresnel",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.712, 1.6, 0.098",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"fresnel_E_8" : {
+					"channel" : 22,
+					"type" : "6\" Fresnel",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.712, 1.6, 0.098",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"fresnel_G_10" : {
+					"channel" : 32,
+					"type" : "6\" Fresnel",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.712, 1.6, 0.098",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"fresnel_G_4" : {
+					"channel" : 12,
+					"type" : "6\" Fresnel",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.712, 1.6, 0.098",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"lowerCyc1" : {
+					"channel" : 46,
+					"type" : "L&E Mini Strip",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"lowerCyc2" : {
+					"channel" : 47,
+					"type" : "L&E Mini Strip",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"lowerCyc3" : {
+					"channel" : 48,
+					"type" : "L&E Mini Strip",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"par_H1_1" : {
+					"channel" : 13,
+					"type" : "Source Four PAR WFL",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "4.348, 1.6, 0.171",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"par_H1_13" : {
+					"channel" : 37,
+					"type" : "Source Four PAR WFL",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "-0.225, 1.6, 0.171",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"par_H1_14" : {
+					"channel" : 38,
+					"type" : "Source Four PAR WFL",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "-0.496, 1.6, 0.171",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"par_H1_2" : {
+					"channel" : 14,
+					"type" : "Source Four PAR WFL",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "4.077, 1.6, 0.171",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"par_H1_6" : {
+					"channel" : 33,
+					"type" : "Source Four PAR WFL",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.361, 1.6, 0.171",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"par_H1_7" : {
+					"channel" : 34,
+					"type" : "Source Four PAR WFL",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.09, 1.6, 0.171",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"par_H1_8" : {
+					"channel" : 17,
+					"type" : "Source Four PAR WFL",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "1.746, 1.6, 0.171",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"par_H1_9" : {
+					"channel" : 18,
+					"type" : "Source Four PAR WFL",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 Fresnel UL flood_575w-115v_wfl.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "1.475, 1.6, 0.171",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"rover1" : {
+					"channel" : 51,
+					"type" : "Generic Dimmer",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"rover2" : {
+					"channel" : 52,
+					"type" : "Generic Dimmer",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"rover3" : {
+					"channel" : 53,
+					"type" : "Generic Dimmer",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"rover4" : {
+					"channel" : 54,
+					"type" : "Generic Dimmer",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"s4_BSL_1" : {
+					"channel" : 19,
+					"type" : "Source Four Jr 50",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr 50 Deg. 575X-115v_LM6302_07.ies",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "4.452, -0.71875, 1.659",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_BSL_2" : {
+					"channel" : 20,
+					"type" : "Source Four Jr 50",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr 50 Deg. 575X-115v_LM6302_07.ies",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "4.452, -1.417, 1.659",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_BSR_1" : {
+					"channel" : 39,
+					"type" : "Source Four Jr 50",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr 50 Deg. 575X-115v_LM6302_07.ies",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "-1.075, -0.6875, 1.834",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_BSR_2" : {
+					"channel" : 40,
+					"type" : "Source Four Jr 50",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr 50 Deg. 575X-115v_LM6302_07.ies",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "-1.075, -1.3334, 1.834",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_E1_1" : {
+					"channel" : 3,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "3.036, 1.6, 3.076",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_E1_3" : {
+					"channel" : 23,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "1.113, 1.6, 3.076",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_E_11" : {
+					"channel" : 5,
+					"type" : "Source Four Jr 26",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr26Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "1.545, 1.6, 3.619",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_E_16" : {
+					"channel" : 25,
+					"type" : "Source Four Jr 26",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr26Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "-0.853, 1.6, 3.619",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_E_3" : {
+					"channel" : 1,
+					"type" : "Source Four Jr 26",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Angle" : "front right",
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr26Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "4.478, 1.6, 3.619",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_E_7" : {
+					"channel" : 21,
+					"type" : "Source Four Jr 26",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr26Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.599, 1.6, 3.619",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_E_LED1" : {
+					"channel" : 62,
+					"type" : "Source Four Lustr+ 36",
+					"parameters" : {
+						"color" : {
+							"type" : "color",
+							"channels" : {
+								"Amber" : 0,
+								"Blue" : 0,
+								"Cyan" : 0,
+								"Green" : 0,
+								"Indigo" : 0,
+								"Red" : 0,
+								"White" : 0
+							},
+							"basis" : {
+								"Amber" : [
+									22.75055,
+									16.650221,
+									0.002898
+								],
+								"Blue" : [
+									6.2441,
+									2.706676,
+									38.314226
+								],
+								"Cyan" : [
+									2.75181,
+									18.405105,
+									8.957865
+								],
+								"Green" : [
+									11.67676,
+									35.630649,
+									2.980725
+								],
+								"Indigo" : [
+									6.98871,
+									1.786141,
+									40.548044
+								],
+								"Red" : [
+									11.83373,
+									5.07042,
+									0.000015
+								],
+								"White" : [
+									53.02644,
+									57.20048,
+									51.420583
+								]
+							},
+							"weight" : 1,
+							"mode" : "ADDITIVE"
+						},
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						},
+						"strobe" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 LED Lustr+ 36 deg EDLT 6-11-13.ies",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "-0.606, 1.6, 3.557",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_E_LED2" : {
+					"channel" : 61,
+					"type" : "Source Four Lustr+ 36",
+					"parameters" : {
+						"color" : {
+							"type" : "color",
+							"channels" : {
+								"Amber" : 0,
+								"Blue" : 0,
+								"Cyan" : 0,
+								"Green" : 0,
+								"Indigo" : 0,
+								"Red" : 0,
+								"White" : 0
+							},
+							"basis" : {
+								"Amber" : [
+									22.75055,
+									16.650221,
+									0.002898
+								],
+								"Blue" : [
+									6.2441,
+									2.706676,
+									38.314226
+								],
+								"Cyan" : [
+									2.75181,
+									18.405105,
+									8.957865
+								],
+								"Green" : [
+									11.67676,
+									35.630649,
+									2.980725
+								],
+								"Indigo" : [
+									6.98871,
+									1.786141,
+									40.548044
+								],
+								"Red" : [
+									11.83373,
+									5.07042,
+									0.000015
+								],
+								"White" : [
+									53.02644,
+									57.20048,
+									51.420583
+								]
+							},
+							"weight" : 1,
+							"mode" : "ADDITIVE"
+						},
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						},
+						"strobe" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4 LED Lustr+ 36 deg EDLT 6-11-13.ies",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.071, 1.6, 3.532",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_G_1" : {
+					"channel" : 7,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "4.538, 1.6, 1.688",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_G_11" : {
+					"channel" : 29,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "-0.427, 1.6, 1.688",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_G_12" : {
+					"channel" : 30,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "-0.427, 1.6, 1.438",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_G_2" : {
+					"channel" : 8,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "4.538, 1.6, 1.438",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_G_3" : {
+					"channel" : 11,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "3.67, 1.6, 1.499",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_G_5" : {
+					"channel" : 27,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.427, 1.6, 1.688",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_G_6" : {
+					"channel" : 28,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.427, 1.6, 1.438",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_G_7" : {
+					"channel" : 9,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "1.434, 1.6, 1.688",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_G_8" : {
+					"channel" : 10,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "1.434, 1.6, 1.438",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_G_9" : {
+					"channel" : 31,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "1.074, 1.6, 1.499",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_H1_10" : {
+					"channel" : 35,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "1.098, 1.6, 0.098",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_H1_11" : {
+					"channel" : 36,
+					"type" : "Source Four 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "2",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "0.908, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "0.734, 1.6, 0.098",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_H1_11_seachanger" : {
+					"channel" : 36,
+					"type" : "Ocean Optics Seachanger",
+					"parameters" : {
+						"cyan" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"green" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"magenta" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"yellow" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"s4_H1_4" : {
+					"channel" : 15,
+					"type" : "Source Four 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "3.077, 1.6, 0.098",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"s4_H1_4_seachanger" : {
+					"channel" : 15,
+					"type" : "Ocean Optics Seachanger",
+					"parameters" : {
+						"cyan" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"green" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"magenta" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"yellow" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"s4_H1_5" : {
+					"channel" : 16,
+					"type" : "Source Four Jr 36",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"Area" : "1",
+						"color" : "1.0, 0.7020, 0.4431",
+						"exposure" : "3.0",
+						"filename" : "S4jr36Deg.575X-115v_LM6302_07.IES",
+						"lookat" : "2.912, -2.0, 1.604",
+						"pan" : "0",
+						"position" : "2.712, 1.6, 0.098",
+						"samples" : "3",
+						"tilt" : "0.0",
+						"up" : "0, -1, 0",
+						"volume_samples" : "3"
+					}
+				},
+				"upperCyc1" : {
+					"channel" : 41,
+					"type" : "R40 3CKT. STRIPLIGHT",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"upperCyc2" : {
+					"channel" : 42,
+					"type" : "R40 3CKT. STRIPLIGHT",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"upperCyc3" : {
+					"channel" : 43,
+					"type" : "R40 3CKT. STRIPLIGHT",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				}
+			},
+			"captured" : []
+		}
+	}
+}

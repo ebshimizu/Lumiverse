@@ -117,9 +117,9 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 AtNode *ArnoldPatch::getLightNode(Device *d) {
 	std::string light_name = d->getId();
 	AtNode *light_ptr;
-
-	if (m_lights.count(light_name) == 0)
+	if (m_lights.count(light_name) == 0){
 		return NULL;
+	}
 	std::string type = m_lights[light_name]->metadata;
 	ArnoldLightRecord *record = (ArnoldLightRecord *)m_lights[light_name];
 	if (record->light == NULL) {
@@ -183,9 +183,10 @@ void ArnoldPatch::setOrientation(AtNode *light_ptr, Device *d_ptr, LumiverseOrie
 void ArnoldPatch::loadLight(Device *d_ptr) {
     std::string light_name = d_ptr->getId();
     AtNode *light_ptr = getLightNode(d_ptr);
-    
-	if (!light_ptr)
-        return ;
+   
+	if (!light_ptr){
+		return;
+	}
 
     for (std::string meta : d_ptr->getMetadataKeyNames()) {
         std::string value;
@@ -229,6 +230,7 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
 		}
     }
     
+
     // Sets arnold params with device params
     // This process is after parsing metadata, so parameters here can overwrite values from metadata
     for (std::string param : d_ptr->getParamNames()) {
@@ -272,6 +274,7 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
 
 	ArnoldLightRecord *record = (ArnoldLightRecord *)m_lights[light_name];
 	record->light = light_ptr;
+	Logger::log(INFO, "loadLight " + d_ptr->getId());
 }
 
 /*!
@@ -406,12 +409,14 @@ void ArnoldPatch::setSamples(int samples) {
     m_interface.setSamples(samples);
 }
     
+/* this update is never called*/
 void ArnoldPatch::update(set<Device *> devices) {
 	bool render_req = isUpdateRequired(devices);
 
     if (!render_req) {
         return ;
     }
+
     updateLight(devices);
     clearUpdateFlags();
     

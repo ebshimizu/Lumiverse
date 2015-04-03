@@ -149,11 +149,10 @@ void ArnoldAnimationPatch::workerRender(FrameDeviceInfo frame) {
 	// Dumps only when the image was rendered successfully for rendering.
 	// If the worker was reset while rendering, doesn't dump.
 	if (success && frame.mode == SimulationAnimationMode::RENDERING) {
-		m_mem_frameManager->dump(frame.time, getBufferPointer(),
-			getWidth(), getHeight());
-		if (m_file_frameManager)
-			m_file_frameManager->dump(frame.time, getBufferPointer(),
-			getWidth(), getHeight());
+		m_mem_frameManager->dump(frame.time, getBufferPointer(),getWidth(), getHeight());
+		if (m_file_frameManager){
+			m_file_frameManager->dump(frame.time, getBufferPointer(), getWidth(), getHeight());
+		}
 	}
 }
 

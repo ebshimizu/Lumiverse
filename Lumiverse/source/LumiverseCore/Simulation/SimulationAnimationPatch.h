@@ -41,7 +41,7 @@ namespace Lumiverse {
       SimulationAnimationMode mode;
 
       /*! \brief Constructor. */
-      FrameDeviceInfo() : time(-1), mode(SimulationAnimationMode::INTERACTIVE) { }
+      FrameDeviceInfo() : time(-1), mode(SimulationAnimationMode::RENDERING) { }
 
       /*! \brief Releases the copies for devices. */
       void clear() {
@@ -216,6 +216,23 @@ namespace Lumiverse {
     */
 	virtual void deleteFinishedCallback(int id);
 
+	virtual float *getBufferPointer() = 0;
+
+	virtual void rerender() = 0;
+	
+	virtual void interruptRender() = 0;
+
+	virtual int getWidth() = 0;
+	virtual int getHeight() = 0;
+
+	virtual void setPreviewSamples(int preview) = 0;
+
+	virtual void setRenderSamples(int render) = 0;
+
+	virtual int getPreviewSamples() = 0;
+
+	virtual int getRenderSamples() = 0;
+
   protected:
 
 	/*!
@@ -248,6 +265,7 @@ namespace Lumiverse {
 	virtual void createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame) = 0;
 
 	virtual void enqueueFrameInfo(const FrameDeviceInfo &frame);
+
 
     // The worker thread.
     std::thread *m_worker;

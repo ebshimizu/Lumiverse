@@ -149,6 +149,11 @@ namespace Lumiverse {
 
 	virtual void reset();
 
+	float* getBufferPointer() { return ArnoldPatch::getBufferPointer(); }
+
+	int getWidth(){ return ArnoldPatch::getWidth(); }
+	int getHeight() { return ArnoldPatch::getHeight(); }
+
   protected:
 	virtual void onRecording() override { setSamples(m_preview_samples); }
 
@@ -162,6 +167,8 @@ namespace Lumiverse {
 	virtual void workerRender(FrameDeviceInfo frame);
 
 	virtual void createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame);
+
+
 
   private:
 	/*! \brief The camera sampling rate for preview.

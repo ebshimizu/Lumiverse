@@ -37,7 +37,6 @@ void SimulationPatch::loadJSON(const JSONNode data) {
 				directory += "/";
 			
 		}
-
 		i++;
 	}
 }
@@ -54,7 +53,7 @@ SimulationPatch::~SimulationPatch() {
 }
 
 bool SimulationPatch::isUpdateRequired(set<Device *> devices) {
-    bool req = false;
+   bool req = false;
     
     for (Device* d : devices) {
 		std::string name = d->getId();
@@ -62,6 +61,7 @@ bool SimulationPatch::isUpdateRequired(set<Device *> devices) {
 			continue;
 		
         if (m_lights[d->getId()]->rerender_req) {
+			Logger::log(INFO, d->getId()+ " rerender_req=true");
             req = true;
             break;
         }
@@ -84,7 +84,6 @@ bool SimulationPatch::isUpdateRequired(set<Device *> devices) {
 				it++;
 		}
 	}
-
     return req;
 }
 
@@ -102,6 +101,7 @@ void SimulationPatch::interruptRender() {
 }
 
 void SimulationPatch::onDeviceChanged(Device *d) {
+	Logger::log(INFO, d->getId() + " onDeviceChanged");
     if (m_lights.count(d->getId()) > 0) {
         m_lights[d->getId()]->rerender_req = true;
     }

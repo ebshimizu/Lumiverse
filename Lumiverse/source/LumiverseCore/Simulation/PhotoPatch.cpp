@@ -16,7 +16,6 @@ m_blend(NULL), m_blend_buffer(NULL) {
 
 void PhotoPatch::loadJSON(const JSONNode data) {
 	string patchName = data.name();
-
 	// Load options for raytracer application. (window, ray tracer, filter)
 	JSONNode::const_iterator i = data.begin();
 
@@ -37,9 +36,10 @@ void PhotoPatch::loadJSON(const JSONNode data) {
 			}
 			else
 				directory += "/";
+
+			m_default_path = directory;
 			
 		}
-
 		if (nodeName == "width") {
 			JSONNode path = *i;
 
@@ -51,13 +51,11 @@ void PhotoPatch::loadJSON(const JSONNode data) {
 
 			m_height = i->as_int();
 		}
-
 		if (nodeName == "lights") {
 			JSONNode lights = *i;
 			JSONNode::const_iterator light = lights.begin();
 			while (light != lights.end()) {
 				std::string light_name = light->name();
-
 				m_lights[light_name] = new PhotoLightRecord();
 				m_lights[light_name]->metadata = light->find("filename")->as_string();
 
@@ -65,11 +63,9 @@ void PhotoPatch::loadJSON(const JSONNode data) {
 				sstm << "Added light " << light_name << ": " << m_lights[light_name]->metadata;
 
 				Logger::log(INFO, sstm.str());
-
 				light++;
 			}
 		}
-
 		i++;
 	}
 }
@@ -86,7 +82,8 @@ void PhotoPatch::loadLight(Device *d_ptr) {
 			return;
 		}
 
-		buffer = imageio_load_image(record->metadata.c_str(), &width, &height);
+		string imagePath = m_default_path + record->metadata;
+		buffer = imageio_load_image(imagePath.c_str(), &width, &height);
 
 		if (!buffer) {
 			std::stringstream sstm;
@@ -99,7 +96,6 @@ void PhotoPatch::loadLight(Device *d_ptr) {
 
 		record->photo = new float[m_width * m_height * 4];
 		bytes_to_floats(record->photo, buffer, m_width, m_height);
-
 		delete[] buffer;
 		buffer = NULL;
 
@@ -148,10 +144,14 @@ bool PhotoPatch::blendFloat(float* blended, float* light,
 			for (size_t ch = 0; ch < 4; ch++) {
 				size_t offset = (m_width * i + j) * 4 + ch;
 				size_t offset_des = (m_width * (m_height - 1 - i) + j) * 4 + ch;
-				if (ch < 3)
+				if (ch < 3){
 					blended[offset] += light[offset] * rgba[ch] * intensity;
-				else
-					blended[offset] += light[offset] * rgba[ch];
+					if (blended[offset] > 1.0) blended[offset] = 1.0;
+				}
+				else{
+				blended[offset] += light[offset] * rgba[ch];
+				if (blended[offset]>1.0) blended[offset] = 1.0;
+			    }
 			}
 		}
 		if (!m_interrupt_flag.test_and_set())
@@ -207,7 +207,7 @@ bool PhotoPatch::renderLoop() {
 			toclear = false;
 			std::memset(m_blend_buffer, 0, img_size * sizeof(float));
 		}
-		
+		if (light->intensity > 0) { std::printf("intensity=%f\n", light->intensity); }
 		if (light->photo && light->intensity > 0 &&
 			!light->color.isZero())
 			success = blendFloat(m_blend_buffer, light->photo, light->intensity, light->color);
@@ -222,8 +222,14 @@ bool PhotoPatch::renderLoop() {
 			break;
 	}
 
-	if (success)
+	if (success){
 		std::memcpy(m_blend, m_blend_buffer, img_size * sizeof(float));
+		/*for (int i = 0; i < m_width*m_height; i++){
+			if (m_blend[i * 4] > 0) std::printf("red %f\n", m_blend[i * 4]);
+			if (m_blend[i * 4+1] > 0) std::printf("green %f\n", m_blend[i * 4]);
+			if (m_blend[i * 4+2] > 0) std::printf("green %f\n", m_blend[i * 4]);
+		}*/
+	}
 
 	return success;
 }
@@ -261,5 +267,17 @@ JSONNode PhotoPatch::toJSON() {
 }
     
 
+void PhotoPatch::interruptRender(){
+	if (m_renderloop != NULL){
+		try{
+			m_renderloop->join();
+		}
+		catch (const std::system_error &e){
+			Logger::log(ERR, "PhotoPatch rendering thread doesn't exist");
+		}
+		m_renderloop = NULL;
+	}
+
+}
 }
 #endif

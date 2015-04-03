@@ -1,0 +1,721 @@
+00:00:00    80MB         | log started Fri Apr 03 11:42:24 2015
+00:00:00    80MB         | Arnold 4.2.0.6 windows icc-14.0.2 oiio-1.2.2 rlm-10.1.2 2014/07/16 13:10:09
+00:00:00    80MB         | running on chenxil-pc with pid 10588
+00:00:00    80MB         |  1 x Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz (4 cores, 8 logical) with 8143MB
+00:00:00    80MB         |  Windows 8 (version 6.2, build 9200)
+00:00:00    80MB         |  
+00:00:00    80MB         | loading plugins from J:/LumiverseInstall/lib/arnold/plugin ...
+00:00:00    80MB         |  BufferDriver.dll: driver_buffer uses Arnold 4.1.3.3
+00:00:00    80MB         |  PhotometricGobo.dll: photometric_gobo uses Arnold 4.1.3.3
+00:00:00    80MB         |  PointCloudShader.dll: point_cloud_shader uses Arnold 4.1.3.3
+00:00:00    80MB WARNING | skipping nonexisting shader path: C:/lib/Lumiverse/lib/arnold/plugin
+00:00:00    80MB         | loading plugins from C:/solidangle/mtoadeploy/2015/shaders/ ...
+00:00:00    80MB WARNING |  mtoa_shaders.dll was compiled against non-compatible Arnold 4.2.1.2
+00:00:00    80MB         | loaded 3 plugins from 3 lib(s) in 0:00.02
+00:00:00    81MB         | [ass] loading J:\Lumiverse\Lumiverse\data\Chosky\stage.ass ...
+00:00:00   104MB         |  [ass] 16384 nodes ...
+00:00:02   126MB         |  [ass] 32768 nodes ...
+00:00:03   147MB         |  [ass] 49152 nodes ...
+00:00:03   172MB         |  [ass] 65536 nodes ...
+00:00:04   193MB         |  [ass] 81920 nodes ...
+00:00:05   214MB         |  [ass] 98304 nodes ...
+00:00:06   235MB         |  [ass] 114688 nodes ...
+00:00:06   263MB         |  [ass] 131072 nodes ...
+00:00:07   284MB         |  [ass] 147456 nodes ...
+00:00:07   305MB         |  [ass] 163840 nodes ...
+00:00:08   327MB         |  [ass] 180224 nodes ...
+00:00:08   348MB         |  [ass] 196608 nodes ...
+00:00:08   369MB         |  [ass] 212992 nodes ...
+00:00:09   390MB         |  [ass] 229376 nodes ...
+00:00:09   411MB         |  [ass] 245760 nodes ...
+00:00:10   445MB         |  [ass] 262144 nodes ...
+00:00:10   466MB         |  [ass] 278528 nodes ...
+00:00:11   488MB         |  [ass] 294912 nodes ...
+00:00:11   509MB         |  [ass] 311296 nodes ...
+00:00:12   530MB         |  [ass] 327680 nodes ...
+00:00:12   551MB         |  [ass] 344064 nodes ...
+00:00:13   572MB         |  [ass] 360448 nodes ...
+00:00:13   594MB         |  [ass] 376832 nodes ...
+00:00:14   616MB         |  [ass] 393216 nodes ...
+00:00:14   638MB         |  [ass] 409600 nodes ...
+00:00:15   659MB         |  [ass] 425984 nodes ...
+00:00:15   681MB         |  [ass] 442368 nodes ...
+00:00:16   702MB         |  [ass] 458752 nodes ...
+00:00:16   723MB         |  [ass] 475136 nodes ...
+00:00:17   744MB         |  [ass] 491520 nodes ...
+00:00:17   765MB         |  [ass] 507904 nodes ...
+00:00:18   810MB         |  [ass] 524288 nodes ...
+00:00:18   832MB         |  [ass] 540672 nodes ...
+00:00:19   853MB         |  [ass] 557056 nodes ...
+00:00:19   874MB         |  [ass] 573440 nodes ...
+00:00:20   895MB         |  [ass] 589824 nodes ...
+00:00:20   916MB         |  [ass] 606208 nodes ...
+00:00:21   937MB         |  [ass] 622592 nodes ...
+00:00:21   958MB         |  [ass] 638976 nodes ...
+00:00:22   980MB         |  [ass] 655360 nodes ...
+00:00:22  1001MB         |  [ass] 671744 nodes ...
+00:00:23  1022MB         |  [ass] 688128 nodes ...
+00:00:23  1043MB         |  [ass] 704512 nodes ...
+00:00:24  1064MB         |  [ass] 720896 nodes ...
+00:00:24  1086MB         |  [ass] 737280 nodes ...
+00:00:25  1107MB         |  [ass] 753664 nodes ...
+00:00:25  1129MB         |  [ass] 770048 nodes ...
+00:00:26  1152MB         |  [ass] 786432 nodes ...
+00:00:27  1174MB         |  [ass] 802816 nodes ...
+00:00:27  1196MB         |  [ass] 819200 nodes ...
+00:00:28  1218MB         |  [ass] 835584 nodes ...
+00:00:28  1239MB         |  [ass] 851968 nodes ...
+00:00:29  1260MB         |  [ass] 868352 nodes ...
+00:00:29  1281MB         |  [ass] 884736 nodes ...
+00:00:30  1302MB         |  [ass] 901120 nodes ...
+00:00:30  1323MB         |  [ass] 917504 nodes ...
+00:00:31  1344MB         |  [ass] 933888 nodes ...
+00:00:32  1365MB         |  [ass] 950272 nodes ...
+00:00:32  1387MB         |  [ass] 966656 nodes ...
+00:00:33  1408MB         |  [ass] 983040 nodes ...
+00:00:33  1429MB         |  [ass] 999424 nodes ...
+00:00:34  1450MB         |  [ass] 1015808 nodes ...
+00:00:34  1471MB         |  [ass] 1032192 nodes ...
+00:00:35  1540MB         |  [ass] 1048576 nodes ...
+00:00:36  1561MB         |  [ass] 1064960 nodes ...
+00:00:36  1583MB         |  [ass] 1081344 nodes ...
+00:00:37  1604MB         |  [ass] 1097728 nodes ...
+00:00:37  1625MB         |  [ass] 1114112 nodes ...
+00:00:38  1646MB         |  [ass] 1130496 nodes ...
+00:00:38  1667MB         |  [ass] 1146880 nodes ...
+00:00:39  1688MB         |  [ass] 1163264 nodes ...
+00:00:40  1709MB         |  [ass] 1179648 nodes ...
+00:00:40  1730MB         |  [ass] 1196032 nodes ...
+00:00:41  1752MB         |  [ass] 1212416 nodes ...
+00:00:41  1773MB         |  [ass] 1228800 nodes ...
+00:00:42  1794MB         |  [ass] 1245184 nodes ...
+00:00:43  1815MB         |  [ass] 1261568 nodes ...
+00:00:43  1836MB         |  [ass] 1277952 nodes ...
+00:00:44  1857MB         |  [ass] 1294336 nodes ...
+00:00:44  1878MB         |  [ass] 1310720 nodes ...
+00:00:45  1900MB         |  [ass] 1327104 nodes ...
+00:00:46  1921MB         |  [ass] 1343488 nodes ...
+00:00:46  1942MB         |  [ass] 1359872 nodes ...
+00:00:47  1963MB         |  [ass] 1376256 nodes ...
+00:00:47  1984MB         |  [ass] 1392640 nodes ...
+00:00:48  2005MB         |  [ass] 1409024 nodes ...
+00:00:49  2026MB         |  [ass] 1425408 nodes ...
+00:00:49  2048MB         |  [ass] 1441792 nodes ...
+00:00:50  2069MB         |  [ass] 1458176 nodes ...
+00:00:51  2090MB         |  [ass] 1474560 nodes ...
+00:00:51  2111MB         |  [ass] 1490944 nodes ...
+00:00:52  2136MB         |  [ass] 1507328 nodes ...
+00:00:53  2158MB         |  [ass] 1523712 nodes ...
+00:00:53  2180MB         |  [ass] 1540096 nodes ...
+00:00:54  2202MB         |  [ass] 1556480 nodes ...
+00:00:55  2225MB         |  [ass] 1572864 nodes ...
+00:00:56  2239MB         |  [ass] 1589248 nodes ...
+00:00:56  2262MB         |  [ass] 1605632 nodes ...
+00:00:57  2284MB         |  [ass] 1622016 nodes ...
+00:00:58  2306MB         |  [ass] 1638400 nodes ...
+00:00:58  2328MB         |  [ass] 1654784 nodes ...
+00:00:59  2349MB         |  [ass] 1671168 nodes ...
+00:01:00  2370MB         |  [ass] 1687552 nodes ...
+00:01:00  2392MB         |  [ass] 1703936 nodes ...
+00:01:01  2413MB         |  [ass] 1720320 nodes ...
+00:01:02  2434MB         |  [ass] 1736704 nodes ...
+00:01:02  2435MB         | [ass] read 235016528 bytes, 1737437 nodes in 1:02.11
+00:01:02  2443MB WARNING | can't rename node "" to "filter": name already in use
+00:01:02  2438MB WARNING | Jenna_Front2: could not set POINT parameter "position"
+00:01:02  2438MB WARNING | Hunter_Diag_Front1: could not set POINT parameter "position"
+00:01:02  2438MB WARNING | Hunter_Front2: could not set POINT parameter "position"
+00:01:02  2438MB WARNING | Alex_Rover_Sidelight: could not set POINT parameter "position"
+00:01:02  2439MB WARNING | Ruben_Shadow: could not set POINT parameter "position"
+00:01:02  2440MB WARNING | too many messages (>5) of type: "%s: could not set %s parameter "%s"" -- not printing any more!
+00:01:02  2441MB         |  
+00:01:02  2441MB         | [rlm] checking connection to license server on 5053@pike.graphics.cs.cmu.edu ...
+00:01:03  2442MB         | [rlm] checkout of arnold (version 20140716) from pike.graphics.cs.cmu.edu OK
+00:01:03  2442MB         | [rlm] expiration date: 28-jul-2015 (117 days left)
+00:01:03  2442MB         |  
+00:01:03  2442MB         | there are 57 lights and 1737430 objects:
+00:01:03  2442MB         |       1 persp_camera
+00:01:03  2442MB         |      57 photometric_light
+00:01:03  2442MB         |       1 utility
+00:01:03  2442MB         |       3 standard
+00:01:03  2442MB         |       1 volume_scattering
+00:01:03  2442MB         |       2 gaussian_filter
+00:01:03  2442MB         |  1737427 disk
+00:01:03  2442MB         |       3 polymesh
+00:01:03  2442MB         |       1 driver_buffer
+00:01:03  2442MB         |       4 photometric_gobo
+00:01:03  2442MB         |       1 point_cloud_shader
+00:01:03  2442MB         |  
+00:01:04  2442MB         | rendering image at 960 x 540, -3 AA samples, 3 GI samples, 1 GI bounces
+00:01:04  2442MB         |  initializing 1737502 nodes ...
+00:01:17  2693MB         |  node initialization done in 0:13.04
+00:01:17  2697MB         |  creating root object list ...
+00:01:17  2711MB         |   scene bounds: (-100 -22.0341473 -100) -> (100 23.3268299 100)
+00:01:17  2711MB         |  updating 1737503 nodes ...
+00:01:17  2711MB         |   aiVolumeScattering: 5 samples (volume_scattering)
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Jenna_Front2: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Hunter_Diag_Front1: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Hunter_Front2: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2711MB         |   Alex_Rover_Sidelight: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Ruben_Shadow: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2711MB         |   Ruben_Low_Shadow: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Alex_Texture3: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Jenna_Side: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Alex_Joan_Key: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2711MB         |   Alex_Floorplate_Candle3: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2711MB         |   Alex_Floorplate_Candle1: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2711MB         |   Alex_Rover_Lightning: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2711MB         |   Alex_Floorplate_Hell: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Alex_Texture1: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64NSP.IES (IESNA:LM-63-1995 type C)
+00:01:17  2711MB         |   Alex_Moon_Fill: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Jenna_Front1: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Hunter_Front1: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Ruben_Top1: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Alex_Bed_Key: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2711MB         |   Hunter_Rover_Window: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Alex_Texture6: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2711MB         |   Alex_Floorplate_Candle2: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2711MB         |   Jenna_Back1: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2711MB         |   Hunter_Back2: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Ruben_Side1: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Ruben_Front1: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Ruben_Side2: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Jenna_Side2: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Hunter_Top: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Alex_Moon_SR: disabled photometric_light
+00:01:17  2711MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2711MB         |   Jenna_03: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Ruben_Spec: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Jenna_Spec: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Ruben_Top2: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Jenna_Back4: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Jenna_Back2: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Ruben_Front2: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2712MB         |   Jenna_DSL_Floor: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2712MB         |   Jenna_DSR_Floor: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Ruben_Spec4: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Hunter_Diag_Front2: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Ruben_TopSpec: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Alex_Texture5: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Ruben_Spec2: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2712MB         |   Hunter_Back1: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2712MB         |   unallocated_01: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Alex_Texture4: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Ruben_Spec5: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Alex_Back_Key: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Ruben_Window1: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:17  2712MB         |   Jenna_Back3: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Jenna_02: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Alex_Moon_SL: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Ruben_Top3: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Alex_Texture2: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Jenna_01: disabled photometric_light
+00:01:17  2712MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:17  2712MB         |   Ruben_Spec3: disabled photometric_light
+00:01:17  2712MB         |  node update done in 0:00.55
+00:01:17  2712MB         |  Using light lookup acceleration for 57 lights
+00:01:17  2712MB         |  [aov] parsing output statement: "RGBA RGBA filter buffer_driver243"
+00:01:18  2712MB         |  [aov] registered driver: "buffer_driver243" (driver_buffer)
+00:01:18  2712MB         |  [aov]  * "RGBA" of type RGBA filtered by "filter" (gaussian_filter)
+00:01:18  2712MB         |  [aov] done preparing 1 AOV for 1 output to 1 driver (0 deep AOVs)
+00:01:18  2712MB         |  starting 8 bucket workers of size 64x64 ...
+00:01:19  2812MB         |   [accel] bvh4 done - 0:01.16 - 1737430 prims, 1 key
+00:01:19  2813MB         |     0% done - 10 rays/pixel
+00:01:19  2813MB         |     5% done - 10 rays/pixel
+00:01:19  2813MB         |    10% done - 10 rays/pixel
+00:01:19  2813MB         |    15% done - 10 rays/pixel
+00:01:19  2813MB         |    20% done - 10 rays/pixel
+00:01:19  2813MB         |    25% done - 10 rays/pixel
+00:01:19  2813MB         |    30% done - 10 rays/pixel
+00:01:19  2813MB         |    35% done - 10 rays/pixel
+00:01:19  2813MB         |    40% done - 10 rays/pixel
+00:01:19  2813MB         |    45% done - 10 rays/pixel
+00:01:19  2813MB         |    50% done - 10 rays/pixel
+00:01:19  2813MB         |    55% done - 10 rays/pixel
+00:01:19  2813MB         |    60% done - 10 rays/pixel
+00:01:19  2813MB         |    65% done - 10 rays/pixel
+00:01:19  2813MB         |    70% done - 10 rays/pixel
+00:01:19  2813MB         |    75% done - 10 rays/pixel
+00:01:19  2813MB         |    80% done - 10 rays/pixel
+00:01:19  2813MB         |    85% done - 10 rays/pixel
+00:01:19  2813MB         |    90% done - 10 rays/pixel
+00:01:19  2813MB         |    95% done - 10 rays/pixel
+00:01:19  2812MB         |   100% done - 10 rays/pixel
+00:01:19  2812MB         |  bucket workers done in 0:01.84
+00:01:19  2812MB         | render done
+00:01:19  2812MB         |  
+00:01:19  2812MB         | -----------------------------------------------------------------------------------------
+00:01:19  2812MB         | scene creation time:
+00:01:19  2812MB         |  plugin loading               0:00.02
+00:01:19  2812MB         |  .ass parsing                 1:02.11
+00:01:19  2812MB         |  system/unaccounted           0:57.32
+00:01:19  2812MB         |  total                        1:03.99  (10.42% machine utilization)
+00:01:19  2812MB         | -----------------------------------------------------------------------------------------
+00:01:19  2812MB         | render time:
+00:01:19  2812MB         |  node init                    0:13.98
+00:01:19  2812MB         |  bucket rendering             0:01.84
+00:01:19  2812MB         |   mesh processing             0:00.02
+00:01:19  2812MB         |   accel. building             0:01.18
+00:01:19  2812MB         |   pixel rendering             0:00.63  (multi-threaded render, this value may not be reliable)
+00:01:19  2812MB         |  system/unaccounted           0:11.86
+00:01:19  2812MB         |  total                        0:15.86  (25.22% machine utilization)
+00:01:19  2812MB         | -----------------------------------------------------------------------------------------
+00:01:19  2812MB         | memory consumed in MB:
+00:01:19  2812MB         |  at startup                     77.99
+00:01:19  2812MB         |  plugins                         0.50
+00:01:19  2812MB         |  AOV samples                     0.03
+00:01:19  2812MB         |  output buffers                  0.50
+00:01:19  2812MB         |  node overhead                 530.25
+00:01:19  2812MB         |  message passing                 0.02
+00:01:19  2812MB         |  memory pools                    3.77
+00:01:19  2812MB         |  geometry                       15.44
+00:01:19  2812MB         |    polymesh                      0.00
+00:01:19  2812MB         |  accel. structs                104.36
+00:01:19  2812MB         |  strings                       180.21
+00:01:19  2812MB         |  texture cache                   0.00
+00:01:19  2812MB         |  unaccounted                  1945.86
+00:01:19  2812MB         |  total peak                   2858.93
+00:01:19  2812MB         | -----------------------------------------------------------------------------------------
+00:01:19  2812MB         | ray counts:                           (/pixel , /sample) (% total) (avg. hits) (max hits)
+00:01:19  2812MB         |  camera                         12665 (   1.00,    1.00) ( 10.00%) (     1.00) (       1)
+00:01:19  2812MB         |  diffuse                       113985 (   9.00,    9.00) ( 90.00%) (     0.82) (       1)
+00:01:19  2812MB         |  total                         126650 (  10.00,   10.00) (100.00%) (     0.84) (       1)
+00:01:19  2812MB         |  max depth                          1
+00:01:19  2812MB         | -----------------------------------------------------------------------------------------
+00:01:19  2812MB         | shader calls:                         (/pixel , /sample) (% total)
+00:01:19  2812MB         |  primary                       106148 (   8.38,    8.38) ( 45.60%)
+00:01:19  2812MB         |  atmosphere                    126650 (  10.00,   10.00) ( 54.40%)
+00:01:19  2812MB         |  total                         232798 (  18.38,   18.38) (100.00%)
+00:01:19  2812MB         | -----------------------------------------------------------------------------------------
+00:01:19  2812MB         | geometry:                             (% hit ) (instances) (  init mem,  final mem)
+00:01:19  2812MB         |  lists                              1 (100.0%) (        0) (     13.26,      13.26)
+00:01:19  2812MB         |  polymeshes                         3 (100.0%) (        0) (      0.00,       0.00)
+00:01:19  2812MB         |  simple                       1737427 ( 16.5%) (        0) (      0.00,       2.18)
+00:01:19  2812MB         | -----------------------------------------------------------------------------------------
+00:01:19  2812MB         | geometric elements:                   (      min) (       avg.) (      max)
+00:01:19  2812MB         |  objects (top level)          1737430 (  1737430) (  1737430.0) (  1737430)
+00:01:19  2812MB         |  polygons                           3 (        1) (        1.0) (        1)
+00:01:20  2812MB         | -----------------------------------------------------------------------------------------
+00:01:20  2812MB         | triangle tessellation:                (      min) (       avg.) (      max) (/ element) (% total)
+00:01:20  2812MB         |  polymeshes                         6 (        2) (        2.0) (        2) (     2.00) (100.00%)
+00:01:20  2812MB         |  unique triangles:                  6
+00:01:20  2812MB         |  memory use (in MB)              0.00
+00:01:20  2812MB         |    vertices                      0.00
+00:01:20  2812MB         |    vertex indices                0.00
+00:01:20  2812MB         |    uniform indices               0.00
+00:01:20  2812MB         |  largest polymeshes by triangle count:
+00:01:20  2812MB         |            2 tris -- floor1
+00:01:20  2812MB         |            2 tris -- floor2
+00:01:20  2812MB         |            2 tris -- wall
+00:01:20  2812MB         | -----------------------------------------------------------------------------------------
+00:01:20  2812MB         | acceleration structures:              (% total)
+00:01:20  2812MB         |  list                               3 ( 75.00%)
+00:01:20  2812MB         |  bvh                                1 ( 25.00%)
+00:01:20  2812MB         |  total                              4 (100.00%)
+00:01:20  2812MB         | -----------------------------------------------------------------------------------------
+00:01:20  2812MB         | number of warnings, warning type:
+00:01:20  2812MB         |     1:  %s was compiled against non-compatible Arnold %s
+00:01:20  2812MB         |    57:  %s: could not set %s parameter "%s"
+00:01:20  2812MB         |     1:  can't rename node "%s" to "%s": name already in use
+00:01:20  2812MB         |     1:  skipping nonexisting shader path: %s
+00:01:20  2812MB         | -----------------------------------------------------------------------------------------
+00:01:20  2812MB         | performance warnings:
+00:01:20  2812MB WARNING |  Rendering utilization was only 25%. Your render may be bound by a single threaded process or I/O.
+00:01:20  2812MB WARNING |  Scene creation was a significant amount of total time (80%). Consider optimizing this process first.
+00:01:20  2812MB         | -----------------------------------------------------------------------------------------
+00:01:20  2812MB WARNING | can't rename node "" to "Ruben_Spec3_gobo": name already in use
+00:01:20  2812MB WARNING | can't rename node "" to "Ruben_Spec4_gobo": name already in use
+00:01:20  2812MB WARNING | can't rename node "" to "Ruben_Spec2_gobo": name already in use
+00:01:20  2812MB WARNING | can't rename node "" to "Ruben_Window1_gobo": name already in use
+00:01:20  2812MB         |  
+00:01:20  2812MB         | rendering image at 960 x 540, -3 AA samples, 3 GI samples, 1 GI bounces
+00:01:20  2812MB         |  updating 1737507 nodes ...
+00:01:20  2812MB         |   aiVolumeScattering: 5 samples (volume_scattering)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64NSP.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:20  2812MB         |  node update done in 0:00.44
+00:01:20  2812MB         |  Using light lookup acceleration for 57 lights
+00:01:20  2812MB         |  [aov] parsing output statement: "RGBA RGBA filter buffer_driver243"
+00:01:20  2812MB         |  [aov] registered driver: "buffer_driver243" (driver_buffer)
+00:01:20  2812MB         |  [aov]  * "RGBA" of type RGBA filtered by "filter" (gaussian_filter)
+00:01:20  2812MB         |  [aov] done preparing 1 AOV for 1 output to 1 driver (0 deep AOVs)
+00:01:20  2812MB         |  starting 8 bucket workers of size 64x64 ...
+00:01:20  2813MB         |     0% done - 10 rays/pixel
+00:01:20  2813MB         |     5% done - 10 rays/pixel
+00:01:20  2813MB         |    10% done - 10 rays/pixel
+00:01:20  2813MB         |    15% done - 10 rays/pixel
+00:01:20  2813MB         |    20% done - 10 rays/pixel
+00:01:20  2813MB         |    25% done - 10 rays/pixel
+00:01:20  2813MB         |    30% done - 10 rays/pixel
+00:01:20  2813MB         |    35% done - 10 rays/pixel
+00:01:20  2813MB         |    40% done - 10 rays/pixel
+00:01:20  2813MB         |    45% done - 10 rays/pixel
+00:01:20  2813MB         |    50% done - 10 rays/pixel
+00:01:20  2813MB         |    55% done - 10 rays/pixel
+00:01:20  2813MB         |    60% done - 10 rays/pixel
+00:01:20  2813MB         |    65% done - 10 rays/pixel
+00:01:20  2813MB         |    70% done - 10 rays/pixel
+00:01:20  2813MB         |    75% done - 10 rays/pixel
+00:01:21  2813MB         |    80% done - 10 rays/pixel
+00:01:21  2813MB         |    85% done - 10 rays/pixel
+00:01:21  2813MB         |    90% done - 10 rays/pixel
+00:01:21  2813MB         |    95% done - 10 rays/pixel
+00:01:21  2812MB         |   100% done - 10 rays/pixel
+00:01:21  2812MB         |  bucket workers done in 0:00.48
+00:01:21  2812MB         | render done
+00:01:21  2812MB         |  
+00:01:21  2812MB         | -----------------------------------------------------------------------------------------
+00:01:21  2812MB         | scene creation time:
+00:01:21  2812MB         |  plugin loading               0:00.02
+00:01:21  2812MB         |  .ass parsing                 1:02.11
+00:01:21  2812MB         |  system/unaccounted           0:57.55
+00:01:21  2812MB         |  total                        1:04.28  (10.47% machine utilization)
+00:01:21  2812MB         | -----------------------------------------------------------------------------------------
+00:01:21  2812MB         | render time:
+00:01:21  2812MB         |  node init                    0:00.44
+00:01:21  2812MB         |  bucket rendering             0:00.48
+00:01:21  2812MB         |   accel. building             0:00.00
+00:01:21  2812MB         |   pixel rendering             0:00.48  (multi-threaded render, this value may not be reliable)
+00:01:21  2812MB         |  system/unaccounted           0:00.50
+00:01:21  2812MB         |  total                        0:00.93  (45.49% machine utilization)
+00:01:21  2812MB         | -----------------------------------------------------------------------------------------
+00:01:21  2812MB         | memory consumed in MB:
+00:01:21  2812MB         |  at startup                     77.99
+00:01:21  2812MB         |  plugins                         0.50
+00:01:21  2812MB         |  AOV samples                     0.03
+00:01:21  2812MB         |  output buffers                  0.50
+00:01:21  2812MB         |  node overhead                 530.25
+00:01:21  2812MB         |  message passing                 0.02
+00:01:21  2812MB         |  memory pools                    3.77
+00:01:21  2812MB         |  geometry                       15.44
+00:01:21  2812MB         |    polymesh                      0.00
+00:01:21  2812MB         |  accel. structs                104.36
+00:01:21  2812MB         |  strings                       180.21
+00:01:21  2812MB         |  texture cache                   0.00
+00:01:21  2812MB         |  unaccounted                  1945.86
+00:01:21  2812MB         |  total peak                   2858.93
+00:01:21  2812MB         | -----------------------------------------------------------------------------------------
+00:01:21  2812MB         | ray counts:                           (/pixel , /sample) (% total) (avg. hits) (max hits)
+00:01:21  2812MB         |  camera                         12665 (   1.00,    1.00) ( 10.00%) (     1.00) (       1)
+00:01:21  2812MB         |  diffuse                       113985 (   9.00,    9.00) ( 90.00%) (     0.82) (       1)
+00:01:21  2812MB         |  total                         126650 (  10.00,   10.00) (100.00%) (     0.84) (       1)
+00:01:21  2812MB         |  max depth                          1
+00:01:21  2812MB         | -----------------------------------------------------------------------------------------
+00:01:21  2812MB         | shader calls:                         (/pixel , /sample) (% total)
+00:01:21  2812MB         |  primary                       106148 (   8.38,    8.38) ( 45.60%)
+00:01:21  2812MB         |  atmosphere                    126650 (  10.00,   10.00) ( 54.40%)
+00:01:21  2812MB         |  total                         232798 (  18.38,   18.38) (100.00%)
+00:01:21  2812MB         | -----------------------------------------------------------------------------------------
+00:01:21  2812MB         | geometry:                             (% hit ) (instances) (  init mem,  final mem)
+00:01:21  2812MB         |  lists                              1 (100.0%) (        0) (     13.26,      13.26)
+00:01:21  2812MB         |  polymeshes                         3 (100.0%) (        0) (      0.00,       0.00)
+00:01:21  2812MB         |  simple                       1737427 ( 16.5%) (        0) (      0.00,       2.18)
+00:01:21  2812MB         | -----------------------------------------------------------------------------------------
+00:01:21  2812MB         | geometric elements:                   (      min) (       avg.) (      max)
+00:01:21  2812MB         |  objects (top level)          1737430 (  1737430) (  1737430.0) (  1737430)
+00:01:21  2812MB         |  polygons                           3 (        1) (        1.0) (        1)
+00:01:21  2812MB         | -----------------------------------------------------------------------------------------
+00:01:21  2812MB         | triangle tessellation:                (      min) (       avg.) (      max) (/ element) (% total)
+00:01:21  2812MB         |  polymeshes                         6 (        2) (        2.0) (        2) (     2.00) (100.00%)
+00:01:21  2812MB         |  unique triangles:                  6
+00:01:21  2812MB         |  memory use (in MB)              0.00
+00:01:21  2812MB         |    vertices                      0.00
+00:01:21  2812MB         |    vertex indices                0.00
+00:01:21  2812MB         |    uniform indices               0.00
+00:01:21  2812MB         | -----------------------------------------------------------------------------------------
+00:01:21  2812MB         | acceleration structures:              (% total)
+00:01:21  2812MB         |  list                               3 ( 75.00%)
+00:01:21  2812MB         |  bvh                                1 ( 25.00%)
+00:01:21  2812MB         |  total                              4 (100.00%)
+00:01:21  2812MB         | -----------------------------------------------------------------------------------------
+00:01:21  2812MB         | number of warnings, warning type:
+00:01:21  2812MB         |     1:  %s was compiled against non-compatible Arnold %s
+00:01:21  2812MB         |   114:  %s: could not set %s parameter "%s"
+00:01:21  2812MB         |     1:  Rendering utilization was only %.00f%%. Your render may be bound by a single threaded process or I/O.
+00:01:21  2812MB         |     1:  Scene creation was a significant amount of total time (%.00f%%). Consider optimizing this process first.
+00:01:21  2812MB         |     5:  can't rename node "%s" to "%s": name already in use
+00:01:21  2812MB         |     1:  skipping nonexisting shader path: %s
+00:01:21  2812MB         | -----------------------------------------------------------------------------------------
+00:01:21  2812MB         | performance warnings:
+00:01:21  2812MB WARNING |  Scene creation was a significant amount of total time (99%). Consider optimizing this process first.
+00:01:21  2812MB         | -----------------------------------------------------------------------------------------
+00:01:26  2822MB         |  
+00:01:26  2822MB         | rendering image at 960 x 540, -3 AA samples, 3 GI samples, 1 GI bounces
+00:01:26  2822MB         |  updating 1737507 nodes ...
+00:01:26  2822MB         |   aiVolumeScattering: 5 samples (volume_scattering)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64NSP.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64WFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 19 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\Q1000PAR64MFL.IES (IESNA:LM-63-1995 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 36 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |   [photometric] J:\Lumiverse\Lumiverse\data\Chosky\S4 26 Deg. 575w-115v_LM6302_07.ies (IESNA:LM-63-2002 type C)
+00:01:27  2822MB         |  node update done in 0:00.45
+00:01:27  2822MB         |  Using light lookup acceleration for 57 lights
+00:01:27  2822MB         |  [aov] parsing output statement: "RGBA RGBA filter buffer_driver243"
+00:01:27  2822MB         |  [aov] registered driver: "buffer_driver243" (driver_buffer)
+00:01:27  2822MB         |  [aov]  * "RGBA" of type RGBA filtered by "filter" (gaussian_filter)
+00:01:27  2822MB         |  [aov] done preparing 1 AOV for 1 output to 1 driver (0 deep AOVs)
+00:01:27  2822MB         |  starting 8 bucket workers of size 64x64 ...
+00:01:27  2826MB         |     0% done - 11 rays/pixel
+00:01:27  2826MB         |     5% done - 11 rays/pixel
+00:01:27  2826MB         |    10% done - 10 rays/pixel
+00:01:27  2826MB         |    15% done - 10 rays/pixel
+00:01:27  2826MB         |    20% done - 10 rays/pixel
+00:01:27  2826MB         |    25% done - 11 rays/pixel
+00:01:27  2827MB         |    30% done - 11 rays/pixel
+00:01:27  2827MB         |    35% done - 10 rays/pixel
+00:01:27  2827MB         |    40% done - 10 rays/pixel
+00:01:27  2827MB         |    45% done - 11 rays/pixel
+00:01:27  2827MB         |    50% done - 11 rays/pixel
+00:01:27  2827MB         |    55% done - 11 rays/pixel
+00:01:27  2827MB         |    60% done - 11 rays/pixel
+00:01:27  2827MB         |    65% done - 11 rays/pixel
+00:01:27  2827MB         |    70% done - 10 rays/pixel
+00:01:27  2827MB         |    75% done - 10 rays/pixel
+00:01:28  2827MB         |    80% done - 10 rays/pixel
+00:01:28  2827MB         |    85% done - 10 rays/pixel
+00:01:28  2827MB         |    90% done - 10 rays/pixel
+00:01:28  2827MB         |    95% done - 10 rays/pixel
+00:01:28  2826MB         |   100% done - 10 rays/pixel
+00:01:28  2826MB         |  bucket workers done in 0:00.83
+00:01:28  2826MB         | render done
+00:01:28  2826MB         |  
+00:01:28  2826MB         | -----------------------------------------------------------------------------------------
+00:01:28  2826MB         | scene creation time:
+00:01:28  2826MB         |  plugin loading               0:00.02
+00:01:28  2826MB         |  .ass parsing                 1:02.11
+00:01:28  2826MB         |  system/unaccounted           1:02.07
+00:01:28  2826MB         |  total                        1:10.01  (11.33% machine utilization)
+00:01:28  2826MB         | -----------------------------------------------------------------------------------------
+00:01:28  2826MB         | render time:
+00:01:28  2826MB         |  node init                    0:00.45
+00:01:28  2826MB         |  bucket rendering             0:00.83
+00:01:28  2826MB         |   accel. building             0:00.00
+00:01:28  2826MB         |   pixel rendering             0:00.83  (multi-threaded render, this value may not be reliable)
+00:01:28  2826MB         |  system/unaccounted           0:00.61
+00:01:28  2826MB         |  total                        0:01.29  (52.58% machine utilization)
+00:01:28  2826MB         | -----------------------------------------------------------------------------------------
+00:01:28  2826MB         | memory consumed in MB:
+00:01:28  2826MB         |  at startup                     77.99
+00:01:28  2826MB         |  plugins                         0.50
+00:01:28  2826MB         |  AOV samples                     0.03
+00:01:28  2826MB         |  output buffers                  0.50
+00:01:28  2826MB         |  node overhead                 530.25
+00:01:28  2826MB         |  message passing                 0.02
+00:01:28  2826MB         |  memory pools                    7.77
+00:01:28  2826MB         |  geometry                       15.44
+00:01:28  2826MB         |    polymesh                      0.00
+00:01:28  2826MB         |  accel. structs                104.36
+00:01:28  2826MB         |  strings                       180.21
+00:01:28  2826MB         |  texture cache                   0.00
+00:01:28  2826MB         |  unaccounted                  1941.86
+00:01:28  2826MB         |  total peak                   2858.93
+00:01:28  2826MB         | -----------------------------------------------------------------------------------------
+00:01:28  2826MB         | ray counts:                           (/pixel , /sample) (% total) (avg. hits) (max hits)
+00:01:28  2826MB         |  camera                         12665 (   1.00,    1.00) (  9.62%) (     1.00) (       1)
+00:01:28  2826MB         |  shadow                          2976 (   0.23,    0.23) (  2.26%) (     0.35) (       1)
+00:01:28  2826MB         |  volume_shadow                   2033 (   0.16,    0.16) (  1.54%) (     0.20) (       1)
+00:01:28  2826MB         |  diffuse                       113985 (   9.00,    9.00) ( 86.58%) (     0.82) (       1)
+00:01:28  2826MB         |  total                         131659 (  10.40,   10.40) (100.00%) (     0.82) (       1)
+00:01:28  2826MB         |  max depth                          1
+00:01:28  2826MB         | -----------------------------------------------------------------------------------------
+00:01:28  2826MB         | shader calls:                         (/pixel , /sample) (% total)
+00:01:28  2826MB         |  primary                       106148 (   8.38,    8.38) ( 44.91%)
+00:01:28  2826MB         |  atmosphere                    130200 (  10.28,   10.28) ( 55.09%)
+00:01:28  2826MB         |  total                         236348 (  18.66,   18.66) (100.00%)
+00:01:28  2826MB         | -----------------------------------------------------------------------------------------
+00:01:28  2826MB         | geometry:                             (% hit ) (instances) (  init mem,  final mem)
+00:01:28  2826MB         |  lists                              1 (100.0%) (        0) (     13.26,      13.26)
+00:01:28  2826MB         |  polymeshes                         3 (100.0%) (        0) (      0.00,       0.00)
+00:01:28  2826MB         |  simple                       1737427 ( 16.5%) (        0) (      0.00,       2.18)
+00:01:28  2826MB         | -----------------------------------------------------------------------------------------
+00:01:28  2826MB         | geometric elements:                   (      min) (       avg.) (      max)
+00:01:28  2826MB         |  objects (top level)          1737430 (  1737430) (  1737430.0) (  1737430)
+00:01:28  2826MB         |  polygons                           3 (        1) (        1.0) (        1)
+00:01:28  2826MB         | -----------------------------------------------------------------------------------------
+00:01:28  2826MB         | triangle tessellation:                (      min) (       avg.) (      max) (/ element) (% total)
+00:01:28  2826MB         |  polymeshes                         6 (        2) (        2.0) (        2) (     2.00) (100.00%)
+00:01:28  2826MB         |  unique triangles:                  6
+00:01:28  2826MB         |  memory use (in MB)              0.00
+00:01:28  2826MB         |    vertices                      0.00
+00:01:28  2826MB         |    vertex indices                0.00
+00:01:28  2826MB         |    uniform indices               0.00
+00:01:28  2826MB         | -----------------------------------------------------------------------------------------
+00:01:28  2826MB         | acceleration structures:              (% total)
+00:01:28  2826MB         |  list                               3 ( 75.00%)
+00:01:28  2826MB         |  bvh                                1 ( 25.00%)
+00:01:28  2826MB         |  total                              4 (100.00%)
+00:01:28  2826MB         | -----------------------------------------------------------------------------------------
+00:01:28  2826MB         | number of warnings, warning type:
+00:01:28  2826MB         |     1:  %s was compiled against non-compatible Arnold %s
+00:01:28  2826MB         |   115:  %s: could not set %s parameter "%s"
+00:01:28  2826MB         |     1:  Rendering utilization was only %.00f%%. Your render may be bound by a single threaded process or I/O.
+00:01:28  2826MB         |     2:  Scene creation was a significant amount of total time (%.00f%%). Consider optimizing this process first.
+00:01:28  2826MB         |     5:  can't rename node "%s" to "%s": name already in use
+00:01:28  2826MB         |     1:  skipping nonexisting shader path: %s
+00:01:28  2826MB         | -----------------------------------------------------------------------------------------
+00:01:28  2826MB         | performance warnings:
+00:01:28  2826MB WARNING |  Scene creation was a significant amount of total time (98%). Consider optimizing this process first.
+00:01:28  2826MB         | -----------------------------------------------------------------------------------------
+00:01:39  2805MB         |  
+00:01:39  2805MB         | releasing resources

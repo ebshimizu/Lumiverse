@@ -85,6 +85,41 @@ namespace Lumiverse {
 
 	virtual void reset();
 
+	virtual void rerender();
+
+	/*!
+	* \brief Sets the camera sampling rate for preview.
+	*
+	* Although it's possible to set the rate to a large number. It's not recommended.
+	* \param preview The camera sampling rate for preview.
+	*/
+	void setPreviewSamples(int preview);
+
+	/*!
+	* \brief Sets the camera sampling rate for rendering.
+	*
+	* Although it's possible to set the rate to a small number. It's not recommended.
+	* \param render The camera sampling rate for rendering.
+	*/
+	void setRenderSamples(int render);
+
+	/*!
+	* \brief Returns the camera sampling rate for preview.
+	*/
+	int getPreviewSamples() { return m_preview_samples; }
+
+	/*!
+	* \brief Returns the camera sampling rate for render.
+	*/
+	int getRenderSamples() { return m_render_samples; }
+
+	float* getBufferPointer() { return PhotoPatch::getBufferPointer(); }
+
+	void interruptRender();
+
+	int getWidth(){ return PhotoPatch::getWidth(); }
+	int getHeight() { return PhotoPatch::getHeight(); }
+
   protected:
 
 	virtual void workerRender(FrameDeviceInfo frame) override;
@@ -99,6 +134,10 @@ namespace Lumiverse {
 	virtual void onRecording() override { }
 
 	virtual void onRendering() override { }
+
+  private:
+	  int m_preview_samples;
+	  int m_render_samples;
 
   };
     

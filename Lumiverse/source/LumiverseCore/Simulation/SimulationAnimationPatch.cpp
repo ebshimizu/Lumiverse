@@ -53,8 +53,9 @@ void SimulationAnimationPatch::update(set<Device *> devices,
 	InterruptFunction interruptRender,
 	ClearUpdateFlagsFunction clearUpdateFlags) {
 	// Doesn't respond if it's stopped.
-    if (m_mode == SimulationAnimationMode::STOPPED)
-        return ;
+	if (m_mode == SimulationAnimationMode::STOPPED){
+		return;
+	}
     
     FrameDeviceInfo frame;
 	
@@ -65,8 +66,9 @@ void SimulationAnimationPatch::update(set<Device *> devices,
     bool rerender_req = isUpdateRequired(devices);
 
     // There's no need to send this frame
-    if (!rerender_req)
-        return ;
+	if (!rerender_req){
+		return;
+	}
     
 	createFrameInfoBody(devices, frame);
 
@@ -90,11 +92,11 @@ void SimulationAnimationPatch::update(set<Device *> devices,
 void SimulationAnimationPatch::enqueueFrameInfo(const FrameDeviceInfo &frame) {
 	// Since there aren't many competitions (worker runs slowly),
 	// it's okay to just use a coarse lock.
-	m_queue.lock();
+	//m_queue.lock();
 	// Checks if start point was reset during this update call.
 	if (m_startPoint != chrono::system_clock::from_time_t(0))
 		m_queuedFrameDeviceInfo.push_back(frame);
-	m_queue.unlock();
+	//m_queue.unlock();
 }
 
 void SimulationAnimationPatch::createFrameInfoHeader(FrameDeviceInfo &frame) {

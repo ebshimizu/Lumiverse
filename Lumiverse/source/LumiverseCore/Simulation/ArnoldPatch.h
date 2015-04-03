@@ -182,7 +182,7 @@ namespace Lumiverse {
 	*/
 	virtual size_t getBucketNumber() const { return m_interface.getBucketNumber(); }
 
-  protected:
+  //protected:
  
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.
