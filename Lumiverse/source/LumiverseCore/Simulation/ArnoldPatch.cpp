@@ -239,7 +239,11 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
       if (raw->getTypeName() == "float") {
         if (param == "intensity") {
           LumiverseFloat* scaledVal = (LumiverseFloat*)LumiverseTypeUtils::copy(raw);
-          *scaledVal *= (float)(ColorUtils::getTotalTrans(d_ptr->getMetadata("gel")));
+
+          if (d_ptr->metadataExists("gel")) {
+            *scaledVal *= (float)(ColorUtils::getTotalTrans(d_ptr->getMetadata("gel")));
+          }
+
           m_interface.setParameter(light_ptr, param, scaledVal->asString());
         }
       }

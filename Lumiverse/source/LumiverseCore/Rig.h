@@ -364,6 +364,11 @@ namespace Lumiverse {
     */
     void resetDevices();
 
+    /*!
+    \brief Returns true if the Rig is running slowly.
+    */
+    bool isSlow() { return m_slow; }
+
   private:
     /*!
     * \brief Loads the rig info from the parsed JSON data.
@@ -457,6 +462,11 @@ namespace Lumiverse {
     * be used to inject values into the rig before the patch happens.
     */
     map<int, function<void()> > m_updateFunctions;
+
+    /*!
+    \brief Incidates if the Rig is updating slowly.
+    */
+    bool m_slow;
 
     // May have more indicies in the future, like mapping by channel number.
   };

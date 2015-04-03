@@ -406,11 +406,13 @@ void Rig::update() {
     float elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count() / 1000.0f;
 
     if (elapsed < m_loopTime) {
+      m_slow = false;
       unsigned int ms = (unsigned int)(1000 * (m_loopTime - elapsed));
       this_thread::sleep_for(chrono::milliseconds(ms));
     }
     else {
-      Logger::log(WARN, "Rig Update loop running slowly");
+      m_slow = true;
+      // Logger::log(WARN, "Rig Update loop running slowly");
     }
   }
 }

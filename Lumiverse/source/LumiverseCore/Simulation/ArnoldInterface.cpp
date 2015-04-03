@@ -282,8 +282,8 @@ void ArnoldInterface::addGobo(AtNode *light_ptr, std::string file, float deg, fl
 }
 
 void ArnoldInterface::init() {
-    // TODO : to use env var (different apis for linux and win)
-    AiLicenseSetServer("pike.graphics.cs.cmu.edu", 5053);
+  // TODO : to use env var (different apis for linux and win)
+  // Make sure your environment variables are set properly to check out an arnold license.
 
     // Starts a arnold session
     AiBegin();

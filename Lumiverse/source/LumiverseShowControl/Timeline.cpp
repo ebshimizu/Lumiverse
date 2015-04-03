@@ -485,6 +485,9 @@ size_t Timeline::getLoopLength() {
 
 size_t Timeline::getLoopTime(size_t time) {
   // determine where we are in the loop
+  if (getLoopLength() == 0)
+    return 0;
+
   int loopNum = (int)(time / getLoopLength());
   if (_loops != -1 && loopNum >= _loops) {
     // if we've exceeded our number of loops, set to the end keyframe.
