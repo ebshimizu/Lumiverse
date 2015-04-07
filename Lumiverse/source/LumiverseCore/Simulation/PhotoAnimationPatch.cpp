@@ -133,5 +133,21 @@ void PhotoAnimationPatch::setRenderSamples(int render) {
 	m_render_samples = render;
 }
 
+float PhotoAnimationPatch::getPercentage() const {
+	// Rough number.
+	if (m_mode == SimulationAnimationMode::INTERACTIVE){
+		return PhotoPatch::getPercentage();
+	}
+	else if (m_mode == SimulationAnimationMode::RENDERING) {
+		// Don't forget the frame being processed
+		size_t finished = m_mem_frameManager->getFrameNum();
+		size_t sum = finished + m_queuedFrameDeviceInfo.size() + 1;
+		float renderingPer = PhotoPatch::getPercentage();
+		sum = (sum == 0) ? 1 : sum;
+
+		return ((float)finished * 100.f + renderingPer) / sum;
+	}
+}
+
 }
 #endif

@@ -61,7 +61,6 @@ bool SimulationPatch::isUpdateRequired(set<Device *> devices) {
 			continue;
 		
         if (m_lights[d->getId()]->rerender_req) {
-			Logger::log(INFO, d->getId()+ " rerender_req=true");
             req = true;
             break;
         }
@@ -101,7 +100,6 @@ void SimulationPatch::interruptRender() {
 }
 
 void SimulationPatch::onDeviceChanged(Device *d) {
-	Logger::log(INFO, d->getId() + " onDeviceChanged");
     if (m_lights.count(d->getId()) > 0) {
         m_lights[d->getId()]->rerender_req = true;
     }

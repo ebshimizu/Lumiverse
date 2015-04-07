@@ -117,7 +117,7 @@ namespace Lumiverse {
 	*
 	* \return The percent.
 	*/
-	//virtual float getPercentage() const { return m_interface.getPercentage(); }
+	virtual float getPercentage() const { return m_percentage; }
 
   //protected:
     /*!
@@ -165,6 +165,8 @@ namespace Lumiverse {
 	float *m_blend_buffer;
 
 	std::string m_default_path;
+	
+	float m_percentage;
 
   };
 }

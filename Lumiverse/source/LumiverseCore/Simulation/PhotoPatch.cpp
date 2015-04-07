@@ -9,7 +9,7 @@
 namespace Lumiverse {
 
 PhotoPatch::PhotoPatch(const JSONNode data) :
-m_blend(NULL), m_blend_buffer(NULL) {
+m_blend(NULL), m_blend_buffer(NULL),m_percentage(0.0) {
 	m_interrupt_flag.test_and_set();
 	loadJSON(data);
 }
@@ -82,12 +82,12 @@ void PhotoPatch::loadLight(Device *d_ptr) {
 			return;
 		}
 
-		string imagePath = m_default_path + record->metadata;
+		string imagePath = m_default_path +"images\\"+ (record->metadata);
 		buffer = imageio_load_image(imagePath.c_str(), &width, &height);
 
 		if (!buffer) {
 			std::stringstream sstm;
-			sstm << "Unable to read file: " << record->metadata.c_str();
+			sstm << "Unable to read file: " << imagePath.c_str();
 
 			Logger::log(WARN, sstm.str());
 
@@ -145,7 +145,7 @@ bool PhotoPatch::blendFloat(float* blended, float* light,
 				size_t offset = (m_width * i + j) * 4 + ch;
 				size_t offset_des = (m_width * (m_height - 1 - i) + j) * 4 + ch;
 				if (ch < 3){
-					blended[offset] += light[offset] * rgba[ch] * intensity;
+					blended[offset] += light[offset]* rgba[ch] * intensity;
 					if (blended[offset] > 1.0) blended[offset] = 1.0;
 				}
 				else{
@@ -200,21 +200,21 @@ bool PhotoPatch::renderLoop() {
 	m_interrupt_flag.test_and_set();
 
 	// Blend one by one
+	m_percentage = 0.0;
 	for (auto record : m_lights) {
+		m_percentage += 1;
 		PhotoLightRecord *light = (PhotoLightRecord *)record.second;
 
 		if (toclear) {
 			toclear = false;
 			std::memset(m_blend_buffer, 0, img_size * sizeof(float));
 		}
-		if (light->intensity > 0) { std::printf("intensity=%f\n", light->intensity); }
-		if (light->photo && light->intensity > 0 &&
-			!light->color.isZero())
+		if (light->photo && light->intensity > 0 && !light->color.isZero()){
 			success = blendFloat(m_blend_buffer, light->photo, light->intensity, light->color);
+		}
 		else if (!light->photo) {
 			std::stringstream sstm;
 			sstm << "Empty file: " << light->metadata.c_str();
-
 			Logger::log(WARN, sstm.str());
 		}
 
@@ -224,13 +224,9 @@ bool PhotoPatch::renderLoop() {
 
 	if (success){
 		std::memcpy(m_blend, m_blend_buffer, img_size * sizeof(float));
-		/*for (int i = 0; i < m_width*m_height; i++){
-			if (m_blend[i * 4] > 0) std::printf("red %f\n", m_blend[i * 4]);
-			if (m_blend[i * 4+1] > 0) std::printf("green %f\n", m_blend[i * 4]);
-			if (m_blend[i * 4+2] > 0) std::printf("green %f\n", m_blend[i * 4]);
-		}*/
 	}
 
+	m_percentage /= (float)m_lights.size();
 	return success;
 }
 

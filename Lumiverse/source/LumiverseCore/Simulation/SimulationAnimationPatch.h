@@ -233,6 +233,8 @@ namespace Lumiverse {
 
 	virtual int getRenderSamples() = 0;
 
+	virtual float getPercentage() const = 0;
+
   protected:
 
 	/*!

@@ -120,6 +120,15 @@ namespace Lumiverse {
 	int getWidth(){ return PhotoPatch::getWidth(); }
 	int getHeight() { return PhotoPatch::getHeight(); }
 
+	/*!
+	* \brief Gets the current rendering progress as percentage.
+	*
+	* The value returned may not be the accurate number due to concurrency.
+	* Also the accuracy is limited to number of frame.
+	* \return The current rendering progress as percentage
+	*/
+	float getPercentage() const;
+
   protected:
 
 	virtual void workerRender(FrameDeviceInfo frame) override;

@@ -153,7 +153,6 @@ void ArnoldInterface::setParameter(AtNode *light_ptr, const std::string &paramNa
             else if (param.arnoldTypeName == "string") {
 				// First to see if the string is a path (if is a ies file).
 				// If it is, converts to relative path.
-				std::printf("%s %s\n", paramName.c_str(), toRelativePath(value).c_str());
 				AiNodeSetStr(light_ptr, paramName.c_str(), toRelativePath(value).c_str());
             }
         
@@ -305,7 +304,6 @@ void ArnoldInterface::init() {
    
     // Set a driver to output result into a float buffer
     AtNode *driver = AiNode("driver_buffer");
-	std::printf("driver=%p\n", driver);
     std::string name("buffer_driver");
     std::stringstream ss;
     ss << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() -
