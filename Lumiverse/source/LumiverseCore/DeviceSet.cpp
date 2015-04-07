@@ -547,6 +547,12 @@ void DeviceSet::setColorRGBRaw(string param, double r, double g, double b, doubl
   }
 }
 
+void DeviceSet::setRGBRaw(double r, double g, double b, double weight) {
+  for (auto& d : m_workingSet) {
+    d->setColorRGBRaw("color", r, g, b, weight);
+  }
+}
+
 void DeviceSet::setColorRGB(string param, double r, double g, double b, double weight, RGBColorSpace cs) {
   for (auto& d : m_workingSet) {
     if (d->paramExists(param)) {

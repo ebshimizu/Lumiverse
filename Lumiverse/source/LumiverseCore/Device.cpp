@@ -282,6 +282,10 @@ bool Device::setColorRGB(string param, double r, double g, double b, double weig
   return true;
 }
 
+bool Device::setRGBRaw(double r, double g, double b, double weight) {
+  return setColorRGBRaw("color", r, g, b, weight);
+}
+
 bool Device::setColorChannel(string param, string channel, double val) {
   if (m_parameters.count(param) == 0 ||
       m_parameters[param]->getTypeName() != "color") {

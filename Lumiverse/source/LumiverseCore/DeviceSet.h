@@ -428,6 +428,13 @@ namespace Lumiverse {
     */
     void setColorRGBRaw(string param, double r, double g, double b, double weight = 1.0);
 
+    /*!
+    \brief Sets the value of a LumiverseColor paramter
+
+    Assumes the existence of a RGB "color" parameter.
+    */
+    void setRGBRaw(double r, double g, double b, double weight = 1.0);
+
     /*! \brief Sets the value of a LumiverseColor parameter
     *
     * Proxy for LumiverseColor::setRGB().
