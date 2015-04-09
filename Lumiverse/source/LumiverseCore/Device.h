@@ -310,6 +310,11 @@ namespace Lumiverse {
     */
     bool setRGBRaw(double r, double g, double b, double weight = 1.0);
 
+    /*!
+    \brief Proxy for setParam("intensity", val). Assumes the existence of an "intensity" parameter.
+    */
+    bool setIntensity(float val) { return setParam("intensity", val); }
+
     /*! \brief Sets the value of a LumiverseColor parameter
     *
     * Does not create a new parameter if they key doesn't exist.

@@ -435,6 +435,11 @@ namespace Lumiverse {
     */
     void setRGBRaw(double r, double g, double b, double weight = 1.0);
 
+    /*!
+    \brief Proxy for setParam("intensity", val). Assumes the existence of an "intensity" parameter.
+    */
+    void setIntensity(float val) { setParam("intensity", val); }
+
     /*! \brief Sets the value of a LumiverseColor parameter
     *
     * Proxy for LumiverseColor::setRGB().
