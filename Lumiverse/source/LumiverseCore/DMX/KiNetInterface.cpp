@@ -57,7 +57,7 @@ void KiNetInterface::init() {
     free(m_buffer);
 
   m_buffer = (unsigned char*)malloc(getBufferSize() * sizeof(unsigned char));
-  memset(m_buffer, (int)getBufferSize(), 0);
+  memset(m_buffer, 0, (int)getBufferSize());
   for (int c = 0; c < getNumChannels(); c++)
   {
     memcpy(m_buffer + c * getPacketSize(), getHeaderBytes(), getHeaderSize());
