@@ -157,7 +157,7 @@ namespace Lumiverse {
     * \param device The Device to pull data from
     * \param dmxMap Table to DMX Maps to tell this function how to interpret the Device's data.
     */
-    void updateDMX(unsigned char* data, Device* device, map<string, patchData> dmxMap);
+    void updateDMX(unsigned char* data, Device* device, map<string, patchData>& dmxMap);
 
     /*! \brief Gets the universe the device is patched to.
     * \return The Device's universe */

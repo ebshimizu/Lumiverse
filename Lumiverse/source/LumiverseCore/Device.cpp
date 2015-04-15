@@ -325,7 +325,13 @@ void Device::copyParamByValue(string param, LumiverseType* source) {
 }
     
 bool Device::paramExists(string param) {
-  return (m_parameters.count(param) > 0);
+  try {
+    auto p = m_parameters.at(param);
+    return true;
+  }
+  catch (exception e) {
+    return false;
+  }
 }
 
 size_t Device::numParams() {

@@ -220,18 +220,22 @@ DMXPatch::~DMXPatch() {
 void DMXPatch::update(set<Device *> devices) {
   for (Device* d : devices) {
     // Skip if there is no DMX patch for the device stored
-    if (m_patch.count(d->getId()) == 0)
+    try {
+      // For each device, find the device patch stored.
+      DMXDevicePatch devPatch = *(m_patch).at(d->getId());
+
+      unsigned int uni = devPatch.getUniverse();
+      
+      // Skip if universes aren't allocated because the interface doesn't exist.
+      // TODO: check this, logic may be questionable
+      if (uni >= m_universes.size())
+        continue;
+      
+      devPatch.updateDMX(&m_universes[uni].front(), d, m_deviceMaps[devPatch.getDMXMapKey()]);
+    }
+    catch (exception e) {
       continue;
-    
-    // For each device, find the device patch stored.
-    DMXDevicePatch devPatch = *(m_patch)[d->getId()];
-    unsigned int uni = devPatch.getUniverse();
-    
-    // Skip if universes aren't allocated because the interface doesn't exist.
-    if (uni >= m_universes.size())
-      continue;
-    
-    devPatch.updateDMX(&m_universes[uni].front(), d, m_deviceMaps[devPatch.getDMXMapKey()]);
+    }
   }
 
   // Send updated data to interfaces

@@ -12,14 +12,15 @@ DMXDevicePatch::~DMXDevicePatch() {
   // Empty for now
 }
 
-void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, patchData> dmxMap) {
+void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, patchData>& dmxMap) {
   for (auto& instr : dmxMap) {
-    // Validation checks.
-    if (!device->paramExists(instr.first)) {
-      // DMX mapping has a parameter that the device does not have.
+    LumiverseType* param = device->getParam(instr.first);
+    if (param == nullptr) {
+      // DMX mapping has a parameter that the device does not have, return
       ostringstream ss;
       ss << "Device does not have a parameter named " << instr.first << "\n";
-      throw logic_error(ss.str().c_str());
+      Logger::log(ERR, ss.str());
+      return;
     }
 
     // Eventually might have to check the type of the data in the device to make
@@ -28,61 +29,61 @@ void DMXDevicePatch::updateDMX(unsigned char* data, Device* device, map<string, 
     switch (instr.second.type) {
       case (FLOAT_TO_SINGLE):
       {
-        LumiverseFloat* val = (LumiverseFloat*) device->getParam(instr.first);
+        LumiverseFloat* val = (LumiverseFloat*)param;
         floatToSingle(data, instr.second.startAddress, val);
         break;
       }
       case (FLOAT_TO_FINE):
       {
-        LumiverseFloat* val = (LumiverseFloat*)device->getParam(instr.first);
+        LumiverseFloat* val = (LumiverseFloat*)param;
         floatToFine(data, instr.second.startAddress, val->asPercent());
         break;
       }
       case (ENUM) :
       {
-        LumiverseEnum* val = (LumiverseEnum*)device->getParam(instr.first);
+        LumiverseEnum* val = (LumiverseEnum*)param;
         toEnum(data, instr.second.startAddress, val);
         break;
       }
       case (RGB_REPEAT2) :
       {
-        LumiverseFloat* val = (LumiverseFloat*)device->getParam(instr.first);
+        LumiverseFloat* val = (LumiverseFloat*)param;
         RGBRepeat(data, instr.second.startAddress, val, 2);
         break;
       }
       case (RGB_REPEAT3) :
       {
-        LumiverseFloat* val = (LumiverseFloat*)device->getParam(instr.first);
+        LumiverseFloat* val = (LumiverseFloat*)param;
         RGBRepeat(data, instr.second.startAddress, val, 3);
         break;
       }
       case (RGB_REPEAT4) :
       {
-        LumiverseFloat* val = (LumiverseFloat*)device->getParam(instr.first);
+        LumiverseFloat* val = (LumiverseFloat*)param;
         RGBRepeat(data, instr.second.startAddress, val, 4);
         break;
       }
       case(COLOR_RGB) :
       {
-        LumiverseColor* val = (LumiverseColor*)device->getParam(instr.first);
+        LumiverseColor* val = (LumiverseColor*)param;
         ColorToRGB(data, instr.second.startAddress, val);
         break;
       }
       case (COLOR_RGBW) :
       {
-        LumiverseColor* val = (LumiverseColor*)device->getParam(instr.first);
+        LumiverseColor* val = (LumiverseColor*)param;
         ColorToRGBW(data, instr.second.startAddress, val);
         break;
       }
       case (COLOR_LUSTRPLUS):
       {
-        LumiverseColor* val = (LumiverseColor*)device->getParam(instr.first);
+        LumiverseColor* val = (LumiverseColor*)param;
         ColorToLustrPlus(data, instr.second.startAddress, val);
         break;
       }
       case (ORI_TO_FINE) :
       {
-        LumiverseOrientation* val = (LumiverseOrientation*)device->getParam(instr.first);
+        LumiverseOrientation* val = (LumiverseOrientation*)param;
         floatToFine(data, instr.second.startAddress, val->asPercent());
         break;
       }

@@ -45,6 +45,7 @@ set (LumiverseCore_INCLUDE_ARTNET ON CACHE BOOL "Build LumiverseCore with ArtNet
 set (LumiverseCore_PYTHON_BINDINGS ON CACHE BOOL "Build LumiverseCore bindings for Python")
 set (LumiverseCore_INCLUDE_OLA OFF CACHE BOOL "Build LumiverseCore with OLA Driver")
 set (LumiverseCore_CSHARP_BINDINGS OFF CACHE BOOL "Build LumiverseCore bindings for C#")
+set (LumiverseCore_NODEJS_BINDINGS OFF CACHE BOOL "Build Lumiverse bindings for Node.js")
 
 # Config interface options
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
@@ -309,7 +310,7 @@ endif(LUMIVERSE_DOCS)
 
 
 # Time for fun other library binding generation time
-IF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
+IF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS OR LumiverseCore_NODEJS_BINDINGS)
 	FIND_PACKAGE(SWIG REQUIRED)
 	INCLUDE(${SWIG_USE_FILE})
 
@@ -357,4 +358,12 @@ IF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
 
 		SWIG_LINK_LIBRARIES(lumiversecsharp ${ACTIVE_LIBRARIES})
 	ENDIF (LumiverseCore_CSHARP_BINDINGS)
-ENDIF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS)
+
+	IF (LumiverseCore_NODEJS_BINDINGS)
+		MESSAGE("Including Node.js bindings...")
+		SET_SOURCE_FILES_PROPERTIES(LumiverseCore.i PROPERTIES SWIG_FLAGS "-node")
+		SWIG_ADD_MODULE(lumiversenode javascript ${LUMIVERSE_CORE_SOURCE} ${LUMIVERSE_SHOW_CONTROL_SOURCE} LumiverseCore.i)
+
+		SWIG_LINK_LIBRARIES(lumiversenode ${ACTIVE_LIBRARIES})
+	ENDIF (LumiverseCore_NODEJS_BINDINGS)
+ENDIF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS OR LumiverseCore_NODEJS_BINDINGS)
