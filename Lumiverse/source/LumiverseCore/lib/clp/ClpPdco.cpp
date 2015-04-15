@@ -316,9 +316,8 @@ ClpPdco::pdco( ClpPdcoBase * stuff, Options &options, Info &info, Outfo &outfo)
      //bool useChol = (LSmethod == 1);
      //bool useQR   = (LSmethod == 2);
      bool direct  = (LSmethod <= 2 && ifexplicit);
-     char solver[6];
-     strcpy(solver, "  LSQR");
-
+     char solver[7];
+     strncpy(solver, "  LSQR", 7);
 
      //---------------------------------------------------------------------
      // Categorize bounds and allow for fixed variables by modifying b.
