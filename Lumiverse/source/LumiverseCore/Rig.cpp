@@ -386,14 +386,28 @@ void Rig::setRefreshRate(unsigned int rate) {
 
 void Rig::update() {
   while (m_running) {
+    // Get start time
+    auto start = chrono::high_resolution_clock::now();
+
     updateOnce();
+
+    // Sleep a bit depending on how long the update took.
+    auto end = chrono::high_resolution_clock::now();
+    float elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count() / 1000.0f;
+
+    if (elapsed < m_loopTime) {
+      m_slow = false;
+      unsigned int ms = (unsigned int)(1000 * (m_loopTime - elapsed));
+      this_thread::sleep_for(chrono::milliseconds(ms));
+    }
+    else {
+      m_slow = true;
+      // Logger::log(WARN, "Rig Update loop running slowly");
+    }
   }
 }
 
 void Rig::updateOnce() {
-  // Get start time
-  auto start = chrono::high_resolution_clock::now();
-
   // Run additional functions before sending to patches
   // These functions can be update functions you run in your own code
   // or other things that need to be in sync with stuff going over the network.
@@ -404,20 +418,6 @@ void Rig::updateOnce() {
   // Run the whole update thing for all patches
   for (auto& p : m_patches) {
     p.second->update(m_devices);
-  }
-
-  // Sleep a bit depending on how long the update took.
-  auto end = chrono::high_resolution_clock::now();
-  float elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count() / 1000.0f;
-
-  if (elapsed < m_loopTime) {
-    m_slow = false;
-    unsigned int ms = (unsigned int)(1000 * (m_loopTime - elapsed));
-    this_thread::sleep_for(chrono::milliseconds(ms));
-  }
-  else {
-    m_slow = true;
-    // Logger::log(WARN, "Rig Update loop running slowly");
   }
 }
 
