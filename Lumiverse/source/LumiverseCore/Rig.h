@@ -336,6 +336,14 @@ namespace Lumiverse {
     void update();
 
     /*!
+    \brief Forces an update to happen when this function is called.
+
+    Can be used to write a custom update loop. Not recommended to call this function while the Rig is running
+    (may create data races).
+    */
+    void updateOnce();
+
+    /*!
     * \brief Get a simulation patch
     *
     * Checks against all the registered patches and returns the first simulation patch found.
