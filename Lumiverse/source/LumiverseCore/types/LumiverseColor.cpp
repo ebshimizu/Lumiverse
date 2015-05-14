@@ -544,6 +544,7 @@ namespace Lumiverse {
       model.addRow(numCols, &indices[0], &xCoef[0], 0, 0);
       model.addRow(numCols, &indices[0], &yCoef[0], 0, 0);
       
+      model.setLogLevel(0);
       model.dual();
 
       const double* res = model.getColSolution();

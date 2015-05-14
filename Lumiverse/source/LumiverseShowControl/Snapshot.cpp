@@ -21,12 +21,17 @@ namespace ShowControl {
       m_rigData[d->getId()] = new Device(d);
     }
 
-    m_playbackData = pb->toJSON();
+    if (pb != nullptr) {
+      m_playbackData = pb->toJSON();
+    }
   }
 
   void Snapshot::loadSnapshot(Rig* targetRig, Playback* targetPb) {
     loadRig(targetRig);
-    loadPlayback(targetPb);
+
+    if (targetPb != nullptr) {
+      loadPlayback(targetPb);
+    }
   }
 
   void Snapshot::loadRig(Rig* targetRig) {

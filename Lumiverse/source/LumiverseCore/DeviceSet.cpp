@@ -561,6 +561,12 @@ void DeviceSet::setColorRGB(string param, double r, double g, double b, double w
   }
 }
 
+void DeviceSet::setMetadata(string key, string val) {
+  for (auto &d : m_workingSet) {
+    d->setMetadata(key, val);
+  }
+}
+
 vector<string> DeviceSet::getIds() {
   vector<string> ids;
   

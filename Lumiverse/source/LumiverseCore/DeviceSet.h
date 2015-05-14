@@ -448,6 +448,14 @@ namespace Lumiverse {
     void setColorRGB(string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
 
     /*!
+    \brief Sets the metadata for the given key-value pair for all devices in the DeviceSet.
+
+    \param key Metadata key
+    \param val Metadata value
+    */
+    void setMetadata(string key, string val);
+
+    /*!
     * \brief Gets the devices managed by this set.
     * 
     * \return Set of Device* contained by the DeviceSet

@@ -245,6 +245,7 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
           }
 
           m_interface.setParameter(light_ptr, param, scaledVal->asString());
+          delete scaledVal;
         }
       }
       else if (raw->getTypeName() == "color") {
