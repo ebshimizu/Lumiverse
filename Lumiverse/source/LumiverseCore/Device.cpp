@@ -286,6 +286,10 @@ bool Device::setRGBRaw(double r, double g, double b, double weight) {
   return setColorRGBRaw("color", r, g, b, weight);
 }
 
+LumiverseFloat* Device::getIntensity() {
+  return (LumiverseFloat*)getParam("intensity");
+}
+
 bool Device::setColorChannel(string param, string channel, double val) {
   if (m_parameters.count(param) == 0 ||
       m_parameters[param]->getTypeName() != "color") {
@@ -321,7 +325,7 @@ void Device::copyParamByValue(string param, LumiverseType* source) {
       return;
   }
     
-  onParameterChanged();
+//  onParameterChanged();
 }
     
 bool Device::paramExists(string param) {

@@ -245,7 +245,7 @@ namespace Lumiverse {
 
 	virtual void createFrameInfoHeader(FrameDeviceInfo &frame);
 
-	virtual void createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame) = 0;
+	virtual void createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame, bool forceUpdate = false) = 0;
 
 	virtual void enqueueFrameInfo(const FrameDeviceInfo &frame);
 

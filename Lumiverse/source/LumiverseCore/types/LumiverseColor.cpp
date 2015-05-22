@@ -294,6 +294,14 @@ namespace Lumiverse {
     return Eigen::Vector3d(lab[0], C, H);
   }
 
+  Eigen::Vector2d LumiverseColor::getupvp() {
+    Eigen::Vector3d xyY = getxyY();
+    double u = (4 * xyY[0]) / (-2 * xyY[0] + 12 * xyY[1] + 3);
+    double v = (9 * xyY[1]) / (-2 * xyY[0] + 12 * xyY[1] + 3);
+
+    return Eigen::Vector2d(u, v);
+  }
+
   bool LumiverseColor::addColorChannel(string name) {
     if (m_deviceChannels.count(name) == 0) {
       m_deviceChannels[name] = 0;

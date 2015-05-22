@@ -171,11 +171,55 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
   }
 }
 
-void ArnoldAnimationPatch::createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame) {
+void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices, unsigned char* buff) {
+  if (m_mode != SimulationAnimationMode::STOPPED)
+    disableContinuousRenderMode();
+
+  FrameDeviceInfo frame;
+
+  // Fulls time and mode for frame info.
+  createFrameInfoHeader(frame);
+  createFrameInfoBody(devices, frame, true);
+
+  std::stringstream ss;
+  ss << "Rendering single frame: " << frame.time;
+  Logger::log(LDEBUG, ss.str());
+
+  // Interrupts the current rendering if in the interactive mode.
+  if (m_mode == SimulationAnimationMode::INTERACTIVE ||
+    m_mode == SimulationAnimationMode::RECORDING) {
+    interruptRender();
+  }
+
+  // Render immediately.
+  if (!m_interface.isOpen())
+    m_interface.init();
+
+  updateLight(frame.devices);
+  bool success = ArnoldPatch::renderLoop();
+  frame.clear();
+
+  if (success) {
+    auto bp = getBufferPointer();
+    for (int j = 0; j < getHeight(); j++) {
+      for (int i = 0; i < getWidth(); i++) {
+        int offset = (j * getWidth() + i) * 4;
+
+        // convert to bytes
+        buff[offset] = static_cast<unsigned char>(bp[offset] * 0xff);
+        buff[offset + 1] = static_cast<unsigned char>(bp[offset + 1] * 0xff);
+        buff[offset + 2] = static_cast<unsigned char>(bp[offset + 2] * 0xff);
+        buff[offset + 3] = static_cast<unsigned char>(bp[offset + 3] * 0xff);
+      }
+    }
+  }
+}
+
+void ArnoldAnimationPatch::createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame, bool forceUpdate) {
 	for (Device *d : devices) {
 		// Checks if the device is connect to this patch
-		if (m_lights.count(d->getId()) > 0 &&
-			m_lights[d->getId()]->rerender_req) {
+		if (forceUpdate || (m_lights.count(d->getId()) > 0 &&
+			m_lights[d->getId()]->rerender_req)) {
 			// Makes copy of this device
 			Device *d_copy = new Device(*d);
 			frame.devices.insert(d_copy);

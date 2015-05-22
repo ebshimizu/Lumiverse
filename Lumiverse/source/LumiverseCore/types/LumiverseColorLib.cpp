@@ -132,6 +132,40 @@ Eigen::Vector3d convXYZtoxyY(Eigen::Vector3d color) {
   return Eigen::Vector3d(color[0] / denom, color[1] / denom, color[1]);
 }
 
+Eigen::Vector2d convxytouv(Eigen::Vector3d xyY) {
+  double u = (4 * xyY[0]) / (-2 * xyY[0] + 12 * xyY[1] + 3);
+  double v = (9 * xyY[1]) / (-2 * xyY[0] + 12 * xyY[1] + 3);
+
+  return Eigen::Vector2d(u, v);
+}
+
+Eigen::Vector2d convuvtoxy(Eigen::Vector2d uv) {
+  double x = (9 * uv[0]) / (6 * uv[0] - 16 * uv[1] + 12);
+  double y = (4 * uv[1]) / (6 * uv[0] - 16 * uv[1] + 12);
+
+  return Eigen::Vector2d(x, y);
+}
+
+Eigen::Vector3d convXYZtoLUV(Eigen::Vector3d XYZ, ReferenceWhite rw) {
+#ifdef USE_C11_MAPS
+  return convXYZtoLUV(XYZ, refWhites[rw]);
+#else
+  return convXYZtoLUV(XYZ, refWhites(rw));
+#endif
+}
+
+Eigen::Vector3d convXYZtoLUV(Eigen::Vector3d XYZ, Eigen::Vector3d rw) {
+  auto rwuv = convxytouv(convXYZtoxyY(rw));
+  auto uv = convxytouv(convXYZtoxyY(XYZ));
+
+  double yn = (XYZ[1] / rw[1]);
+  double lstar = (yn > pow(6.0 / 29.0, 3.0)) ? 116.0 * pow(yn, 1.0 / 3.0) - 16 : pow(29.0 / 3.0, 3.0) * yn;
+  double ustar = 13 * lstar * (uv[0] - rwuv[0]);
+  double vstar = 13 * lstar * (uv[1] - rwuv[1]);
+
+  return Eigen::Vector3d(lstar, ustar, vstar);
+}
+
 Eigen::Vector3d normalizeRGB(Eigen::Vector3d rgb) {
   double maxVal = max(rgb[0], max(rgb[1], rgb[2]));
   if (maxVal > 1)

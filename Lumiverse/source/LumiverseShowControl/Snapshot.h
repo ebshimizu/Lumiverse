@@ -61,6 +61,11 @@ namespace ShowControl {
     */
     void loadPlayback(Playback* targetPb);
 
+    /*!
+    \brief Retrieves device data from the snapshot.
+    */
+    const map<string, Device*>& getRigData() { return m_rigData; }
+
   private:
     /*!
     \brief Stores the device data from the rig

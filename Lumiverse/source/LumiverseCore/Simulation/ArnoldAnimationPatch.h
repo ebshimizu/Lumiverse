@@ -168,6 +168,13 @@ namespace Lumiverse {
     */
     void renderSingleFrame(const set<Device *>& devices, string filename);
 
+    /*!
+    \brief Renders a single frame from the current state of Devices to a buffer.
+
+    Buffer format is RGBA 32-bit.
+    */
+    void renderSingleFrameToBuffer(const set<Device*>& devices, unsigned char* buff);
+
   protected:
     virtual void onRecording() override { setSamples(m_preview_samples); }
 
@@ -180,7 +187,7 @@ namespace Lumiverse {
 
     virtual void workerRender(FrameDeviceInfo frame);
 
-    virtual void createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame);
+    virtual void createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame, bool forceUpdate = false);
 
   private:
     /*! \brief The camera sampling rate for preview.

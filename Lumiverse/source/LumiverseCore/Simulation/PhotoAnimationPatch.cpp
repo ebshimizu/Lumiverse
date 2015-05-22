@@ -62,11 +62,11 @@ void PhotoAnimationPatch::workerRender(FrameDeviceInfo frame) {
 	}
 }
 
-void PhotoAnimationPatch::createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame) {
+void PhotoAnimationPatch::createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame, bool forceUpdate) {
 	for (Device *d : devices) {
 		// Checks if the device is connect to this patch
-		if (m_lights.count(d->getId()) > 0 &&
-			m_lights[d->getId()]->rerender_req) {
+		if (forceUpdate || (m_lights.count(d->getId()) > 0 &&
+			m_lights[d->getId()]->rerender_req)) {
 			// Makes copy of this device
 			Device *d_copy = new Device(*d);
 			frame.devices.insert(d_copy);

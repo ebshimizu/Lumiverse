@@ -251,6 +251,13 @@ namespace Lumiverse {
     Eigen::Vector3d getLCHab(Eigen::Vector3d refWhite);
 
     /*!
+    \brief Gets the u' and v' components of the color.
+
+    These are used in the L*u*v* color space computation but are also a way to measure differences in chroma.
+    */
+    Eigen::Vector2d getupvp();
+
+    /*!
     \brief Adds a color channel to the LumiverseColor.
     \return true on success, false otherwise.
     */

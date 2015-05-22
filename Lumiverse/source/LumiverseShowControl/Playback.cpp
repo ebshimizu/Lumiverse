@@ -38,6 +38,7 @@ namespace ShowControl {
 
     // Load up cue and layer data.
     load(filename);
+    m_grandmaster = 1;
   }
 
   Playback::~Playback() {

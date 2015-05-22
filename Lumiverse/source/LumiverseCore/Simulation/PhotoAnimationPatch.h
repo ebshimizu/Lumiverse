@@ -88,7 +88,7 @@ namespace Lumiverse {
   protected:
 
 	virtual void workerRender(FrameDeviceInfo frame) override;
-	virtual void createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame);
+	virtual void createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame, bool forceUpdate = false);
 
 	/*!
 	* \brief Loads data from a parsed JSON object

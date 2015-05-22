@@ -306,6 +306,31 @@ namespace Lumiverse {
     Eigen::Vector3d convXYZtoxyY(Eigen::Vector3d color);
 
     /*!
+    \brief Converts an xy(Y) color to a u', v' pair
+
+    Note that the Y parameter of the input is thrown out.
+    */
+    Eigen::Vector2d convxytouv(Eigen::Vector3d xyY);
+
+    /*!
+    \brief Converts (u',v') to (x, y) coordinates
+    */
+    Eigen::Vector2d convuvtoxy(Eigen::Vector2d uv);
+
+    /*!
+    \brief Converts XYZ to L*u*v*
+    
+    Default reference white is D50 for this function.
+    http://en.wikipedia.org/wiki/CIELUV
+    */
+    Eigen::Vector3d convXYZtoLUV(Eigen::Vector3d XYZ, ReferenceWhite rw = D50);
+
+    /*!
+    \brief Converts XYZ to L*u*v* using an arbitrary reference white    
+    */
+    Eigen::Vector3d convXYZtoLUV(Eigen::Vector3d XYZ, Eigen::Vector3d rw);
+
+    /*!
     \brief Takes an RGB value and normalizes it to the range [0,1].
 
     Note that this function is likely a terrible hack and is temporary while

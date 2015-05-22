@@ -315,6 +315,11 @@ namespace Lumiverse {
     */
     bool setIntensity(float val) { return setParam("intensity", val); }
 
+    /*!
+    \brief Returns the intensity parameter if it exists.
+    */
+    LumiverseFloat* getIntensity();
+
     /*! \brief Sets the value of a LumiverseColor parameter
     *
     * Does not create a new parameter if they key doesn't exist.
