@@ -166,6 +166,26 @@ Eigen::Vector3d convXYZtoLUV(Eigen::Vector3d XYZ, Eigen::Vector3d rw) {
   return Eigen::Vector3d(lstar, ustar, vstar);
 }
 
+Eigen::Vector3d convLUVtoXYZ(Eigen::Vector3d LUV, ReferenceWhite rw) {
+#ifdef USE_C11_MAPS
+  return convLUVtoXYZ(LUV, refWhites[rw]);
+#else
+  return convLUVtoXYZ(LUV, refWhites(rw));
+#endif
+}
+
+Eigen::Vector3d convLUVtoXYZ(Eigen::Vector3d LUV, Eigen::Vector3d rw) {
+  auto rwuv = convxytouv(convXYZtoxyY(rw));
+
+  auto up = LUV[1] / (13 * LUV[0]) + rwuv[0];
+  auto vp = LUV[2] / (13 * LUV[0]) + rwuv[1];
+
+  auto Y = (LUV[0] > 8) ? rw[1] * pow((LUV[0] + 16.0) / 116.0, 3) : rw[1] * LUV[0] * pow(3.0 / 29.0, 3);
+  auto X = Y * (9.0 * up) / (4.0 * vp);
+  auto Z = Y * (12.0 - 3.0 * up - 20.0 * vp) / (4.0 * vp);
+  return Eigen::Vector3d(X, Y, Z);
+}
+
 Eigen::Vector3d normalizeRGB(Eigen::Vector3d rgb) {
   double maxVal = max(rgb[0], max(rgb[1], rgb[2]));
   if (maxVal > 1)

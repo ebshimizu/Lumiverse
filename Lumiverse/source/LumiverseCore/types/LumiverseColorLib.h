@@ -331,6 +331,18 @@ namespace Lumiverse {
     Eigen::Vector3d convXYZtoLUV(Eigen::Vector3d XYZ, Eigen::Vector3d rw);
 
     /*!
+    \brief Converts L*u*v* to XYZ
+
+    Default refernce white is D50
+    */
+    Eigen::Vector3d convLUVtoXYZ(Eigen::Vector3d LUV, ReferenceWhite rw = D50);
+
+    /*!
+    \brief Converts L*u*v* to XYZ using an arbitrary reference white
+    */
+    Eigen::Vector3d convLUVtoXYZ(Eigen::Vector3d LUV, Eigen::Vector3d rw);
+
+    /*!
     \brief Takes an RGB value and normalizes it to the range [0,1].
 
     Note that this function is likely a terrible hack and is temporary while
