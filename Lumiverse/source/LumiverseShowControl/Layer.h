@@ -38,36 +38,36 @@ namespace ShowControl {
   {
   public:
     enum BlendMode {
-      BLEND_OPAQUE,   /*!< Blend all devices. */
-      NULL_DEFAULT,   /*!< Ignores parameters that are left at the default values */
-      NULL_INTENSITY, /*!< Ignores devices with intensity set to 0. If devices have no intensity, they will be active. */
-      SELECTED_ONLY   /*!< Uses a DeviceSet to determine which devices to affect using normal blending. */
+      ALPHA,      /*!< Blend all parameters using traditional alpha blending. */
+      OVERWRITE,  /*!< Overwrite all previous parameter values */
+      MAX,        /*!< Highest parameter value takes precedence */
+      MIN         /*!< Lowest parameter value takes precedence*/
     };
 
     /*!
     \brief Constructs a Layer.
 
     Copies all devices from the Rig, resets them to defaults, and sets the mode.
-    By default the Layer will be set to NULL_DEFAULT, essentially ignoring all
-    parameters in the layer when it's constructed. A layer is set to inactive on construction.
+    By default the Layer will be set to ALPHA. A Layer is set to inactive on construction.
     */
-    Layer(Rig* rig, Playback* pb, string name, int priority, BlendMode mode = NULL_DEFAULT);
+    Layer(Rig* rig, Playback* pb, string name, int priority, BlendMode mode = ALPHA);
 
     /*!
-    \brief Constructs a Layer using the BLEND_OPAQUE mode with specified opacity.
+    \brief Constructs a Layer using the ALPHA mode with specified opacity.
 
     Creates an empty layer using the selected opacity.
     */
     Layer(Rig* rig, Playback* pb, string name, int priority, float opacity);
 
     /*!
-    \brief Constructs a Layer using the SELECTED_ONLY mode with specified devices.
-
-    Creates an empty layer with the selected devices. Note that the layer will
-    contain all other devices in the rig, but will only look at the selected set
-    when flattening.
+    \brief Constructs a Layer using the selected devices and all of their parameters.
     */
-    Layer(Rig* rig, Playback* pb, string name, int priority, DeviceSet set);
+    Layer(DeviceSet set, Playback* pb, string name, int priority, BlendMode mode = ALPHA);
+
+    /*!
+    \brief Constructs an empty Layer
+    */
+    Layer(Playback* pb, string name, int priority, BlendMode mode = ALPHA);
 
     /*!
     \brief Constructs a Layer from a JSON node.
@@ -131,39 +131,6 @@ namespace ShowControl {
     /*! \brief Set m_active to false. */
     void deactivate() { m_active = false; }
 
-    /*! \brief Sets the parameter filter using a fully specified set. */
-    void setParamFilter(set<string> filter) { m_parameterFilter = filter; }
-
-    /*! \brief Adds a single parameter to the filter. */
-    void addParamFilter(string param);
-
-    /*! \brief Removes a single parameter from the filter. */
-    void removeParamFilter(string param);
-
-    /*! \brief Removes the device filter entirely. */
-    void deleteParamFilter();
-
-    /*! \brief Inverts the filter. m_invertFilter = !m_invertFilter. */
-    void invertFilter();
-
-    /*! \brief True = inverted, false = normal. */
-    bool getFilterStatus() { return m_invertFilter; }
-
-    /*! \brief Sets the selected devices for this layer.*/
-    void setSelectedDevices(DeviceSet devices);
-
-    /*! \brief Removes the given devices from the selected devices for the layer. */
-    void removeSelectedDevices(DeviceSet devices);
-
-    /*! \brief Adds the given devices to the selected devices fot the layer. */
-    void addSelectedDevices(DeviceSet devices);
-
-    /*! \brief Removes the selected devices filter from this layer. */
-    void clearSelectedDevices();
-
-    /*! \brief Gets the selected devices for this layer. */
-    DeviceSet getSelectedDevices() { return m_selectedDevices; }
-
     /*! \brief Set the layer name */
     void setName(string name) { m_name = name; }
     
@@ -177,6 +144,44 @@ namespace ShowControl {
     int getPriority() { return m_priority; }
 
     /*!
+    \brief Adds the selected devices and all parameters to the Layer state
+    */
+    void addDevices(DeviceSet d);
+
+    /*!
+    \brief Adds a single device and parameter to the layer.
+    */
+    void addDevice(Device* d, string param);
+
+    /*!
+    \brief Adds the selected devices and selected parameters to the Layer state
+    */
+    void addDevicesWithParams(DeviceSet d, set<string> params);
+
+    /*!
+    \brief Adds the specified parameter with the specified type to the existing
+    devices in the Layer.
+
+    Use with caution, it's better to use addDevicesWithParams instead of using this
+    */
+    void addParamToAllDevices(string param, LumiverseType* type);
+
+    /*! \brief Deletes a single parameter from a single device in the layer */
+    void deleteParameter(string id, string param);
+
+    /*!
+    \brief Deletes the selected devices from the layer along with all of their
+    parameters.
+    */
+    void deleteDevices(DeviceSet d);
+
+    /*! \brief Deletes the selected parameter values from the layer. */
+    void deleteParametersFromDevices(DeviceSet d, set<string> params);
+
+    /*! \brief Deletes all parameters from all devices in the layer. */
+    void deleteParametersFromAllDevices(set<string> params);
+
+    /*!
     \brief Returns the ID of the Timeline most being played on the Layer.
 
     \return ID of the Timeline that's being played back.
@@ -188,7 +193,7 @@ namespace ShowControl {
 
     The layer state can be manipulated through this map.
     */
-    map<string, Device*>& getLayerState() { return m_layerState; }
+    map<string, map<string, LumiverseType*> >& getLayerState() { return m_layerState; }
 
     /*!
     \brief Updates the Layer. If cues a running, the cues get updated.
@@ -220,19 +225,11 @@ namespace ShowControl {
     /*!
     \brief Holds the information on the current state of the layer.
 
-    Might notice that this is the same structure used inside of the Rig itself.
+    Note that the Layer will only update the parameters contained within this data structure.
+    Shortcuts have been provided for layers that use all parameters, however
+    you can create layers that manage a handful of parameters for a small number of devices.
     */
-    map<string, Device*> m_layerState;
-
-    /*!
-    \brief Holds information about parameters that should or shouldn't be
-    included when this layer is flattened.
-
-    You can choose to only affect a certain number of parameters in a
-    layer. So while the layer may store all of the parameters, you can
-    choose to ignore some.
-    */
-    set<string> m_parameterFilter;
+    map<string, map<string, LumiverseType*> > m_layerState;
 
     /*!
     \brief Playback object associated with the Layer.
@@ -247,17 +244,11 @@ namespace ShowControl {
     /*! \brief Layer priority. High priority layers are on top of low priority ones. */
     int m_priority;
 
-    /*! \brief If true, filter will be for all parameters except the specified params. */
-    bool m_invertFilter;
-
     /*! \brief Layer visibility flag. */
     bool m_active;
 
     /*! \brief Layer blend mode. */
     BlendMode m_mode;
-
-    /*! \brief If using SELECTED_ONLY mode, the devices to use. */
-    DeviceSet m_selectedDevices;
 
     /*! \brief If using BLEND_OPAQUE, the opacity of the layer. */
     float m_opacity;
@@ -312,35 +303,35 @@ namespace ShowControl {
 #ifdef USE_C11_MAPS
   /*! \brief Enum translation to string for JSON output */
   static unordered_map<Layer::BlendMode, string, std::hash<unsigned int>> BlendModeToString {
-      { Layer::BLEND_OPAQUE, "BLEND_OPAQUE" },
-      { Layer::NULL_DEFAULT, "NULL_DEFAULT" },
-      { Layer::NULL_INTENSITY, "NULL_INTENSITY" },
-      { Layer::SELECTED_ONLY, "SELECTED_ONLY" }
+      { Layer::ALPHA, "ALPHA" },
+      { Layer::OVERWRITE, "OVERWRITE" },
+      { Layer::MAX, "MAX" },
+      { Layer::MIN, "MIN" }
   };
 
   /*! \brief String translation back to Enum for data load */
   static unordered_map<string, Layer::BlendMode> StringToBlendMode {
-      { "BLEND_OPAQUE", Layer::BLEND_OPAQUE },
-      { "NULL_DEFAULT", Layer::NULL_DEFAULT },
-      { "NULL_INTENSITY", Layer::NULL_INTENSITY },
-      { "SELECTED_ONLY", Layer::SELECTED_ONLY }
+      { "ALPHA", Layer::ALPHA },
+      { "OVERWRITE", Layer::OVERWRITE },
+      { "MAX", Layer::MAX },
+      { "MIN", Layer::MIN }
   };
 #else
 	static string BlendModeToString(Layer::BlendMode b) {
 		switch (b) {
-		case Layer::BLEND_OPAQUE: return "BLEND_OPAQUE";
-		case Layer::NULL_DEFAULT: return "NULL_DEFAULT";
-		case Layer::NULL_INTENSITY: return "NULL_INTENSITY";
-		case Layer::SELECTED_ONLY: return "SELECTED_ONLY";
+		case Layer::ALPHA: return "ALPHA";
+		case Layer::OVERWRITE: return "OVERWRITE";
+		case Layer::MAX: return "MAX";
+		case Layer::MIN: return "MIN";
 		default: return "";
 		}
 	}
 
 	static Layer::BlendMode StringToBlendMode(string b) {
-		if (b == "BLEND_OPAQUE") return Layer::BLEND_OPAQUE;
-		if (b == "NULL_DEFAULT") return Layer::NULL_DEFAULT;
-		if (b == "NULL_INTESITY") return Layer::NULL_INTENSITY;
-		if (b == "SELECTED_ONLY") return Layer::SELECTED_ONLY;
+		if (b == "ALPHA") return Layer::ALPHA;
+		if (b == "OVERWRITE") return Layer::OVERWRITE;
+		if (b == "MAX") return Layer::MAX;
+		if (b == "MIN") return Layer::MIN;
 		return Layer::BLEND_OPAQUE;
 	}
 #endif
