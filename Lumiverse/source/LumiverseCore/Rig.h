@@ -31,7 +31,10 @@
 #include "Simulation/ArnoldAnimationPatch.h"
 #endif
 
+
 namespace Lumiverse {
+  typedef function<Patch*(JSONNode&)> patchParseFunc;
+
   class DeviceSet;
 
   /*!
@@ -49,6 +52,17 @@ namespace Lumiverse {
   {
     /*! \sa DeviceSet */
     friend class DeviceSet;
+  
+  public:
+    /*!
+    \brief Map containing functions to parse non-default patch types.
+
+    Lumiverse users may add functions to this map prior to loading JSON files
+    to provide support for loading custom patch objects.
+
+    Note that you cannot override default patch types at this time.
+    */
+    static map<string, patchParseFunc> patchParsers;
 
   public:
     /*!

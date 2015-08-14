@@ -2,6 +2,8 @@
 
 namespace Lumiverse {
 
+map<string, patchParseFunc> Rig::patchParsers = {};
+
 Rig::Rig() {
   m_running = false;
   setRefreshRate(40);
@@ -116,7 +118,7 @@ void Rig::loadPatches(JSONNode root) {
       Logger::log(WARN, ss.str());
     }
 
-    string patchType = type->as_string();
+    string patchType = type->as_string();    
 
     // New patch types will need new seralization definitions.
     if (patchType == "DMXPatch") {
@@ -175,9 +177,16 @@ void Rig::loadPatches(JSONNode root) {
     }
 #endif
     else {
-      stringstream ss;
-      ss << "Unknown Patch type " << patchType << " in Patch ID " << nodeName << "Patch not loaded.";
-      Logger::log(WARN, ss.str());
+      // Check custom parsers
+      try {
+        patch = patchParsers.at(patchType)(*i);
+        addPatch(nodeName, patch);
+      }
+      catch (exception e) {
+        stringstream ss;
+        ss << "Unknown Patch type " << patchType << " in Patch ID " << nodeName << "Patch not loaded.";
+        Logger::log(WARN, ss.str());
+      }
     }
 
     //increment the iterator
