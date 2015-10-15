@@ -26,7 +26,7 @@ namespace ShowControl {
       }
     }
 
-    m_active = false;
+    m_active = true;
     m_pause = false;
     m_stop = false;
     m_playing = false;
@@ -38,7 +38,7 @@ namespace ShowControl {
     m_name(name), m_pb(pb), m_priority(priority), m_mode(mode)
   {
     // yup this layer's empty
-    m_active = false;
+    m_active = true;
     m_pause = false;
     m_stop = false;
     m_playing = false;
@@ -82,6 +82,10 @@ namespace ShowControl {
       it++;
     }
 
+    m_active = true;
+    m_pause = false;
+    m_stop = false;
+    m_playing = false;
     m_playbackData = nullptr;
     m_queuedPlayback = nullptr;
   }
@@ -96,7 +100,7 @@ namespace ShowControl {
       }
     }
 
-    m_active = false;
+    m_active = true;
     m_pause = false;
     m_stop = false;
     m_playing = false;
