@@ -1,0 +1,1065 @@
+{
+	"playback" : {
+		"cueLists" : {},
+		"layers" : {},
+		"programmer" : {
+			"devices" : {
+				"lowerCyc" : {
+					"channel" : 46,
+					"type" : "L&E Mini-Strip",
+					"parameters" : {
+						"color1" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						},
+						"color2" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						},
+						"color3" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"area" : "lower cyc",
+						"color1" : "R124",
+						"color2" : "R125",
+						"color3" : "R126"
+					}
+				},
+				"par1" : {
+					"channel" : 2,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front right",
+						"area" : "2",
+						"color" : "N\/C"
+					}
+				},
+				"par10" : {
+					"channel" : 24,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front",
+						"area" : "1",
+						"color" : "N\/C"
+					}
+				},
+				"par11" : {
+					"channel" : 26,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front left",
+						"area" : "1",
+						"color" : "N\/C"
+					}
+				},
+				"par12" : {
+					"channel" : 32,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "top",
+						"area" : "1",
+						"color" : "R27"
+					}
+				},
+				"par13" : {
+					"channel" : 33,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back right",
+						"area" : "1",
+						"color" : "R21"
+					}
+				},
+				"par14" : {
+					"channel" : 34,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back right",
+						"area" : "1",
+						"color" : "R349"
+					}
+				},
+				"par15" : {
+					"channel" : 37,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back left",
+						"area" : "1",
+						"color" : "R349"
+					}
+				},
+				"par16" : {
+					"channel" : 38,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back left",
+						"area" : "1",
+						"color" : "R21"
+					}
+				},
+				"par2" : {
+					"channel" : 4,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front",
+						"area" : "2",
+						"color" : "N\/C"
+					}
+				},
+				"par3" : {
+					"channel" : 6,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front left",
+						"area" : "2",
+						"color" : "N\/C"
+					}
+				},
+				"par4" : {
+					"channel" : 12,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "top",
+						"area" : "2",
+						"color" : "R27"
+					}
+				},
+				"par5" : {
+					"channel" : 13,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back right",
+						"area" : "2",
+						"color" : "R21"
+					}
+				},
+				"par6" : {
+					"channel" : 14,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back right",
+						"area" : "2",
+						"color" : "R349"
+					}
+				},
+				"par7" : {
+					"channel" : 17,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back left",
+						"area" : "2",
+						"color" : "R349"
+					}
+				},
+				"par8" : {
+					"channel" : 18,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back left",
+						"area" : "2",
+						"color" : "R21"
+					}
+				},
+				"par9" : {
+					"channel" : 22,
+					"type" : "Source Four PAR",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front right",
+						"area" : "1",
+						"color" : "N\/C"
+					}
+				},
+				"rover1" : {
+					"channel" : 51,
+					"type" : "Generic Dimmer",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"rover2" : {
+					"channel" : 52,
+					"type" : "Generic Dimmer",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"rover3" : {
+					"channel" : 53,
+					"type" : "Generic Dimmer",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"rover4" : {
+					"channel" : 54,
+					"type" : "Generic Dimmer",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {}
+				},
+				"s41" : {
+					"channel" : 1,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front right",
+						"area" : "2",
+						"color" : "R02"
+					}
+				},
+				"s410" : {
+					"channel" : 16,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back",
+						"area" : "2",
+						"color" : "R382"
+					}
+				},
+				"s411" : {
+					"channel" : 19,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "mid side right",
+						"area" : "2",
+						"color" : "R119"
+					}
+				},
+				"s412" : {
+					"channel" : 20,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "shin side right",
+						"area" : "2",
+						"color" : "R119"
+					}
+				},
+				"s413" : {
+					"channel" : 21,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front right",
+						"area" : "1",
+						"color" : "R02"
+					}
+				},
+				"s414" : {
+					"channel" : 23,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front",
+						"area" : "1",
+						"color" : "R02"
+					}
+				},
+				"s415" : {
+					"channel" : 25,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front left",
+						"area" : "1",
+						"color" : "R02"
+					}
+				},
+				"s416" : {
+					"channel" : 27,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "high side right",
+						"area" : "1",
+						"color" : "L139"
+					}
+				},
+				"s417" : {
+					"channel" : 28,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "high side right",
+						"area" : "1",
+						"color" : "L148"
+					}
+				},
+				"s418" : {
+					"channel" : 29,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "high side left",
+						"area" : "1",
+						"color" : "L139"
+					}
+				},
+				"s419" : {
+					"channel" : 30,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "high side left",
+						"area" : "1",
+						"color" : "L148"
+					}
+				},
+				"s42" : {
+					"channel" : 3,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front",
+						"area" : "2",
+						"color" : "L201"
+					}
+				},
+				"s420" : {
+					"channel" : 31,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "top",
+						"area" : "1",
+						"color" : "R80"
+					}
+				},
+				"s421" : {
+					"channel" : 35,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back",
+						"area" : "1",
+						"color" : "R382"
+					}
+				},
+				"s422" : {
+					"channel" : 36,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back",
+						"area" : "1",
+						"color" : "R119"
+					}
+				},
+				"s422_seachanger" : {
+					"channel" : 36,
+					"type" : "Ocean Optics Seachanger",
+					"parameters" : {
+						"cyan" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"green" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"magenta" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"yellow" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back",
+						"area" : "1",
+						"color" : "R119"
+					}
+				},
+				"s423" : {
+					"channel" : 39,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "mid side left",
+						"area" : "1",
+						"color" : "R119"
+					}
+				},
+				"s424" : {
+					"channel" : 40,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "shin side left",
+						"area" : "1",
+						"color" : "R119"
+					}
+				},
+				"s43" : {
+					"channel" : 5,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front left",
+						"area" : "2",
+						"color" : "R02"
+					}
+				},
+				"s44" : {
+					"channel" : 7,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "high side right",
+						"area" : "2",
+						"color" : "L139"
+					}
+				},
+				"s45" : {
+					"channel" : 8,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "high side right",
+						"area" : "2",
+						"color" : "L148"
+					}
+				},
+				"s46" : {
+					"channel" : 9,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "high side left",
+						"area" : "2",
+						"color" : "L139"
+					}
+				},
+				"s47" : {
+					"channel" : 10,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "high side left",
+						"area" : "2",
+						"color" : "L148"
+					}
+				},
+				"s48" : {
+					"channel" : 11,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "top",
+						"area" : "2",
+						"color" : "R80"
+					}
+				},
+				"s49" : {
+					"channel" : 15,
+					"type" : "Source Four ERS",
+					"parameters" : {
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back",
+						"area" : "2",
+						"color" : "R119"
+					}
+				},
+				"s49_seachanger" : {
+					"channel" : 15,
+					"type" : "Ocean Optics Seachanger",
+					"parameters" : {
+						"cyan" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"green" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"magenta" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"yellow" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "back",
+						"area" : "2",
+						"color" : "R119"
+					}
+				},
+				"s4LED1" : {
+					"channel" : 61,
+					"type" : "ETC Source Four Lustr+",
+					"parameters" : {
+						"amber" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"blue" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"cyan" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"green" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"indigo" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						},
+						"red" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"white" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front right",
+						"area" : "2",
+						"color" : "R119"
+					}
+				},
+				"s4LED2" : {
+					"channel" : 62,
+					"type" : "ETC Source Four Lustr+",
+					"parameters" : {
+						"amber" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"blue" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"cyan" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"green" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"indigo" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"intensity" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						},
+						"red" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						},
+						"white" : {
+							"type" : "float",
+							"val" : 1,
+							"default" : 1,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"angle" : "front right",
+						"area" : "1",
+						"color" : "R119"
+					}
+				},
+				"upperCyc" : {
+					"channel" : 41,
+					"type" : "L&E Mini-Strip",
+					"parameters" : {
+						"color1" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						},
+						"color2" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						},
+						"color3" : {
+							"type" : "float",
+							"val" : 0,
+							"default" : 0,
+							"max" : 1,
+							"min" : 0
+						}
+					},
+					"metadata" : {
+						"area" : "upper cyc",
+						"color1" : "R124",
+						"color2" : "R125",
+						"color3" : "R126"
+					}
+				}
+			},
+			"captured" : []
+		}
+	}
+}
