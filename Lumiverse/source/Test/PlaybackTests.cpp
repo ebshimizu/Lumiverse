@@ -111,14 +111,14 @@ bool PlaybackTests::checkTimeline() {
     return false;
   }
 
-  auto val = m_pb->getTimeline("Timeline 1")->getValueAtTime(m_pb->getRig()->getDevice("s41"), "intensity", 2500, m_pb->getTimelines());
+  auto val = m_pb->getTimeline("Timeline 1")->getValueAtTime("s41", "intensity", m_pb->getRig()->getDevice("s41")->getParam("intensity"), 2500, m_pb->getTimelines());
 
   if (abs(((LumiverseFloat*)val.get())->getVal() - 0.5) > 0.00001) {
     cout << "Timeline value at time error. At time 2500ms, s41 intensity expected: 0.5. Received: " << ((LumiverseFloat*)val.get())->getVal() << "\n";
     return false;
   }
 
-  if (m_pb->getTimeline("Timeline 1")->getValueAtTime(nullptr, "INVALID PARAMETER", 0, m_pb->getTimelines()) != nullptr) {
+  if (m_pb->getTimeline("Timeline 1")->getValueAtTime("INVALID ID", "INVALID PARAMETER", nullptr, 0, m_pb->getTimelines()) != nullptr) {
     cout << "Cue access failure. Able to get data for device with invalid parameter\n";
     return false;
   }

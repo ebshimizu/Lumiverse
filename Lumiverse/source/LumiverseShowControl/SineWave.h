@@ -57,7 +57,7 @@ namespace ShowControl {
     /*!
     \brief Returns the value of the requested parameter according to the sine wave parameters.
     */
-    virtual shared_ptr<LumiverseType> getValueAtTime(Device* d, string paramName, size_t time, map<string, shared_ptr<Timeline> >& tls) override;
+    virtual shared_ptr<LumiverseType> getValueAtTime(string id, string paramName, LumiverseType* currentVal, size_t time, map<string, shared_ptr<Timeline> >& tls) override;
 
     /*!
     \brief Returns the amount of time it takes to cycle through the sine wave once in milliseconds.

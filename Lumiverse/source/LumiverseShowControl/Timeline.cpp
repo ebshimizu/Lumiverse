@@ -25,7 +25,12 @@ Timeline::~Timeline() {
 }
 
 string Timeline::getTimelineKey(Device* d, string paramName) {
-  return d->getId() + ":" + paramName;
+  return getTimelineKey(d->getId(), paramName);
+}
+
+string Timeline::getTimelineKey(string id, string paramName)
+{
+  return id + ":" + paramName;
 }
 
 Keyframe Timeline::getKeyframe(string identifier, size_t time) {
@@ -178,11 +183,8 @@ map<string, shared_ptr<Event> >& Timeline::getAllEndEvents() {
   return _endEvents;
 }
 
-shared_ptr<LumiverseType> Timeline::getValueAtTime(Device* d, string paramName, size_t time, map<string, shared_ptr<Timeline> >& tls) {
-  if (d == nullptr)
-    return nullptr;
-
-  string identifier = getTimelineKey(d, paramName);
+shared_ptr<LumiverseType> Timeline::getValueAtTime(string  id, string paramName, LumiverseType* currentVal, size_t time, map<string, shared_ptr<Timeline> >& tls) {
+  string identifier = getTimelineKey(id, paramName);
   time = getLoopTime(time);
 
   try {
@@ -223,7 +225,7 @@ shared_ptr<LumiverseType> Timeline::getValueAtTime(Device* d, string paramName, 
 
       if (last.timelineID != "") {
         if (tls.count(last.timelineID) > 0) {
-          return tls[last.timelineID]->getValueAtTime(d, paramName, time - last.t + last.timelineOffset, tls);
+          return tls[last.timelineID]->getValueAtTime(id, paramName, currentVal, time - last.t + last.timelineOffset, tls);
         }
         else return nullptr;
       }
@@ -244,13 +246,13 @@ shared_ptr<LumiverseType> Timeline::getValueAtTime(Device* d, string paramName, 
     // If no such timeline exists in the playback, return nullptr (indicate to layer to skip value for this)
     if (first.timelineID != "") {
       if (tls.count(first.timelineID) > 0) {
-        x = tls[first.timelineID]->getValueAtTime(d, paramName, time - first.t + first.timelineOffset, tls);
+        x = tls[first.timelineID]->getValueAtTime(id, paramName, currentVal, time - first.t + first.timelineOffset, tls);
       }
       else return nullptr;
     }
     if (next.timelineID != "") {
       if (tls.count(next.timelineID) > 0) {
-        y = tls[next.timelineID]->getValueAtTime(d, paramName, time - next.t + next.timelineOffset, tls);
+        y = tls[next.timelineID]->getValueAtTime(id, paramName, currentVal, time - next.t + next.timelineOffset, tls);
       }
       else return nullptr;
     }
@@ -366,31 +368,31 @@ bool Timeline::isDone(size_t time, map<string, shared_ptr<Timeline> >& tls) {
   return false;
 }
 
-void Timeline::setCurrentState(map<string, Device*>& state, shared_ptr<Timeline> active, size_t time) {
+void Timeline::setCurrentState(map<string, map<string, LumiverseType*> >& state, shared_ptr<Timeline> active, size_t time) {
   for (const auto& d : state) {
-    for (const auto& p : d.second->getParamNames()) {
-      updateKeyframeState(d.second, p, active, time);
+    for (const auto& p : d.second) {
+      updateKeyframeState(d.first, p.first, p.second, active, time);
     }
   }
 }
 
-void Timeline::updateKeyframeState(Device* d, string paramName, shared_ptr<Timeline> tl, size_t time) {
-  string id = getTimelineKey(d, paramName);
-  for (auto& kf : _timelineData[id]) {
+void Timeline::updateKeyframeState(string id, string paramName, LumiverseType* param, shared_ptr<Timeline> tl, size_t time) {
+  string kid = getTimelineKey(id, paramName);
+  for (auto& kf : _timelineData[kid]) {
     if (kf.second.useCurrentState) {
       // check for active subtimelines
       if (tl != nullptr) {
-        Keyframe activeKeyframe = tl->getPreviousKeyframe(getTimelineKey(d, paramName), time);
+        Keyframe activeKeyframe = tl->getPreviousKeyframe(getTimelineKey(id, paramName), time);
         if (activeKeyframe.timelineID != "") {
           kf.second.timelineID = activeKeyframe.timelineID;
           kf.second.timelineOffset = tl->getLoopTime(time) - activeKeyframe.t + activeKeyframe.timelineOffset + kf.second.t;
         }
         else {
-          kf.second.val = shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(d->getParam(paramName)));
+          kf.second.val = shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(param));
         }
       }
       else {
-        kf.second.val = shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(d->getParam(paramName)));
+        kf.second.val = shared_ptr<LumiverseType>(LumiverseTypeUtils::copy(param));
       }
     }
   }

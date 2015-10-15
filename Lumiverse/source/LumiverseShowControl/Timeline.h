@@ -61,6 +61,11 @@ public:
   string getTimelineKey(Device* d, string paramName);
 
   /*!
+  \brief Gets the identifier used to refer to a device-parameter keyframe set.
+  */
+  string getTimelineKey(string id, string paramName);
+
+  /*!
   \brief Gets the keyframe for a given identifier and time. Read-only.
 
   Note that if the keyframe doesn't exist, you will receive an invalid keyframe.
@@ -195,11 +200,12 @@ public:
   /*!
   \brief Returns the value of the specified parameter for the specified device at the specified time.
 
-  \param identifier [deviceID]:[paramName] for the desired device and parameter
+  \param id Device ID
+  \param paramName Parameter name
   \param time Time in milliseconds to get the value.
   \return A LumiverseType value for the specified time in the timeline.
   */
-  virtual shared_ptr<LumiverseType> getValueAtTime(Device* d, string paramName, size_t time, map<string, shared_ptr<Timeline> >& tls);
+  virtual shared_ptr<LumiverseType> getValueAtTime(string id, string paramName, LumiverseType* currentVal, size_t time, map<string, shared_ptr<Timeline> >& tls);
 
   /*!
   \brief Executes the events between the specified times
@@ -270,7 +276,7 @@ public:
 
   \param state Layer state
   */
-  virtual void setCurrentState(map<string, Device*>& state, shared_ptr<Timeline> active, size_t time);
+  virtual void setCurrentState(map<string, map<string, LumiverseType*> >& state, shared_ptr<Timeline> active, size_t time);
 
   /*!
   \brief Gets the keyframe closest to happen at or before the given time.
@@ -350,7 +356,7 @@ private:
   /*!
   \brief Updates the Keyframes marked as "Use Current State" in the Timeline's data 
   */
-  void updateKeyframeState(Device* d, string paramName, shared_ptr<Timeline> tl, size_t time);
+  void updateKeyframeState(string id, string paramName, LumiverseType* param, shared_ptr<Timeline> tl, size_t time);
 
   /*!
   \brief Initializes the timeline with the given JSONNode's data.

@@ -54,13 +54,7 @@ namespace ShowControl {
     // nothing at the moment.
   }
 
-  shared_ptr<LumiverseType> SineWave::getValueAtTime(Device* d, string paramName, size_t time, map<string, shared_ptr<Timeline> >& tls) {
-    LumiverseType* currentVal = d->getParam(paramName);
-
-    // Stop if the current value doesn't exist (unknonwn type)
-    if (currentVal == nullptr)
-      return nullptr;
-
+  shared_ptr<LumiverseType> SineWave::getValueAtTime(string id, string paramName, LumiverseType* currentVal, size_t time, map<string, shared_ptr<Timeline> >& tls) {
     float t = (float)time / 1000.0f;
 
     // Clamp to end time if we're done with our sine loops.

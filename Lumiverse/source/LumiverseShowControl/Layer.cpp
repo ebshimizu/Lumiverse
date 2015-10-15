@@ -10,17 +10,40 @@ namespace ShowControl {
     init(rig);
   }
 
-  Layer::Layer(Rig* rig, Playback* pb, string name, int priority, float opacity) : m_mode(BLEND_OPAQUE),
+  Layer::Layer(Rig* rig, Playback* pb, string name, int priority, float opacity) : m_mode(ALPHA),
     m_opacity(opacity), m_name(name), m_priority(priority), m_pb(pb)
   {
     init(rig);
   }
 
-  Layer::Layer(Rig* rig, Playback* pb, string name, int priority, DeviceSet set) : m_mode(SELECTED_ONLY),
-    m_selectedDevices(set), m_name(name), m_priority(priority), m_pb(pb)
+  Layer::Layer(DeviceSet set, Playback * pb, string name, int priority, BlendMode mode) :
+    m_name(name), m_priority(priority), m_pb(pb), m_mode(mode)
   {
-    m_opacity = 1;
-    init(rig);
+    auto devices = set.getDevices();
+    for (const auto& d : devices) {
+      for (const auto& p : d->getRawParameters()) {
+        m_layerState[d->getId()][p.first] = LumiverseTypeUtils::copy(p.second);
+      }
+    }
+
+    m_active = false;
+    m_pause = false;
+    m_stop = false;
+    m_playing = false;
+    m_playbackData = nullptr;
+    m_queuedPlayback = nullptr;
+  }
+
+  Layer::Layer(Playback * pb, string name, int priority, BlendMode mode) :
+    m_name(name), m_pb(pb), m_priority(priority), m_mode(mode)
+  {
+    // yup this layer's empty
+    m_active = false;
+    m_pause = false;
+    m_stop = false;
+    m_playing = false;
+    m_playbackData = nullptr;
+    m_queuedPlayback = nullptr;
   }
 
   Layer::Layer(Playback* pb, JSONNode node) : m_pb(pb) {
@@ -32,8 +55,6 @@ namespace ShowControl {
         m_name = it->as_string();
       else if (name == "priority")
         m_priority = it->as_int();
-      else if (name == "invertFilter")
-        m_invertFilter = it->as_bool();
       else if (name == "active")
         m_active = it->as_bool();
       else if (name == "mode")
@@ -49,7 +70,11 @@ namespace ShowControl {
         auto device = it->begin();
 
         while (device != it->end()) {
-          m_layerState[device->name()] = new Device(device->name(), *device);
+          auto param = device->begin();
+          while (param != device->end()) {
+            m_layerState[device->name()][param->name()] = LumiverseTypeUtils::loadFromJSON(*param);
+            param++;
+          }
           device++;
         }
       }
@@ -64,15 +89,17 @@ namespace ShowControl {
   void Layer::init(Rig* rig) {
     const set<Device*> devices = rig->getAllDevices().getDevices();
     for (auto d : devices) {
-      // Copy and reset to defaults
-      m_layerState[d->getId()] = new Device(*d);
-      m_layerState[d->getId()]->reset();
+      for (auto p : d->getRawParameters()) {
+        // Copy and reset to defaults
+        m_layerState[d->getId()][p.first] = LumiverseTypeUtils::copy(p.second);
+        m_layerState[d->getId()][p.first]->reset();
+      }
     }
 
     m_active = false;
-    m_invertFilter = false;
     m_pause = false;
     m_stop = false;
+    m_playing = false;
     m_playbackData = nullptr;
     m_queuedPlayback = nullptr;
   }
@@ -80,7 +107,9 @@ namespace ShowControl {
   Layer::~Layer() {
     // Delete the devices
     for (auto kvp : m_layerState) {
-      delete m_layerState[kvp.first];
+      for (auto pkvp : kvp.second) {
+        delete m_layerState[kvp.first][pkvp.first];
+      }
     }
   }
 
@@ -88,37 +117,149 @@ namespace ShowControl {
     m_opacity = (val > 1) ? 1 : ((val < 0) ? 0 : val);
   }
 
-  void Layer::addParamFilter(string param) {
-    m_parameterFilter.insert(param);
+  bool Layer::addDevices(DeviceSet d)
+  {
+    if (m_playing) {
+      Logger::log(ERR, "Layer modification not allowed during playback.");
+      return false;
+    }
+
+    auto devices = d.getDevices();
+    for (const auto& dv : devices) {
+      for (const auto& p : dv->getRawParameters()) {
+        m_layerState[dv->getId()][p.first] = LumiverseTypeUtils::copy(p.second);
+      }
+    }
+
+    return true;
   }
 
-  void Layer::removeParamFilter(string param) {
-    m_parameterFilter.erase(param);
+  bool Layer::addDevice(Device * d, string param)
+  {
+    // Disallow layer modification if layer is playing.
+    if (m_playing) {
+      Logger::log(ERR, "Layer modification not allowed during playback.");
+      return false;
+    }
+
+    // Delete old param value if exists
+    if (m_layerState[d->getId()].count(param) != 0) {
+      delete m_layerState[d->getId()][param];
+    }
+
+    m_layerState[d->getId()][param] = LumiverseTypeUtils::copy(d->getParam(param));
+
+    return true;
   }
 
-  void Layer::deleteParamFilter() {
-    m_parameterFilter.clear();
+  bool Layer::addDevicesWithParams(DeviceSet d, set<string> params)
+  {
+    if (m_playing) {
+      Logger::log(ERR, "Layer modification not allowed during playback.");
+      return false;
+    }
+
+    auto devices = d.getDevices();
+    for (const auto& dv : devices) {
+      for (const auto& p : params) {
+        // Delete old param value if exists
+        if (m_layerState[dv->getId()].count(p) != 0) {
+          delete m_layerState[dv->getId()][p];
+        }
+
+        // Add new param val
+        m_layerState[dv->getId()][p] = LumiverseTypeUtils::copy(dv->getParam(p));
+      }
+    }
+
+    return true;
   }
 
-  void Layer::invertFilter() {
-    m_invertFilter = !m_invertFilter;
+  bool Layer::addParamToAllDevices(string param, LumiverseType * type)
+  {
+    if (m_playing) {
+      Logger::log(ERR, "Layer modification not allowed during playback.");
+      return false;
+    }
+
+    for (auto& d : m_layerState) {
+      // Delete old param if it exists
+      if (d.second.count(param) != 0) {
+        delete d.second[param];
+      }
+
+      d.second[param] = LumiverseTypeUtils::copy(type);
+    }
+
+    return true;
   }
 
-  void Layer::setSelectedDevices(DeviceSet devices) {
-    m_selectedDevices = devices;
+  bool Layer::deleteParameter(string id, string param)
+  {
+    if (m_playing) {
+      Logger::log(ERR, "Layer modification not allowed during playback");
+      return false;
+    }
+
+    if (m_layerState[id].count(param) != 0) {
+      delete m_layerState[id][param];
+      m_layerState[id].erase(param);
+    }
+
+    return true;
   }
 
-  void Layer::removeSelectedDevices(DeviceSet devices) {
-    m_selectedDevices = m_selectedDevices.remove(devices);
+  bool Layer::deleteDevices(DeviceSet d)
+  {
+    if (m_playing) {
+      Logger::log(ERR, "Layer modification not allowed during playback.");
+      return false;
+    }
+
+    auto devices = d.getDevices();
+    for (const auto& dv : devices) {
+      auto params = m_layerState[dv->getId()];
+      for (const auto& kvp : params) {
+        deleteParameter(dv->getId(), kvp.first);
+      }
+
+      m_layerState.erase(dv->getId());
+    }
+
+    return true;
   }
 
-  void Layer::addSelectedDevices(DeviceSet devices) {
-    m_selectedDevices = m_selectedDevices.add(devices);
+  bool Layer::deleteParametersFromDevices(DeviceSet d, set<string> params)
+  {
+    if (m_playing) {
+      Logger::log(ERR, "Layer modification not allowed during playback");
+      return false;
+    }
+
+    auto devices = d.getDevices();
+    for (const auto& dv : devices) {
+      for (const auto& p : params) {
+        deleteParameter(dv->getId(), p);
+      }
+    }
+
+    return true;
   }
 
-  void Layer::clearSelectedDevices() {
-    // Easiest way is to just select nothing from the rig
-    m_selectedDevices = m_selectedDevices.select("");
+  bool Layer::deleteParametersFromAllDevices(set<string> params)
+  {
+    if (m_playing) {
+      Logger::log(ERR, "Layer modification not allowed during playback");
+      return false;
+    }
+
+    for (const auto& kvp : m_layerState) {
+      for (const auto& p : params) {
+        deleteParameter(kvp.first, p);
+      }
+    }
+
+    return true;
   }
 
   void Layer::play(string id) {
@@ -159,15 +300,18 @@ namespace ShowControl {
 
   void Layer::pause() {
     m_pause = true;
+    m_playing = false;
   }
 
   void Layer::resume() {
     m_pause = false;
     m_stop = false;
+    m_playing = true;
   }
 
   void Layer::stop() {
     m_stop = true;
+    m_playing = false;
   }
 
   string Layer::getRecentTimeline() {
@@ -182,6 +326,10 @@ namespace ShowControl {
     if (m_queuedPlayback != nullptr) {
       m_playbackData = m_queuedPlayback;
       m_queuedPlayback = nullptr;
+
+      m_pause = false;
+      m_stop = false;
+      m_playing = true;
     }
     m_queue.unlock();
 
@@ -212,15 +360,15 @@ namespace ShowControl {
         size_t tp = chrono::duration_cast<chrono::milliseconds>(m_previousLoopStart - m_playbackData->start).count();
 
         for (const auto& device : m_layerState) {
-          for (const auto& param : device.second->getParamNames()) {
-            shared_ptr<LumiverseType> val = tl->getValueAtTime(device.second, param, t, m_pb->getTimelines());
+          for (auto& param : m_layerState[device.first]) {
+            shared_ptr<LumiverseType> val = tl->getValueAtTime(device.first, param.first, param.second, t, m_pb->getTimelines());
 
             // A value of nullptr indicates that the Timeline doesn't have any data for the specified device/paramter pair.
             if (val == nullptr) {
               continue;
             }
 
-            LumiverseTypeUtils::copyByVal(val.get(), m_layerState[device.first]->getParam(param));
+            LumiverseTypeUtils::copyByVal(val.get(), param.second);
           }
         }
 
@@ -233,6 +381,9 @@ namespace ShowControl {
           tl->executeEndEvents();
           delete m_playbackData;
           m_playbackData = nullptr;
+          m_stop = true;
+          m_pause = false;
+          m_playing = false;
         }
         m_queue.unlock();
       }
@@ -245,33 +396,14 @@ namespace ShowControl {
     // We assume here that what you're passing in contains all the devices in the rig
     // and will not create new devices if they don't exist in the current state.
 
-    map<string, Device*> active = m_layerState;
-
-    if (m_mode == SELECTED_ONLY) {
-      map<string, Device*> selected;
-      // Run things on a different set for this mode
-      for (auto d : m_selectedDevices.getDevices()) {
-        selected[d->getId()] = d;
-      }
-      active = selected;
-    }
+    map<string, map<string, LumiverseType*> > active = m_layerState;
 
     for (auto& device : active) {
       try {
         auto d = currentState.at(device.first);
 
-        // Time to start dealin with layer specific blend modes.
-        if (m_mode == NULL_INTENSITY) {
-          // Skip devices with intensity 0
-          if (device.second->paramExists("intensity")) {
-            float val = -1;
-            device.second->getParam("intensity", val);
-            if (val == 0) continue;
-          }
-        }
-
         // Go through each parameter in the device
-        for (auto& param : device.second->getRawParameters()) {
+        for (auto& param : device.second) {
           string paramName = param.first;
           LumiverseType* src = param.second;
           LumiverseType* dest = d->getParam(param.first);
@@ -281,19 +413,7 @@ namespace ShowControl {
             continue;
           }
 
-          // Criteria for looking at a parameter.
-          // Filter is empty OR (paramName is in the filter AND filter not inverted)
-          // OR (paramName is not in filter AND filter is inverted)
-          if ((m_parameterFilter.size() == 0) ||
-              (m_parameterFilter.count(paramName) > 0 && !m_invertFilter) ||
-              (m_parameterFilter.count(paramName) == 0 && m_invertFilter))
-          {
-            // if we're using NULL_DEFAULT mode, we'll need to check params to see
-            // if they're equal to their default values
-            if (m_mode == NULL_DEFAULT && src->isDefault()) {
-              continue;
-            }
-
+          if (m_mode == ALPHA) {
             if (m_opacity >= 1) {
               LumiverseTypeUtils::copyByVal(src, dest);
             }
@@ -303,6 +423,9 @@ namespace ShowControl {
               shared_ptr<LumiverseType> res = LumiverseTypeUtils::lerp(dest, src, m_opacity);
               LumiverseTypeUtils::copyByVal(res.get(), dest);
             }
+          }
+          else if (m_mode == OVERWRITE) {
+            LumiverseTypeUtils::copyByVal(src, dest);
           }
         }
       }
@@ -320,7 +443,6 @@ namespace ShowControl {
 
     layer.push_back(JSONNode("name", m_name));
     layer.push_back(JSONNode("priority", m_priority));
-    layer.push_back(JSONNode("invertFilter", m_invertFilter));
     layer.push_back(JSONNode("active", m_active));
 #ifdef USE_C11_MAPS
     layer.push_back(JSONNode("mode", BlendModeToString[m_mode]));
@@ -334,29 +456,28 @@ namespace ShowControl {
     JSONNode layerState;
     layerState.set_name("state");
     for (const auto& kvp : m_layerState) {
-      layerState.push_back(kvp.second->toJSON());
+      JSONNode params;
+      params.set_name(kvp.first);
+      for (const auto& pkvp : kvp.second) {
+        params.push_back(pkvp.second->toJSON(pkvp.first));
+      }
+      layerState.push_back(params);
     }
 
     layer.push_back(layerState);
-
-    // Parameter filter, list of IDs really
-    JSONNode paramFilter;
-    paramFilter.set_name("paramFilter");
-    for (const auto& id : m_selectedDevices.getIds()) {
-      paramFilter.push_back(JSONNode(id, id));
-    }
-    layer.push_back(paramFilter.as_array());
 
     return layer;
   }
 
   void Layer::reset() {
     for (const auto& kvp : m_layerState) {
-      kvp.second->reset();
+      for (const auto& pkvp : kvp.second) {
+        pkvp.second->reset();
+      }
     }
 
     m_lastPlayedTimeline = "";
-    // stop/pause logic?
+    stop();
   }
   
 }

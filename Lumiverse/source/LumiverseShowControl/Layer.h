@@ -145,41 +145,46 @@ namespace ShowControl {
 
     /*!
     \brief Adds the selected devices and all parameters to the Layer state
+    \return True on success, false on failure
     */
-    void addDevices(DeviceSet d);
+    bool addDevices(DeviceSet d);
 
     /*!
     \brief Adds a single device and parameter to the layer.
+    \return True on success, false on failure
     */
-    void addDevice(Device* d, string param);
+    bool addDevice(Device* d, string param);
 
     /*!
     \brief Adds the selected devices and selected parameters to the Layer state
+    \return True on success, false on failure
     */
-    void addDevicesWithParams(DeviceSet d, set<string> params);
+    bool addDevicesWithParams(DeviceSet d, set<string> params);
 
     /*!
     \brief Adds the specified parameter with the specified type to the existing
     devices in the Layer.
 
     Use with caution, it's better to use addDevicesWithParams instead of using this
+    \return True on success, false on failure
     */
-    void addParamToAllDevices(string param, LumiverseType* type);
+    bool addParamToAllDevices(string param, LumiverseType* type);
 
     /*! \brief Deletes a single parameter from a single device in the layer */
-    void deleteParameter(string id, string param);
+    bool deleteParameter(string id, string param);
 
     /*!
     \brief Deletes the selected devices from the layer along with all of their
     parameters.
+    \return True on success, false on failure
     */
-    void deleteDevices(DeviceSet d);
+    bool deleteDevices(DeviceSet d);
 
     /*! \brief Deletes the selected parameter values from the layer. */
-    void deleteParametersFromDevices(DeviceSet d, set<string> params);
+    bool deleteParametersFromDevices(DeviceSet d, set<string> params);
 
     /*! \brief Deletes all parameters from all devices in the layer. */
-    void deleteParametersFromAllDevices(set<string> params);
+    bool deleteParametersFromAllDevices(set<string> params);
 
     /*!
     \brief Returns the ID of the Timeline most being played on the Layer.
@@ -250,7 +255,7 @@ namespace ShowControl {
     /*! \brief Layer blend mode. */
     BlendMode m_mode;
 
-    /*! \brief If using BLEND_OPAQUE, the opacity of the layer. */
+    /*! \brief If using alpha blending, the opacity of the layer. */
     float m_opacity;
 
     /*! \brief Indicates if playback is paused on this layer. */
@@ -261,6 +266,11 @@ namespace ShowControl {
     This allows the update function to finish a full update and then clear the playback queue.
     */
     bool m_stop;
+
+    /*!
+    \brief Indicates if the layer is currently playing back a timeline
+    */
+    bool m_playing;
 
     /*!
     \brief Stores the previous loop start time in milliseconds.
