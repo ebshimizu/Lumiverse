@@ -141,7 +141,7 @@ bool Device::setParam(string param, LumiverseType* val) {
 
   // callback
   onParameterChanged();
-    
+
   return ret;
 }
 
@@ -169,18 +169,18 @@ bool Device::setParam(string param, float val) {
       (m_parameters[param]->getTypeName() != "float" &&
       m_parameters[param]->getTypeName() != "orientation")) {
       Logger::log(ERR, "Parameter doesn't exist or trying to assign float value to a non-float type.");
-      
+
       return false;
   }
-    
+
   if (m_parameters[param]->getTypeName() == "float")
     *((LumiverseFloat *)m_parameters[param]) = val;
-  else 
+  else
     *((LumiverseOrientation *)m_parameters[param]) = val;
 
   // callback
   onParameterChanged();
-    
+
   return ret;
 }
 
@@ -192,10 +192,10 @@ bool Device::setParam(string param, string val, float val2) {
   // Checks param type
   if (m_parameters[param]->getTypeName() != "enum") {
     Logger::log(ERR, "Trying to assign enum value to a non-enum type.");
-        
+
     return false;
   }
-    
+
   LumiverseEnum* data = (LumiverseEnum *)m_parameters[param];
   if (!data->setVal(val))
     return false;
@@ -206,7 +206,7 @@ bool Device::setParam(string param, string val, float val2) {
 
   // callback
   onParameterChanged();
-    
+
   return true;
 }
 
@@ -215,12 +215,12 @@ bool Device::setParam(string param, string val, float val2, LumiverseEnum::Mode 
       m_parameters[param]->getTypeName() != "enum") {
     return false;
   }
-    
+
   ((LumiverseEnum *)m_parameters[param])->setVal(val, val2, mode, interpMode);
 
   // callback
   onParameterChanged();
-    
+
   return true;
 }
 
@@ -236,7 +236,7 @@ bool Device::setParam(string param, string channel, double val) {
     // callback
     onParameterChanged();
   }
-    
+
   return ret;
 }
 
@@ -250,7 +250,7 @@ bool Device::setParam(string param, double x, double y, double weight) {
 
   // callback
   onParameterChanged();
-    
+
   return true;
 }
 
@@ -264,7 +264,7 @@ bool Device::setColorRGBRaw(string param, double r, double g, double b, double w
 
   // callback
   onParameterChanged();
-    
+
   return true;
 }
 
@@ -278,7 +278,7 @@ bool Device::setColorRGB(string param, double r, double g, double b, double weig
 
   // callback
   onParameterChanged();
-    
+
   return true;
 }
 
@@ -297,18 +297,18 @@ bool Device::setColorChannel(string param, string channel, double val) {
   }
 
   ((LumiverseColor*)m_parameters[param])->setColorChannel(channel, val);
-  
+
   onParameterChanged();
   return true;
 }
-    
+
 void Device::copyParamByValue(string param, LumiverseType* source) {
   LumiverseType *target = m_parameters[param];
-    
+
 	// Skips this copy if types don't match.
   if (!LumiverseTypeUtils::areSameType(source, target))
     return;
-    
+
   if (source->getTypeName() == "float") {
     *((LumiverseFloat*)target) = *((LumiverseFloat*)source);
   }
@@ -324,10 +324,10 @@ void Device::copyParamByValue(string param, LumiverseType* source) {
   else {
       return;
   }
-    
+
 //  onParameterChanged();
 }
-    
+
 bool Device::paramExists(string param) {
   try {
     auto p = m_parameters.at(param);
@@ -380,10 +380,10 @@ bool Device::setMetadata(string key, string val) {
   }
 
   m_metadata[key] = val;
-    
+
   // callback
   onMetadataChanged();
-    
+
   return ret;
 }
 
@@ -409,14 +409,14 @@ void Device::clearMetadataValues() {
   for (auto& kv : m_metadata) {
     kv.second = "";
   }
-    
+
   // callback
   onMetadataChanged();
 }
 
 void Device::clearAllMetadata() {
   m_metadata.clear();
-    
+
   // callback
   onMetadataChanged();
 }
@@ -438,16 +438,13 @@ void Device::reset() {
   for (auto p : m_parameters) {
     p.second->reset();
   }
-    
+
   // callback
   onParameterChanged();
   onMetadataChanged();
 }
 
 string Device::toString() {
-  if (this == nullptr) {
-    return "Device does not exist";
-  }
   JSONNode dev = toJSON();
 
   string out = dev.write_formatted();
@@ -486,7 +483,7 @@ int Device::addMetadataChangedCallback(DeviceCallbackFunction func) {
 
     return (int)id;
 }
-    
+
 void Device::deleteParameterChangedCallback(int id) {
   if (m_onParameterChangedFunctions.count(id) > 0) {
     m_onParameterChangedFunctions.erase(id);
@@ -629,7 +626,7 @@ void Device::loadParams(const JSONNode data) {
     // Go into the child node that has all the param data
     JSONNode paramData = *i;
     LumiverseType *val = LumiverseTypeUtils::loadFromJSON(paramData);
-      
+
     if (val != nullptr)
         setParam(paramName, val);
 
@@ -637,17 +634,17 @@ void Device::loadParams(const JSONNode data) {
     ++i;
   }
 }
-    
+
 void Device::onParameterChanged() {
     for (const auto& kvp : m_onParameterChangedFunctions) {
         kvp.second(this);
     }
 }
-    
+
 void Device::onMetadataChanged(){
     for (const auto& kvp : m_onMetadataChangedFunctions) {
         kvp.second(this);
     }
 }
-    
+
 }

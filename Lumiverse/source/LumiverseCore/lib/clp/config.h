@@ -45,7 +45,7 @@
 #define HAVE_MEMORY_H
 
 /* Define to 1 if you have the <readline/readline.h> header file. */
-/* #undef HAVE_READLINE_READLINE_H */
+#define HAVE_READLINE_READLINE_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H

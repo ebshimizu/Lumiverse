@@ -18,7 +18,7 @@ int DeviceTests::runTests() {
 bool DeviceTests::runTest(std::function<bool()> t, string testName, int testNum) {
   bool pass;
 
-  if (pass = t()) {
+  if ((pass = t())) {
     cout << "[ OK ]";
   }
   else {
@@ -66,11 +66,11 @@ bool DeviceTests::deviceCopy(){
     cout << "[ERROR] deviceCopy: Intensity parameter not equal\n";
     return false;
   }
-  
+
   string orig;
   string cpy;
   d.getMetadata("test", orig);
-  
+
   if (!copy.getMetadata("test", cpy)) {
     cout << "[ERROR] Metadata key 'test' does not exist in copy.\n";
     return false;
@@ -197,7 +197,7 @@ bool DeviceTests::devicePropertyManipulation() {
     cout << "Enumeration value set to invalid option\n";
     ret = false;
   }
-  
+
   // Type mismatch
   if (d.setParam("enum", 5)) {
     cout << "Able to set enumeration as floating point\n";

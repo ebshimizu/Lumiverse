@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.0)
 
 project (Lumiverse)
 set (LUMIVERSE_DOCS ON CACHE BOOL "Generate Documentation Project (requires Doxygen)")
@@ -18,7 +18,7 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
   IF (NOT EXISTS ${LumiverseCore_ARNOLD_PATH})
   	message( FATAL_ERROR "INCLUDE_ARNOLD is TRUE but no ARNOLD_PATH specified." )
   ENDIF (NOT EXISTS ${LumiverseCore_ARNOLD_PATH})
-  
+
   SET (LumiverseCore_USE_ARNOLD "#define USE_ARNOLD")
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
@@ -38,19 +38,24 @@ include_directories("${PROJECT_SOURCE_DIR}/LumiverseCore/types"
 
 # Lumiverse Core Version Number, in case its needed
 set (LumiverseCore_VERSION_MAJOR 2)
-set (LumiverseCore_VERSION_MINOR 1)
-set (LumiverseCore_INCLUDE_DMXPRO2INTERFACE OFF CACHE BOOL "Build LumiverseCore with Enttec USB DMX Pro Mk II Driver")
+set (LumiverseCore_VERSION_MINOR 0)
+
+# Modules
+set (LumiverseCore_INCLUDE_OLA OFF CACHE BOOL "Build LumiverseCore with OLA Driver")
 set (LumiverseCore_INCLUDE_KINET ON CACHE BOOL "Build LumiverseCore with KiNet Driver")
 set (LumiverseCore_INCLUDE_ARTNET ON CACHE BOOL "Build LumiverseCore with ArtNet Driver")
-set (LumiverseCore_PYTHON_BINDINGS ON CACHE BOOL "Build LumiverseCore bindings for Python")
-set (LumiverseCore_INCLUDE_OLA OFF CACHE BOOL "Build LumiverseCore with OLA Driver")
+set (LumiverseCore_INCLUDE_DMXPRO2 OFF CACHE BOOL "Build LumiverseCore with Enttec USB DMX Pro Mk II Driver")
+set (LumiverseCore_INCLUDE_LIGHTMAN ON CACHE BOOL "Build LumiverseCore with Lightman Simulations")
+
+# Other Language Bindings
+set (LumiverseCore_PYTHON_BINDINGS OFF CACHE BOOL "Build LumiverseCore bindings for Python")
 set (LumiverseCore_CSHARP_BINDINGS OFF CACHE BOOL "Build LumiverseCore bindings for C#")
 set (LumiverseCore_NODEJS_BINDINGS OFF CACHE BOOL "Build Lumiverse bindings for Node.js")
 
 # Config interface options
-IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+IF (LumiverseCore_INCLUDE_DMXPRO2)
     SET (LumiverseCore_USE_DMXPRO2 "#define USE_DMXPRO2")
-ENDIF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+ENDIF (LumiverseCore_INCLUDE_DMXPRO2)
 
 IF (LumiverseCore_INCLUDE_KINET)
     SET (LumiverseCore_USE_KINET "#define USE_KINET")
@@ -64,6 +69,10 @@ IF (LumiverseCore_INCLUDE_OLA)
     SET (LumiverseCore_USE_OLA "#define USE_OLA")
 ENDIF (LumiverseCore_INCLUDE_OLA)
 
+IF (LumiverseCore_INCLUDE_LIGHTMAN)
+    SET (LumiverseCore_USE_LIGHTMAN "#define USE_LIGHTMAN")
+ENDIF (LumiverseCore_INCLUDE_LIGHTMAN)
+
 configure_file (
   "${PROJECT_SOURCE_DIR}/LumiverseCore/LumiverseCoreConfig.h.in"
   "${PROJECT_SOURCE_DIR}/LumiverseCore/LumiverseCoreConfig.h"
@@ -71,15 +80,20 @@ configure_file (
 
 # Compiler options
 IF(APPLE)
-    SET(CLANG_FLAGS "-std=c++11 -stdlib=libc++")
-    
-    # HACK(kayvonf): removing frequently occurring warnings due to clp
-    # sloppiness.  If possible, someone should try to surpress these
-    # warnings only for the relevant file(s).
-    SET(CLANG_FLAGS "${CLANG_FLAGS} -Wno-deprecated-register -Wno-extra-tokens")
-    
+    SET(CLANG_FLAGS "-std=c++11 -stdlib=libc++ -Wno-deprecated-register")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_FLAGS}")
-ELSEIF(UNIX OR LINUX)
+
+    # OSX(sky): install rpath for osx. This is supported since cmake
+    # version 3.0, changed to cmake minimum to 3.0 for this to work.
+    set(CMAKE_SKIP_BUILD_RPATH  false)
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH false)
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
+    list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+    if("${isSystemDir}" STREQUAL "-1")
+       set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+    endif("${isSystemDir}" STREQUAL "-1")
+ELSEIF(LINUX)
     SET(GCC_FLAGS "-std=c++11 -pthread -fPIC")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_FLAGS}")
     MESSAGE("Detected platform Unix: Adding -std=c++11 to g++ flags")
@@ -130,7 +144,7 @@ set (LUMIVERSE_CORE_SOURCE
 set (ACTIVE_LIBRARIES libjson clp)
 
 # Add relevant files to build if using DMXPRO2
-IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+IF (LumiverseCore_INCLUDE_DMXPRO2)
     SET (LumiverseCore_USE_DMXPRO2 "#define USE_DMXPRO2" STRING)
     SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE}
       ${PROJECT_SOURCE_DIR}/LumiverseCore/DMX/DMXPro2Interface.h
@@ -138,7 +152,7 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
       ${PROJECT_SOURCE_DIR}/LumiverseCore/DMX/DMXPro2Interface.cpp
     )
     SET (ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ftd2xx)
-ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+ENDIF(LumiverseCore_INCLUDE_DMXPRO2)
 
 # Add Arnold simulation code
 IF (LumiverseCore_INCLUDE_ARNOLD)
@@ -186,13 +200,35 @@ IF (LumiverseCore_INCLUDE_OLA)
     ${PROJECT_SOURCE_DIR}/LumiverseCore/DMX/OLAInterface.cpp)
 ENDIF (LumiverseCore_INCLUDE_OLA)
 
+# Add Lightman Simulation if used
+IF (LumiverseCore_INCLUDE_LIGHTMAN)
+  find_package(LIGHTMAN REQUIRED)
+  include_directories(${LIGHTMAN_INCLUDE_DIRS})
+
+  # Lightman Dependencies - OpenGL
+  find_package(OPENGL REQUIRED)
+  include_directories(${OPENGL_INCLUDE_DIRS})
+
+  # Lightman Dependencies - GLEW GLFW
+  find_package( PKGCONFIG REQUIRED )
+  pkg_search_module( GLEW REQUIRED glew  )
+  pkg_search_module( GLFW REQUIRED glfw3 )
+  include_directories(${GLEW_INCLUDE_DIRS})
+  include_directories(${GLFW_INCLUDE_DIRS})
+
+  SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${LIGHTMAN_LIBRARIES})
+  SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE}
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/LMS/LMSPatch.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/LMS/LMSPatch.cpp)
+ENDIF (LumiverseCore_INCLUDE_LIGHTMAN)
+
 # Build the libraries
 add_library(LumiverseCore ${LUMIVERSE_CORE_SOURCE})
 add_library(LumiverseCoreShared SHARED ${LUMIVERSE_CORE_SOURCE})
 add_subdirectory(${PROJECT_SOURCE_DIR}/LumiverseCore/lib)
 
 # DMXPRO2 Interface build settings
-IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+IF (LumiverseCore_INCLUDE_DMXPRO2)
     IF(WIN32)
         add_library(ftd2xx STATIC IMPORTED)
         set_property(TARGET ftd2xx PROPERTY IMPORTED_LOCATION
@@ -204,7 +240,7 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
         set_property(TARGET ftd2xx PROPERTY IMPORTED_LOCATION
             ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/ftd2xx/libftd2xx.1.2.2.dylib)
     ENDIF(APPLE)
-ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+ENDIF(LumiverseCore_INCLUDE_DMXPRO2)
 
 # Simulation module needs libpng to output png
 # Build with Arnold SDK (ai)
@@ -284,12 +320,12 @@ ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
 INSTALL(TARGETS LumiverseCoreShared DESTINATION lib)
 
-IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+IF (LumiverseCore_INCLUDE_DMXPRO2)
     FILE(GLOB pro2files ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/ftd2xx/*.H)
     INSTALL(FILES ${pro2files} DESTINATION include/lib/ftd2xx)
     # You'll have to copy over the right file for ftd2xx to use it properly until I
     # can get this library replaced.
-ENDIF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
+ENDIF (LumiverseCore_INCLUDE_DMXPRO2)
 
 add_subdirectory(LumiverseShowControl)
 
@@ -341,7 +377,7 @@ IF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS OR LumiverseC
 
 	SET_SOURCE_FILES_PROPERTIES(LumiverseCore.i PROPERTIES CPLUSPLUS ON)
 	SET_SOURCE_FILES_PROPERTIES(LumiverseCore.i PROPERTIES SWIG_FLAGS "")
-	
+
 	IF (LumiverseCore_PYTHON_BINDINGS)
 		MESSAGE("Including python bindings...")
 		FIND_PACKAGE(PythonLibs)

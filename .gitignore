@@ -224,8 +224,13 @@ Lumiverse/source/LumiverseCore/lib/arnold/plugin
 Lumiverse/source/LumiverseCore/lib/arnold/include
 Lumiverse/docs
 
-# Mac
+
+##########
+## OSX
+#########
 **/._*
+
+.DS_Store
 
 # Simulation and visualization libraries
 Driver/source/lib/

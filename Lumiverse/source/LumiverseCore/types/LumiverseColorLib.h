@@ -18,6 +18,7 @@
 #include <unordered_map>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <vector>
 
 #include "Logger.h"
 #include "lib/Eigen/Dense"
@@ -319,14 +320,14 @@ namespace Lumiverse {
 
     /*!
     \brief Converts XYZ to L*u*v*
-    
+
     Default reference white is D50 for this function.
     http://en.wikipedia.org/wiki/CIELUV
     */
     Eigen::Vector3d convXYZtoLUV(Eigen::Vector3d XYZ, ReferenceWhite rw = D50);
 
     /*!
-    \brief Converts XYZ to L*u*v* using an arbitrary reference white    
+    \brief Converts XYZ to L*u*v* using an arbitrary reference white
     */
     Eigen::Vector3d convXYZtoLUV(Eigen::Vector3d XYZ, Eigen::Vector3d rw);
 
