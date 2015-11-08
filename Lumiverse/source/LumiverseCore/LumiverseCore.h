@@ -34,7 +34,7 @@
 
 /*! \file LumiverseCore.h
 * \brief Include file for all of LumiverseCore in one conveninent location.
-* 
+*
 * This file gets configured according to the interfaces you selected in the cmake
 * build settings. Only includes the headers in LumiverseCore. You must include
 * other headers separately
@@ -66,6 +66,10 @@
 #include "DMX/DMXDevicePatch.h"
 #include "DMX/DMXInterface.h"
 #include "lib/libjson/libjson.h"
+
+#ifdef USE_LIGHTMAN
+#include "LMS/LMSPatch.h"
+#endif
 
 #ifdef USE_DMXPRO2
 #include "DMX/DMXPro2Interface.h"

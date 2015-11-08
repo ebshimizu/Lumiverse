@@ -3,6 +3,7 @@
 #define LumiverseCore_VERSION_MAJOR @LumiverseCore_VERSION_MAJOR@
 #define LumiverseCore_VERSION_MINOR @LumiverseCore_VERSION_MINOR@
 
+@LumiverseCore_USE_LIGHTMAN@
 @LumiverseCore_USE_DMXPRO2@
 @LumiverseCore_USE_KINET@
 @LumiverseCore_USE_ARNOLD@
