@@ -1,0 +1,585 @@
+{
+    "title": "PBridge",
+    "files": [
+        "exr/panel_01.exr",
+        "exr/panel_02.exr",
+        "exr/panel_03.exr",
+        "exr/panel_04.exr",
+        "exr/panel_05.exr",
+        "exr/panel_06.exr",
+        "exr/panel_07.exr",
+        "exr/panel_08.exr",
+        "exr/panel_09.exr",
+        "exr/panel_10.exr",
+        "exr/panel_11.exr",
+        "exr/panel_12.exr",
+        "exr/panel_13.exr",
+        "exr/panel_14.exr",
+        "exr/panel_15.exr",
+        "exr/panel_16.exr",
+        "exr/panel_17.exr",
+        "exr/panel_18.exr",
+        "exr/panel_19.exr",
+        "exr/panel_20.exr",
+        "exr/panel_21.exr",
+        "exr/panel_22.exr",
+        "exr/panel_23.exr",
+        "exr/panel_24.exr",
+        "exr/panel_25.exr",
+        "exr/panel_26.exr",
+        "exr/panel_27.exr",
+        "exr/panel_28.exr",
+        "exr/panel_29.exr",
+        "exr/panel_30.exr",
+        "exr/panel_31.exr",
+        "exr/panel_32.exr",
+        "exr/panel_33.exr",
+        "exr/panel_34.exr",
+        "exr/panel_35.exr",
+        "exr/panel_36.exr",
+        "exr/panel_37.exr",
+        "exr/panel_38.exr",
+        "exr/panel_39.exr",
+        "exr/panel_40.exr",
+        "exr/panel_41.exr",
+        "exr/panel_42.exr",
+        "exr/panel_43.exr",
+        "exr/panel_44.exr",
+        "exr/panel_45.exr",
+        "exr/panel_46.exr",
+        "exr/panel_47.exr",
+        "exr/panel_48.exr",
+        "exr/panel_49.exr",
+        "exr/panel_50.exr",
+        "exr/panel_51.exr",
+        "exr/panel_52.exr",
+        "exr/panel_53.exr",
+        "exr/panel_54.exr",
+        "exr/panel_55.exr",
+        "exr/panel_56.exr",
+        "exr/ambient.exr"
+    ],
+    "ambient": "ambient",
+    "layers": [
+        {
+            "name": "ambient",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_01",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_02",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_03",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_04",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_05",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_06",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_07",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_08",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_09",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_10",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_11",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_12",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_13",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_14",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_15",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_16",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_17",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_18",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_19",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_20",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_21",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_22",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_23",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_24",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_25",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_26",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_27",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_28",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_29",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_30",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_31",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_32",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_33",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_34",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_35",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_36",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_37",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_38",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_39",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_40",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_41",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_42",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_43",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_44",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_45",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_46",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_47",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_48",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_49",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_50",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_51",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_52",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_53",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_54",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_55",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "name": "panel_56",
+            "active": true,
+            "modulator": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "tonemapper": {
+        "type": "REINHARD",
+        "gamma": 2.2,
+        "level": 1.0,
+        "key": 0.12,
+        "wht": 1.0
+    }
+}

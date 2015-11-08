@@ -27,7 +27,7 @@ int RigTests::runTests() {
 bool RigTests::runTest(std::function<bool()> t, string testName, int testNum) {
   bool pass;
 
-  if (pass = t()) {
+  if ((pass = t())) {
     cout << "[ OK ]";
   }
   else {
@@ -215,10 +215,10 @@ bool RigTests::queryID() {
     cout << "Unable to combine id selector with other selectors\n";
     ret = false;
   }
-  
+
   return ret;
 }
- 
+
 bool RigTests::queryChannel() {
   bool ret = true;
 
@@ -275,7 +275,7 @@ bool RigTests::queryMetadata() {
     cout << "Failed to select devices by metadata contains\n";
     ret = false;
   }
-  
+
   //$= (ends with)
   expected.clear();
   expected = expected.select("#11-12,#31-32");
@@ -283,13 +283,13 @@ bool RigTests::queryMetadata() {
     cout << "Failed to select devices by metadata ends with\n";
     ret = false;
   }
-  
+
   //^= (starts with)
   if (!m_testRig->select("$angle^=to").hasSameDevices(expected)) {
     cout << "Failed to select devices by metadata starts with\n";
     ret = false;
   }
-  
+
   //!= (is not)
   if (m_testRig->select("$area!=2").size() != 24) {
     cout << "Failed to select devices by metadata not equal to\n";
@@ -394,10 +394,10 @@ bool RigTests::dynamicQuery() {
 
   bool ret = true;
   DynamicDeviceSet dynam(m_testRig, "@intensity>0.5f");
-  
+
   DeviceSet expected(m_testRig);
   expected = expected.select("");
-  
+
   if (dynam.size() != 0) {
     cout << "Dynamic DeviceSet shouldn't have any devices in it. (No devices with intensity > 0.5).\n";
     ret = false;

@@ -5,7 +5,7 @@ namespace ShowControl {
   SineWave::SineWave(float period, float magnitude, float phase, float offset, Mode mode) :
     Timeline(), _period(period), _magnitude(magnitude), _phase(phase), _offset(offset), _mode(mode)
   {
-    
+
   }
 
   SineWave::SineWave(JSONNode node) {
@@ -104,6 +104,7 @@ namespace ShowControl {
     else {
       Logger::log(WARN, "Unsupported type for SineWave Timeline: " + type);
     }
+    return nullptr;
   }
 
   size_t SineWave::getLoopLength() {

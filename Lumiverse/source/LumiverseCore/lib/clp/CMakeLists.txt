@@ -141,7 +141,18 @@ add_library(clp
   CoinWarmStartBasis.cpp
   CoinWarmStartDual.cpp
   CoinWarmStartPrimalDual.cpp
-  CoinWarmStartVector.cpp 
+  CoinWarmStartVector.cpp
 )
+
+# Suppress warnings due to clp sloppiness
+# Clang goes crazy otherwise
+IF(APPLE)
+    target_compile_options(clp PRIVATE -Wno-parentheses)
+    target_compile_options(clp PRIVATE -Wno-extra-tokens)
+    target_compile_options(clp PRIVATE -Wno-format-security)
+    target_compile_options(clp PRIVATE -Wno-deprecated-register)
+    target_compile_options(clp PRIVATE -Wno-constant-conversion)
+    target_compile_options(clp PRIVATE -Wno-constant-logical-operand)
+ENDIF(APPLE)
 
 INSTALL(TARGETS clp ARCHIVE DESTINATION lib)

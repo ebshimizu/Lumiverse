@@ -18,6 +18,7 @@
 #include "LumiverseCoreConfig.h"
 #include "Patch.h"
 #include "DMX/DMXPatch.h"
+#include "LMS/LMSPatch.h"
 #include "Simulation/PhotoPatch.h"
 #include "Simulation/PhotoAnimationPatch.h"
 #include "Device.h"
@@ -52,7 +53,7 @@ namespace Lumiverse {
   {
     /*! \sa DeviceSet */
     friend class DeviceSet;
-  
+
   public:
     /*!
     \brief Map containing functions to parse non-default patch types.

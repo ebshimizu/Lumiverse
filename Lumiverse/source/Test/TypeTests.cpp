@@ -14,7 +14,7 @@ int TypeTests::runTests() {
 bool TypeTests::runTest(std::function<bool()> t, string testName, int testNum) {
   bool pass;
 
-  if (pass = t()) {
+  if ((pass = t())) {
     cout << "[ OK ]";
   }
   else {
@@ -187,7 +187,7 @@ bool TypeTests::colorTests() {
     cout << "LumiverseColor error resetting to default color.\n";
     ret = false;
   }
-     
+
   return ret;
 }
 

@@ -34,7 +34,7 @@ void Rig::loadJSON(JSONNode root) {
     stringstream ss2(version->as_string());
 
     ss << LumiverseCore_VERSION_MAJOR << "." << LumiverseCore_VERSION_MINOR;
-    
+
     float libVer;
     float fileVer;
 
@@ -110,7 +110,7 @@ void Rig::loadPatches(JSONNode root) {
     Logger::log(INFO, ss.str());
 
     Patch* patch;
-    
+
     auto type = i->find("type");
     if (type == i->end()) {
       stringstream ss;
@@ -118,13 +118,20 @@ void Rig::loadPatches(JSONNode root) {
       Logger::log(WARN, ss.str());
     }
 
-    string patchType = type->as_string();    
+    string patchType = type->as_string();
 
     // New patch types will need new seralization definitions.
     if (patchType == "DMXPatch") {
       patch = (Patch*) new DMXPatch(*i);
       addPatch(nodeName, patch);
     }
+
+    // Lightman simulation patch
+    if (patchType == "LMSPatch") {
+        patch = (Patch*) new LMSPatch(*i);
+        addPatch(nodeName, patch);
+    }
+
 #ifdef USE_ARNOLD
 	else if (patchType == "PhotoPatch") {
 		patch = (Patch*) new PhotoPatch(*i);
@@ -166,7 +173,7 @@ void Rig::loadPatches(JSONNode root) {
 	  i->push_back(*i->find("jsonPath"));
       patch = (Patch*) new ArnoldPatch(*i);
       addPatch(nodeName, patch);
-        
+
         Device::DeviceCallbackFunction callback = std::bind(&ArnoldPatch::onDeviceChanged,
                                                             (ArnoldPatch*)patch,
                                                             std::placeholders::_1);
@@ -220,7 +227,7 @@ Rig::~Rig() {
 
   if (m_updateLoop != nullptr)
     delete m_updateLoop;
-  
+
   // Delete Devices
   for (auto& d : m_devices) {
     delete d;
@@ -276,7 +283,7 @@ bool Rig::load(string filename) {
     // It's not guaranteed that the following memory after memblock is blank.
     // C-style string needs an end.
     memblock[size] = '\0';
-      
+
     JSONNode n = libjson::parse(memblock);
 
 	// Pass in json path with the original json nodes.
@@ -484,7 +491,7 @@ DeviceSet Rig::getDevices(string key, string val, bool isEqual) {
 
 set<string> Rig::getAllUsedParams() {
   set<string> params;
-  
+
   for (auto& d : m_devices) {
     for (auto& s : d->getParamNames()) {
       params.insert(s);
@@ -501,7 +508,7 @@ bool Rig::save(string filename, bool overwrite) {
     return false;
   }
   ifile.close();
-  
+
   ofstream rigFile;
   rigFile.open(filename, ios::out | ios::trunc);
   rigFile << toJSON().write_formatted();
@@ -536,7 +543,7 @@ JSONNode Rig::toJSON() {
 
   return root;
 }
-    
+
 Patch* Rig::getSimulationPatch(string type) {
     for (pair<string, Patch*> patch : m_patches) {
         if ((patch.second->getType() == "ArnoldPatch" ||
@@ -547,7 +554,7 @@ Patch* Rig::getSimulationPatch(string type) {
             return patch.second;
         }
     }
-        
+
     return NULL;
 }
 
@@ -604,7 +611,7 @@ bool Rig::removeFunction(int pid) {
     ss << "Failed to remove additional function from update loop with pid " << pid << " (function does not exist)";
     Logger::log(WARN, ss.str());
   }
-  
+
   if (restart)
     run();
 

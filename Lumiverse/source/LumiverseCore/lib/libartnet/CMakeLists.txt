@@ -16,7 +16,7 @@ IF (UNIX OR LINUX)
 	SET(CMAKE_C_FLAGS "-fPIC")
   MESSAGE("Detected platform Unix: compiling libartnet with -fPIC")
 ENDIF (UNIX OR LINUX)
-	
+
 add_library(libartnet
 	artnet.c
 	misc.c
@@ -25,6 +25,14 @@ add_library(libartnet
 	tod.c
 	transmit.c
 )
+
+# Suppress warnings for Apple Clang
+IF(APPLE)
+  target_compile_options(libartnet PRIVATE -Wno-format)
+  target_compile_options(libartnet PRIVATE -Wno-macro-redefined)
+  target_compile_options(libartnet PRIVATE -Wno-tautological-compare)
+  target_compile_options(libartnet PRIVATE -Wno-pointer-bool-conversion)
+ENDIF(APPLE)
 
 FILE(GLOB artnetfiles ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 INSTALL(FILES ${artnetfiles} DESTINATION include/lib/libartnet)

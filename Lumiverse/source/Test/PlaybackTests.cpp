@@ -24,7 +24,7 @@ int PlaybackTests::runTests() {
 bool PlaybackTests::runTest(std::function<bool()> t, string testName, int testNum) {
   bool pass;
 
-  if (pass = t()) {
+  if ((pass = t())) {
     cout << "[ OK ]";
   }
   else {
@@ -93,7 +93,7 @@ bool PlaybackTests::programTimelines() {
 
   prog->getDevice("s41")->setParam("intensity", 1.0);
   prog->writeToTimeline(m_pb->getTimeline("Timeline 1"), 5000);
-  
+
   if (m_pb->getTimeline("Timeline 1")->getKeyframe("s41:intensity", 0).t != 0) {
     cout << "Failed to store keyframe in Timeline 1\n";
     return false;
@@ -134,7 +134,7 @@ bool PlaybackTests::playCue() {
 
   m_pb->getLayer("Layer 1")->activate();
   m_pb->getLayer("Layer 1")->play("Timeline 1");
-  
+
   cout << "Playing back Timeline 1...\n";
   this_thread::sleep_for(chrono::milliseconds(5100));
 

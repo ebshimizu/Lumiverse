@@ -5,6 +5,7 @@ set (LumiverseDemos_BUILD_SPEED_TEST ON CACHE BOOL "Build speed tester demo appl
 
 IF (LumiverseDemos_BUILD_DEMO)
 	add_subdirectory(LumiverseDemo)
+	add_subdirectory(LMSBridgeDemo)
 ENDIF(LumiverseDemos_BUILD_DEMO)
 
 IF (LumiverseDemos_BUILD_SPEED_TEST)
