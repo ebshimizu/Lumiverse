@@ -39,6 +39,11 @@
 * build settings. Only includes the headers in LumiverseCore. You must include
 * other headers separately
 */
+#pragma once
+
+#ifndef LUMIVERSE_CORE_H
+#define LUMIVERSE_CORE_H
+
 #include "LumiverseCoreConfig.h"
 
 #ifdef USE_KINET
@@ -89,4 +94,6 @@
 #include "Simulation/PhotoAnimationPatch.h"
 #include "Simulation/ArnoldFrameManager.h"
 #include "Simulation/ArnoldMemoryFrameManager.h"
+#endif
+
 #endif
