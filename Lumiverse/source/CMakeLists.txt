@@ -222,7 +222,7 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
     IF(WIN32)
         add_library(ai STATIC IMPORTED)
         set_property(TARGET ai PROPERTY IMPORTED_LOCATION
-            ${LumiverseCore_ARNOLD_PATH}/bin/ai.lib)
+            ${LumiverseCore_ARNOLD_PATH}/lib/ai.lib)
     ENDIF(WIN32)
 
     IF(APPLE)
