@@ -1,14 +1,13 @@
 #include "CueList.h"
-#ifndef _CUELIST_H_
 
 namespace Lumiverse {
 namespace ShowControl {
 
-CueList::CueList(string name) : m_name(name)
+CueList::CueList(string name, Playback* pb) : _name(name), _pb(pb)
 {
 }
 
-CueList::CueList(JSONNode node) {
+CueList::CueList(JSONNode node, Playback* pb): _pb(pb) {
   auto cues = node.find("cues");
   if (cues != node.end()) {
     // Load cues
@@ -20,7 +19,7 @@ CueList::CueList(JSONNode node) {
       float cueNum;
       ss >> cueNum;
 
-      m_cues[cueNum] = Cue(*it);
+      _cues[cueNum] = it->as_string();
 
       ++it;
     }
@@ -29,21 +28,26 @@ CueList::CueList(JSONNode node) {
     Logger::log(WARN, "No cues found in cue list.");
   }
 
-  m_name = node.name();
+  _name = node.name();
 }
 
 CueList::~CueList()
 {
 }
 
-bool CueList::storeCue(float num, Cue cue, bool overwrite) {
+bool CueList::storeCue(float num, string cueID, bool overwrite) {
   if (num < 0) {
     Logger::log(ERR, "Cue numbers must be positive.");
     return false;
   }
 
-  if (overwrite == true || m_cues.count(num) == 0) {
-    m_cues[num] = cue;
+  if (_pb->getTimeline(cueID) == nullptr) {
+    Logger::log(ERR, "Specified Cue does not exist: " + cueID);
+    return false;
+  }
+
+  if (overwrite == true || _cues.count(num) == 0) {
+    _cues[num] = cueID;
     stringstream ss;
     ss << "Recorded cue " << num;
     Logger::log(INFO, ss.str());
@@ -56,76 +60,57 @@ bool CueList::storeCue(float num, Cue cue, bool overwrite) {
   return false;
 }
 
-void CueList::deleteCue(float num) {
-  if (m_cues.count(num) > 0) {
-    m_cues.erase(num);
+void CueList::deleteCue(float num, bool totalDelete) {
+  if (_cues.count(num) > 0) {
+    if (totalDelete) {
+      _pb->deleteTimeline(_cues[num]);
+    }
+    _cues.erase(num);
 
     stringstream ss;
-    ss << "Cue " << num << " deleted";
+    ss << "Cue " << num << " deleted from cue list";
     Logger::log(INFO, ss.str());
   }
 }
 
-void CueList::update(float num, Rig* rig, bool track) {
-  if (track) {
-    Cue::changedParams changed = m_cues[num].update(rig);
-
-    auto tracking = m_cues.find(num);
-    // Start at the cue after the one modified.
-    ++tracking;
-
-    while (tracking != m_cues.end()) {
-      tracking->second.trackedUpdate(changed, rig);
-
-      // Keep going until there's nothing left to track,
-      // or the while loop reaches the end of the cue list.
-      if (changed.size() == 0)
-        break;
-
-      ++tracking;
-    }
-
-  }
-  else {
-    // Discard returned param. shared_ptr should free memory.
-    m_cues[num].update(rig);
-  }
-}
+//void CueList::update(float num, Rig* rig, bool track) {
+  // Should update a series of cues in the cue list according to tracking rules.
+//}
 
 float CueList::getFirstCueNum() {
-  if (m_cues.size() == 0) {
+  if (_cues.size() == 0) {
     // No cues defaults this to -1.    
     return -1;
   }
-  return m_cues.begin()->first;
+  return _cues.begin()->first;
 }
 
 float CueList::getLastCueNum() {
-  if (m_cues.size() == 0) {
+  if (_cues.size() == 0) {
     // No cues defaults this to -1
     return -1;
   }
 
-  return m_cues.rbegin()->first;
+  return _cues.rbegin()->first;
 }
 
 Cue* CueList::getNextCue(float num) {
-  auto current = m_cues.find(num);
-  if (current == m_cues.end()) {
+  auto current = _cues.find(num);
+  if (current == _cues.end()) {
     return nullptr;
   }
 
   current++;
-  if (current == m_cues.end()) {
+  if (current == _cues.end()) {
     return nullptr;
   }
   
-  return &current->second;
+  return (Cue*)_pb->getTimeline(current->second).get();
 }
 
 float CueList::getNextCueNum(float num) {
-  auto current = m_cues.find(num);
-  if (current == m_cues.end()) {
+  auto current = _cues.find(num);
+  if (current == _cues.end()) {
     return -1;
   }
 
@@ -134,19 +119,19 @@ float CueList::getNextCueNum(float num) {
 }
 
 Cue* CueList::getPrevCue(float num) {
-  auto current = m_cues.find(num);
-  if (current == m_cues.begin()) {
+  auto current = _cues.find(num);
+  if (current == _cues.begin()) {
     return nullptr;
   }
 
   current--;
 
-  return &current->second;
+  return (Cue*)(_pb->getTimeline(current->second).get());
 }
 
 float CueList::getPrevCueNum(float num) {
-  auto current = m_cues.find(num);
-  if (current == m_cues.begin()) {
+  auto current = _cues.find(num);
+  if (current == _cues.begin()) {
     return -1;
   }
 
@@ -155,7 +140,7 @@ float CueList::getPrevCueNum(float num) {
 }
 
 float CueList::getCueNumAtIndex(int index) {
-  auto it = m_cues.begin();
+  auto it = _cues.begin();
   
   // There's gotta be a faster way of finding this with the std lib
   for (int i = 0; i < index; i++) {
@@ -167,16 +152,15 @@ float CueList::getCueNumAtIndex(int index) {
 
 JSONNode CueList::toJSON() {
   JSONNode list;
-  list.set_name(m_name);
+  list.set_name(_name);
 
   JSONNode cues;
   cues.set_name("cues");
-  for (auto& kvp : m_cues) {
+  for (auto& kvp : _cues) {
     stringstream ss;
     ss << kvp.first;
 
-    JSONNode cue = kvp.second.toJSON();
-    cue.set_name(ss.str());
+    JSONNode cue(ss.str(), kvp.second);
     
     cues.push_back(cue);
   }
@@ -187,5 +171,3 @@ JSONNode CueList::toJSON() {
 
 }
 }
-
-#endif

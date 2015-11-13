@@ -1,4 +1,3 @@
-#define _CUELIST_H_
 #ifndef _CUELIST_H_
 #define _CUELIST_H_
 
@@ -6,9 +5,12 @@
 
 #include <LumiverseCore.h>
 #include "Cue.h"
+#include "Playback.h"
 
 namespace Lumiverse {
 namespace ShowControl {
+
+class Playback;
 
 // A cue list is a list of cues. This class maintains the relationships
 // between cues and performs update operations.
@@ -22,10 +24,10 @@ class CueList
 {
 public:
   /*! \brief Make a new empty cue list */
-  CueList(string name);
+  CueList(string name, Playback* pb);
 
   /*! \brief Load a CueList from a JSON node */
-  CueList(JSONNode node);
+  CueList(JSONNode node, Playback* pb);
 
   // Delete the cue list
   ~CueList();
@@ -33,17 +35,18 @@ public:
   // Stores a cue in the list.
   // Returns false if there's already a cue with the given number in the map.
   // Set overwrite to true to force.
-  bool storeCue(float num, Cue cue, bool overwrite = false);
+  bool storeCue(float num, string cueID, bool overwrite = false);
 
-  // Delets a cue.
-  void deleteCue(float num);
+  // Delets a cue. Does not delete the Cue object from the playback controls by default
+  void deleteCue(float num, bool totalDelete = false);
 
   // Updates a cue and tracks changes.
-  // Set track to false if no tracking desired.
-  void update(float num, Rig* rig, bool track = true);
+  // Set track to true if tracking desired.
+  // This function is a bit more complicated at the moment
+  //void update(float num, Rig* rig, bool track = false);
 
-  // Gets the list of cues
-  const map<float, Cue>& getCueList() { return m_cues; }
+  // Gets the list of cue numbers
+  const map<float, string>& getCueList() { return _cues; }
 
   /*!
   \brief Gets the number of the first cue. 
@@ -60,14 +63,7 @@ public:
   float getLastCueNum();
 
   // Gets a cue and allows user to modify it.
-  Cue* getCue(float num) {
-    if (m_cues.count(num) > 0) {
-      return &(m_cues[num]);
-    }
-    else {
-      return nullptr;
-    }
-  }
+  Cue* getCue(float num);
 
   // Gets the next cue in the list
   // If the given cue number isn't in the list, returns nullptr
@@ -96,10 +92,10 @@ public:
   float getCueNumAtIndex(int index);
 
   /*! \brief Sets the name of the cue list. */
-  void setName(string name) { m_name = name; }
+  void setName(string name) { _name = name; }
 
   /*! \brief Gets the name of the cue list. */
-  string getName() { return m_name; }
+  string getName() { return _name; }
 
   /*!
   \brief Returns the JSON representation of the cue list.
@@ -108,10 +104,13 @@ public:
 
 private:
   // List of cues. Cue numbers can be floats.
-  map<float, Cue> m_cues;
+  map<float, string> _cues;
 
   /*! \brief Name of the list */
-  string m_name;
+  string _name;
+
+  /*! \brief Pointer to Playback object that contains the actual cue data. */
+  Playback* _pb;
 };
 
 }

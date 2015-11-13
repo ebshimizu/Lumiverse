@@ -113,6 +113,43 @@ void Timeline::deleteKeyframe(DeviceSet devices, size_t time) {
   }
 }
 
+void Timeline::moveKeyframe(string id, size_t oldTime, size_t newTime)
+{
+  Keyframe temp = getKeyframe(id, oldTime);
+  deleteKeyframe(id, oldTime);
+  _timelineData[id][newTime] = temp;
+}
+
+void Timeline::deleteKeyframesAfter(string id, size_t start)
+{
+  vector<size_t> toDelete;
+  for (const auto& k : _timelineData[id]) {
+    if (k.first > start) {
+      toDelete.push_back(k.first);
+    }
+  }
+
+  for (const auto& i : toDelete) {
+    deleteKeyframe(id, i);
+  }
+}
+
+void Timeline::deleteKeyframesBetween(size_t start, size_t end)
+{
+  for (const auto& id : _timelineData) {
+    vector<size_t> toDelete;
+    for (const auto& k : id.second) {
+      if (k.first > start && k.first < end) {
+        toDelete.push_back(k.first);
+      }
+    }
+
+    for (const auto& i : toDelete) {
+      deleteKeyframe(id.first, i);
+    }
+  }
+}
+
 bool Timeline::addEndEvent(string id, shared_ptr<Event> e) {
   if (_endEvents.count(id) > 0) {
     return false;

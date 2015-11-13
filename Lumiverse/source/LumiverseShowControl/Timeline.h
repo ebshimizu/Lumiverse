@@ -26,7 +26,9 @@ are complete).
 
 Subclasses of timelines are allowed, and encouraged for certain applications. Note that you do not have
 to override all functions, but probably should at least override getValueAtTime(). Subclasses
-have access to all the keyframe functions and data structures, but do not have to use them
+have access to all the keyframe functions and data structures, but do not have to use them.
+
+Times are specified in ms.
 \sa Event
 */
 class Timeline {
@@ -135,6 +137,22 @@ public:
   \brief Deletes the keyframes for the specified devices at the specified time.
   */
   void deleteKeyframe(DeviceSet devices, size_t time);
+
+  /*!
+  \brief Moves a keyframe from one time to a different time. If a keyframe already exists at
+  the target time, it is overwritten.
+  */
+  void moveKeyframe(string id, size_t oldTime, size_t newTime);
+
+  /*!
+  \brief Deletes all keyframes for an id that occur after (>) the start time.
+  */
+  void deleteKeyframesAfter(string id, size_t start);
+
+  /*!
+  \brief Deletes all keyframes between (start < keyframe < end) the specified times
+  */
+  void deleteKeyframesBetween(size_t start, size_t end);
 
   /*!
   \brief Adds a new event to the end of the timeline
@@ -296,7 +314,7 @@ public:
   */
   virtual string getTimelineTypeName() { return "timeline"; }
 
-private:
+protected:
   /*!
   \brief Stores the length of the timeline.
 
