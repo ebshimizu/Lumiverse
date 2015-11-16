@@ -5,6 +5,7 @@
 
 #include "Rig.h"
 #include "Timeline.h"
+#include "Cue.h"
 
 namespace Lumiverse {
 namespace ShowControl {
@@ -203,6 +204,11 @@ public:
   if the rig is the same.
   */
   bool loadJSON(JSONNode data);
+
+  /*!
+  \brief Returns a cue constructed from the current state of the programmer
+  */
+  Cue* getCue(float up, float down, float delay);
 
 private:
   /*!

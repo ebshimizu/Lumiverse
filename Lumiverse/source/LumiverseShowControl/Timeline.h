@@ -26,7 +26,9 @@ are complete).
 
 Subclasses of timelines are allowed, and encouraged for certain applications. Note that you do not have
 to override all functions, but probably should at least override getValueAtTime(). Subclasses
-have access to all the keyframe functions and data structures, but do not have to use them
+have access to all the keyframe functions and data structures, but do not have to use them.
+
+Times are specified in ms.
 \sa Event
 */
 class Timeline {
@@ -59,6 +61,11 @@ public:
   \brief Gets the identifier used to refer to a device-parameter keyframe set.
   */
   string getTimelineKey(Device* d, string paramName);
+
+  /*!
+  \brief Gets the identifier used to refer to a device-parameter keyframe set.
+  */
+  string getTimelineKey(string id, string paramName);
 
   /*!
   \brief Gets the keyframe for a given identifier and time. Read-only.
@@ -132,6 +139,22 @@ public:
   void deleteKeyframe(DeviceSet devices, size_t time);
 
   /*!
+  \brief Moves a keyframe from one time to a different time. If a keyframe already exists at
+  the target time, it is overwritten.
+  */
+  void moveKeyframe(string id, size_t oldTime, size_t newTime);
+
+  /*!
+  \brief Deletes all keyframes for an id that occur after (>) the start time.
+  */
+  void deleteKeyframesAfter(string id, size_t start);
+
+  /*!
+  \brief Deletes all keyframes between (start < keyframe < end) the specified times
+  */
+  void deleteKeyframesBetween(size_t start, size_t end);
+
+  /*!
   \brief Adds a new event to the end of the timeline
 
   Id is needed for this to allow easy access to end events.
@@ -195,11 +218,12 @@ public:
   /*!
   \brief Returns the value of the specified parameter for the specified device at the specified time.
 
-  \param identifier [deviceID]:[paramName] for the desired device and parameter
+  \param id Device ID
+  \param paramName Parameter name
   \param time Time in milliseconds to get the value.
   \return A LumiverseType value for the specified time in the timeline.
   */
-  virtual shared_ptr<LumiverseType> getValueAtTime(Device* d, string paramName, size_t time, map<string, shared_ptr<Timeline> >& tls);
+  virtual shared_ptr<LumiverseType> getValueAtTime(string id, string paramName, LumiverseType* currentVal, size_t time, map<string, shared_ptr<Timeline> >& tls);
 
   /*!
   \brief Executes the events between the specified times
@@ -270,7 +294,7 @@ public:
 
   \param state Layer state
   */
-  virtual void setCurrentState(map<string, Device*>& state, shared_ptr<Timeline> active, size_t time);
+  virtual void setCurrentState(map<string, map<string, LumiverseType*> >& state, shared_ptr<Timeline> active, size_t time);
 
   /*!
   \brief Gets the keyframe closest to happen at or before the given time.
@@ -290,7 +314,7 @@ public:
   */
   virtual string getTimelineTypeName() { return "timeline"; }
 
-private:
+protected:
   /*!
   \brief Stores the length of the timeline.
 
@@ -350,7 +374,7 @@ private:
   /*!
   \brief Updates the Keyframes marked as "Use Current State" in the Timeline's data 
   */
-  void updateKeyframeState(Device* d, string paramName, shared_ptr<Timeline> tl, size_t time);
+  void updateKeyframeState(string id, string paramName, LumiverseType* param, shared_ptr<Timeline> tl, size_t time);
 
   /*!
   \brief Initializes the timeline with the given JSONNode's data.

@@ -38,10 +38,10 @@ include_directories("${PROJECT_SOURCE_DIR}/LumiverseCore/types"
 
 # Lumiverse Core Version Number, in case its needed
 set (LumiverseCore_VERSION_MAJOR 2)
-set (LumiverseCore_VERSION_MINOR 1)
+set (LumiverseCore_VERSION_MINOR 2)
 set (LumiverseCore_INCLUDE_DMXPRO2INTERFACE OFF CACHE BOOL "Build LumiverseCore with Enttec USB DMX Pro Mk II Driver")
 set (LumiverseCore_INCLUDE_KINET ON CACHE BOOL "Build LumiverseCore with KiNet Driver")
-set (LumiverseCore_INCLUDE_ARTNET ON CACHE BOOL "Build LumiverseCore with ArtNet Driver")
+set (LumiverseCore_INCLUDE_ARTNET OFF CACHE BOOL "Build LumiverseCore with ArtNet Driver")
 set (LumiverseCore_PYTHON_BINDINGS ON CACHE BOOL "Build LumiverseCore bindings for Python")
 set (LumiverseCore_INCLUDE_OLA OFF CACHE BOOL "Build LumiverseCore with OLA Driver")
 set (LumiverseCore_CSHARP_BINDINGS OFF CACHE BOOL "Build LumiverseCore bindings for C#")

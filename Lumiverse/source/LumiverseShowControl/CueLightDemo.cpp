@@ -31,7 +31,7 @@ int main(int argc, char**argv) {
 
   shared_ptr<Layer> layer1(new Layer(&rig, &pb, "layer1", 1));
 
-  layer1->setMode(Layer::BLEND_OPAQUE);
+  layer1->setMode(Layer::ALPHA);
   layer1->activate();
 
   start = chrono::high_resolution_clock::now();

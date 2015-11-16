@@ -6,3 +6,5 @@
 #include "Playback.h"
 #include "Snapshot.h"
 #include "SineWave.h"
+#include "Cue.h"
+#include "CueList.h"

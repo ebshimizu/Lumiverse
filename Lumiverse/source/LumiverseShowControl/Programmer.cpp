@@ -305,6 +305,11 @@ bool Programmer::loadJSON(JSONNode data) {
   return true;
 }
 
+Cue* Programmer::getCue(float up, float down, float delay)
+{
+  return new Cue(m_devices, up, down, delay);
+}
+
 void Programmer::addCaptured(DeviceSet set) {
   m_progMutex.lock();
 

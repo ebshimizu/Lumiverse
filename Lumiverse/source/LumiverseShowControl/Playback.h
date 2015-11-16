@@ -15,6 +15,7 @@
 namespace Lumiverse {
 namespace ShowControl{
   class Layer;
+  class CueList;
   
   /*!
   \brief A playback object manages layers, timelines, and coordinates their actions and updates.
@@ -269,6 +270,50 @@ namespace ShowControl{
     */
     float getGrandmaster() { return m_grandmaster; }
 
+    /*!
+    \brief Adds a cue list to the Playback
+    If a list already exists with the same name, this function will return false.
+    \param cueList Cue list to add.
+    */
+    bool addCueList(shared_ptr<CueList> cueList);
+
+    /*!
+    \brief Retrieves a cue list from the Playback
+    \param id Cue list id.
+    \return Pointer to specified cue list. nullptr if cue list doesn't exist.
+    */
+    shared_ptr<CueList> getCueList(string id);
+
+    /*!
+    \brief Deletes a cue list from the Playback
+    */
+    void deleteCueList(string id);
+
+    /*!
+    \brief Assigns a cue list to a layer
+    If one of the specified items doesn't exist, nothing will happen and this
+    function will return false.
+    \param cueListId Cue list identifier
+    \param layerName Name of the layer to assign the cue list to.
+    \param resetCurrenCue Set to true to reset the current cue of the layer (resets to -1)
+    */
+    bool addCueListToLayer(string cueListId, string layerName, bool resetCurrentCue = true);
+
+    /*!
+    \brief Removes a cue list assigned to a particular layer.
+    \param layerName Name of the layer
+    */
+    void removeCueListFromLayer(string layerName);
+
+    /*! \brief Returns a list of the cue list names contained in the Playback. */
+    vector<string> getCueListNames();
+
+    /*!
+    \brief Returns the number of cue lists contained in this Playback object.
+    \return Number of cue lists.
+    */
+    int getNumCueLists();
+
   private:
     /*! \brief Map of layer names to layers. */
     map<string, shared_ptr<Layer> > m_layers;
@@ -284,6 +329,9 @@ namespace ShowControl{
 
     /*! \brief Map of */
     map<string, shared_ptr<Timeline> > m_timelines;
+
+    /*! \brief Map of CueList ids to CueList objects*/
+    map<string, shared_ptr<CueList> > m_cueLists;
 
     // Does the updating of the rig while running.
     // unique_ptr<thread> m_updateLoop;
