@@ -85,6 +85,14 @@ float CueList::getFirstCueNum() {
   return _cues.begin()->first;
 }
 
+string CueList::getFirstCue() {
+  if (_cues.size() == 0) {
+    // No cues defaults this to -1.    
+    return "";
+  }
+  return _cues.begin()->second;
+}
+
 float CueList::getLastCueNum() {
   if (_cues.size() == 0) {
     // No cues defaults this to -1
@@ -94,18 +102,41 @@ float CueList::getLastCueNum() {
   return _cues.rbegin()->first;
 }
 
-Cue* CueList::getNextCue(float num) {
+string CueList::getLastCue() {
+  if (_cues.size() == 0) {
+    // No cues defaults this to -1
+    return "";
+  }
+
+  return _cues.rbegin()->second;
+}
+
+Cue* CueList::getCue(float num) {
+  if (_cues.count(num) == 0)
+    return nullptr;
+
+  return (Cue*)_pb->getTimeline(_cues[num]).get();
+}
+
+string CueList::getCueName(float num) {
+  if (_cues.count(num) == 0)
+    return "";
+
+  return _cues[num];
+}
+
+string CueList::getNextCue(float num) {
   auto current = _cues.find(num);
   if (current == _cues.end()) {
-    return nullptr;
+    return "";
   }
 
   current++;
   if (current == _cues.end()) {
-    return nullptr;
+    return "";
   }
   
-  return (Cue*)_pb->getTimeline(current->second).get();
+  return current->second;
 }
 
 float CueList::getNextCueNum(float num) {
@@ -118,15 +149,15 @@ float CueList::getNextCueNum(float num) {
   return current->first;
 }
 
-Cue* CueList::getPrevCue(float num) {
+string CueList::getPrevCue(float num) {
   auto current = _cues.find(num);
   if (current == _cues.begin()) {
-    return nullptr;
+    return "";
   }
 
   current--;
 
-  return (Cue*)(_pb->getTimeline(current->second).get());
+  return current->second;
 }
 
 float CueList::getPrevCueNum(float num) {

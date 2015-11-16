@@ -65,6 +65,8 @@ public:
   // Creates a cue with different up and down fades, and a different delay
   Cue(Rig* rig, float up, float down, float delay);
 
+  Cue(map<string, Device*> devices, float up, float down, float delay);
+
   /*! \brief Creates a cue from a JSON node. */
   Cue(JSONNode node);
 
@@ -81,7 +83,7 @@ public:
   */
   void operator=(const Cue& other);
 
-  // Modifiers
+  string getTimelineTypeName() override { return "cue"; }
 
   /*!
   \brief Updates the changes between the rig and this cue.
@@ -100,6 +102,11 @@ public:
   \brief Updates the cue with the values specified for a particular identifier.
   */
   void update(map<string, LumiverseType*> params);
+
+  /*!
+  \brief Updates a single parameter in the cue.
+  */
+  void update(string id, string param, LumiverseType* data);
 
   /*!
   \brief Sets the delay for a cue
@@ -141,14 +148,6 @@ public:
 
   /*! \brief Returns the JSON representation of the cue. */
   JSONNode toJSON() override;
-
-  /*!
-  \brief Returns the length of the cue.
-  
-  If the length hasn't been updated recently, this will calculate it.
-  Otherwise it'll return the m_length value calculated at an earlier time.
-  */
-  size_t getLength() override;
   
   /*!
   \brief Returns the total transition time of the cue.
@@ -161,6 +160,11 @@ public:
   Adjusts timing of cues depending on if they are an upfade or a downfade
   */
   void setCurrentState(map<string, map<string, LumiverseType*> >& state, shared_ptr<Timeline> active, size_t time) override;
+
+  /*!
+  \brief Gets the static value of the last keyframe in the cue if it exists.
+  */
+  shared_ptr<LumiverseType> getLastCueValue(string id, string paramName);
 
 private:
   // Upfade time

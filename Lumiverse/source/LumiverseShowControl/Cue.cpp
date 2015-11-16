@@ -24,6 +24,16 @@ Cue::Cue(Rig* rig, float up, float down, float delay) : _upfade(up), _downfade(d
   update(rig);
 }
 
+Cue::Cue(map<string, Device*> devices, float up, float down, float delay) :
+  _upfade(up), _downfade(down), _delay(delay)
+{
+  for (const auto& d : devices) {
+    for (const auto& p : d.second->getParamNames()) {
+      update(d.second->getId(), p, d.second->getParam(p));
+    }
+  }
+}
+
 Cue::Cue(JSONNode node) {
   auto it = node.begin();
   while (it != node.end()) {
@@ -88,6 +98,17 @@ void Cue::update(map<string, LumiverseType*> params) {
   }
 }
 
+void Cue::update(string id, string param, LumiverseType* data) {
+  string kid = getTimelineKey(id, param);
+
+  deleteKeyframe(kid, 0);
+  deleteKeyframe(kid, _upfade * 1000);
+  deleteKeyframe(kid, _downfade * 1000);
+
+  setKeyframe(kid, 0, data, true);
+  setKeyframe(kid, _upfade * 1000, data, false);
+}
+
 void Cue::setDelay(float delay) {
   setTime(_upfade, _downfade, delay);
 }
@@ -114,7 +135,7 @@ JSONNode Cue::toJSON() {
   cue.push_back(JSONNode("upfade", _upfade));
   cue.push_back(JSONNode("downfade", _downfade));
   cue.push_back(JSONNode("delay", _delay));
-  cue.push_back(JSONNode("type", "cue"));
+  cue.push_back(JSONNode("type", getTimelineTypeName()));
 
   JSONNode cueData = Timeline::toJSON();
 
@@ -123,12 +144,6 @@ JSONNode Cue::toJSON() {
   cue.push_back(cueData);
 
   return cue;
-}
-
-size_t Cue::getLength() {
-  // At the moment this is fine, since we're not considering
-  // extra keyframe timing issues within a cue
-  return _delay + max(_upfade, _downfade);
 }
 
 void Cue::setCurrentState(map<string, map<string, LumiverseType*> >& state, shared_ptr<Timeline> active, size_t time) {
@@ -155,6 +170,18 @@ void Cue::setCurrentState(map<string, map<string, LumiverseType*> >& state, shar
       // Update as normal.
       updateKeyframeState(d.first, p.first, p.second, active, time);
     }
+  }
+}
+
+shared_ptr<LumiverseType> Cue::getLastCueValue(string id, string paramName)
+{
+  string kid = getTimelineKey(id, paramName);
+
+  if (_timelineData.count(kid) > 0) {
+    return _timelineData[kid].rbegin()->second.val;
+  }
+  else {
+    return nullptr;
   }
 }
   

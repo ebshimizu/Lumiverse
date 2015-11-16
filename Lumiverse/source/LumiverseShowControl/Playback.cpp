@@ -230,7 +230,16 @@ namespace ShowControl {
     // Easy stuff first
     pb.push_back(JSONNode("grandmaster", m_grandmaster));
 
-    // Timelines first.
+    // Cue Lists.
+    JSONNode clists;
+    clists.set_name("cueLists");
+
+    for (auto& kvp : m_cueLists) {
+      clists.push_back(kvp.second->toJSON());
+    }
+    pb.push_back(clists);
+
+    // Timelines.
     JSONNode lists;
     lists.set_name("timelines");
 
@@ -344,8 +353,8 @@ namespace ShowControl {
       float verNum;
       ss >> verNum;
 
-      if (verNum < 2.0) {
-        Logger::log(WARN, "Playbacks older than version 2 cannot be loaded.");
+      if (verNum < 2.1) {
+        Logger::log(ERR, "Playbacks older than version 2.2 cannot be loaded.");
         return false;
       }
     }
@@ -375,8 +384,20 @@ namespace ShowControl {
           else if (t == "sinewave") {
             m_timelines[it->name()] = shared_ptr<Timeline>(new SineWave(*it));
           }
+          else if (t == "cue") {
+            m_timelines[it->name()] = shared_ptr<Timeline>(new Cue(*it));
+          }
         }
         Logger::log(INFO, "Loaded timeline " + it->name());
+        it++;
+      }
+    }
+
+    auto cueLists = data->find("cueLists");
+    if (cueLists != data->end()) {
+      auto it = cueLists->begin();
+      while (it != cueLists->end()) {
+        m_cueLists[it->name()] = shared_ptr<CueList>(new CueList(*it, this));
         it++;
       }
     }
@@ -391,11 +412,11 @@ namespace ShowControl {
         m_layers[it->name()] = shared_ptr<Layer>(new Layer(const_cast<Playback*>(this), *it));
 
         // TODO: Change how layers find what's assigned to them
-        //auto cueList = it->find("cueList");
-        //if (cueList != it->end()) {
+        auto cueList = it->find("cueList");
+        if (cueList != it->end()) {
           // Got a cue list to assign
-        //  addCueListToLayer(cueList->as_string(), it->name(), false);
-        //}
+          addCueListToLayer(cueList->as_string(), it->name(), false);
+        }
 
         it++;
       }
@@ -499,6 +520,62 @@ namespace ShowControl {
 
   void Playback::setGrandmaster(float val) {
     m_grandmaster = (val > 1) ? 1 : ((val < 0) ? 0 : val);
+  }
+
+  bool Playback::addCueList(shared_ptr<CueList> cueList) {
+    if (m_cueLists.count(cueList->getName()) == 0) {
+      m_cueLists[cueList->getName()] = cueList;
+      return true;
+    }
+    else {
+      stringstream ss;
+      ss << "Playback already has a cue list named " << cueList->getName();
+      Logger::log(ERR, ss.str());
+      return false;
+    }
+  }
+
+  shared_ptr<CueList> Playback::getCueList(string id) {
+    if (m_cueLists.count(id) > 0) {
+      return m_cueLists[id];
+    }
+
+    return nullptr;
+  }
+
+  void Playback::deleteCueList(string id) {
+    if (m_cueLists.count(id) > 0) {
+      m_cueLists.erase(id);
+    }
+  }
+
+  bool Playback::addCueListToLayer(string cueListId, string layerName, bool resetCurrentCue) {
+    if (m_layers.count(layerName) > 0 && m_cueLists.count(cueListId) > 0) {
+      m_layers[layerName]->setCueList(m_cueLists[cueListId], resetCurrentCue);
+      return true;
+    }
+
+    return false;
+  }
+
+  void Playback::removeCueListFromLayer(string layerName) {
+    if (m_layers.count(layerName) > 0) {
+      m_layers[layerName]->removeCueList();
+    }
+  }
+
+  vector<string> Playback::getCueListNames() {
+    vector<string> names;
+
+    for (const auto& kvp : m_cueLists) {
+      names.push_back(kvp.first);
+    }
+
+    return names;
+  }
+
+  int Playback::getNumCueLists() {
+    return m_cueLists.size();
   }
 }
 }

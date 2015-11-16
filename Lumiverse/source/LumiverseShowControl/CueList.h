@@ -55,6 +55,8 @@ public:
   */
   float getFirstCueNum();
 
+  string getFirstCue();
+
   /*!
   \brief Gets the number of the last cue.
   
@@ -62,12 +64,15 @@ public:
   */
   float getLastCueNum();
 
+  string getLastCue();
+
   // Gets a cue and allows user to modify it.
   Cue* getCue(float num);
+  string getCueName(float num);
 
   // Gets the next cue in the list
   // If the given cue number isn't in the list, returns nullptr
-  Cue* getNextCue(float num);
+  string getNextCue(float num);
 
   // Same as getNextCue but returns the cue number.
   // If the given cue number isn't in the list, returns -1
@@ -78,7 +83,7 @@ public:
   \param num Cue to start search at.
   \return Pointer to previous cue in the list from cue num.
   */
-  Cue* getPrevCue(float num);
+  string getPrevCue(float num);
 
   /*!
   \brief Gets the number of the previous cue in the list.

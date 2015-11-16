@@ -65,6 +65,8 @@ namespace ShowControl {
 #endif
       else if (name == "opacity")
         m_opacity = it->as_float();
+      else if (name == "currentCue")
+        m_currentCue = it->as_float();
       // Cue list must be matched up one level above.
       else if (name == "state") {
         auto device = it->begin();
@@ -267,6 +269,11 @@ namespace ShowControl {
   }
 
   void Layer::play(string id) {
+    if (m_pb->getTimeline(id) == nullptr) {
+      Logger::log(ERR, "Timeline with id " + id + " could not be found.");
+      return;
+    }
+
     // An assumption is made that each timeline isn't being played back multiple times at once
     // grab relevant data from current playback object
     string tlID = "";
@@ -291,6 +298,7 @@ namespace ShowControl {
     pbd->complete = false;
     pbd->start = chrono::high_resolution_clock::now();
     pbd->elapsed = pbd->start;
+    pbd->length = m_pb->getTimeline(id)->getLength();
 
     // Delete anything in the up next slot if we got something there
     if (m_queuedPlayback != nullptr) {
@@ -455,6 +463,14 @@ namespace ShowControl {
 #endif
     layer.push_back(JSONNode("opacity", m_opacity));
     layer.push_back(JSONNode("lastPlayedTimeline", m_lastPlayedTimeline));
+    layer.push_back(JSONNode("currentCue", m_currentCue));
+
+    if (hasCueList()) {
+      layer.push_back(JSONNode("cueList", m_cueList->getName()));
+    }
+    else {
+      layer.push_back(JSONNode("cueList", "null"));
+    }
 
     // Copy state
     JSONNode layerState;
@@ -483,6 +499,80 @@ namespace ShowControl {
     m_lastPlayedTimeline = "";
     stop();
   }
+
+  void Layer::setCueList(shared_ptr<CueList> list, bool resetCurrentCue) {
+    m_cueList = list;
+
+    if (resetCurrentCue) {
+      m_currentCue = -1;
+    }
+  }
+
+  void Layer::removeCueList() {
+    m_cueList = nullptr;
+    m_currentCue = -1;
+  }
+
+  bool Layer::hasCueList()
+  {
+    return m_cueList != nullptr;
+  }
+
+  const shared_ptr<CueList>& Layer::getCueList()
+  {
+    return m_cueList;
+  }
+
+  float Layer::getCurrentCue()
+  {
+    return m_currentCue;
+  }
   
+  void Layer::go() {
+    if (hasCueList()) {
+      if (m_currentCue >= 0) {
+        string nextCue = m_cueList->getNextCue(m_currentCue);
+        m_currentCue = m_cueList->getNextCueNum(m_currentCue);
+        play(nextCue);
+      }
+      else if (m_currentCue < 0) {
+        play(m_cueList->getFirstCue());
+      }
+    }
+    else {
+      stringstream ss;
+      ss << "Layer " << m_name << " cannot go to next cue because it has no assigned cue list.";
+      Logger::log(ERR, ss.str());
+    }
+  }
+
+  void Layer::back() {
+    if (hasCueList()) {
+      string prevCue = m_cueList->getPrevCue(m_currentCue);
+      m_currentCue = m_cueList->getPrevCueNum(m_currentCue);
+      play(prevCue);
+    }
+    else {
+      stringstream ss;
+      ss << "Layer " << m_name << " cannot go to previous cue because it has no assigned cue list.";
+      Logger::log(ERR, ss.str());
+    }
+  }
+
+  void Layer::goToCue(float num, float up, float down, float delay) {
+    if (hasCueList()) {
+      string nextCue = m_cueList->getCueName(num);
+
+      // Note that at the moment this ignores any parameters sent to goToCue.
+      m_currentCue = num;
+      play(nextCue);
+    }
+    else {
+      stringstream ss;
+      ss << "Layer " << m_name << " cannot go to cue because it has no assigned cue list.";
+      Logger::log(ERR, ss.str());
+    }
+  }
+
 }
 }

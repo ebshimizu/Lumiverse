@@ -6,6 +6,8 @@
 #include "LumiverseCore.h"
 #include "Timeline.h"
 #include "Playback.h"
+#include "CueList.h"
+#include "Cue.h"
 
 #include <memory>
 #include <chrono>
@@ -14,6 +16,7 @@
 namespace Lumiverse {
 namespace ShowControl {
   class Playback;
+  class CueList;
   
   /*! \brief Data that tracks the progress of a Timeline. */
   struct PlaybackData {
@@ -22,6 +25,7 @@ namespace ShowControl {
     string timelineID;
     bool complete;
     chrono::time_point<chrono::high_resolution_clock> elapsed;
+    size_t length;
   };
 
   /*!
@@ -226,6 +230,46 @@ namespace ShowControl {
     /*! \brief Restores the layer state to defaults and gets out of the current cue. */
     void reset();
 
+    /*!
+    \brief Assigns a CueList to the Layer
+    */
+    void setCueList(shared_ptr<CueList> list, bool resetCurrentCue = true);
+
+    /*!
+    \brief Remvoes a CueList from the Layer
+    */
+    void removeCueList();
+
+    /*!
+    \brief Indicates whether or not the Layer has a CueList assigned to it
+    */
+    bool hasCueList();
+
+    /*!
+    \brief Retrieves the CueList assigned to the layer
+    */
+    const shared_ptr<CueList>& getCueList();
+
+    /*!
+    \brief Gets the most recently played cue on the Layer
+    */
+    float getCurrentCue();
+
+    /*!
+    \brief Goes to the next cue in the list
+    */
+    void go();
+
+    /*!
+    \brief Goes to the previous cue in the list
+    */
+    void back();
+
+    /*!
+    \brief Goes to the selected cue in the selected time.
+    */
+    void goToCue(float num, float up = 3, float down = 3, float delay = 0);
+
   private:
     /*!
     \brief Holds the information on the current state of the layer.
@@ -283,6 +327,10 @@ namespace ShowControl {
     \brief Stores the ID of the most recently played back Timeline.
     */
     string m_lastPlayedTimeline;
+
+    shared_ptr<CueList> m_cueList;
+
+    float m_currentCue;
 
     /*! \brief Copies the devices and does other Layer initialization */
     void init(Rig* rig);
