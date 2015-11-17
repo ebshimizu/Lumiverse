@@ -75,19 +75,19 @@ namespace Lumiverse {
     * The frame buffer point is set to NULL. The buffer will be initialized after getting the size of output.
     * The default gamma is 2.2.
     */
-	 ArnoldInterface() : m_buffer(NULL), m_gamma(2.2f), m_samples(-3), m_predictive(false),
-		  m_bucket_pos(NULL), m_bucket_num(0), m_open(false) { }
+     ArnoldInterface() : m_buffer(NULL), m_gamma(2.2f), m_samples(-3), m_predictive(false),
+		   m_bucket_pos(NULL), m_bucket_num(0), m_open(false) { }
       
     /*!
-    * \brief Destroys the object.
+      \brief Destroys the object.
     */
-	virtual ~ArnoldInterface() { 
-		delete[] m_buffer; 
-		m_buffer = NULL;
-		delete[] m_bucket_pos; 
-		m_bucket_pos = NULL;
-		m_bucket_num = 0; 
-	}
+    virtual ~ArnoldInterface() { 
+      delete[] m_buffer; 
+      m_buffer = NULL;
+      delete[] m_bucket_pos; 
+      m_bucket_pos = NULL;
+      m_bucket_num = 0; 
+    }
       
     /*!
     * \brief Initializes the Arnold renderer.
@@ -128,6 +128,16 @@ namespace Lumiverse {
     * \return The pointer to the frame buffer.
     */
     float *getBufferPointer() { return m_buffer; }
+
+    /*!
+    \brief Sets an integer parameter for an arnold light
+    */
+    void setParameter(string lightName, string param, int val);
+
+    /*!
+    \brief Sets a float parameter for an arnold light.
+    */
+    void setParameter(string lightName, string param, float val);
 
     /*!
     * \brief Sets a parameter light node according to a key-value pair of metadata.
@@ -201,34 +211,34 @@ namespace Lumiverse {
     */
     float getGamma() { return m_gamma; }
 
-	/*!
-	* \brief Sets the predictive flag.
-	*
-	* \param predictive The predictive flag.
-	*/
-	void setPredictive(bool predictive) { m_predictive = predictive; }
+    /*!
+    * \brief Sets the predictive flag.
+    *
+    * \param predictive The predictive flag.
+    */
+    void setPredictive(bool predictive) { m_predictive = predictive; }
 
-	/*!
-	* \brief Gets the predictive flag.
-	*
-	* \return The predictive flag.
-	*/
-	bool getPredictive() { return m_predictive; }
-    
-	/*!
-	* \brief Sets the camera sampling rate used for current rendering.
-	*
-	* Although the system may have multiple camera sampling rates (e.g. for interactive mode and for real rendering),
-	* this rate will be used for the current rendering.
-	* \param samples The sampling rate.
-	*/
-    void setSamples(int samples) { m_samples = samples; }
+    /*!
+    * \brief Gets the predictive flag.
+    *
+    * \return The predictive flag.
+    */
+    bool getPredictive() { return m_predictive; }
       
-	/*!
-	* \brief Gets the sampling rate.
-	*
-	* \return The sampling rate.
-	*/
+    /*!
+    * \brief Sets the camera sampling rate used for current rendering.
+    *
+    * Although the system may have multiple camera sampling rates (e.g. for interactive mode and for real rendering),
+    * this rate will be used for the current rendering.
+    * \param samples The sampling rate.
+    */
+      void setSamples(int samples) { m_samples = samples; }
+        
+    /*!
+    * \brief Gets the sampling rate.
+    *
+    * \return The sampling rate.
+    */
     int getSamples() { return m_samples; }
       
     /*!
@@ -243,63 +253,73 @@ namespace Lumiverse {
     */
     void interrupt();
 
-	/*!
-	* \brief Parses the arnold parameter map to a JSON node.
-	* \return The Json node.
-	*/
-	JSONNode arnoldParameterToJSON();
+    /*!
+    * \brief Parses the arnold parameter map to a JSON node.
+    * \return The Json node.
+    */
+    JSONNode arnoldParameterToJSON();
 
-	/*!
-	* \brief Gets the progress of current frame as a percentage.
-	* \return The percent.
-	*/
-	float getPercentage() const { 
-		if (m_progress.bucket_sum < 0)
-			return 0.f;
-		return (0.f + m_progress.bucket_cur) / m_progress.bucket_sum * 100.f; 
-	}
+    /*!
+    * \brief Gets the progress of current frame as a percentage.
+    * \return The percent.
+    */
+    float getPercentage() const { 
+      if (m_progress.bucket_sum < 0)
+        return 0.f;
+      return (0.f + m_progress.bucket_cur) / m_progress.bucket_sum * 100.f; 
+    }
 
-	/*!
-	* \brief Gets the current bucket for each worker thread.
-	* \return An array of current buckets.
-	*/
-	BucketPositionInfo *getBucketPositionInfo() const { return m_bucket_pos; }
+    /*!
+    * \brief Gets the current bucket for each worker thread.
+    * \return An array of current buckets.
+    */
+    BucketPositionInfo *getBucketPositionInfo() const { return m_bucket_pos; }
 
-	/*!
-	* \brief Gets number of buckets rendered simultanously.
-	* This is usually the number of threads supported by hardware.
-	* \return The number of buckets rendered simultanously.
-	*/
-	size_t getBucketNumber() const { return m_bucket_num; }
+    /*!
+    * \brief Gets number of buckets rendered simultanously.
+    * This is usually the number of threads supported by hardware.
+    * \return The number of buckets rendered simultanously.
+    */
+    size_t getBucketNumber() const { return m_bucket_num; }
 
-	/*!
-	* \brief Modifies the surface color according to Picture Perfect RGB Rendering Using Spectral Prefiltering and Sharp Color Primaries.
-	* Currently only converts sRGB to sharp RGB.
-	*/
-	void updateSurfaceColor(Eigen::Vector3d white);
+    /*!
+    * \brief Modifies the surface color according to Picture Perfect RGB Rendering Using Spectral Prefiltering and Sharp Color Primaries.
+    * Currently only converts sRGB to sharp RGB.
+    */
+    void updateSurfaceColor(Eigen::Vector3d white);
 
-	/*!
-	* \brief Sets the default path.
-	*
-	* \param def_path The default path.
-	*/
-	void setDefaultPath(std::string def_path) { m_default_path = def_path; }
+    /*!
+    * \brief Sets the default path.
+    *
+    * \param def_path The default path.
+    */
+    void setDefaultPath(std::string def_path) { m_default_path = def_path; }
 
-	/*!
-	* \brief Gets the default path.
-	*
-	* \return The default path.
-	*/
-	std::string getDefaultPath() { return m_default_path; }
+    /*!
+    * \brief Gets the default path.
+    *
+    * \return The default path.
+    */
+    std::string getDefaultPath() { return m_default_path; }
 
-	/*!
-	* \brief Checks if this interface is currently open.
-	*
-	* \return If it's open.
-	*/
-	bool isOpen() { return m_open; }
-      
-	void addGobo(AtNode *light_ptr, std::string file, float deg, float rot);
+    /*!
+    * \brief Checks if this interface is currently open.
+    *
+    * \return If it's open.
+    */
+    bool isOpen() { return m_open; }
+        
+    void addGobo(AtNode *light_ptr, std::string file, float deg, float rot);
+
+    /*!
+    \brief Sets the Arnold log filename and flags
+    */
+    void setLogFileName(string filename, int flags = AI_LOG_ALL);
+
+    /*!
+    \brief Returns a set of light names used in the .ass file
+    */
+    map<string, AtNode*> getLights();
 
   private:
     /*!

@@ -171,6 +171,20 @@ Eigen::Matrix3f LumiverseTypeUtils::getRotationMatrix(Eigen::Vector3f lookat, Ei
 	return ret;
 }
 
+Eigen::Matrix3f LumiverseTypeUtils::getRotationMatrix(Eigen::Vector3f lookat, Eigen::Vector3f axis) {
+  // Rotate axis to lookat
+  axis.normalize();
+  lookat.normalize();
+
+  // Axis of rotation
+  Eigen::Vector3f rAxis = lookat.cross(axis);
+  rAxis.normalize();
+
+  // Rotation transform
+  Eigen::AngleAxisf rot = Eigen::AngleAxisf(acos(axis.dot(lookat)), rAxis);
+  return rot.toRotationMatrix();
+}
+
 bool LumiverseTypeUtils::lessThan(LumiverseType* lhs, LumiverseType* rhs) {
   // Nullptr is automatically less than anything (except nullptr)
   if (lhs == nullptr && rhs != nullptr)

@@ -150,6 +150,11 @@ namespace Lumiverse {
     virtual void reset();
 
     /*!
+    \brief Returns the Arnold interface
+    */
+    ArnoldInterface* getArnoldInterface() { return &m_interface; }
+
+    /*!
     \brief Disables continuous rendering of frames in the ArnoldAnimationPatch.
     */
     void disableContinuousRenderMode();

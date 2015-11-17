@@ -31,7 +31,7 @@ namespace Lumiverse {
     *
     * Sets the cursor to the beginning.
     */
-    ArnoldFrameManager(size_t fps = 24) : m_fps(fps), m_current(0) { }
+    ArnoldFrameManager(int fps = 24) : m_fps(fps), m_current(0) { }
 
     /*!
     * \brief Destroys the object.

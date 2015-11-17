@@ -102,8 +102,8 @@ void Cue::update(string id, string param, LumiverseType* data) {
   string kid = getTimelineKey(id, param);
 
   deleteKeyframe(kid, 0);
-  deleteKeyframe(kid, _upfade * 1000);
-  deleteKeyframe(kid, _downfade * 1000);
+  deleteKeyframe(kid, (size_t)(_upfade * 1000));
+  deleteKeyframe(kid, (size_t)(_downfade * 1000));
 
   setKeyframe(kid, 0, data, true);
   setKeyframe(kid, _upfade * 1000, data, false);

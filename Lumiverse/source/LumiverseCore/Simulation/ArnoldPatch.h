@@ -162,28 +162,27 @@ namespace Lumiverse {
     */
     virtual void interruptRender() override;
       
-	/*!
-	* \brief Gets the progress of current frame in percentage.
-	*
-	* \return The percent.
-	*/
-	virtual float getPercentage() const { return m_interface.getPercentage(); }
+    /*!
+    * \brief Gets the progress of current frame in percentage.
+    *
+    * \return The percent.
+    */
+    virtual float getPercentage() const { return m_interface.getPercentage(); }
 
-	/*!
-	* \brief Gets the current bucket for each worker thread.
-	* \return An array of current buckets.
-	*/
-	virtual BucketPositionInfo *getBucketPositionInfo() const { return m_interface.getBucketPositionInfo(); }
+    /*!
+    * \brief Gets the current bucket for each worker thread.
+    * \return An array of current buckets.
+    */
+    virtual BucketPositionInfo *getBucketPositionInfo() const { return m_interface.getBucketPositionInfo(); }
 
-	/*!
-	* \brief Gets number of buckets rendered simultanously.
-	* This is usually the number of threads supported by hardware.
-	* \return The number of buckets rendered simultanously.
-	*/
-	virtual size_t getBucketNumber() const { return m_interface.getBucketNumber(); }
+    /*!
+    * \brief Gets number of buckets rendered simultanously.
+    * This is usually the number of threads supported by hardware.
+    * \return The number of buckets rendered simultanously.
+    */
+    virtual size_t getBucketNumber() const { return m_interface.getBucketNumber(); }
 
   protected:
- 
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.
     * This function updates light node for renderer.
@@ -191,19 +190,19 @@ namespace Lumiverse {
     */
     void updateLight(set<Device *> devices);
 
-	/*!
-	* \brief Loads a arnold light node.
-	* This function is also used to update a light node.
-	* \param d_ptr The device with updated parameters.
-	*/
-	virtual void loadLight(Device *d_ptr) override;
+    /*!
+    * \brief Loads a arnold light node.
+    * This function is also used to update a light node.
+    * \param d_ptr The device with updated parameters.
+    */
+    virtual void loadLight(Device *d_ptr) override;
 
-	/*!
-	* \brief Resets the arnold light node and surface with updated parameters of deices.
-	* Experiment with methods from Picture Perfect RGB rendering.
-	* \param devices The device list.
-	*/
-	void updateLightPredictive(set<Device *> devices);
+    /*!
+    * \brief Resets the arnold light node and surface with updated parameters of deices.
+    * Experiment with methods from Picture Perfect RGB rendering.
+    * \param devices The device list.
+    */
+    void updateLightPredictive(set<Device *> devices);
     
     /*!
     * \brief Loads data from a parsed JSON object
@@ -211,11 +210,11 @@ namespace Lumiverse {
     */
     virtual void loadJSON(const JSONNode data) override;
 
-	/*!
-    * \brief Calls Arnold render function.
-    * This function runs in a separate thread.
-    */
-	virtual bool renderLoop();
+    /*!
+      * \brief Calls Arnold render function.
+      * This function runs in a separate thread.
+      */
+    virtual bool renderLoop();
 
     /*!
     * \brief Arnold Interface
@@ -223,23 +222,16 @@ namespace Lumiverse {
     ArnoldInterface m_interface;
 
   private:
-	void setOrientation(AtNode *light_ptr, Device *d_ptr, LumiverseOrientation *pan, LumiverseOrientation *tilt);
+    void setOrientation(AtNode *light_ptr, Device *d_ptr, LumiverseOrientation *pan, LumiverseOrientation *tilt);
 
-	void setOrientation(AtNode *light_ptr, Device *d_ptr, std::string pan_str, std::string tilt_str);
+    void setOrientation(AtNode *light_ptr, Device *d_ptr, std::string pan_str, std::string tilt_str);
 
-	/*!
-    * \brief Modifies light color according to Picture Perfect RGB Rendering Using Spectral Prefiltering and Sharp Color Primaries.
-	* \param d The device representing the light.
-	* \param white The white spot in sharp RGB. (currently not used)
-    */
-	void modifyLightColor(Device *d, Eigen::Vector3d white);
-
-	/*!
-	* \brief Gets a light node.
-	* \param d The device representing the light.
-	* \return The light node.
-	*/
-	AtNode *getLightNode(Device *d);
+    /*!
+      * \brief Modifies light color according to Picture Perfect RGB Rendering Using Spectral Prefiltering and Sharp Color Primaries.
+    * \param d The device representing the light.
+    * \param white The white spot in sharp RGB. (currently not used)
+      */
+    void modifyLightColor(Device *d, Eigen::Vector3d white);
   };
 }
 

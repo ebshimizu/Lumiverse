@@ -73,7 +73,15 @@ namespace Lumiverse {
     */
     bool areSameType(LumiverseType* lhs, LumiverseType* rhs);
 
+    /*!
+    \brief Returns a rotation matrix given the up vector, look at vector, the pan, and tilt.
+    */
     Eigen::Matrix3f getRotationMatrix(Eigen::Vector3f lookat, Eigen::Vector3f up, LumiverseOrientation pan, LumiverseOrientation tilt);
+
+    /*!
+    \brief Rotates the unit vector axis to the lookat vector.
+    */
+    Eigen::Matrix3f getRotationMatrix(Eigen::Vector3f lookat, Eigen::Vector3f axis)
 
     /*!
     * \brief Compares two LumiverseTypes with <

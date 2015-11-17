@@ -36,7 +36,7 @@ namespace Lumiverse {
 		/*!
 		 * \brief Constructs a ArnoldFileFrameManager object.
 		 */
-		  ArnoldFileFrameManager(std::string frame_path, size_t fps = 24) :
+		  ArnoldFileFrameManager(std::string frame_path, int fps = 24) :
 			  m_frame_path(frame_path), m_prev_frame(-1), m_current(0), m_buffer(NULL),
 			  ArnoldFrameManager(fps) { }
 

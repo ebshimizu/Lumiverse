@@ -6,44 +6,45 @@
 namespace Lumiverse {
     
 void ArnoldInterface::loadArnoldParam(const JSONNode data) {
-    ArnoldParam arnold_param;
-    JSONNode::const_iterator i = data.begin();
+  ArnoldParam arnold_param;
+  JSONNode::const_iterator i = data.begin();
     
 	while (i != data.end()) {
 		std::string nodeName = i->name();
         
-        // Two values for parameter mapping.
+    // Two values for parameter mapping.
 		if (nodeName == "dimension") {
-            JSONNode dimension = *i;
-            arnold_param.dimension = dimension.as_int();
+      JSONNode dimension = *i;
+      arnold_param.dimension = dimension.as_int();
 		}
         
-        if (nodeName == "arnoldType") {
+    if (nodeName == "arnoldType") {
 			JSONNode type = *i;
-            arnold_param.arnoldTypeName = type.as_string();
+      arnold_param.arnoldTypeName = type.as_string();
 		}
         
 		i++;
 	}
     
-    m_arnold_params[data.name()] = arnold_param;
+  m_arnold_params[data.name()] = arnold_param;
 }
 
 template<size_t D, typename T>
-    void ArnoldInterface::setSingleParameter(AtNode *node, const std::string &paramName, const std::string &value,
-                                         union AiNodeSetter<T> aiNodeSetter) const {
-    ArnoldParameterVector<D, T> paramVector;
-    parseArnoldParameter<D, T>(value, paramVector);
-    
-    // Calls APIs with different dimension.
-    if (D == 1)
-        aiNodeSetter.AiNodeSetter1D(node, paramName.c_str(), paramVector[0]);
-    else if (D == 2)
-        aiNodeSetter.AiNodeSetter2D(node, paramName.c_str(), paramVector[0], paramVector[1]);
-    else if (D == 3)
-        aiNodeSetter.AiNodeSetter3D(node, paramName.c_str(), paramVector[0], paramVector[1], paramVector[2]);
-    else if (D == 4)
-        aiNodeSetter.AiNodeSetter4D(node, paramName.c_str(), paramVector[0], paramVector[1], paramVector[2], paramVector[3]);
+void ArnoldInterface::setSingleParameter(AtNode *node, const std::string &paramName, const std::string &value,
+                                     union AiNodeSetter<T> aiNodeSetter) const
+{
+  ArnoldParameterVector<D, T> paramVector;
+  parseArnoldParameter<D, T>(value, paramVector);
+
+  // Calls APIs with different dimension.
+  if (D == 1)
+    aiNodeSetter.AiNodeSetter1D(node, paramName.c_str(), paramVector[0]);
+  else if (D == 2)
+    aiNodeSetter.AiNodeSetter2D(node, paramName.c_str(), paramVector[0], paramVector[1]);
+  else if (D == 3)
+    aiNodeSetter.AiNodeSetter3D(node, paramName.c_str(), paramVector[0], paramVector[1], paramVector[2]);
+  else if (D == 4)
+    aiNodeSetter.AiNodeSetter4D(node, paramName.c_str(), paramVector[0], paramVector[1], paramVector[2], paramVector[3]);
 }
 
 template<size_t D, typename T, class C>
@@ -117,25 +118,45 @@ void ArnoldInterface::setArrayParameter(AtNode *light_ptr, const std::string &pa
     }
 }
     
+void ArnoldInterface::setParameter(string lightName, string param, int val)
+{
+  AtNode* light = AiNodeLookUpByName(lightName.c_str());
+
+  if (light == NULL)
+    return;
+
+  AiNodeSetInt(light, param.c_str(), val);
+}
+
+void ArnoldInterface::setParameter(string lightName, string param, float val)
+{
+  AtNode* light = AiNodeLookUpByName(lightName.c_str());
+
+  if (light == NULL)
+    return;
+
+  AiNodeSetFlt(light, param.c_str(), val);
+}
+
 void ArnoldInterface::setParameter(AtNode *light_ptr, const std::string &paramName, const std::string &value) {
-    ArnoldParam param = m_arnold_params[paramName];
+  ArnoldParam param = m_arnold_params[paramName];
+
+  // Calls another function if the parameter type is "array"
+  const AtNodeEntry *entry_ptr = AiNodeGetNodeEntry(light_ptr);
+  const AtParamEntry *param_ptr = AiNodeEntryLookUpParameter(entry_ptr, paramName.c_str());
+  if (AiParamGetType(param_ptr) == AI_TYPE_ARRAY && paramName != "matrix") {
+    setArrayParameter(light_ptr, paramName, value);
+    return;
+  }
     
-    // Calls another function if the parameter type is "array"
-    const AtNodeEntry *entry_ptr = AiNodeGetNodeEntry(light_ptr);
-    const AtParamEntry *param_ptr = AiNodeEntryLookUpParameter(entry_ptr, paramName.c_str());
-    if (AiParamGetType(param_ptr) == AI_TYPE_ARRAY && paramName != "matrix") {
-        setArrayParameter(light_ptr, paramName, value);
-        return ;
-    }
-    
-    switch (param.dimension) {
-        case 1: {
-            if (param.arnoldTypeName == "int") {
-                union AiNodeSetter<int> AiNodeSetter;
-                AiNodeSetter.AiNodeSetter1D = AiNodeSetInt;
-                setSingleParameter<1, int>(light_ptr, paramName, value, AiNodeSetter);
-            }
-            else if (param.arnoldTypeName == "uint") {
+  switch (param.dimension) {
+    case 1: {
+      if (param.arnoldTypeName == "int") {
+        union AiNodeSetter<int> AiNodeSetter;
+        AiNodeSetter.AiNodeSetter1D = AiNodeSetInt;
+        setSingleParameter<1, int>(light_ptr, paramName, value, AiNodeSetter);
+      }
+      else if (param.arnoldTypeName == "uint") {
                 union AiNodeSetter<unsigned int> AiNodeSetter;
                 AiNodeSetter.AiNodeSetter1D = AiNodeSetUInt;
                 setSingleParameter<1, unsigned int>(light_ptr, paramName, value, AiNodeSetter);
@@ -221,19 +242,19 @@ void ArnoldInterface::setParameter(AtNode *light_ptr, const std::string &paramNa
 }
 
 void ArnoldInterface::appendToOutputs(const std::string buffer_output) {
-    // Append the new output to options (using the new filter)
-    AtNode *options = AiUniverseGetOptions();
-    AtArray *original = AiNodeGetArray(options, "outputs");
-    size_t num_options = original->nelements + 1;
-    
-    AtArray *outputs_array = AiArrayAllocate(num_options, 1, AI_TYPE_STRING);
-    
-    for (size_t i = 0; i < num_options - 1; i++) {
-        AiArraySetStr(outputs_array, i, AiArrayGetStr(original, i));
-    }
-    
-    AiArraySetStr(outputs_array, num_options - 1, buffer_output.c_str());
-    AiNodeSetArray(options, "outputs", outputs_array);
+  // Append the new output to options (using the new filter)
+  AtNode *options = AiUniverseGetOptions();
+  AtArray *original = AiNodeGetArray(options, "outputs");
+  AtUInt32 num_options = original->nelements + 1;
+  
+  AtArray *outputs_array = AiArrayAllocate(num_options, 1, AI_TYPE_STRING);
+  
+  for (size_t i = 0; i < num_options - 1; i++) {
+    AiArraySetStr(outputs_array, i, AiArrayGetStr(original, i));
+  }
+  
+  AiArraySetStr(outputs_array, num_options - 1, buffer_output.c_str());
+  AiNodeSetArray(options, "outputs", outputs_array);
 }
 
 void ArnoldInterface::setSamplesOption() {
@@ -281,50 +302,71 @@ void ArnoldInterface::addGobo(AtNode *light_ptr, std::string file, float deg, fl
 	AiNodeSetPtr(light_ptr, "filters", gobo);
 }
 
+void ArnoldInterface::setLogFileName(string filename, int flags)
+{
+  AiMsgSetLogFileName(filename.c_str());
+  AiMsgSetLogFileFlags(flags);
+}
+
+map<string, AtNode*> ArnoldInterface::getLights()
+{
+  map<string, AtNode*> lights;
+
+  // Iterate over lights
+  AtNodeIterator* it = AiUniverseGetNodeIterator(AI_NODE_LIGHT);
+
+  while (!AiNodeIteratorFinished(it)) {
+    AtNode* l = AiNodeIteratorGetNext(it);
+    lights[AiNodeGetName(l)] = l;
+  }
+
+  AiNodeIteratorDestroy(it);
+
+  return lights;
+}
+
 void ArnoldInterface::init() {
   // TODO : to use env var (different apis for linux and win)
   // Make sure your environment variables are set properly to check out an arnold license.
 
-    // Starts a arnold session
-    AiBegin();
+  // Starts a arnold session
+  AiBegin();
 
-    AiMsgSetLogFileName("C:/Users/eshimizu/Documents/Lumiverse Shows/Jules/arnold.log");
-	AiMsgSetLogFileFlags(AI_LOG_ALL);
+  setLogFileName("arnold.log");
 
 	// Keeps directory of plugins absolute.
 	AiLoadPlugins(m_plugin_dir.c_str());
     
-    // Doesn't read light node and filter node from the ass file
-	AiASSLoad(toRelativePath(m_ass_file).c_str(), 
-		AI_NODE_ALL & ~AI_NODE_LIGHT);
+  // Load everything from the scene file
+	AiASSLoad(toRelativePath(m_ass_file).c_str(), AI_NODE_ALL);
     
-    AtNode *options = AiUniverseGetOptions();
-    m_width = AiNodeGetInt(options, "xres");
-    m_height = AiNodeGetInt(options, "yres");
-   
-    // Set a driver to output result into a float buffer
-    AtNode *driver = AiNode("driver_buffer");
-    
-    std::string name("buffer_driver");
-    std::stringstream ss;
-    ss << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() -
-                                                 chrono::system_clock::from_time_t(0)).count() % 1000;
-    name = name.append(ss.str());
-    
-    AiNodeSetStr(driver, "name", name.c_str());
-    AiNodeSetInt(driver, "width", m_width);
-    AiNodeSetInt(driver, "height", m_height);
-    AiNodeSetFlt(driver, "gamma", m_gamma);
+  AtNode *options = AiUniverseGetOptions();
+  m_width = AiNodeGetInt(options, "xres");
+  m_height = AiNodeGetInt(options, "yres");
+ 
+  // Set a driver to output result into a float buffer
+  AtNode *driver = AiNode("driver_buffer");
+  
+  std::string name("buffer_driver");
+  std::stringstream ss;
+  ss << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() -
+                                               chrono::system_clock::from_time_t(0)).count() % 1000;
+  name = name.append(ss.str());
+  
+  AiNodeSetStr(driver, "name", name.c_str());
+  AiNodeSetInt(driver, "width", m_width);
+  AiNodeSetInt(driver, "height", m_height);
+  AiNodeSetFlt(driver, "gamma", m_gamma);
 	AiNodeSetBool(driver, "predictive", m_predictive);
     
-    // Assume we are using RGBA
+  // Assume we are using RGBA
 	delete[] m_buffer;
 	m_buffer = NULL;
 	delete[] m_bucket_pos;
 	m_bucket_pos = NULL;
 		
-    m_buffer = new float[m_width * m_height * 4];
-    AiNodeSetPtr(driver, "buffer_pointer", m_buffer);
+  m_buffer = new float[m_width * m_height * 4];
+  AiNodeSetPtr(driver, "buffer_pointer", m_buffer);
 
 	// Swapping threads more than hardware supports may cause problem.
 	m_bucket_num = std::thread::hardware_concurrency();
@@ -333,15 +375,15 @@ void ArnoldInterface::init() {
 
 	AiNodeSetPtr(driver, "progress_pointer", &m_progress);
     
-    // Create a filter
-    AtNode *filter = AiNode("gaussian_filter");
-    AiNodeSetStr(filter, "name", "filter");
-    AiNodeSetFlt(filter, "width", 2);
+  // Create a filter
+  AtNode *filter = AiNode("gaussian_filter");
+  AiNodeSetStr(filter, "name", "filter");
+  AiNodeSetFlt(filter, "width", 2);
     
-    // Register the driver to the arnold options
-    // The function keeps the output options from ass file
-    std::string command("RGBA RGBA filter ");
-    appendToOutputs(command.append(name).c_str());
+  // Register the driver to the arnold options
+  // The function keeps the output options from ass file
+  std::string command("RGBA RGBA filter ");
+  appendToOutputs(command.append(name).c_str());
 
 	m_open = true;
 }
@@ -367,26 +409,26 @@ int ArnoldInterface::render() {
 	if (!m_open)
 		init();
 
-    int code;
+  int code;
 
 	// Sets the sampling rate with the current rate
 	setSamplesOption();
 
-    Logger::log(INFO, "Rendering...");
-    code = AiRender(AI_RENDER_MODE_CAMERA);
+  Logger::log(INFO, "Rendering...");
+  code = AiRender(AI_RENDER_MODE_CAMERA);
 
 	std::stringstream ss;
 	ss << "Done: " << code;
-    Logger::log(INFO, ss.str().c_str());
+  Logger::log(INFO, ss.str().c_str());
     
-    return code;
+  return code;
 }
     
 void ArnoldInterface::interrupt() {
-    if (AiRendering()) {
-        AiRenderInterrupt();
-        Logger::log(INFO, "Aborted rendering to restart.");
-    }
+  if (AiRendering()) {
+    AiRenderInterrupt();
+    Logger::log(INFO, "Aborted rendering to restart.");
+  }
 }
 
 JSONNode ArnoldInterface::arnoldParameterToJSON() {

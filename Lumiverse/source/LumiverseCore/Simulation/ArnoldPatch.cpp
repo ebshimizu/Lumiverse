@@ -69,30 +69,34 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 			m_interface.setPredictive(predictive.as_bool());
 		}
         
-        if (nodeName == "samples") {
-            JSONNode samples = *i;
-            m_interface.setSamples(samples.as_int());
+    if (nodeName == "samples") {
+      JSONNode samples = *i;
+      m_interface.setSamples(samples.as_int());
 		}
 
-		if (nodeName == "lights") {
-			JSONNode lights = *i;
-			JSONNode::const_iterator light = lights.begin();
-			while (light != lights.end()) {
-				std::string light_name = light->name();
+    // Light loading is now done via automatic matching based
+    // on the "Arnold Node Name" metadata field that should be
+    // included by lights used in an arnold simulation
 
-				m_lights[light_name] = new ArnoldLightRecord();
-				m_lights[light_name]->metadata = light->find("type")->as_string();
+		//if (nodeName == "lights") {
+		//	JSONNode lights = *i;
+		//	JSONNode::const_iterator light = lights.begin();
+		//	while (light != lights.end()) {
+		//		std::string light_name = light->name();
 
-				std::stringstream sstm;
-				sstm << "Added light " << light_name << ": " << m_lights[light_name]->metadata;
+		//		m_lights[light_name] = new ArnoldLightRecord();
+		//		m_lights[light_name]->metadata = light->find("type")->as_string();
 
-				Logger::log(INFO, sstm.str());
+		//		std::stringstream sstm;
+		//		sstm << "Added light " << light_name << ": " << m_lights[light_name]->metadata;
 
-				light++;
-			}
-		}
+	  //	  Logger::log(INFO, sstm.str());
+
+		//    light++;
+		//	}
+		//}
         
-        if (nodeName == "arnoldParamMaps") {
+    if (nodeName == "arnoldParamMaps") {
 			JSONNode params = *i;
 			JSONNode::const_iterator param = params.begin();
 			while (param != params.end()) {
@@ -112,25 +116,6 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 		i++;
 	}
 
-}
-
-AtNode *ArnoldPatch::getLightNode(Device *d) {
-	std::string light_name = d->getId();
-	AtNode *light_ptr;
-
-	if (m_lights.count(light_name) == 0)
-		return NULL;
-	std::string type = m_lights[light_name]->metadata;
-	ArnoldLightRecord *record = (ArnoldLightRecord *)m_lights[light_name];
-	if (record->light == NULL) {
-		light_ptr = AiNode(type.c_str());
-		AiNodeSetStr(light_ptr, "name", light_name.c_str());
-	}
-	else {
-		light_ptr = record->light;
-	}
-
-	return light_ptr;
 }
 
 void ArnoldPatch::setOrientation(AtNode *light_ptr, Device *d_ptr, std::string pan_str, std::string tilt_str) {
@@ -180,15 +165,14 @@ void ArnoldPatch::setOrientation(AtNode *light_ptr, Device *d_ptr, LumiverseOrie
 	m_interface.setParameter(light_ptr, "matrix", ss.str());
 }
 
-void ArnoldPatch::loadLight(Device *d_ptr) {
-    std::string light_name = d_ptr->getId();
-    AtNode *light_ptr = getLightNode(d_ptr);
-    
-	if (!light_ptr)
-        return ;
+void ArnoldPatch::loadLight(Device *d_ptr) {    
+	if (!d_ptr->metadataExists("Arnold Node Name"))
+    return;
 
-    for (std::string meta : d_ptr->getMetadataKeyNames()) {
-        std::string value;
+  string light_name = d_ptr->getMetadata("Arnold Node Name");
+
+  for (std::string meta : d_ptr->getMetadataKeyNames()) {
+    std::string value;
 
 		// Set fixed position with metadata
 		// Assume we are using degree
@@ -227,45 +211,110 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
 			d_ptr->getMetadata(meta, value);
 			m_interface.setParameter(light_ptr, meta, value);
 		}
-    }
+  }
     
-    // Sets arnold params with device params
-    // This process is after parsing metadata, so parameters here can overwrite values from metadata
-    for (std::string param : d_ptr->getParamNames()) {
-      LumiverseType *raw = d_ptr->getParam(param);
+  // Sets arnold params with device params
+  // This process is after parsing metadata, so parameters here can overwrite values from metadata
+
+  // Instead of iterating through everything, we look for specific parameters that we
+  // then map directly to Arnold node parameters
+
+  // Internsity
+  if (d_ptr->paramExists("intensity")) {
+    LumiverseFloat* scaledVal = (LumiverseFloat*)LumiverseTypeUtils::copy(d_ptr->getIntensity());
+
+    if (d_ptr->metadataExists("gel")) {
+      *scaledVal *= (float)(ColorUtils::getTotalTrans(d_ptr->getMetadata("gel")));
+    }
+
+    m_interface.setParameter(light_name, "intensity", scaledVal->getVal());
+    delete scaledVal;
+  }
+
+  // Position (the entire 3D transform)
+  // method 1: look at point + position in spherical coordinates around that point
+  if (d_ptr->paramExists("polar") && d_ptr->paramExists("azimuth") && d_ptr->paramExists("distance") &&
+      d_ptr->paramExists("lookAtX") && d_ptr->paramExists("lookAtY") && d_ptr->paramExists("lookAtZ")) {
+    // while a vec3 would be the most appropriate for the lookAt params, Lumiverse does not include
+    // it as a built in type, as no lights really use a vec3 for any actual parameters
+
+    float distance = ((LumiverseFloat*)d_ptr->getParam("distance"))->getVal();
+    auto lookAtX = (LumiverseFloat*) d_ptr->getParam("lookAtX");
+    auto lookAtY = (LumiverseFloat*) d_ptr->getParam("lookAtY");
+    auto lookAtZ = (LumiverseFloat*) d_ptr->getParam("lookAtZ");
+    Eigen::Vector3f lookAt(lookAtX->getVal(), lookAtY->getVal(), lookAtZ->getVal());
+
+    float polar = ((LumiverseOrientation*)d_ptr->getParam("polar"))->valAsUnit(RADIAN);
+    float azimuth = ((LumiverseOrientation*)d_ptr->getParam("azimuth"))->valAsUnit(RADIAN);
+
+    // Calculate xyz position. The look at point is assumed to be the origin of the coordinate system.
+    Eigen::Vector3f pos(distance * sinf(polar) * cosf(azimuth), distance * sinf(polar) * sinf(azimuth), distance * cosf(polar));
+
+    // Translate point to world coordinates from local spherical coords.
+    pos += lookAt;
+    Eigen::Matrix3f dir = lookAt - pos;
+    dir.normalize();
+
+    // Assumes y-up
+    Eigen::Matrix3f rot = LumiverseTypeUtils::getRotationMatrix(dir, Eigen::Vector3f(0, 0, -1));
+
+    AtMatrix transform;
+    transform[0][0] = rot(0, 0);
+    transform[0][1] = rot(0, 1);
+    transform[0][2] = rot(0, 2);
+    transform[0][3] = 0;
+    transform[1][0] = rot(1, 0);
+    transform[1][1] = rot(1, 1);
+    transform[1][2] = rot(1, 2);
+    transform[1][3] = 0;
+    transform[2][0] = rot(2, 0);
+    transform[2][1] = rot(2, 1);
+    transform[2][2] = rot(2, 2);
+    transform[2][3] = 0;
+    transform[3][0] = pos(0);
+    transform[3][1] = pos(1);
+    transform[3][2] = pos(2);
+    transform[3][3] = 1;
+
+    
+  }
+  // method 2: xyz position + roll + pitch + yaw
+  // method 3: xyz position + lookAt
+  
+  for (std::string param : d_ptr->getParamNames()) {
+    LumiverseType *raw = d_ptr->getParam(param);
       
-      // First parse lumiverse type into string. So we can reuse the function for metadata.
-      // It's obviously inefficient.
-      if (raw->getTypeName() == "float") {
-        if (param == "intensity") {
-          LumiverseFloat* scaledVal = (LumiverseFloat*)LumiverseTypeUtils::copy(raw);
+    // First parse lumiverse type into string. So we can reuse the function for metadata.
+    // It's obviously inefficient.
+    if (raw->getTypeName() == "float") {
+      if (param == "intensity") {
+        LumiverseFloat* scaledVal = (LumiverseFloat*)LumiverseTypeUtils::copy(raw);
 
-          if (d_ptr->metadataExists("gel")) {
-            *scaledVal *= (float)(ColorUtils::getTotalTrans(d_ptr->getMetadata("gel")));
-          }
-
-          m_interface.setParameter(light_ptr, param, scaledVal->asString());
-          delete scaledVal;
+        if (d_ptr->metadataExists("gel")) {
+          *scaledVal *= (float)(ColorUtils::getTotalTrans(d_ptr->getMetadata("gel")));
         }
-      }
-      else if (raw->getTypeName() == "color") {
-          Eigen::Vector3d rgb = ((LumiverseColor*)raw)->getRGB();
-          std::stringstream ss;
-          ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
-          m_interface.setParameter(light_ptr, param, ss.str());
-      }
-      // Assume pan and tilt are named as "pan" and "tilt"
-      else if (raw->getTypeName() == "orientation" &&
-          param == "tilt") {
-        LumiverseOrientation *tilt = (LumiverseOrientation*)raw;
-        LumiverseOrientation *pan = (LumiverseOrientation*)d_ptr->getParam("pan");
 
-        if (pan == NULL)
-          continue;
-
-        setOrientation(light_ptr, d_ptr, pan, tilt);
+        m_interface.setParameter(light_ptr, param, scaledVal->asString());
+        delete scaledVal;
       }
     }
+    else if (raw->getTypeName() == "color") {
+      Eigen::Vector3d rgb = ((LumiverseColor*)raw)->getRGB();
+      std::stringstream ss;
+      ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
+      m_interface.setParameter(light_ptr, param, ss.str());
+    }
+    // Assume pan and tilt are named as "pan" and "tilt"
+    else if (raw->getTypeName() == "orientation" && param == "tilt") {
+      LumiverseOrientation *tilt = (LumiverseOrientation*)raw;
+      LumiverseOrientation *pan = (LumiverseOrientation*)d_ptr->getParam("pan");
+
+      if (pan == NULL)
+        continue;
+
+      setOrientation(light_ptr, d_ptr, pan, tilt);
+    }
+  }
 
     // If there is no color parameter, use a gel color/incandescent model
     if (!d_ptr->paramExists("color")) {
@@ -427,11 +476,15 @@ void ArnoldPatch::update(set<Device *> devices) {
 
 void ArnoldPatch::init() {
 	// Init patch and interface
-	for (auto light : m_lights) {
-		m_lights[light.first]->init();
+  m_interface.init();
+
+  // Find lights and create the light records in the patch
+	for (auto light : m_interface.getLights()) {
+    ArnoldLightRecord* r = new ArnoldLightRecord();
+    r->light = light.second;
+    r->init();
+    m_lights[light.first] = r;
 	}
-	
-    //m_interface.init();
 }
 
 void ArnoldPatch::close() {

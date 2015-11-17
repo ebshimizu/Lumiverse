@@ -414,7 +414,7 @@ namespace Lumiverse {
     */
     const map<string, Eigen::Vector3d>& getBasisVectors() { return m_basisVectors; }
 
-    int numBasisVectors() { return m_basisVectors.size(); }
+    size_t numBasisVectors() { return m_basisVectors.size(); }
 
   private:
     /*! \brief Parameter that controls the overall values of the device channels.

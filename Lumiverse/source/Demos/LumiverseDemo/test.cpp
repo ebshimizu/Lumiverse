@@ -4,7 +4,32 @@
 using namespace std;
 using namespace Lumiverse;
 
-int main(int argc, char**argv) {
+int main(int argc, char**argv)
+{
+  Rig* r = new Rig();
+
+  Device* arnoldLight = new Device("left", 1, "spot_light");
+  arnoldLight->setMetadata("Arnold Node Name", "leftShape1");
+  arnoldLight->setParam("intensity", new LumiverseFloat(2000, 0, 10000, 0));
+  LumiverseColor* color = new LumiverseColor(ColorMode::BASIC_RGB);
+  arnoldLight->setParam("color", color);
+  arnoldLight->setParam("hAngle", new LumiverseOrientation());
+  arnoldLight->setParam("vAngle", new LumiverseOrientation());
+  arnoldLight->setParam("distance", new LumiverseFloat(1, 1, 10000, 0));
+
+  r->addDevice(arnoldLight);
+
+  ArnoldAnimationPatch* arnold = new ArnoldAnimationPatch();
+  arnold->getArnoldInterface()->setAssFile("C:/Users/falindrith/OneDrive/Documents/research/attributes_project/scenes/test/test.ass");
+  r->addPatch("arnold", arnold);
+
+  r->init();
+
+  getch();
+}
+
+
+void test() {
   // Creates an empty rig.
   Rig rig("C:/Users/eshimizu/Documents/Lumiverse/Core/Lumiverse/data/Jules/MLData.rig.json");
 
