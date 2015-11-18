@@ -170,48 +170,6 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
     return;
 
   string light_name = d_ptr->getMetadata("Arnold Node Name");
-
-  for (std::string meta : d_ptr->getMetadataKeyNames()) {
-    std::string value;
-
-		// Set fixed position with metadata
-		// Assume we are using degree
-		if (meta == "pan" && d_ptr->metadataExists("tilt")) {
-			d_ptr->getMetadata(meta, value);
-			std::string tilt_str;
-			d_ptr->getMetadata("tilt", tilt_str);
-
-			setOrientation(light_ptr, d_ptr, value, tilt_str);
-		}
-		else if (meta == "gobo" && d_ptr->metadataExists("gobo_file") &&
-			d_ptr->metadataExists("degree")) {
-			std::string file;
-			d_ptr->getMetadata("gobo_file", file);
-
-			std::string deg_str;
-			d_ptr->getMetadata("degree", deg_str);
-
-			float deg;
-
-			std::istringstream iss_deg(deg_str);
-			iss_deg >> deg;
-
-			float rot = 0;
-			if (d_ptr->metadataExists("gobo_rotation")) {
-				std::string rot_str;
-				d_ptr->getMetadata("gobo_rotation", rot_str);
-				
-				std::istringstream iss_rot(rot_str);
-				iss_rot >> rot;
-			}
-
-			m_interface.addGobo(light_ptr, file, deg, rot);
-		}
-		else {
-			d_ptr->getMetadata(meta, value);
-			m_interface.setParameter(light_ptr, meta, value);
-		}
-  }
     
   // Sets arnold params with device params
   // This process is after parsing metadata, so parameters here can overwrite values from metadata
@@ -248,84 +206,30 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
     float azimuth = ((LumiverseOrientation*)d_ptr->getParam("azimuth"))->valAsUnit(RADIAN);
 
     // Calculate xyz position. The look at point is assumed to be the origin of the coordinate system.
-    Eigen::Vector3f pos(distance * sinf(polar) * cosf(azimuth), distance * sinf(polar) * sinf(azimuth), distance * cosf(polar));
+    //Eigen::Vector3f pos(distance * sinf(polar) * cosf(azimuth), distance * sinf(polar) * sinf(azimuth), distance * cosf(polar));
+    Eigen::Vector3f pos(distance * sinf(polar) * sinf(azimuth), distance * cosf(polar), distance * cosf(azimuth) * sinf(polar));
 
     // Translate point to world coordinates from local spherical coords.
     pos += lookAt;
-    Eigen::Matrix3f dir = lookAt - pos;
+    Eigen::Vector3f dir = lookAt - pos;
     dir.normalize();
 
     // Assumes y-up
     Eigen::Matrix3f rot = LumiverseTypeUtils::getRotationMatrix(dir, Eigen::Vector3f(0, 0, -1));
 
-    AtMatrix transform;
-    transform[0][0] = rot(0, 0);
-    transform[0][1] = rot(0, 1);
-    transform[0][2] = rot(0, 2);
-    transform[0][3] = 0;
-    transform[1][0] = rot(1, 0);
-    transform[1][1] = rot(1, 1);
-    transform[1][2] = rot(1, 2);
-    transform[1][3] = 0;
-    transform[2][0] = rot(2, 0);
-    transform[2][1] = rot(2, 1);
-    transform[2][2] = rot(2, 2);
-    transform[2][3] = 0;
-    transform[3][0] = pos(0);
-    transform[3][1] = pos(1);
-    transform[3][2] = pos(2);
-    transform[3][3] = 1;
-
-    
+    m_interface.setParameter(light_name, "matrix", rot, pos);
   }
   // method 2: xyz position + roll + pitch + yaw
   // method 3: xyz position + lookAt
-  
-  for (std::string param : d_ptr->getParamNames()) {
-    LumiverseType *raw = d_ptr->getParam(param);
-      
-    // First parse lumiverse type into string. So we can reuse the function for metadata.
-    // It's obviously inefficient.
-    if (raw->getTypeName() == "float") {
-      if (param == "intensity") {
-        LumiverseFloat* scaledVal = (LumiverseFloat*)LumiverseTypeUtils::copy(raw);
 
-        if (d_ptr->metadataExists("gel")) {
-          *scaledVal *= (float)(ColorUtils::getTotalTrans(d_ptr->getMetadata("gel")));
-        }
-
-        m_interface.setParameter(light_ptr, param, scaledVal->asString());
-        delete scaledVal;
-      }
-    }
-    else if (raw->getTypeName() == "color") {
-      Eigen::Vector3d rgb = ((LumiverseColor*)raw)->getRGB();
-      std::stringstream ss;
-      ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
-      m_interface.setParameter(light_ptr, param, ss.str());
-    }
-    // Assume pan and tilt are named as "pan" and "tilt"
-    else if (raw->getTypeName() == "orientation" && param == "tilt") {
-      LumiverseOrientation *tilt = (LumiverseOrientation*)raw;
-      LumiverseOrientation *pan = (LumiverseOrientation*)d_ptr->getParam("pan");
-
-      if (pan == NULL)
-        continue;
-
-      setOrientation(light_ptr, d_ptr, pan, tilt);
-    }
+  // Color
+  if (d_ptr->paramExists("color")) {
+    LumiverseColor* color = (LumiverseColor*)d_ptr->getParam("color");
+    m_interface.setParameter(light_name, "color", color->getColorChannel("Red"), color->getColorChannel("Green"), color->getColorChannel("Blue"));
   }
 
-    // If there is no color parameter, use a gel color/incandescent model
-    if (!d_ptr->paramExists("color")) {
-      Eigen::Vector3d rgb = ColorUtils::normalizeRGB(ColorUtils::convXYZtoRGB(d_ptr->getGelColor()));
-      std::stringstream ss;
-      ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
-      m_interface.setParameter(light_ptr, "color", ss.str());
-    }
-
-	ArnoldLightRecord *record = (ArnoldLightRecord *)m_lights[light_name];
-	record->light = light_ptr;
+	//ArnoldLightRecord *record = (ArnoldLightRecord *)m_lights[light_name];
+	//record->light = light_ptr;
 }
 
 /*!
@@ -336,10 +240,10 @@ ArnoldPatch::~ArnoldPatch() {
 }
 
 void ArnoldPatch::modifyLightColor(Device *d, Eigen::Vector3d white) {
-	AtNode *light_ptr = getLightNode(d);
+	//AtNode *light_ptr = getLightNode(d);
 
-	if (!light_ptr)
-		return;
+	//if (!light_ptr)
+  //  return;
 
 	Eigen::Vector3d rgb;
 	if (d->getColor() != NULL) 
@@ -358,7 +262,7 @@ void ArnoldPatch::modifyLightColor(Device *d, Eigen::Vector3d white) {
 
 	std::stringstream ss;
 	ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
-	m_interface.setParameter(light_ptr, "color", ss.str());
+	//m_interface.setParameter(light_ptr, "color", ss.str());
 }
     
 void ArnoldPatch::updateLight(set<Device *> devices) {
@@ -368,7 +272,7 @@ void ArnoldPatch::updateLight(set<Device *> devices) {
 	}
 
 	for (Device* d : devices) {
-		std::string name = d->getId();
+		std::string name = d->getMetadata("Arnold Node Name");
 		if (m_lights.count(name) == 0)
 			continue;
 		loadLight(d);

@@ -171,7 +171,7 @@ namespace Lumiverse {
 
     This function will block while the frame is rendering.
     */
-    void renderSingleFrame(const set<Device *>& devices, string filename);
+    void renderSingleFrame(const set<Device *>& devices, string basepath, string filename);
 
     /*!
     \brief Renders a single frame from the current state of Devices to a buffer.

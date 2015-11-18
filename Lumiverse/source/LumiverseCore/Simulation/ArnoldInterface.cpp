@@ -138,6 +138,44 @@ void ArnoldInterface::setParameter(string lightName, string param, float val)
   AiNodeSetFlt(light, param.c_str(), val);
 }
 
+void ArnoldInterface::setParameter(string lightName, string param, Eigen::Matrix3f rot, Eigen::Vector3f trans)
+{
+  AtNode* light = AiNodeLookUpByName(lightName.c_str());
+
+  if (light == NULL)
+    return;
+
+  AtMatrix transform;
+  transform[0][0] = rot(0, 0);
+  transform[0][1] = rot(0, 1);
+  transform[0][2] = rot(0, 2);
+  transform[0][3] = 0;
+  transform[1][0] = rot(1, 0);
+  transform[1][1] = rot(1, 1);
+  transform[1][2] = rot(1, 2);
+  transform[1][3] = 0;
+  transform[2][0] = rot(2, 0);
+  transform[2][1] = rot(2, 1);
+  transform[2][2] = rot(2, 2);
+  transform[2][3] = 0;
+  transform[3][0] = trans(0);
+  transform[3][1] = trans(1);
+  transform[3][2] = trans(2);
+  transform[3][3] = 1;
+
+  AiNodeSetMatrix(light, param.c_str(), transform);
+}
+
+void ArnoldInterface::setParameter(string lightName, string param, float x, float y, float z)
+{
+  AtNode* light = AiNodeLookUpByName(lightName.c_str());
+
+  if (light == NULL)
+    return;
+
+  AiNodeSetRGB(light, param.c_str(), x, y, z);
+}
+
 void ArnoldInterface::setParameter(AtNode *light_ptr, const std::string &paramName, const std::string &value) {
   ArnoldParam param = m_arnold_params[paramName];
 
@@ -323,6 +361,19 @@ map<string, AtNode*> ArnoldInterface::getLights()
   AiNodeIteratorDestroy(it);
 
   return lights;
+}
+
+void ArnoldInterface::setDriverFileName(string base, string filename)
+{
+  AtNode* exr = AiNodeLookUpByName("defaultArnoldDriver@driver_exr.RGBA");
+  if (exr != nullptr) {
+    AiNodeSetStr(exr, "filename", (base + "/exr/" + filename + ".exr").c_str());
+  }
+
+  AtNode* png = AiNodeLookUpByName("defaultArnoldDriver@driver_png.RGBA");
+  if (png != nullptr) {
+    AiNodeSetStr(png, "filename", (base + "/png/" + filename + ".png").c_str());
+  }
 }
 
 void ArnoldInterface::init() {

@@ -81,7 +81,7 @@ namespace Lumiverse {
     /*!
     \brief Rotates the unit vector axis to the lookat vector.
     */
-    Eigen::Matrix3f getRotationMatrix(Eigen::Vector3f lookat, Eigen::Vector3f axis)
+    Eigen::Matrix3f getRotationMatrix(Eigen::Vector3f lookat, Eigen::Vector3f axis);
 
     /*!
     * \brief Compares two LumiverseTypes with <

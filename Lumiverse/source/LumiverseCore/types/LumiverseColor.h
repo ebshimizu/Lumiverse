@@ -318,6 +318,14 @@ namespace Lumiverse {
     */
     bool setRGBRaw(double r, double g, double b, double weight = 1.0);
 
+    /*!
+    \brief Sets the RGB channels of the color using a HSV specified color.
+    If the color does not have just RGB channels this operation will fail and return false.
+
+    \return True on success, false on failure
+    */
+    bool setHSV(double H, double S, double V, double weight = 1.0);
+
     /*! \brief Gets the current values for the color parameters.
     * \return m_deviceChannels map
     */

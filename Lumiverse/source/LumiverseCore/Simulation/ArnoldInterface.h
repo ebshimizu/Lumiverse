@@ -140,6 +140,16 @@ namespace Lumiverse {
     void setParameter(string lightName, string param, float val);
 
     /*!
+    \brief Sets a 4x4 transformation matrix given translation and rotation 
+    */
+    void setParameter(string lightName, string param, Eigen::Matrix3f rot, Eigen::Vector3f trans);
+
+    /*!
+    \brief Sets a RGB parameter
+    */
+    void setParameter(string lightName, string param, float x, float y, float z);
+
+    /*!
     * \brief Sets a parameter light node according to a key-value pair of metadata.
     *
     * The value string should follow the format "v1, v2, ..., vn" for a n-dimensional value
@@ -320,6 +330,11 @@ namespace Lumiverse {
     \brief Returns a set of light names used in the .ass file
     */
     map<string, AtNode*> getLights();
+
+    /*!
+    \brief Sets the driver file path. Assumes default arnold renderers
+    */
+    void setDriverFileName(string base, string filename);
 
   private:
     /*!

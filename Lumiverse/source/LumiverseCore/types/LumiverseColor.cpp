@@ -365,6 +365,68 @@ namespace Lumiverse {
     return true;
   }
 
+  bool LumiverseColor::setHSV(double H, double S, double V, double weight)
+  {
+    if (m_deviceChannels.count("Red") == 0 ||
+      m_deviceChannels.count("Green") == 0 ||
+      m_deviceChannels.count("Blue") == 0 ||
+      m_deviceChannels.size() != 3) {
+
+      Logger::log(ERR, "Cannot set HSV for non-RGB color");
+      return false;
+    }
+
+    if (H < 0 || H >= 360 || S < 0 || S > 1 || V < 0 || V > 1) {
+      Logger::log(ERR, "Invalud HSV tuple specified.");
+      return false;
+    }
+
+    m_weight = weight;
+
+    double C = V * S;
+    double Hp = H / 60;
+    double X = C * (1 - abs(fmod(Hp, 2) - 1));
+
+    double R, G, B;
+    if (0 <= Hp && Hp < 1) {
+      R = C;
+      G = X;
+      B = 0;
+    }
+    else if (1 <= Hp && Hp < 2) {
+      R = X;
+      G = C;
+      B = 0;
+    }
+    else if (2 <= Hp && Hp < 3) {
+      R = 0;
+      G = C;
+      B = X;
+    }
+    else if (3 <= Hp && Hp < 4) {
+      R = 0;
+      G = X;
+      B = C;
+    }
+    else if (4 <= Hp && Hp < 5) {
+      R = X;
+      G = 0;
+      B = C;
+    }
+    else if (5 <= Hp && Hp < 6) {
+      R = C;
+      G = 0;
+      B = X;
+    }
+
+    double m = V - C;
+    m_deviceChannels["Red"] = R + m;
+    m_deviceChannels["Green"] = G + m;
+    m_deviceChannels["Blue"] = B + m;
+
+    return true;
+  }
+
   void LumiverseColor::operator=(LumiverseColor& other) {
     m_weight = other.m_weight;
     m_mode = other.m_mode;

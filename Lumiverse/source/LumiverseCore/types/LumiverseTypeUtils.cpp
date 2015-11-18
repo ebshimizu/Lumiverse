@@ -178,6 +178,11 @@ Eigen::Matrix3f LumiverseTypeUtils::getRotationMatrix(Eigen::Vector3f lookat, Ei
 
   // Axis of rotation
   Eigen::Vector3f rAxis = lookat.cross(axis);
+  
+  if (rAxis.sum() == 0) {
+    return Eigen::Matrix<float, 3, 3>::Identity();
+  }
+
   rAxis.normalize();
 
   // Rotation transform

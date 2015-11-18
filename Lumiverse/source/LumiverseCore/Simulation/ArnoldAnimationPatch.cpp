@@ -132,7 +132,7 @@ void ArnoldAnimationPatch::enableContinuousRenderMode() {
   m_mode = SimulationAnimationMode::INTERACTIVE;
 }
 
-void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string filename) {
+void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string basepath, string filename) {
   if (m_mode != SimulationAnimationMode::STOPPED)
     disableContinuousRenderMode();
 
@@ -156,6 +156,8 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
   if (!m_interface.isOpen())
     m_interface.init();
 
+  m_interface.setDriverFileName(basepath, filename);
+
   updateLight(frame.devices);
   bool success = ArnoldPatch::renderLoop();
 
@@ -163,7 +165,9 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
     unsigned char *bytes = new unsigned char[getWidth() * getHeight() * 4];
     floats_to_bytes(bytes, getBufferPointer(), getWidth(), getHeight());
 
-    if (!imageio_save_image(filename.c_str(), bytes, getWidth(), getHeight())) {
+    string file = basepath + "/png/" + filename + ".png";
+
+    if (!imageio_save_image(file.c_str(), bytes, getWidth(), getHeight())) {
       std::stringstream err_ss;
       err_ss << "Error to write png: " << filename;
       Logger::log(ERR, err_ss.str());
@@ -218,8 +222,8 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
 void ArnoldAnimationPatch::createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame, bool forceUpdate) {
 	for (Device *d : devices) {
 		// Checks if the device is connect to this patch
-		if (forceUpdate || (m_lights.count(d->getId()) > 0 &&
-			m_lights[d->getId()]->rerender_req)) {
+		if (forceUpdate || (m_lights.count(d->getMetadata("Arnold Node Name")) > 0 &&
+			m_lights[d->getMetadata("Arnold Node Name")]->rerender_req)) {
 			// Makes copy of this device
 			Device *d_copy = new Device(*d);
 			frame.devices.insert(d_copy);
