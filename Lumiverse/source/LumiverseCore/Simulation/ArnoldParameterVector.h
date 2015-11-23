@@ -59,18 +59,18 @@ namespace Lumiverse {
 	}
 
     // Override for =
-    void operator=(ArnoldParameterVector& val);
+    void operator=(ArnoldParameterVector val);
 
     // Arithmetic overrides
-    ArnoldParameterVector& operator+=(ArnoldParameterVector& val);
+    ArnoldParameterVector& operator+=(ArnoldParameterVector val);
 
-    ArnoldParameterVector& operator-=(ArnoldParameterVector& val);
+    ArnoldParameterVector& operator-=(ArnoldParameterVector val);
 
     ArnoldParameterVector& operator*=(float val);
-    ArnoldParameterVector& operator*=(ArnoldParameterVector& val);
+    ArnoldParameterVector& operator*=(ArnoldParameterVector val);
 
     ArnoldParameterVector& operator/=(float val);
-    ArnoldParameterVector& operator/=(ArnoldParameterVector& val);
+    ArnoldParameterVector& operator/=(ArnoldParameterVector val);
 
     T& operator[]( size_t i ) {
         // assumes all members are in a contiguous block
@@ -126,7 +126,7 @@ namespace Lumiverse {
 
   // Compares two ArnoldParameterVectors. Uses normal float comparison
   template<size_t D, typename T>
-  inline bool operator==(ArnoldParameterVector<D, T>& a, ArnoldParameterVector<D, T>& b) {
+  inline bool operator==(ArnoldParameterVector<D, T> a, ArnoldParameterVector<D, T> b) {
 	for (size_t i = 0; i < D; i++) {
 		if (a.getElement(i) != b.getElement(i))
 			return false;
@@ -136,13 +136,13 @@ namespace Lumiverse {
   }
 
   template<size_t D, typename T>
-  inline bool operator!=(ArnoldParameterVector<D, T>& a, ArnoldParameterVector<D, T>& b) {
+  inline bool operator!=(ArnoldParameterVector<D, T> a, ArnoldParameterVector<D, T> b) {
     return !(a == b);
   }
 
   // Element uses the normal < op for floats.
   template<size_t D, typename T>
-  inline bool operator<(ArnoldParameterVector<D, T>& a, ArnoldParameterVector<D, T>& b) {
+  inline bool operator<(ArnoldParameterVector<D, T> a, ArnoldParameterVector<D, T> b) {
 	  for (size_t i = 0; i < D; i++) {
 		if (a.getElement(i) >= b.getElement(i))
 			return false;
@@ -152,23 +152,23 @@ namespace Lumiverse {
   }
 
   template<size_t D, typename T>
-  inline bool operator>(ArnoldParameterVector<D, T>& a, ArnoldParameterVector<D, T>& b) {
+  inline bool operator>(ArnoldParameterVector<D, T> a, ArnoldParameterVector<D, T> b) {
     return b < a;
   }
 
   template<size_t D, typename T>
-  inline bool operator<=(ArnoldParameterVector<D, T>& a, ArnoldParameterVector<D, T>& b) {
+  inline bool operator<=(ArnoldParameterVector<D, T> a, ArnoldParameterVector<D, T> b) {
     return !(a > b);
   }
 
   template<size_t D, typename T>
-  inline bool operator>=(ArnoldParameterVector<D, T>& a, ArnoldParameterVector<D, T>& b) {
+  inline bool operator>=(ArnoldParameterVector<D, T> a, ArnoldParameterVector<D, T> b) {
     return !(a < b);
   }
 
   // Arithmetic overrides
   template<size_t D, typename T>
-  inline ArnoldParameterVector<D, T> operator+(ArnoldParameterVector<D, T>& lhs, ArnoldParameterVector<D, T>& rhs) {
+  inline ArnoldParameterVector<D, T> operator+(ArnoldParameterVector<D, T> lhs, ArnoldParameterVector<D, T> rhs) {
     ArnoldParameterVector<D, T> val = ArnoldParameterVector<D, T>(lhs);
 
     for (size_t i = 0; i < D; i++) {
@@ -179,7 +179,7 @@ namespace Lumiverse {
   }
 
   template<size_t D, typename T>
-  inline ArnoldParameterVector<D, T> operator-(ArnoldParameterVector<D, T>& lhs, ArnoldParameterVector<D, T>& rhs) {
+  inline ArnoldParameterVector<D, T> operator-(ArnoldParameterVector<D, T> lhs, ArnoldParameterVector<D, T> rhs) {
     ArnoldParameterVector<D, T> val = ArnoldParameterVector<D, T>(lhs);
 
     for (size_t i = 0; i < D; i++) {
@@ -190,28 +190,28 @@ namespace Lumiverse {
   }
 
   template<size_t D, typename T>
-  inline ArnoldParameterVector<D, T> operator*(ArnoldParameterVector<D, T>& lhs, float rhs) {
+  inline ArnoldParameterVector<D, T> operator*(ArnoldParameterVector<D, T> lhs, float rhs) {
     ArnoldParameterVector<D, T> val = ArnoldParameterVector<D, T>(lhs);
     val *= rhs;
     return val;
   }
 
   template<size_t D, typename T>
-  inline ArnoldParameterVector<D, T> operator*(ArnoldParameterVector<D, T>& lhs, ArnoldParameterVector<D, T>& rhs) {
+  inline ArnoldParameterVector<D, T> operator*(ArnoldParameterVector<D, T> lhs, ArnoldParameterVector<D, T> rhs) {
     ArnoldParameterVector<D, T> val = ArnoldParameterVector<D, T>(lhs);
     val *= rhs;
     return val;
   }
 
   template<size_t D, typename T>
-  inline ArnoldParameterVector<D, T> operator/(ArnoldParameterVector<D, T>& lhs, float rhs) {
+  inline ArnoldParameterVector<D, T> operator/(ArnoldParameterVector<D, T> lhs, float rhs) {
     ArnoldParameterVector<D, T> val = ArnoldParameterVector<D, T>(lhs);
     val /= rhs;
     return val;
   }
 
   template<size_t D, typename T>
-  inline ArnoldParameterVector<D, T> operator/(ArnoldParameterVector<D, T>& lhs, ArnoldParameterVector<D, T>& rhs) {
+  inline ArnoldParameterVector<D, T> operator/(ArnoldParameterVector<D, T> lhs, ArnoldParameterVector<D, T> rhs) {
     ArnoldParameterVector<D, T> val = ArnoldParameterVector<D, T>(lhs);
     val /= rhs;
     return val;
@@ -245,7 +245,7 @@ ArnoldParameterVector<D, T>::ArnoldParameterVector(ArnoldParameterVector* other)
 
 // Override for =
 template<size_t D, typename T>
-void ArnoldParameterVector<D, T>::operator=(ArnoldParameterVector& val) {
+void ArnoldParameterVector<D, T>::operator=(ArnoldParameterVector val) {
 	for (size_t i = 0; i < val.getDimension() && i < D; i++) {
 		m_elements[i] = val.getElement(i);
 	}
@@ -253,7 +253,7 @@ void ArnoldParameterVector<D, T>::operator=(ArnoldParameterVector& val) {
   
 // Arithmetic overrides
 template<size_t D, typename T>
-ArnoldParameterVector<D, T>& ArnoldParameterVector<D, T>::operator+=(ArnoldParameterVector& val) {
+ArnoldParameterVector<D, T>& ArnoldParameterVector<D, T>::operator+=(ArnoldParameterVector val) {
 	for (size_t i = 0; i < val.getDimension() && i < D; i++) {
 		m_elements[i] += val.getElement(i);
 	}
@@ -262,7 +262,7 @@ ArnoldParameterVector<D, T>& ArnoldParameterVector<D, T>::operator+=(ArnoldParam
 }
 
 template<size_t D, typename T>
-ArnoldParameterVector<D, T>& ArnoldParameterVector<D, T>::operator-=(ArnoldParameterVector& val) { 
+ArnoldParameterVector<D, T>& ArnoldParameterVector<D, T>::operator-=(ArnoldParameterVector val) { 
 	for (size_t i = 0; i < val.getDimension() && i < D; i++) {
 		m_elements[i] -= val.getElement(i);
 	}
@@ -280,7 +280,7 @@ ArnoldParameterVector<D, T>& ArnoldParameterVector<D, T>::operator*=(float val) 
 }
 
 template<size_t D, typename T>
-ArnoldParameterVector<D, T>& ArnoldParameterVector<D, T>::operator*=(ArnoldParameterVector& val) { 
+ArnoldParameterVector<D, T>& ArnoldParameterVector<D, T>::operator*=(ArnoldParameterVector val) { 
 	for (size_t i = 0; i < val.getDimension() && i < D; i++) {
 		m_elements[i] *= val.getElement(i);
 	}
@@ -298,7 +298,7 @@ ArnoldParameterVector<D, T>& ArnoldParameterVector<D, T>::operator/=(float val) 
 }
 
 template<size_t D, typename T>
-ArnoldParameterVector<D, T>& ArnoldParameterVector<D, T>::operator/=(ArnoldParameterVector& val) { 
+ArnoldParameterVector<D, T>& ArnoldParameterVector<D, T>::operator/=(ArnoldParameterVector val) { 
 	for (size_t i = 0; i < val.getDimension() && i < D; i++) {
 		m_elements[i] /= val.getElement(i);
 	}

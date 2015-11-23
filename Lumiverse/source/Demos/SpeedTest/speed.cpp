@@ -7,8 +7,14 @@ using namespace std;
 using namespace Lumiverse;
 using namespace Lumiverse::ShowControl;
 
+#ifdef _MSC_VER
 std::chrono::steady_clock::time_point start;
 std::chrono::steady_clock::time_point loopEnd;
+#else
+std::chrono::time_point<std::chrono::system_clock, std::chrono::system_clock::duration> start;
+std::chrono::time_point<std::chrono::system_clock, std::chrono::system_clock::duration> loopEnd;
+#endif
+
 float fps;
 
 void getFPS() {

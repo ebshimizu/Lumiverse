@@ -28,6 +28,7 @@
 #define IMAGEIO_HPP_
 
 #include <cstdlib>
+#include <string.h>
 
 namespace Lumiverse {
 

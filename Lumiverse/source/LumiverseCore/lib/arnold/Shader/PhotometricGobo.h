@@ -9,6 +9,7 @@
 #include <ai.h>
 #include <iostream>
 #include <complex>
+#include <string.h>
 
 
 #endif

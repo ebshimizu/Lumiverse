@@ -219,19 +219,24 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
 		SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${PNG_LIBRARIES})
 	ENDIF(PNG_FOUND)
 
-    IF(WIN32)
-        add_library(ai STATIC IMPORTED)
-        set_property(TARGET ai PROPERTY IMPORTED_LOCATION
-            ${LumiverseCore_ARNOLD_PATH}/lib/ai.lib)
-    ENDIF(WIN32)
+  IF(WIN32)
+    add_library(ai STATIC IMPORTED)
+    set_property(TARGET ai PROPERTY IMPORTED_LOCATION
+        ${LumiverseCore_ARNOLD_PATH}/lib/ai.lib)
+  ENDIF(WIN32)
 
-    IF(APPLE)
-        add_library(ai SHARED IMPORTED)
-        set_property(TARGET ai PROPERTY IMPORTED_LOCATION
-            ${LumiverseCore_ARNOLD_PATH}/bin/libai.dylib)
-    ENDIF(APPLE)
+  IF(APPLE)
+    add_library(ai SHARED IMPORTED)
+    set_property(TARGET ai PROPERTY IMPORTED_LOCATION
+        ${LumiverseCore_ARNOLD_PATH}/bin/libai.dylib)
+  ENDIF(APPLE)
 
-    SET (ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ai)
+	IF (UNIX OR LINUX)
+		add_library(ai SHARED IMPORTED)
+		set_property(TARGET ai PROPERTY IMPORTED_LOCATION ${LumiverseCore_ARNOLD_PATH}/bin/libai.so)
+	ENDIF (UNIX OR LINUX)
+
+  SET (ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ai)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
 target_link_libraries(LumiverseCore ${ACTIVE_LIBRARIES})
