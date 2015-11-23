@@ -306,6 +306,16 @@ namespace Lumiverse {
     bool setColorRGB(string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
 
     /*!
+    \brief Sets the value of a LumiverseColor parameter using HSV
+    */
+    bool setColorHSV(string param, double H, double S, double V, double weight = 1.0);
+
+    /*!
+    \brief Sets the value of a LumiverseColor
+    */
+    bool setColorWeight(string param, double weight);
+
+    /*!
     \brief Proxy for setColorRGBRaw assuming the existence of a "color" parameter
     */
     bool setRGBRaw(double r, double g, double b, double weight = 1.0);

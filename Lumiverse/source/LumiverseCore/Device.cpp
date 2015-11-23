@@ -282,6 +282,28 @@ bool Device::setColorRGB(string param, double r, double g, double b, double weig
   return true;
 }
 
+bool Device::setColorHSV(string param, double H, double S, double V, double weight)
+{
+  if (m_parameters.count(param) == 0 ||
+    m_parameters[param]->getTypeName() != "color") {
+    return false;
+  }
+
+  ((LumiverseColor*)m_parameters[param])->setHSV(H, S, V, weight);
+  return true;
+}
+
+bool Device::setColorWeight(string param, double weight)
+{
+  if (m_parameters.count(param) == 0 ||
+    m_parameters[param]->getTypeName() != "color") {
+    return false;
+  }
+
+  ((LumiverseColor*)m_parameters[param])->setWeight(weight);
+  return true;
+}
+
 bool Device::setRGBRaw(double r, double g, double b, double weight) {
   return setColorRGBRaw("color", r, g, b, weight);
 }

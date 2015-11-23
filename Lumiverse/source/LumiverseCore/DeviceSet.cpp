@@ -561,6 +561,20 @@ void DeviceSet::setColorRGB(string param, double r, double g, double b, double w
   }
 }
 
+void DeviceSet::setColorHSV(string param, double H, double S, double V, double weight)
+{
+  for (auto &d : m_workingSet) {
+    d->setColorHSV(param, H, S, V, weight);
+  }
+}
+
+void DeviceSet::setColorWeight(string param, double weight)
+{
+  for (auto &d : m_workingSet) {
+    d->setColorWeight(param, weight);
+  }
+}
+
 void DeviceSet::setMetadata(string key, string val) {
   for (auto &d : m_workingSet) {
     d->setMetadata(key, val);

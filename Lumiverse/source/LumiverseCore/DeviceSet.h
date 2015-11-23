@@ -448,6 +448,16 @@ namespace Lumiverse {
     void setColorRGB(string param, double r, double g, double b, double weight = 1.0, RGBColorSpace cs = sRGB);
 
     /*!
+    \brief Sets the value of a LumiverseColor parameter using HSV
+    */
+    void setColorHSV(string param, double H, double S, double V, double weight = 1.0);
+
+    /*!
+    \brief Sets the weight of a LumiverseColor parameter
+    */
+    void setColorWeight(string param, double weight);
+
+    /*!
     \brief Sets the metadata for the given key-value pair for all devices in the DeviceSet.
 
     \param key Metadata key
