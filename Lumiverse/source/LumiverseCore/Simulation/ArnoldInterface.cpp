@@ -118,6 +118,29 @@ void ArnoldInterface::setArrayParameter(AtNode *light_ptr, const std::string &pa
     }
 }
     
+bool ArnoldInterface::setDims(int w, int h)
+{
+  if (m_open) {
+    // Adjust global options
+    AtNode* options = AiUniverseGetOptions();
+    AiNodeSetInt(options, "xres", w);
+    AiNodeSetInt(options, "yres", h);
+
+    AtNode* buffer = AiNodeLookUpByName("buffer_driver");
+    if (buffer != nullptr) {
+      AiNodeSetInt(buffer, "width", w);
+      AiNodeSetInt(buffer, "height", h);
+    }
+
+    m_width = w;
+    m_height = h;
+
+    return true;
+  }
+
+  return false;
+}
+
 void ArnoldInterface::setParameter(string lightName, string param, int val)
 {
   AtNode* light = AiNodeLookUpByName(lightName.c_str());

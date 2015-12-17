@@ -258,6 +258,12 @@ namespace Lumiverse {
     Eigen::Vector2d getupvp();
 
     /*!
+    \brief Assuming the color has Red, Green, and Blue color channels, this function
+    computes the HSV of the RGB color.
+    */
+    Eigen::Vector3d getHSV(RGBColorSpace cs = sRGB);
+
+    /*!
     \brief Adds a color channel to the LumiverseColor.
     \return true on success, false otherwise.
     */

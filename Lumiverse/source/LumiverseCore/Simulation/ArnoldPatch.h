@@ -144,6 +144,17 @@ namespace Lumiverse {
 	}
       
     /*!
+    \brief Sets the width and height of the resulting image
+    */
+    bool setDims(int w, int h) {
+      m_interface.setDims(w, h);
+    }
+
+    size_t getBufferSize() {
+      return getWidth() * getHeight() * 4;
+    }
+
+    /*!
     * \brief Gets the sample rate (n * n per pixel).
     *
     * \return The number of AA samples.

@@ -121,6 +121,11 @@ namespace Lumiverse {
     * \return The height of result
     */
     int getHeight() { return m_height; }
+
+    /*!
+    \brief Sets the dimensions of the image.
+    */
+    bool setDims(int w, int h);
     
     /*!
     * \brief Gets the pointer to the frame buffer.

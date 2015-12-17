@@ -302,6 +302,59 @@ namespace Lumiverse {
     return Eigen::Vector2d(u, v);
   }
 
+  Eigen::Vector3d LumiverseColor::getHSV(RGBColorSpace cs)
+  {
+    double R, G, B;
+
+    if (m_deviceChannels.count("Red") == 0 ||
+      m_deviceChannels.count("Green") == 0 ||
+      m_deviceChannels.count("Blue") == 0 ||
+      m_deviceChannels.size() != 3) {
+
+      auto RGB = getRGB(cs);
+      R = RGB[0];
+      G = RGB[1];
+      B = RGB[2];
+    }
+    else {
+      R = m_deviceChannels["Red"];
+      G = m_deviceChannels["Green"];
+      B = m_deviceChannels["Blue"];
+    }
+
+    double M = max(R, max(G, B));
+    double m = min(R, min(G, B));
+    double C = M - m;
+
+    double Hp;
+
+    if (C == 0) {
+      // Technically undefined, we'll default to 0 here
+      Hp = 0;
+    }
+    else if (M == R) {
+      Hp = fmod(((G - B) / C), 6);
+    }
+    else if (M == G) {
+      Hp = (B - R) / C + 2;
+    }
+    else if (M == B) {
+      Hp = (R - G) / C + 4;
+    }
+    double H = 60 * Hp;
+
+    if (H < 0)
+      H += 360;
+
+    double V = M;
+
+    double S = 0;
+    if (V != 0)
+      S = C / V;
+
+    return Eigen::Vector3d(H, S, V);
+  }
+
   bool LumiverseColor::addColorChannel(string name) {
     if (m_deviceChannels.count(name) == 0) {
       m_deviceChannels[name] = 0;
@@ -377,7 +430,7 @@ namespace Lumiverse {
     }
 
     if (H < 0 || H >= 360 || S < 0 || S > 1 || V < 0 || V > 1) {
-      Logger::log(ERR, "Invalud HSV tuple specified.");
+      Logger::log(ERR, "Invalid HSV tuple specified.");
       return false;
     }
 
