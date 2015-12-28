@@ -176,7 +176,7 @@ namespace Lumiverse {
     /*!
     \brief Renders a single frame from the current state of Devices to a buffer.
 
-    Buffer format is RGBA 32-bit.
+    Buffer format is RGBA 32-bit, buffer return order is RGBA
     */
     void renderSingleFrameToBuffer(const set<Device*>& devices, unsigned char* buff);
 

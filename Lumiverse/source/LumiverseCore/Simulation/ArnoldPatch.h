@@ -172,6 +172,11 @@ namespace Lumiverse {
     * \brief Stops the working rendering procedure if Arnold is running.
     */
     virtual void interruptRender() override;
+
+    /*!
+    \brief Forcefully stops the current arnold render function.
+    */
+    void forceInterrupt() { m_interface.interrupt(); }
       
     /*!
     * \brief Gets the progress of current frame in percentage.

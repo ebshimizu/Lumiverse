@@ -104,10 +104,8 @@ void ArnoldAnimationPatch::setRenderSamples(int render) {
 }
   
 float ArnoldAnimationPatch::getPercentage() const {
-    // Rough number.
-    if (m_mode == SimulationAnimationMode::INTERACTIVE)
-		return ArnoldPatch::getPercentage();
-	else if (m_mode == SimulationAnimationMode::RENDERING) {
+  // Rough number.
+	if (m_mode == SimulationAnimationMode::RENDERING) {
 		// Don't forget the frame being processed
 		size_t finished = m_mem_frameManager->getFrameNum();
 		size_t sum = finished + m_queuedFrameDeviceInfo.size() + 1;
@@ -116,6 +114,8 @@ float ArnoldAnimationPatch::getPercentage() const {
 
 		return ((float)finished * 100.f + renderingPer) / sum;
 	}
+
+  return ArnoldPatch::getPercentage();
 }
     
 void ArnoldAnimationPatch::reset() {
@@ -210,9 +210,9 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
         int offset = (j * getWidth() + i) * 4;
 
         // convert to bytes
-        buff[offset] = static_cast<unsigned char>(bp[offset] * 0xff);
+        buff[offset] = static_cast<unsigned char>(bp[offset + 2] * 0xff);
         buff[offset + 1] = static_cast<unsigned char>(bp[offset + 1] * 0xff);
-        buff[offset + 2] = static_cast<unsigned char>(bp[offset + 2] * 0xff);
+        buff[offset + 2] = static_cast<unsigned char>(bp[offset + 0] * 0xff);
         buff[offset + 3] = static_cast<unsigned char>(bp[offset + 3] * 0xff);
       }
     }
