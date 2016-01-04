@@ -318,11 +318,6 @@ void ArnoldInterface::appendToOutputs(const std::string buffer_output) {
   AiNodeSetArray(options, "outputs", outputs_array);
 }
 
-void ArnoldInterface::setSamplesOption() {
-    AtNode *options = AiUniverseGetOptions();
-    AiNodeSetInt(options, "AA_samples", m_samples);
-}
-
 inline std::string ArnoldInterface::toRelativePath(std::string file) {
 	if (!isRelativeFileName(file))
 		return file;
@@ -417,6 +412,7 @@ void ArnoldInterface::init() {
   AtNode *options = AiUniverseGetOptions();
   m_width = AiNodeGetInt(options, "xres");
   m_height = AiNodeGetInt(options, "yres");
+  m_samples = AiNodeGetInt(options, "AA_samples");
  
   // Set a driver to output result into a float buffer
   AtNode *driver = AiNode("driver_buffer");
@@ -479,6 +475,13 @@ void ArnoldInterface::close() {
 	m_open = false;
 }
     
+void ArnoldInterface::setSamples(int samples)
+{
+  m_samples = samples;
+  AtNode *options = AiUniverseGetOptions();
+  AiNodeSetInt(options, "AA_samples", m_samples);
+}
+
 int ArnoldInterface::render() {
 	if (!m_open)
 		init();
@@ -486,7 +489,7 @@ int ArnoldInterface::render() {
   int code;
 
 	// Sets the sampling rate with the current rate
-	setSamplesOption();
+	//setSamplesOption();
 
   Logger::log(INFO, "Rendering...");
   code = AiRender(AI_RENDER_MODE_CAMERA);

@@ -247,8 +247,8 @@ namespace Lumiverse {
     * this rate will be used for the current rendering.
     * \param samples The sampling rate.
     */
-      void setSamples(int samples) { m_samples = samples; }
-        
+    void setSamples(int samples);
+
     /*!
     * \brief Gets the sampling rate.
     *
@@ -377,11 +377,6 @@ namespace Lumiverse {
     * \param buffer_output The output command (typically using a driver_buffer node).
     */
     void appendToOutputs(const std::string buffer_output);
-
-	/*!
-	* \brief Appends the new output command to the outputs attribute of options.
-	*/
-	void setSamplesOption();
 
 	/*!
 	* \brief Checks to see if this arnold STRING parameter is a file.
