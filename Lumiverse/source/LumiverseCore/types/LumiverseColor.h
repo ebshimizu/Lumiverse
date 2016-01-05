@@ -258,10 +258,22 @@ namespace Lumiverse {
     Eigen::Vector2d getupvp();
 
     /*!
+    \brief Get the (u, v) coordinate of the color based on the 1960 CIE color space.
+    
+    This is mainly used for calculating CCT as the 1960 UCS is now obsolete (superseded by CIE 1976, Luv)
+    */
+    Eigen::Vector2d getuv();
+
+    /*!
     \brief Assuming the color has Red, Green, and Blue color channels, this function
     computes the HSV of the RGB color.
     */
     Eigen::Vector3d getHSV(RGBColorSpace cs = sRGB);
+
+    /*!
+    \brief Gets the CCT and Duv value of the color represented by this object.
+    */
+    Eigen::Vector2d getCCT();
 
     /*!
     \brief Adds a color channel to the LumiverseColor.

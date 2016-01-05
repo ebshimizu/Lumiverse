@@ -302,6 +302,14 @@ namespace Lumiverse {
     return Eigen::Vector2d(u, v);
   }
 
+  Eigen::Vector2d LumiverseColor::getuv()
+  {
+    Eigen::Vector2d cieuv = getupvp();
+    cieuv[1] = (2.0 / 3.0) * cieuv[1];
+
+    return cieuv;
+  }
+
   Eigen::Vector3d LumiverseColor::getHSV(RGBColorSpace cs)
   {
     double R, G, B;
@@ -353,6 +361,63 @@ namespace Lumiverse {
       S = C / V;
 
     return Eigen::Vector3d(H, S, V);
+  }
+
+  Eigen::Vector2d LumiverseColor::getCCT()
+  {
+    Eigen::Vector2d uv = getuv();
+    double u = uv[0];
+    double v = uv[1];
+
+    // Using the conversion method specified here:
+    // http://www.cormusa.org/uploads/CORM_2011_Calculation_of_CCT_and_Duv_and_Practical_Conversion_Formulae.PDF
+    // Slide 21
+
+    double k[7][7] = {
+      { -1.77348e-01, 1.115559e+00, -1.5008606E+00, 9.750013E-01, -3.307009E-01, 5.6061400E-02, -3.7146000E-03 },
+      { 5.308409E-04, 2.1595434E-03, -4.3534788E-03, 3.6196568E-03, -1.589747E-03, 3.5700160E-04, -3.2325500E-05 },
+      { -8.58308927E-01, 1.964980251E+00, -1.873907584E+00, 9.53570888E-01, -2.73172022E-01, 4.17781315E-02, -2.6653835E-03 },
+      { -2.3275027E+02, 1.49284136E+03, -2.7966888E+03, 2.51170136E+03, -1.1785121E+03, 2.7183365E+02, -2.3524950E+01 },
+      { -5.926850606E+08, 1.34488160614E+09, -1.27141290956E+09, 6.40976356945E+08, -1.81749963507E+08, 2.7482732935E+07, -1.731364909E+06 },
+      { -2.3758158E+06, 3.89561742E+06, -2.65299138E+06, 9.60532935E+05, -1.9500061E+05, 2.10468274E+04, -9.4353083E+02 },
+      { 2.8151771E+06, -4.11436958E+06, 2.48526954E+06, -7.93406005E+05, 1.4101538E+05, -1.321007E+04, 5.0857956E+02 }
+    };
+
+    double Lfp = sqrt(pow(u - 0.292, 2) + pow(v - 0.24, 2));
+    double a1 = atan((v - 0.24) / (u - 0.292));
+
+    double a = a1;
+    if (a1 < 0)
+      a = a1 + M_PI;
+
+    double Lbb = k[0][6] * pow(a, 6) + k[0][5] * pow(a, 5) + k[0][4] * pow(a, 4) +
+                 k[0][3] * pow(a, 3) + k[0][2] * pow(a, 2) + k[0][1] * a + k[0][0];
+    double Duv = Lfp - Lbb;
+
+    double T1, dTc1, T2, c, dTc2;
+
+    if (a < 2.54) {
+      T1 = 1 / (k[1][6] * pow(a, 6) + k[1][5] * pow(a, 5) + k[1][4] * pow(a, 4) + k[1][3] * pow(a, 3) + k[1][2] * a * a + k[1][1] * a + k[1][0]);
+      dTc1 = (k[3][6] * pow(a, 6) + k[3][5] * pow(a, 5) + k[3][4] * pow(a, 4) + k[3][3] * pow(a, 3) + k[3][2] * a * a + k[3][1] * a + k[3][0]) * ((Lbb + 0.01) / Lfp) * (Duv / 0.01);
+    }
+    else if (a >= 2.54) {
+      T1 = 1 / (k[2][6] * pow(a, 6) + k[2][5] * pow(a, 5) + k[2][4] * pow(a, 4) + k[2][3] * pow(a, 3) + k[2][2] * a * a + k[2][1] * a + k[2][0]);
+      dTc1 = (k[4][6] * pow(a, 6) + k[4][5] * pow(a, 5) + k[4][4] * pow(a, 4) + k[4][3] * pow(a, 3) + k[4][2] * a * a + k[4][1] * a + k[4][0]) * ((Lbb + 0.01) / Lfp) * (Duv / 0.01);
+    }
+
+    T2 = T1 - dTc1;
+    c = log10(T2);
+
+    if (Duv >= 0) {
+      dTc2 = (k[5][6] * pow(c, 6) + k[5][5] * pow(c, 5) + k[5][4] * pow(c, 4) + k[5][3] * pow(c, 3) + k[5][2] * c * c + k[5][1] * c + k[5][0]);
+    }
+    else if (Duv < 0) {
+      dTc2 = (k[6][6] * pow(c, 6) + k[6][5] * pow(c, 5) + k[6][4] * pow(c, 4) + k[6][3] * pow(c, 3) + k[6][2] * c * c + k[6][1] * c + k[6][0]) * pow(abs(Duv / 0.03), 2);
+    }
+
+    double T = T2 - dTc2;
+
+    return Eigen::Vector2d(T, Duv);
   }
 
   bool LumiverseColor::addColorChannel(string name) {
