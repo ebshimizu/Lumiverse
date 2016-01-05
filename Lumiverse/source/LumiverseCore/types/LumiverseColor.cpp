@@ -406,7 +406,15 @@ namespace Lumiverse {
     }
 
     T2 = T1 - dTc1;
-    c = log10(T2);
+
+    if (T2 <= 0) {
+      // technically this should be -infinity, but we'll clamp it to a large
+      // negative number to keep things from going nan.
+      c = -100000;
+    }
+    else {
+      c = log10(T2);
+    }
 
     if (Duv >= 0) {
       dTc2 = (k[5][6] * pow(c, 6) + k[5][5] * pow(c, 5) + k[5][4] * pow(c, 4) + k[5][3] * pow(c, 3) + k[5][2] * c * c + k[5][1] * c + k[5][0]);

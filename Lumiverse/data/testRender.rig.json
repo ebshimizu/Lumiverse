@@ -36,7 +36,7 @@
 					"type" : "float",
 					"val" : 2000,
 					"default" : 0,
-					"max" : 10000,
+					"max" : 20000,
 					"min" : 0
 				},
 				"lookAtX" : {
@@ -107,7 +107,7 @@
 					"type" : "float",
 					"val" : 2000,
 					"default" : 0,
-					"max" : 10000,
+					"max" : 20000,
 					"min" : 0
 				},
 				"lookAtX" : {
@@ -178,7 +178,7 @@
 					"type" : "float",
 					"val" : 8000,
 					"default" : 0,
-					"max" : 100000,
+					"max" : 20000,
 					"min" : 0
 				},
 				"lookAtX" : {
