@@ -7,6 +7,15 @@ namespace ShowControl {
     saveSnapshot(rig, pb);
   }
 
+  Snapshot::Snapshot(Snapshot & other)
+  {
+    for (const auto& kvp : other.m_rigData) {
+      m_rigData[kvp.first] = new Device(kvp.second);
+    }
+
+    m_playbackData = other.m_playbackData;
+  }
+
   Snapshot::~Snapshot() {
     for (const auto& kvp : m_rigData) {
       // Delete all device data since we copied all of it
@@ -51,6 +60,16 @@ namespace ShowControl {
 
     if (running)
       targetPb->start();
+  }
+  set<Device*> Snapshot::getDevices()
+  {
+    set<Device*> devices;
+
+    for (const auto& kvp : m_rigData) {
+      devices.insert(kvp.second);
+    }
+
+    return devices;
   }
 }
 }

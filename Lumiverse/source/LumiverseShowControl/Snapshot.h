@@ -25,6 +25,7 @@ namespace ShowControl {
   {
   public:
     Snapshot(Rig* rig, Playback* pb);
+    Snapshot(Snapshot& other);
     ~Snapshot();
 
     /*!
@@ -65,6 +66,11 @@ namespace ShowControl {
     \brief Retrieves device data from the snapshot.
     */
     const map<string, Device*>& getRigData() { return m_rigData; }
+
+    /*!
+    \brief Returns an unindexed set of the devices from the snapshot.
+    */
+    set<Device*> getDevices();
 
   private:
     /*!
