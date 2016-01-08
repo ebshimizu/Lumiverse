@@ -147,7 +147,11 @@ namespace Lumiverse {
     \brief Sets the width and height of the resulting image
     */
     bool setDims(int w, int h) {
-      m_interface.setDims(w, h);
+      if (w > 0 && h > 0) {
+        m_interface.setDims(w, h);
+        return true;
+      }
+      return false;
     }
 
     size_t getBufferSize() {

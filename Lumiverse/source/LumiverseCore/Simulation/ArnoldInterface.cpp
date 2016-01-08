@@ -126,14 +126,20 @@ bool ArnoldInterface::setDims(int w, int h)
     AiNodeSetInt(options, "xres", w);
     AiNodeSetInt(options, "yres", h);
 
-    AtNode* buffer = AiNodeLookUpByName("buffer_driver");
-    if (buffer != nullptr) {
-      AiNodeSetInt(buffer, "width", w);
-      AiNodeSetInt(buffer, "height", h);
-    }
-
     m_width = w;
     m_height = h;
+
+    if (m_buffer != nullptr) {
+      delete[] m_buffer;
+      m_buffer = new float[m_width * m_height * 4];
+
+      AtNode* driverBuf = AiNodeLookUpByName(m_bufDriverName.c_str());
+      if (driverBuf != nullptr) {
+        AiNodeSetPtr(driverBuf, "buffer_pointer", m_buffer);
+        AiNodeSetInt(driverBuf, "width", m_width);
+        AiNodeSetInt(driverBuf, "height", m_height);
+      }
+    }
 
     return true;
   }
@@ -417,13 +423,13 @@ void ArnoldInterface::init() {
   // Set a driver to output result into a float buffer
   AtNode *driver = AiNode("driver_buffer");
   
-  std::string name("buffer_driver");
+  m_bufDriverName = "buffer_driver";
   std::stringstream ss;
   ss << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() -
                                                chrono::system_clock::from_time_t(0)).count() % 1000;
-  name = name.append(ss.str());
+  m_bufDriverName = m_bufDriverName.append(ss.str());
   
-  AiNodeSetStr(driver, "name", name.c_str());
+  AiNodeSetStr(driver, "name", m_bufDriverName.c_str());
   AiNodeSetInt(driver, "width", m_width);
   AiNodeSetInt(driver, "height", m_height);
   AiNodeSetFlt(driver, "gamma", m_gamma);
@@ -453,7 +459,7 @@ void ArnoldInterface::init() {
   // Register the driver to the arnold options
   // The function keeps the output options from ass file
   std::string command("RGBA RGBA filter ");
-  appendToOutputs(command.append(name).c_str());
+  appendToOutputs(command.append(m_bufDriverName).c_str());
 
 	m_open = true;
 }

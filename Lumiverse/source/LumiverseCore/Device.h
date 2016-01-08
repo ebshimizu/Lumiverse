@@ -125,6 +125,17 @@ namespace Lumiverse {
     inline void setType(string newType) { m_type = newType; }
 
     /*!
+    * \brief Templated parameter retrieval
+    *
+    * Returns a pointer of the specified class, or nullptr if the specified parameter
+    * does not exist.
+    * \param param Parameter name
+    * \return Pointer of type T
+    */
+    template <class T>
+    T* getParam(string param);
+
+    /*!
     * \brief Gets the value of a float parameter
     *
     * This function only returns true if the parameter exists, and if the parameter
@@ -648,6 +659,12 @@ namespace Lumiverse {
     */
     map<int, DeviceCallbackFunction> m_onMetadataChangedFunctions;
   };
+
+  // Template definition
+  template <class T>
+  T* Device::getParam(string param) {
+    return dynamic_cast<T*>(getParam(param));
+  }
 }
 
 #endif

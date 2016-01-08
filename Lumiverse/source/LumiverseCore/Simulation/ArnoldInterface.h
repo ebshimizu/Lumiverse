@@ -444,27 +444,30 @@ namespace Lumiverse {
     */
     int m_samples;
 
-	/*!
-	* \brief If turn on (so-called) predictive rendering
-	*/
-	bool m_predictive;
+    /*!
+    * \brief If turn on (so-called) predictive rendering
+    */
+    bool m_predictive;
 
-	/*!
-	* \brief If the interface is currently open
-	*/
-	bool m_open;
+    /*!
+    * \brief If the interface is currently open
+    */
+    bool m_open;
 
-	// An array for worker threads.
-	BucketPositionInfo *m_bucket_pos;
+    // An array for worker threads.
+    BucketPositionInfo *m_bucket_pos;
 
-	// The size of buckets array.
-	size_t m_bucket_num;
+    // The size of buckets array.
+    size_t m_bucket_num;
 
-	// The progress info of the current frame.
-	ProgressInfo m_progress;
+    // The progress info of the current frame.
+    ProgressInfo m_progress;
 
-	// The default path for all passed files (.ass, .ies...)
-	std::string m_default_path;
+    // The default path for all passed files (.ass, .ies...)
+    std::string m_default_path;
+
+    // Buffer driver name
+    string m_bufDriverName;
   };
 
   /*!
