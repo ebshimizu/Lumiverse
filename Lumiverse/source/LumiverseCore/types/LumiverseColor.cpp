@@ -269,6 +269,9 @@ namespace Lumiverse {
   }
 
   Eigen::Vector3d LumiverseColor::getLab(Eigen::Vector3d refWhite) {
+    if (m_mode == BASIC_RGB)
+      refWhite /= 100.0;
+
     double L = 116 * labf(getY() / refWhite[1]) - 16;
     double a = 500 * (labf(getX() / refWhite[0]) - labf(getY() / refWhite[1]));
     double b = 200 * (labf(getY() / refWhite[1]) - labf(getZ() / refWhite[2]));
@@ -502,7 +505,17 @@ namespace Lumiverse {
       return false;
     }
 
-    if (H < 0 || H >= 360 || S < 0 || S > 1 || V < 0 || V > 1) {
+    // Normalize H
+    while (H < 0)
+    {
+      H += 360;
+    }
+    while (H >= 360)
+    {
+      H -= 360;
+    }
+
+    if (S < 0 || S > 1 || V < 0 || V > 1) {
       Logger::log(ERR, "Invalid HSV tuple specified.");
       return false;
     }
@@ -695,7 +708,7 @@ namespace Lumiverse {
   }
 
   double LumiverseColor::labf(double val) {
-    return (val > pow(6.0 / 29.0, 3)) ? pow(val, 1.0 / 3.0) : (1.0 / 3.0) * pow(29.0 / 6.0, 2) * val + (4.0 / 29.0);
+    return (val > 216.0 / 24389.0) ? pow(val, 1.0 / 3.0) : ((24389.0 / 27.0) * val + 16) / 116.0;
   }
 
   void LumiverseColor::matchChroma(double x, double y, double weight) {
