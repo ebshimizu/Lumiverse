@@ -467,6 +467,12 @@ namespace Lumiverse {
     /*! \brief Basis vectors for each LED source in the light. Represented in XYZ. */
     map<string, Eigen::Vector3d> m_basisVectors;
 
+    /*! \brief Is true if the XYZ cache has been updated. */
+    bool m_XYZupdated;
+
+    /*! \brief Cached XYZ value to avoid recomputation if color has not changed. */
+    Eigen::Vector3d m_XYZ;
+
     /*! \brief Intialization steps for each particular mode. */
     void initMode();
 
@@ -496,6 +502,9 @@ namespace Lumiverse {
     * \param weight Controls the overall brightness of the resulting color.
     */
     void matchChroma(double x, double y, double weight = 1.0);
+
+    /*! \brief Updates the XYZ cache. */
+    void updateXYZ();
 
     inline bool doubleEq(double a, double b) {
       return (abs(a - b) < DBL_EPSILON);

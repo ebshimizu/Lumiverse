@@ -21,6 +21,7 @@ namespace Lumiverse {
   LumiverseColor::LumiverseColor(unordered_map<string, double> params, map<string, Eigen::Vector3d> basis, ColorMode mode, double weight) {
     m_weight = weight;
     m_mode = mode;
+    m_XYZupdated = false;
 
     m_deviceChannels = params;
     m_basisVectors = basis;
@@ -45,6 +46,7 @@ namespace Lumiverse {
       }
       m_basisVectors = otherColor->m_basisVectors;
       m_mapMutex.unlock();
+      m_XYZupdated = false; // Always reset XYZ cache
     }
   }
   
@@ -59,6 +61,7 @@ namespace Lumiverse {
     }
     m_basisVectors = other->m_basisVectors;
     m_mapMutex.unlock();
+    m_XYZupdated = false; // Always reset XYZ cache
   }
 
   LumiverseColor::LumiverseColor(const LumiverseColor& other) {
@@ -72,6 +75,7 @@ namespace Lumiverse {
     }
     m_basisVectors = other.m_basisVectors;
     m_mapMutex.unlock();
+    m_XYZupdated = false; // Always reset XYZ cache
   }
 
   void LumiverseColor::initMode() {
@@ -99,6 +103,8 @@ namespace Lumiverse {
     for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
       it->second = 0;
     }
+
+    m_XYZupdated = false;
   }
 
   JSONNode LumiverseColor::toJSON(string name) {
@@ -157,44 +163,35 @@ namespace Lumiverse {
   }
 
   double LumiverseColor::getX() {
-    if (m_mode == BASIC_RGB) {
-      return RGBtoXYZ(m_deviceChannels["Red"] * m_weight, m_deviceChannels["Green"] * m_weight, m_deviceChannels["Blue"] * m_weight, sRGB)[0];
-    }
-    else {
-      if (m_basisVectors.size() == 0) {
-        Logger::log(ERR, "Cannot retrieve X value. No color basis defined.");
-        return -1;
-      }
+    if (!m_XYZupdated)
+      updateXYZ();
 
-      return sumComponent(0);
+    if (m_XYZupdated)
+      return m_XYZ[0];
+    else {
+      return -1;
     }
   }
 
   double LumiverseColor::getY() {
-    if (m_mode == BASIC_RGB) {
-      return RGBtoXYZ(m_deviceChannels["Red"] * m_weight, m_deviceChannels["Green"] * m_weight, m_deviceChannels["Blue"] * m_weight, sRGB)[1];
-    }
-    else {
-      if (m_basisVectors.size() == 0) {
-        Logger::log(ERR, "Cannot retrieve Y value. No color basis defined.");
-        return -1;
-      }
+    if (!m_XYZupdated)
+      updateXYZ();
 
-      return sumComponent(1);
+    if (m_XYZupdated)
+      return m_XYZ[1];
+    else {
+      return -1;
     }
   }
 
   double LumiverseColor::getZ() {
-    if (m_mode == BASIC_RGB) {
-      return RGBtoXYZ(m_deviceChannels["Red"] * m_weight, m_deviceChannels["Green"] * m_weight, m_deviceChannels["Blue"] * m_weight, sRGB)[2];
-    }
-    else {
-      if (m_basisVectors.size() == 0) {
-        Logger::log(ERR, "Cannot retrieve Z value. No color basis defined.");
-        return -1;
-      }
+    if (!m_XYZupdated)
+      updateXYZ();
 
-      return sumComponent(2);
+    if (m_XYZupdated)
+      return m_XYZ[2];
+    else {
+      return -1;
     }
   }
 
@@ -231,6 +228,8 @@ namespace Lumiverse {
       // we'll try to match the xyY coordinate found from this converted XYZ vector.
       matchChroma(XYZ[0] / (XYZ[0] + XYZ[1] + XYZ[2]), XYZ[1] / (XYZ[0] + XYZ[1] + XYZ[2]), weight);
     }
+    
+    m_XYZupdated = false;
   }
 
   Eigen::Vector3d LumiverseColor::getRGB(RGBColorSpace cs) {
@@ -249,6 +248,8 @@ namespace Lumiverse {
     }
 
     matchChroma(x, y, weight);
+
+    m_XYZupdated = false;
   }
 
   Eigen::Vector3d LumiverseColor::getxyY() {
@@ -434,6 +435,7 @@ namespace Lumiverse {
   bool LumiverseColor::addColorChannel(string name) {
     if (m_deviceChannels.count(name) == 0) {
       m_deviceChannels[name] = 0;
+      m_XYZupdated = false;
       return true;
     }
     else {
@@ -447,6 +449,7 @@ namespace Lumiverse {
   bool LumiverseColor::deleteColorChannel(string name) {
     if (m_deviceChannels.count(name) > 0) {
       m_deviceChannels.erase(name);
+      m_XYZupdated = false;
       return true;
     }
     else {
@@ -460,6 +463,7 @@ namespace Lumiverse {
   bool LumiverseColor::setColorChannel(string name, double val) {
     if (m_deviceChannels.count(name) > 0) {
       m_deviceChannels[name] = ColorUtils::clamp(val, 0, 1);
+      m_XYZupdated = false;
       return true;
     }
     else {
@@ -471,10 +475,12 @@ namespace Lumiverse {
   }
 
   double& LumiverseColor::operator[](string name) {
+    m_XYZupdated = false;
     return m_deviceChannels[name];
   }
 
   void LumiverseColor::setWeight(double weight) {
+    m_XYZupdated = false;
     m_weight = ColorUtils::clamp(weight, 0, 1);
   }
 
@@ -490,6 +496,7 @@ namespace Lumiverse {
     m_deviceChannels["Green"] = g;
     m_deviceChannels["Blue"] = b;
     m_weight = weight;
+    m_XYZupdated = false;
 
     return true;
   }
@@ -562,6 +569,7 @@ namespace Lumiverse {
     m_deviceChannels["Red"] = R + m;
     m_deviceChannels["Green"] = G + m;
     m_deviceChannels["Blue"] = B + m;
+    m_XYZupdated = false;
 
     return true;
   }
@@ -575,12 +583,14 @@ namespace Lumiverse {
       m_deviceChannels[kvp.first] = kvp.second;
     }
     //m_basisVectors = other.m_basisVectors;
-    m_mapMutex.unlock();;
+    m_mapMutex.unlock();
+    m_XYZupdated = false;
   }
 
   LumiverseColor& LumiverseColor::operator+=(double val) {
     for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
       m_deviceChannels[it->first] = ColorUtils::clamp(it->second + val, 0, 1);
+      m_XYZupdated = false;
     }
 
     return *this;
@@ -593,6 +603,7 @@ namespace Lumiverse {
   LumiverseColor& LumiverseColor::operator*=(double val) {
     for (auto it = m_deviceChannels.begin(); it != m_deviceChannels.end(); it++) {
       m_deviceChannels[it->first] = ColorUtils::clamp(it->second * val, 0, 1);
+      m_XYZupdated = false;
     }
 
     return *this;
@@ -649,10 +660,12 @@ namespace Lumiverse {
 
   void LumiverseColor::setBasisVector(string channel, double x, double y, double z) {
     m_basisVectors[channel] = Eigen::Vector3d(x, y, z);
+    m_XYZupdated = false;
   }
 
   void LumiverseColor::removeBasisVector(string channel) {
     m_basisVectors.erase(channel);
+    m_XYZupdated = false;
   }
 
   Eigen::Vector3d LumiverseColor::getBasisVector(string channel) {
@@ -777,5 +790,23 @@ namespace Lumiverse {
       if (e.lineNumber() >= 0)
         std::cout << "This was from a CoinAssert" << std::endl;
     }
+  }
+  void LumiverseColor::updateXYZ()
+  {
+    if (m_mode == BASIC_RGB) {
+      m_XYZ = RGBtoXYZ(m_deviceChannels["Red"] * m_weight, m_deviceChannels["Green"] * m_weight, m_deviceChannels["Blue"] * m_weight, sRGB);
+    }
+    else {
+      if (m_basisVectors.size() == 0) {
+        Logger::log(ERR, "Can't get XYZ color, no basis colors defined.");
+        return;
+      }
+
+      m_XYZ[0] = sumComponent(0);
+      m_XYZ[1] = sumComponent(1);
+      m_XYZ[2] = sumComponent(2);
+    }
+
+    m_XYZupdated = true;
   }
 }
