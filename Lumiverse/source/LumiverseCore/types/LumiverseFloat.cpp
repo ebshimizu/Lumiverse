@@ -65,6 +65,18 @@ void LumiverseFloat::clamp() {
   }
 }
 
+void LumiverseFloat::reset()
+{ 
+  m_val = m_default;
+  clamp();
+}
+
+void LumiverseFloat::setValAsPercent(float val)
+{
+  m_val = val * (m_max - m_min) + m_min;
+  clamp();
+}
+
 float LumiverseFloat::asPercent() {
   return (-m_min + m_val) / (m_max - m_min);
 }

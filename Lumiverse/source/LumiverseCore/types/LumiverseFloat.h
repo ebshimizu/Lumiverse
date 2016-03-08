@@ -124,12 +124,12 @@ namespace Lumiverse {
     /*!
     * \brief Resets the value to the default value
     */
-    virtual void reset() { m_val = m_default; clamp(); }
+    virtual void reset();
 
     /*!
     \brief Sets the value of the LumiverseFloat proportionally
     */
-    void setValAsPercent(float val) { m_val = val * (m_max - m_min) + m_min; clamp(); }
+    void setValAsPercent(float val);
 
     /*!
     * \brief Returns the value of this float as a percentage

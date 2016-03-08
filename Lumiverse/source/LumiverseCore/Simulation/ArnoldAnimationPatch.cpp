@@ -165,7 +165,7 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
     unsigned char *bytes = new unsigned char[getWidth() * getHeight() * 4];
     floats_to_bytes(bytes, getBufferPointer(), getWidth(), getHeight());
 
-    string file = basepath + "/png/" + filename + ".png";
+    string file = basepath + "/" + filename + ".png";
 
     if (!imageio_save_image(file.c_str(), bytes, getWidth(), getHeight())) {
       std::stringstream err_ss;

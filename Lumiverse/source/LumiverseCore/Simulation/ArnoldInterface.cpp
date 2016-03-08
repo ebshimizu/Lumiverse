@@ -117,6 +117,24 @@ void ArnoldInterface::setArrayParameter(AtNode *light_ptr, const std::string &pa
         setArrayParameter<4, float, AtRGBA>(light_ptr, paramName, value, AiArraySetRGBAFunc, AI_TYPE_RGBA);
     }
 }
+
+void ArnoldInterface::setOptionParameter(const std::string & paramName, int val)
+{
+  AtNode* options = AiUniverseGetOptions();
+  AiNodeSetInt(options, paramName.c_str(), val);
+}
+
+void ArnoldInterface::setOptionParameter(const std::string & paramName, float val)
+{
+  AtNode* options = AiUniverseGetOptions();
+  AiNodeSetInt(options, paramName.c_str(), val);
+}
+
+int ArnoldInterface::getOptionParameter(const std::string & paramName)
+{
+  AtNode* options = AiUniverseGetOptions();
+  return AiNodeGetInt(options, paramName.c_str());
+}
     
 bool ArnoldInterface::setDims(int w, int h)
 {

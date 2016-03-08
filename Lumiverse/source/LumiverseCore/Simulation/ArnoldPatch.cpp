@@ -228,6 +228,12 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
     m_interface.setParameter(light_name, "color", color->getColorChannel("Red"), color->getColorChannel("Green"), color->getColorChannel("Blue"));
   }
 
+  // Softness
+  if (d_ptr->paramExists("penumbraAngle")) {
+    LumiverseFloat* angle = d_ptr->getParam<LumiverseFloat>("penumbraAngle");
+    m_interface.setParameter(light_name, "penumbra_angle", angle->getVal());
+  }
+
 	//ArnoldLightRecord *record = (ArnoldLightRecord *)m_lights[light_name];
 	//record->light = light_ptr;
 }
