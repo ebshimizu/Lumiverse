@@ -65,7 +65,7 @@ namespace ShowControl {
     /*!
     \brief Retrieves device data from the snapshot.
     */
-    const map<string, Device*>& getRigData() { return m_rigData; }
+    map<string, Device*>& getRigData() { return m_rigData; }
 
     /*!
     \brief Returns an unindexed set of the devices from the snapshot.
