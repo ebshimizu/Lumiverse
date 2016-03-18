@@ -391,6 +391,12 @@ namespace Lumiverse {
     */
     bool isSlow() { return m_slow; }
 
+    /*!
+    \brief Returns a set containing all of the unique values for a metadata key.
+    \param key Metadata key to get values for
+    */
+    set<string> getMetadataValues(string key);
+
   private:
     /*!
     * \brief Loads the rig info from the parsed JSON data.

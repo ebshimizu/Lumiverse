@@ -124,6 +124,15 @@ DeviceSet DeviceSet::parseSelector(string selector, bool filter) {
     // Metadata seletor
     case '$': 
       return parseMetadataSelector(selector, filter);
+    case '*':
+    {
+      // special add everything selector.
+      DeviceSet a(*this);
+      for (const auto& d : m_rig->getDeviceRaw()) {
+        a = (filter) ? a.remove(d) : a.add(d);
+      }
+      return a;
+    }
     // Everything else is an ID
     default:
       return (filter) ? remove(m_rig->m_devicesById[selector]) : add(m_rig->m_devicesById[selector]);

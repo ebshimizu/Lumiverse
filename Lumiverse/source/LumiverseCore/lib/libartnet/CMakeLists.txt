@@ -27,6 +27,8 @@ add_library(libartnet
 )
 
 FILE(GLOB artnetfiles ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-INSTALL(FILES ${artnetfiles} DESTINATION include/lib/libartnet)
+INSTALL(FILES ${artnetfiles} DESTINATION Debug/include/lib/libartnet CONFIGURATIONS Debug)
+INSTALL(FILES ${artnetfiles} DESTINATION Release/include/lib/libartnet CONFIGURATIONS Release)
 
-INSTALL(TARGETS libartnet ARCHIVE DESTINATION lib)
+INSTALL(TARGETS libartnet ARCHIVE DESTINATION Debug/lib CONFIGURATIONS Debug)
+INSTALL(TARGETS libartnet ARCHIVE DESTINATION Release/lib CONFIGURATIONS Release)

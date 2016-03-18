@@ -6,15 +6,13 @@ using namespace Lumiverse;
 
 int main(int argc, char**argv)
 {
-  Rig* r = new Rig("C:/Users/falindrith/Documents/Lumiverse/Core/Lumiverse/data/testRender.rig.json");
+  LumiverseColor* c = new LumiverseColor(ColorMode::BASIC_RGB);
+  c->setRGB(1, 0.954, 0.688);
+  
+  auto cct = c->getCCT();
+  cout << cct << "\n";
 
-  ArnoldAnimationPatch* arnold = (ArnoldAnimationPatch*)r->getPatch("arnold");
-  arnold->setSamples(0);
-
-  r->init();
-  r->updateOnce();
-
-  arnold->renderSingleFrame(r->getDeviceRaw(), "C:/Users/falindrith/OneDrive/Documents/research/attributes_project/scenes", "test");
+  getchar();
 }
 
 

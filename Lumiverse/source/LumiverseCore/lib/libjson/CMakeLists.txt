@@ -17,4 +17,5 @@ add_library(libjson
   _internal/Source/libjson.cpp
 )
 
-INSTALL(TARGETS libjson ARCHIVE DESTINATION lib)
+INSTALL(TARGETS libjson ARCHIVE DESTINATION Debug/lib CONFIGURATIONS Debug)
+INSTALL(TARGETS libjson ARCHIVE DESTINATION Release/lib CONFIGURATIONS Release)

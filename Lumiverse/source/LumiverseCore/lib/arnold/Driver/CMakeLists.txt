@@ -38,4 +38,5 @@ ENDIF(APPLE)
 FILE(GLOB driverFiles ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 INSTALL(FILES ${driverFiles} DESTINATION include/lib/arnold/include)
 
-INSTALL(TARGETS BufferDriver DESTINATION lib/arnold/plugin)
+INSTALL(TARGETS BufferDriver DESTINATION Debug/lib/arnold/plugin CONFIGURATIONS Debug)
+INSTALL(TARGETS BufferDriver DESTINATION Release/lib/arnold/plugin CONFIGURATIONS Release)

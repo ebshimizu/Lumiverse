@@ -56,4 +56,5 @@ target_link_libraries(PlaybackDemo LumiverseCore LumiverseShowControl)
 
 FILE(GLOB cuefiles ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 INSTALL(FILES ${cuefiles} DESTINATION include/LumiverseShowControl)
-INSTALL(TARGETS LumiverseShowControl ARCHIVE DESTINATION lib)
+INSTALL(TARGETS LumiverseShowControl ARCHIVE DESTINATION Debug/lib CONFIGURATIONS Debug)
+INSTALL(TARGETS LumiverseShowControl ARCHIVE DESTINATION Release/lib CONFIGURATIONS Release)

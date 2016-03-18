@@ -273,7 +273,8 @@ FILE(GLOB clpfiles ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/clp/*.hpp ${PROJECT_S
 INSTALL(FILES ${clpfiles} DESTINATION include/lib/clp)
 
 FILE(GLOB pngbinfiles ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/libpng/*.lib)
-INSTALL(FILES ${pngbinfiles} DESTINATION lib)
+INSTALL(FILES ${pngbinfiles} DESTINATION Debug/lib CONFIGURATIONS Debug)
+INSTALL(FILES ${pngbinfiles} DESTINATION Release/lib CONFIGURATIONS Release)
 
 FILE(GLOB pngfiles ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/libpng/*.h)
 INSTALL(FILES ${pngfiles} DESTINATION include/lib/libpng)
@@ -283,15 +284,19 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
     INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold/include)
 
     FILE(GLOB arnoldbinfiles ${LumiverseCore_ARNOLD_PATH}/bin/*)
-    INSTALL(FILES ${arnoldbinfiles} DESTINATION lib)
+    INSTALL(FILES ${arnoldbinfiles} DESTINATION Debug/lib CONFIGURATIONS Debug)
+    INSTALL(FILES ${arnoldbinfiles} DESTINATION Release/lib CONFIGURATIONS Release)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
-INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION lib)
-INSTALL(TARGETS LumiverseCoreShared DESTINATION lib)
+INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION Debug/lib CONFIGURATIONS Debug)
+INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION Release/lib CONFIGURATIONS Release)
+INSTALL(TARGETS LumiverseCoreShared DESTINATION Debug/lib CONFIGURATIONS Debug)
+INSTALL(TARGETS LumiverseCoreShared DESTINATION Release/lib CONFIGURATIONS Release)
 
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
     FILE(GLOB pro2files ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/ftd2xx/*.H)
-    INSTALL(FILES ${pro2files} DESTINATION include/lib/ftd2xx)
+    INSTALL(FILES ${pro2files} DESTINATION Debug/include/lib/ftd2xx CONFIGURATIONS Debug)
+    INSTALL(FILES ${pro2files} DESTINATION Release/include/lib/ftd2xx CONFIGURATIONS Release)
     # You'll have to copy over the right file for ftd2xx to use it properly until I
     # can get this library replaced.
 ENDIF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)

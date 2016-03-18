@@ -20,6 +20,19 @@ Rig::Rig(string filename) {
   }
 }
 
+set<string> Rig::getMetadataValues(string key)
+{
+  set<string> vals;
+  for (const auto& d : m_devices) {
+    string v;
+    if (d->getMetadata(key, v)) {
+      vals.insert(v);
+    }
+  }
+
+  return vals;
+}
+
 void Rig::loadJSON(JSONNode root) {
   //JSONNode::const_iterator i = root.begin();
   JSONNode::iterator i = root.begin();
