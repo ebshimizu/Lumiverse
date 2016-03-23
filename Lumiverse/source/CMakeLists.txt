@@ -20,9 +20,10 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
   ENDIF (NOT EXISTS ${LumiverseCore_ARNOLD_PATH})
   
   SET (LumiverseCore_USE_ARNOLD "#define USE_ARNOLD")
+
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
-# LumiverseCore setings
+# LumiverseCore settings
 include_directories(
   "${PROJECT_SOURCE_DIR}/LumiverseCore")
 include_directories("${PROJECT_SOURCE_DIR}/LumiverseCore/types"
@@ -165,6 +166,8 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/imageio.h
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/imageio.cpp
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/ArnoldParameterVector.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/DistributedArnoldInterface.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/DistributedArnoldInterface.cpp
   )
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
@@ -209,6 +212,25 @@ ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 # Simulation module needs libpng to output png
 # Build with Arnold SDK (ai)
 IF (LumiverseCore_INCLUDE_ARNOLD)
+	set(LIBCURL_INCLUDE_DIR "" CACHE PATH "Path to libcurl include directory")
+	set(LIBCURL_LIBRARY "" CACHE FILEPATH "Path to libcurl library")
+	set(CURLCPP_INCLUDE_DIR "" CACHE PATH "Path to curlcpp include directory")
+	set(CURLCPP_LIBRARY "" CACHE PATH "Path to curlcpp library")
+	IF("${LIBCURL_INCLUDE_DIR}" STREQUAL "")
+		MESSAGE(FATAL_ERROR "You must include LIBCURL_INCLUDE_DIR if you're using distributed Arnold rendering")
+	ELSEIF("${LIBCURL_LIBRARY}" STREQUAL "")
+		MESSAGE(FATAL_ERROR "You must include LIBCURL_LIBRARY if you're using distributed Arnold rendering")
+	ELSEIF("${CURLCPP_INCLUDE_DIR}" STREQUAL "")
+		MESSAGE(FATAL_ERROR "You must include CURLCPP_INCLUDE_DIR if you're using distributed Arnold rendering")
+	ELSEIF("${CURLCPP_LIBRARY}" STREQUAL "")
+		MESSAGE(FATAL_ERROR "You must include CURLCPP_LIBRARY if you're using distributed Arnold rendering")
+	ENDIF("${LIBCURL_INCLUDE_DIR}" STREQUAL "")
+
+	include_directories(${LIBCURL_INCLUDE_DIR})
+	include_directories(${CURLCPP_INCLUDE_DIR})
+	SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${LIBCURL_LIBRARY})
+	SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${CURLCPP_LIBRARY})
+
 	find_package(PNG REQUIRED)
 
 	IF(PNG_FOUND)

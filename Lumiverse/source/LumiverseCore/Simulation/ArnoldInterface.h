@@ -94,12 +94,12 @@ namespace Lumiverse {
     *
     * Opens a new Arnold session. Loads ass file and the plugin (buffer_driver).
     */
-    void init();
+    virtual void init();
 
     /*!
     * \brief Closes the Arnold session.
     */
-    void close();
+    virtual void close();
 
     /*!
     * \brief Gets the type of this object.
@@ -272,12 +272,12 @@ namespace Lumiverse {
     * Returns the error code of AiRender, so the caller can know if the renderer was interrupted.
     * \return Error code of arnold.
     */
-    int render();
+    virtual int render();
       
     /*!
     * \brief Interrupts current rendering.
     */
-    void interrupt();
+    virtual void interrupt();
 
     /*!
     * \brief Parses the arnold parameter map to a JSON node.
@@ -289,7 +289,7 @@ namespace Lumiverse {
     * \brief Gets the progress of current frame as a percentage.
     * \return The percent.
     */
-    float getPercentage() const { 
+    virtual float getPercentage() { 
       if (m_progress.bucket_sum < 0)
         return 0.f;
       return (0.f + m_progress.bucket_cur) / m_progress.bucket_sum * 100.f; 
@@ -352,7 +352,7 @@ namespace Lumiverse {
     */
     void setDriverFileName(string base, string filename);
 
-  private:
+  protected:
     /*!
     * \brief Helper function to sets a arnold non-array parameter.
     *

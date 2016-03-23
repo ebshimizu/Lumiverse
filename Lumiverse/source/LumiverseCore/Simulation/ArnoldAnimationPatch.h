@@ -48,8 +48,8 @@ namespace Lumiverse {
     * \brief Constructs a ArnoldAnimationPatch object.
     */
 	  ArnoldAnimationPatch() : SimulationAnimationPatch(),
-      m_preview_samples(m_interface.getSamples()),
-      m_render_samples(m_interface.getSamples()) { }
+      m_preview_samples(m_interface->getSamples()),
+      m_render_samples(m_interface->getSamples()) { }
 
     /*!
     * \brief Constructs ArnoldPatch from JSON data.
@@ -152,7 +152,7 @@ namespace Lumiverse {
     /*!
     \brief Returns the Arnold interface
     */
-    ArnoldInterface* getArnoldInterface() { return &m_interface; }
+    ArnoldInterface* getArnoldInterface() { return m_interface; }
 
     /*!
     \brief Disables continuous rendering of frames in the ArnoldAnimationPatch.

@@ -34,6 +34,13 @@ IF(APPLE)
 	target_link_libraries(BufferDriver ai)
 ENDIF(APPLE)
 
+if(UNIX)
+    add_library(ai SHARED IMPORTED)
+	set_property(TARGET ai PROPERTY IMPORTED_LOCATION
+		${CMAKE_CURRENT_LIST_DIR}/../bin/libai.so)
+	target_link_libraries(BufferDriver ai)
+ENDIF(UNIX)
+
 # Installation time
 FILE(GLOB driverFiles ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 INSTALL(FILES ${driverFiles} DESTINATION include/lib/arnold/include)

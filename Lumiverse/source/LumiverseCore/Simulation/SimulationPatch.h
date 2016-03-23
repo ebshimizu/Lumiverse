@@ -41,7 +41,7 @@ namespace Lumiverse {
   * of communication is done with help of an ArnoldInterface object.
   * SimulationPatch handles parsing Json and passing info to ArnoldInterface.
   *  
-  * \sa ArnoldInterface, ArnoldAnimationPatch
+  * \sa ArnoldInterface, DistributedArnoldInterface, ArnoldAnimationPatch
   */
   class SimulationPatch : public Patch
   {
@@ -160,7 +160,7 @@ namespace Lumiverse {
 	*
 	* \return The percent.
 	*/
-	//virtual float getPercentage() const { return m_interface.getPercentage(); }
+	//virtual float getPercentage() const { return m_interface->getPercentage(); }
 
   protected:
 

@@ -7,11 +7,12 @@ namespace Lumiverse {
 
 // Uses chrono::system_clock::from_time_t(0) as an invalid value.
 ArnoldAnimationPatch::ArnoldAnimationPatch(const JSONNode data)
-	: SimulationAnimationPatch(), m_preview_samples(m_interface.getSamples()),
-    m_render_samples(m_interface.getSamples()) {
+	: SimulationAnimationPatch() {
     // TODO: type for frame manager
 	m_mem_frameManager = new ArnoldMemoryFrameManager();
     loadJSON(data);
+	m_preview_samples = m_interface->getSamples();
+	m_render_samples = m_interface->getSamples();
 }
     
 ArnoldAnimationPatch::~ArnoldAnimationPatch() {
@@ -109,7 +110,7 @@ float ArnoldAnimationPatch::getPercentage() const {
 		// Don't forget the frame being processed
 		size_t finished = m_mem_frameManager->getFrameNum();
 		size_t sum = finished + m_queuedFrameDeviceInfo.size() + 1;
-		float renderingPer = m_interface.getPercentage();
+		float renderingPer = m_interface->getPercentage();
 		sum = (sum == 0) ? 1 : sum;
 
 		return ((float)finished * 100.f + renderingPer) / sum;
@@ -153,10 +154,10 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
   }
 
   // Render immediately.
-  if (!m_interface.isOpen())
-    m_interface.init();
+  if (!m_interface->isOpen())
+    m_interface->init();
 
-  m_interface.setDriverFileName(basepath, filename);
+  m_interface->setDriverFileName(basepath, filename);
 
   updateLight(frame.devices);
   bool success = ArnoldPatch::renderLoop();
@@ -196,8 +197,8 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
   }
 
   // Render immediately.
-  if (!m_interface.isOpen())
-    m_interface.init();
+  if (!m_interface->isOpen())
+    m_interface->init();
 
   updateLight(frame.devices);
   bool success = ArnoldPatch::renderLoop();
