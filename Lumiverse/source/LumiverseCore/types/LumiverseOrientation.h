@@ -181,7 +181,7 @@ namespace Lumiverse {
     /*!
     \brief Sets the value of the LumiverseOrientation proportionally
     */
-    void setValAsPercent(float val) { m_val = val * (m_max - m_min) + m_min; }
+    void setValAsPercent(float val);
     
     /*!
     * \brief Returns the value of this orientation as a percentage

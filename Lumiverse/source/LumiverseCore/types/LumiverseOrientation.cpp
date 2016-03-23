@@ -91,7 +91,16 @@ void LumiverseOrientation::clamp() {
   }
 }
 
+void LumiverseOrientation::setValAsPercent(float val)
+{
+  m_val = val * (m_max - m_min) + m_min;
+  clamp();
+}
+
 float LumiverseOrientation::asPercent() {
+  if (m_max - m_min == 0)
+    return 0;
+
   return (m_val - m_min) / (m_max - m_min);
 }
 

@@ -78,6 +78,9 @@ void LumiverseFloat::setValAsPercent(float val)
 }
 
 float LumiverseFloat::asPercent() {
+  if (m_max - m_min == 0)
+    return 0;
+
   return (-m_min + m_val) / (m_max - m_min);
 }
 
