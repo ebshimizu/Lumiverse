@@ -180,6 +180,19 @@ namespace Lumiverse {
     */
     void renderSingleFrameToBuffer(const set<Device*>& devices, unsigned char* buff);
 
+    /*!
+    \brief Sets the position of the light in terms of spherical coordinates.
+
+    Note that this function will lock the lights in their positions, and if you want to
+    move them, you must manually unlock them and define the look at points for lights that can move.
+    */
+    void getPositionFromAss(const set<Device*>& devices);
+
+    /*!
+    \brief Gets color and shape params from arnold.
+    */
+    void getBeamPropsFromAss(const set<Device*>& devices);
+
   protected:
     virtual void onRecording() override { setSamples(m_preview_samples); }
 

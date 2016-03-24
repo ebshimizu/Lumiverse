@@ -106,4 +106,14 @@ LumiverseFloat& LumiverseFloat::operator*=(LumiverseFloat& val) { m_val *= val.m
 
 LumiverseFloat& LumiverseFloat::operator/=(float val) { m_val /= val; clamp(); return *this; }
 LumiverseFloat& LumiverseFloat::operator/=(LumiverseFloat& val) { m_val /= val.m_val; return *this; }
+
+void LumiverseFloat::setVals(float val, float def, float min, float max)
+{
+  m_val = val;
+  m_default = def;
+  m_min = min;
+  m_max = max;
+  clamp();
+}
+
 }

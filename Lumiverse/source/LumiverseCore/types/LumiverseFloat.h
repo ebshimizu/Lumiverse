@@ -86,6 +86,11 @@ namespace Lumiverse {
     void setVal(float val) { m_val = val; clamp(); }
 
     /*!
+    \brief Sets values for all float params.
+    */
+    void setVals(float val, float def, float min, float max);
+
+    /*!
     * \brief Set maximum value
     * \param val New maximum value
     */

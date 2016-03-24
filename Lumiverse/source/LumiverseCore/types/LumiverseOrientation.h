@@ -126,6 +126,11 @@ namespace Lumiverse {
     void setVal(float val, ORIENTATION_UNIT unit = DEGREE) { m_val = asUnit(unit, val, m_unit); clamp(); }
 
     /*!
+    \brief Sets the value of all orientation values except the unit.
+    */
+    void setVals(float val, float def, float min, float max);
+
+    /*!
     * \brief Set unit
     * \param val New unit
     */

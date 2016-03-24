@@ -63,6 +63,15 @@ string LumiverseOrientation::asString() {
   return string(buf);
 }
 
+void LumiverseOrientation::setVals(float val, float def, float min, float max)
+{
+  m_val = val;
+  m_default = def;
+  m_min = min;
+  m_max = max;
+  clamp();
+}
+
 void LumiverseOrientation::setUnit(ORIENTATION_UNIT unit) {
   // Don't need to do anything if they match already
   if (m_unit == unit)

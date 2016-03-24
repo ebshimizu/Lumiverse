@@ -219,6 +219,103 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
   }
 }
 
+void ArnoldAnimationPatch::getPositionFromAss(const set<Device*>& devices)
+{
+  // by default in y-up coordinate systems, the light faces -z to start with.
+  // The procedure here will be to grab the translation component of the arnold matrix
+  // (which is actually just the position of the light in 3-d space) and set the
+  // look at point to origin - (lookAtDir.normalized()) and the distance to 1.
+
+  for (auto d : devices) {
+    // bit of a hack, but don't touch quad light positions, they seem a bit odd
+    if (d->getType() == "quad_light")
+      continue;
+
+    string nodeName = d->getMetadata("Arnold Node Name");
+    AtNode* light = AiNodeLookUpByName(nodeName.c_str());
+    
+    if (light != nullptr) {
+      // Get the matrix
+      AtMatrix m;
+      AiNodeGetMatrix(light, "matrix", m);
+
+      // Get the light location
+      Eigen::Vector3d origin(m[3][0], m[3][1], m[3][2]);
+
+      // Get the rotation matrix
+      Eigen::Matrix3d rot;
+      rot(0, 0) = m[0][0];
+      rot(0, 1) = m[0][1];
+      rot(0, 2) = m[0][2];
+      rot(1, 0) = m[1][0];
+      rot(1, 1) = m[1][1];
+      rot(1, 2) = m[1][2];
+      rot(2, 0) = m[2][0];
+      rot(2, 1) = m[2][1];
+      rot(2, 2) = m[2][2];
+
+      // rotate -z to get direction
+      Eigen::Vector3d z(0, 0, -1);
+
+      Eigen::Vector3d dir = z.transpose() * rot;
+      Eigen::Vector3d look = origin + dir.normalized();
+
+      // calculate spherical coords
+      Eigen::Vector3d relPos = origin - look;
+      double polar = acos(relPos(1) / relPos.norm()) * (180.0 / M_PI);
+      double azimuth = atan2(relPos(2), relPos(0)) * (180 / M_PI);
+
+      // Set params, and lock them to the values found in the file.
+      // If the params don't exist, just create them
+      if (!d->paramExists("distance"))
+        d->setParam("distance", new LumiverseFloat());
+      if (!d->paramExists("polar"))
+        d->setParam("polar", new LumiverseOrientation());
+      if (!d->paramExists("azimuth"))
+        d->setParam("azimuth", new LumiverseOrientation());
+      if (!d->paramExists("lookAtX"))
+        d->setParam("lookAtX", new LumiverseFloat());
+      if (!d->paramExists("lookAtY"))
+        d->setParam("lookAtY", new LumiverseFloat());
+      if (!d->paramExists("lookAtZ"))
+        d->setParam("lookAtZ", new LumiverseFloat());
+
+      d->getParam<LumiverseFloat>("distance")->setVals(1, 1, 1, 1);
+      d->getParam<LumiverseOrientation>("polar")->setVals(polar, polar, polar, polar);
+      d->getParam<LumiverseOrientation>("azimuth")->setVals(azimuth, azimuth, azimuth, azimuth);
+      d->getParam<LumiverseFloat>("lookAtX")->setVals(look(0), look(0), look(0), look(0));
+      d->getParam<LumiverseFloat>("lookAtY")->setVals(look(1), look(1), look(1), look(1));
+      d->getParam<LumiverseFloat>("lookAtZ")->setVals(look(2), look(2), look(2), look(2));
+    }
+  }
+
+}
+
+void ArnoldAnimationPatch::getBeamPropsFromAss(const set<Device*>& devices)
+{
+  for (auto d : devices) {
+    string nodeName = d->getMetadata("Arnold Node Name");
+    AtNode* light = AiNodeLookUpByName(nodeName.c_str());
+
+    if (light != nullptr) {
+      AtRGB color = AiNodeGetRGB(light, "color");
+      float intens = AiNodeGetFlt(light, "intensity");
+      float pangle = AiNodeGetFlt(light, "penumbra_angle");
+
+      if (!d->paramExists("intensity"))
+        d->setParam("intensity", new LumiverseFloat(0, 0, 100000, 0));
+      if (!d->paramExists("penumbraAngle"))
+        d->setParam("penumbraAngle", new LumiverseFloat(0, 0, 20, -20));
+      if (!d->paramExists("color"))
+        d->setParam("color", new LumiverseColor(Lumiverse::BASIC_RGB));
+
+      d->getColor()->setRGB(color.r, color.g, color.b);
+      d->setIntensity(intens);
+      d->getParam<LumiverseFloat>("penumbraAngle")->setVal(pangle);
+    }
+  }
+}
+
 void ArnoldAnimationPatch::createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame, bool forceUpdate) {
 	for (Device *d : devices) {
 		// Checks if the device is connect to this patch
