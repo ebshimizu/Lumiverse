@@ -318,20 +318,16 @@ namespace Lumiverse {
   {
     double R, G, B;
 
-    if (m_deviceChannels.count("Red") == 0 ||
-      m_deviceChannels.count("Green") == 0 ||
-      m_deviceChannels.count("Blue") == 0 ||
-      m_deviceChannels.size() != 3) {
-
+    if (m_mode == BASIC_RGB) {
+      R = m_deviceChannels["Red"];
+      G = m_deviceChannels["Green"];
+      B = m_deviceChannels["Blue"];
+    }
+    else {
       auto RGB = getRGB(cs);
       R = RGB[0];
       G = RGB[1];
       B = RGB[2];
-    }
-    else {
-      R = m_deviceChannels["Red"];
-      G = m_deviceChannels["Green"];
-      B = m_deviceChannels["Blue"];
     }
 
     double M = max(R, max(G, B));
@@ -503,11 +499,7 @@ namespace Lumiverse {
 
   bool LumiverseColor::setHSV(double H, double S, double V, double weight)
   {
-    if (m_deviceChannels.count("Red") == 0 ||
-      m_deviceChannels.count("Green") == 0 ||
-      m_deviceChannels.count("Blue") == 0 ||
-      m_deviceChannels.size() != 3) {
-
+    if (m_mode != BASIC_RGB) {
       Logger::log(ERR, "Cannot set HSV for non-RGB color");
       return false;
     }

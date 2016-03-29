@@ -158,7 +158,7 @@ namespace Lumiverse {
     /*!
     * \brief Ensures that the value of this float is between min and max.
     */
-    inline void clamp();
+    void clamp();
 
     /*!
     * \brief the value of this object

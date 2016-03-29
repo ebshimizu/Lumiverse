@@ -347,7 +347,7 @@ void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
 }
     
 bool ArnoldPatch::renderLoop() {
-    int code = m_interface.render();
+  int code = m_interface.render();
 
 	return (code == AI_SUCCESS);
 }

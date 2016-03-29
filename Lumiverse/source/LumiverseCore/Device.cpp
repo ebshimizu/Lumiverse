@@ -72,12 +72,11 @@ bool Device::getParam(string param, float& val) {
 }
 
 LumiverseType* Device::getParam(string param) {
-  try {
-    return m_parameters.at(param);
+  unordered_map<string, LumiverseType*>::iterator it = m_parameters.find(param);
+  if (it != m_parameters.end()) {
+    return it->second;
   }
-  catch (exception e) {
-    return nullptr;
-  }
+  return nullptr;
 }
 
 LumiverseFloat* Device::getFloat(string param) {
@@ -351,13 +350,11 @@ void Device::copyParamByValue(string param, LumiverseType* source) {
 }
     
 bool Device::paramExists(string param) {
-  try {
-    auto p = m_parameters.at(param);
+  unordered_map<string, LumiverseType*>::iterator it = m_parameters.find(param);
+  if (it != m_parameters.end()) {
     return true;
   }
-  catch (exception e) {
-    return false;
-  }
+  return false;
 }
 
 size_t Device::numParams() {

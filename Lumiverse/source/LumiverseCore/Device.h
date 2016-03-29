@@ -482,7 +482,7 @@ namespace Lumiverse {
     * in a calling function.
     * \return Reference to the map of parameter data.
     */
-    map<string, LumiverseType*>& getRawParameters() { return m_parameters; }
+    unordered_map<string, LumiverseType*>& getRawParameters() { return m_parameters; }
       
     /** Indicates the function signature for parameter and metadata callbacks.
     Currently a device have to pass in "this" pointer. It seems to be other
@@ -630,7 +630,7 @@ namespace Lumiverse {
     * other protocol, it's not a parameter.
     */
     // Type may change in the future as more specialized datatypes come up.
-    map<string, LumiverseType*> m_parameters;
+    unordered_map<string, LumiverseType*> m_parameters;
 
     /*!
     * \brief Map for program-side information.
