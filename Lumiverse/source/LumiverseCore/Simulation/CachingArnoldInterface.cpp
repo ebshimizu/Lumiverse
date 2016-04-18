@@ -5,8 +5,6 @@
 namespace Lumiverse {
 
 	void CachingArnoldInterface::init() {
-		tone_mapper.set_gamma(m_gamma);
-
 		AiBegin();
 
 		setLogFileName("arnold.log");
@@ -22,6 +20,7 @@ namespace Lumiverse {
 		m_width = AiNodeGetInt(options, "xres");
 		m_height = AiNodeGetInt(options, "yres");
 		m_samples = AiNodeGetInt(options, "AA_samples");
+		this->setHDROutputBuffer(new Pixel3[m_width * m_height]);
 
 		// setup buffer driver
 		AtNode *driver = AiNode("driver_buffer");
@@ -73,10 +72,8 @@ namespace Lumiverse {
 			Pixel3 *pixels = new Pixel3[m_width * m_height]();
 			EXRLayer *layer = new EXRLayer(pixels, m_width, m_height, name.c_str());
 
-			// get light information
-			AtRGB rgb = AiNodeGetRGB(light, "color");
-			float intensity = AiNodeGetFlt(light, "intensity");
-			layer->set_modulator(Pixel3(rgb.r, rgb.g, rgb.b) * intensity);
+			// Disable layer by default -- enable when we read light nodes from scene in render()
+			layer->disable();
 
 			// add layer to compositor (render later)
 			compositor.add_layer(layer);
@@ -116,8 +113,9 @@ namespace Lumiverse {
 			AiRender(AI_RENDER_MODE_CAMERA);
 
 			// copy to layer buffer
-			string name = AiNodeGetStr(light, "name");
+			std::string name = AiNodeGetStr(light, "name");
 			EXRLayer *layer = compositor.get_layer_by_name(name.c_str());
+
 			Pixel3 *layer_buffer = layer->get_pixels();
 			for (size_t idx = 0; idx < m_width * m_height; ++idx) {
 				layer_buffer[idx].r = buffer[idx].r;
@@ -137,13 +135,34 @@ namespace Lumiverse {
 	}
 
 	int CachingArnoldInterface::render() {
-		return AI_ERROR;
+		tone_mapper.set_gamma(m_gamma);
+
+		AtNodeIterator *it = AiUniverseGetNodeIterator(AI_NODE_LIGHT);
+		while (!AiNodeIteratorFinished(it)) {
+
+			AtNode *light = AiNodeIteratorGetNext(it);
+
+			// create new layer
+			std::string name = AiNodeGetStr(light, "name");
+			EXRLayer *layer = compositor.get_layer_by_name(name.c_str());
+			AtRGB rgb = AiNodeGetRGB(light, "color");
+			float intensity = AiNodeGetFlt(light, "intensity");
+			layer->set_modulator(Pixel3(rgb.r, rgb.g, rgb.b) * intensity);
+			layer->enable();
+		}
+		AiNodeIteratorDestroy(it);
+
+		dumpHDRToBuffer();
+
+		return AI_SUCCESS;
 	}
 
 	void CachingArnoldInterface::setHDROutputBuffer(Pixel3 *buffer) {
 
-		if (buffer)
+		if (buffer) {
 			this->hdr_output_buffer = buffer;
+		}
+
 		tone_mapper.set_output_hdr(hdr_output_buffer);
 	}
 
@@ -155,6 +174,7 @@ namespace Lumiverse {
 		}
 
 		compositor.render();
+		tone_mapper.set_input(compositor.get_compose_buffer(), m_width, m_height);
 		tone_mapper.apply_hdr();
 	}
 }

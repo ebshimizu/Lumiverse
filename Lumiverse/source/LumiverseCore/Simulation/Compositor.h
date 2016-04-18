@@ -1,7 +1,7 @@
 #ifndef Lumiverse_COMPOSITOR_H
 #define Lumiverse_COMPOSITOR_H
 
-#include <set>
+#include <unordered_map>
 #include <string>
 
 #include "EXRLayer.h"
@@ -48,7 +48,7 @@ public:
    * Gets the set of layers in the compositor.
    * @return the set of all layers in the compositor.
    */
-  std::set<EXRLayer *> get_layers();
+  std::unordered_map<std::string, EXRLayer *>& get_layers();
 
   /**
    * Add a new render layer to the compositor.
@@ -80,32 +80,6 @@ public:
   void del_layer_by_name(const char *layer_name);
 
   /**
-   * Get a pointer to the ambient layer.
-   * @retun pointer to the ambient layer
-   *        NULL if no ambient layer is set
-   */
-  EXRLayer *get_ambient();
-
-  /**
-   * Set the ambient layer of the scene.
-   * Note that this will enable ambient cancellation and re-process
-   * all layers. The layer to be set as ambient layer must be in the
-   * compositor, otherwise the call has no effect.
-   * @param layer pointer to the layer to be set as ambient layer.
-   */
-  void set_ambient(EXRLayer *layer);
-
-  /**
-   * Enable ambient cancellation in composition.
-   */
-  void enable_ambient();
-
-  /**
-   * Disable ambient cancellation in composition.
-   */
-  void disable_ambient();
-
-  /**
    * Set the output buffer of the compositor.
    * Applications may specify an output buffer that the compositor
    * writes the result to. If this is never set, the output will be
@@ -118,6 +92,12 @@ public:
    * Updates the frame buffer based on the the current state of the scene.
    */
   void render();
+
+  /*!
+  \brief Get the buffer of composed pixels (i.e. the composition of
+  all of the exr layers)
+  */
+  Pixel3 *get_compose_buffer() { return compose_buffer; };
 
 private:
   /**
@@ -135,14 +115,7 @@ private:
   /**
    * EXRLayers.
    */
-  std::set<EXRLayer *> layers;
-
-  /**
-   * The ambient layer.
-   * The ambient layer stores the effect of the ambient light of the
-   * scene and is used in cancellation of ambient light.
-   */
-  EXRLayer *ambient_layer;
+  std::unordered_map<std::string, EXRLayer *> layers;
 
   /**
    * The internal composition buffer.
@@ -151,14 +124,6 @@ private:
    * is set, results are saved in the composition buffer.
    */
   Pixel3 *compose_buffer;
-
-  /**
-   * The external output buffer.
-   * Applications can specify a buffer to which the compositor will write
-   * the results to. When this is set, results will no longer be written
-   * to the compose_buffer, but will be written to output_buffer.
-   */
-  Pixel3 *output_buffer;
 };
 
 }; // namespace Lumiverse

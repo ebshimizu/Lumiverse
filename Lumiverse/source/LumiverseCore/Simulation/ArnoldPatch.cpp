@@ -48,6 +48,9 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 		m_interface = (DistributedArnoldInterface *)new DistributedArnoldInterface(host, port, outputPath);
 		m_using_distributed = true;
 #endif
+	}
+	else if (cacheRendering(data)) {
+		m_interface = (CachingArnoldInterface *)new CachingArnoldInterface();
 	} else {
 		Logger::log(INFO, "Using ArnoldInterface");
 		m_interface = (ArnoldInterface *)new ArnoldInterface();
@@ -152,6 +155,12 @@ void ArnoldPatch::setOptionParameter(std::string paramName, int val) {
 
 void ArnoldPatch::setOptionParameter(std::string paramName, float val) {
 	m_interface->setOptionParameter(paramName, val);
+}
+
+bool ArnoldPatch::cacheRendering(const JSONNode data) {
+	auto cacheNode = data.find("cache_rendering");
+
+	return (cacheNode != data.end()) && (cacheNode->as_bool());
 }
 
 bool ArnoldPatch::useDistributedRendering(const JSONNode data) {
