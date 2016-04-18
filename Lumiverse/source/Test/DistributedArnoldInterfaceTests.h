@@ -3,7 +3,10 @@
 */
 
 #include <LumiverseCore.h>
+
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 
 using namespace Lumiverse;
 
@@ -34,7 +37,10 @@ private:
   bool spinUpTestServer();
   void tearDownTestServer();
   bool m_server_spun_up = false;
+#ifdef _WIN32
+
   PROCESS_INFORMATION m_test_server_info;
 
   DistributedArnoldInterface *m_test_interface;
+#endif
 };

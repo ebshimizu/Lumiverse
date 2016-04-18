@@ -58,11 +58,13 @@ bool DistributedArnoldInterfaceTests::initTests() {
 
 bool DistributedArnoldInterfaceTests::spinUpTestServer() {
 	// Fork new process
-	STARTUPINFO si;
 	std::string plugins = "C:/Program Files/Lumiverse/lib/arnold/plugin;C:/solidangle/mtoadeploy/2016/shaders/";
 	std::string path_to_dumiverse = "C:/Program Files/Lumiverse/include/Simulation/dumiverse.js";
 	std::string executable = "C:/Program Files/nodejs/node.exe";
 	std::string command_line = executable + " " + path_to_dumiverse + " " + plugins;
+
+#ifdef _WIN32
+	STARTUPINFO si;
 	LPSTR process_arg = const_cast<char *>(command_line.c_str());
 	
 	return !CreateProcess(
@@ -77,17 +79,22 @@ bool DistributedArnoldInterfaceTests::spinUpTestServer() {
 		&si,
 		&m_test_server_info
 		);
+#endif
+
+	return false;
 }
 
 void DistributedArnoldInterfaceTests::tearDownTestServer() {
 	std::cout << "Killing test server" << std::endl;
 
 	// Send termination signal
+#ifdef _WIN32
 	TerminateProcess(m_test_server_info.hProcess, 0);
 
 	// Close handles
 	CloseHandle(m_test_server_info.hProcess);
 	CloseHandle(m_test_server_info.hThread);
+#endif
 }
 
 bool DistributedArnoldInterfaceTests::renderTests() {
