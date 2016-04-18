@@ -25,6 +25,30 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 	// Load options for raytracer application. (window, ray tracer, filter)
 	JSONNode::const_iterator i = data.begin();
 
+
+	// As of 4/8/2016 this is only implemented for Arnold
+	if (useDistributedRendering(data)) {
+		auto distributedNode = data.find("distributed");
+		auto hostNode = distributedNode->find("host");
+		auto portNode = distributedNode->find("port");
+		auto outputPathNode = distributedNode->find("outputPath");
+
+		string host = hostNode->as_string();
+		int port = portNode->as_int();
+		string outputPath = "";
+		if (outputPathNode != distributedNode->end()) {
+			string outputPath = outputPathNode->as_string();
+		}
+		
+		stringstream ss;
+		ss << "Using DistributedArnoldInterface with host " << host << " and port " << port;
+		Logger::log(INFO, ss.str());
+		m_interface = (DistributedArnoldInterface *)new DistributedArnoldInterface(host, port, outputPath);
+	} else {
+		Logger::log(INFO, "Using ArnoldInterface");
+		m_interface = (ArnoldInterface *)new ArnoldInterface();
+	}
+
 	while (i != data.end()) {
 		std::string nodeName = i->name();
 
@@ -42,12 +66,12 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 			}
 			else
 				directory += "/";
-			m_interface.setDefaultPath(directory);
+			m_interface->setDefaultPath(directory);
 		}
 
 		if (nodeName == "sceneFile") {
           JSONNode fileName = *i;
-          m_interface.setAssFile(fileName.as_string());
+          m_interface->setAssFile(fileName.as_string());
 		}
         
         if (nodeName == "pluginDir") {
@@ -56,22 +80,22 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 #ifndef _WIN32
 			convertPlugin(plugin);
 #endif
-			m_interface.setPluginDirectory(plugin);
+			m_interface->setPluginDirectory(plugin);
 		}
         
         if (nodeName == "gamma") {
             JSONNode gamma = *i;
-            m_interface.setGamma(gamma.as_float());
+            m_interface->setGamma(gamma.as_float());
 		}
 
 		if (nodeName == "predictive") {
 			JSONNode predictive = *i;
-			m_interface.setPredictive(predictive.as_bool());
+			m_interface->setPredictive(predictive.as_bool());
 		}
         
     if (nodeName == "samples") {
       JSONNode samples = *i;
-      m_interface.setSamples(samples.as_int());
+      m_interface->setSamples(samples.as_int());
 		}
 
     // Light loading is now done via automatic matching based
@@ -102,7 +126,7 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 			while (param != params.end()) {
 				std::string param_name = param->name();
 
-                m_interface.loadArnoldParam(*param);
+                m_interface->loadArnoldParam(*param);
                 
                 std::stringstream sstm;
                 sstm << "Added param " << param_name;
@@ -117,6 +141,31 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 	}
 
 }
+
+
+bool ArnoldPatch::useDistributedRendering(const JSONNode data) {
+	auto distributed = data.find("distributed");
+	if (distributed == data.end()) {
+		return false;
+	}
+
+	auto hostNode = distributed->find("host");
+	if (hostNode == distributed->end()) {
+		Logger::log(WARN, "Unable to determine hostname for distributing rendering -- make sure it is included in your rig. Defaulting to local rendering.");
+
+		return false;
+	}
+
+	auto portNode = distributed->find("port");
+	if (portNode == distributed->end()) {
+		Logger::log(WARN, "Unable to determine port for distributing rendering -- make sure it is included in your rig. Defaulting to local rendering.");
+
+		return false;
+	}
+
+	return true;
+}
+
 
 void ArnoldPatch::setOrientation(AtNode *light_ptr, Device *d_ptr, std::string pan_str, std::string tilt_str) {
 	float pan_val;
@@ -162,7 +211,7 @@ void ArnoldPatch::setOrientation(AtNode *light_ptr, Device *d_ptr, LumiverseOrie
 		<< rotation(2, 0) << "," << rotation(2, 1) << "," << rotation(2, 2) << ",0,"
 		<< pos << ",1";
 
-	m_interface.setParameter(light_ptr, "matrix", ss.str());
+	m_interface->setParameter(light_ptr, "matrix", ss.str());
 }
 
 void ArnoldPatch::loadLight(Device *d_ptr) {    
@@ -185,7 +234,7 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
       *scaledVal *= (float)(ColorUtils::getTotalTrans(d_ptr->getMetadata("gel")));
     }
 
-    m_interface.setParameter(light_name, "intensity", scaledVal->getVal());
+    m_interface->setParameter(light_name, "intensity", scaledVal->getVal());
     delete scaledVal;
   }
 
@@ -217,7 +266,7 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
     // Assumes y-up
     Eigen::Matrix3f rot = LumiverseTypeUtils::getRotationMatrix(dir, Eigen::Vector3f(0, 0, -1));
 
-    m_interface.setParameter(light_name, "matrix", rot, pos);
+    m_interface->setParameter(light_name, "matrix", rot, pos);
   }
   // method 2: xyz position + roll + pitch + yaw
   // method 3: xyz position + lookAt
@@ -225,13 +274,13 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
   // Color
   if (d_ptr->paramExists("color")) {
     LumiverseColor* color = (LumiverseColor*)d_ptr->getParam("color");
-    m_interface.setParameter(light_name, "color", color->getColorChannel("Red"), color->getColorChannel("Green"), color->getColorChannel("Blue"));
+    m_interface->setParameter(light_name, "color", color->getColorChannel("Red"), color->getColorChannel("Green"), color->getColorChannel("Blue"));
   }
 
   // Softness
   if (d_ptr->paramExists("penumbraAngle")) {
     LumiverseFloat* angle = d_ptr->getParam<LumiverseFloat>("penumbraAngle");
-    m_interface.setParameter(light_name, "penumbra_angle", angle->getVal());
+    m_interface->setParameter(light_name, "penumbra_angle", angle->getVal());
   }
 
 	//ArnoldLightRecord *record = (ArnoldLightRecord *)m_lights[light_name];
@@ -242,7 +291,8 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
 * \brief Destroys the object.
 */
 ArnoldPatch::~ArnoldPatch() {
-	m_interface.close();
+	m_interface->close();
+	delete m_interface;
 }
 
 void ArnoldPatch::modifyLightColor(Device *d, Eigen::Vector3d white) {
@@ -268,11 +318,11 @@ void ArnoldPatch::modifyLightColor(Device *d, Eigen::Vector3d white) {
 
 	std::stringstream ss;
 	ss << rgb[0] << ", " << rgb[1] << ", " << rgb[2];
-	//m_interface.setParameter(light_ptr, "color", ss.str());
+	//m_interface->setParameter(light_ptr, "color", ss.str());
 }
     
 void ArnoldPatch::updateLight(set<Device *> devices) {
-	if (m_interface.getPredictive()) {
+	if (m_interface->getPredictive()) {
 		updateLightPredictive(devices);
 		return;
 	}
@@ -343,17 +393,17 @@ void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
 		modifyLightColor(d, rgb_w);
 	}
 
-	m_interface.updateSurfaceColor(rgb_w);
+	m_interface->updateSurfaceColor(rgb_w);
 }
     
 bool ArnoldPatch::renderLoop() {
-  int code = m_interface.render();
+    int code = m_interface->render();
 
 	return (code == AI_SUCCESS);
 }
 
 void ArnoldPatch::interruptRender() {
-    m_interface.interrupt();
+    m_interface->interrupt();
     
     if (m_renderloop != NULL) {
         try {
@@ -367,7 +417,7 @@ void ArnoldPatch::interruptRender() {
 }
     
 void ArnoldPatch::setSamples(int samples) {
-    m_interface.setSamples(samples);
+    m_interface->setSamples(samples);
 }
     
 void ArnoldPatch::update(set<Device *> devices) {
@@ -386,10 +436,10 @@ void ArnoldPatch::update(set<Device *> devices) {
 
 void ArnoldPatch::init() {
 	// Init patch and interface
-  m_interface.init();
+  m_interface->init();
 
   // Find lights and create the light records in the patch
-	for (auto light : m_interface.getLights()) {
+	for (auto light : m_interface->getLights()) {
     ArnoldLightRecord* r = new ArnoldLightRecord();
     r->light = light.second;
     r->init();
@@ -399,17 +449,17 @@ void ArnoldPatch::init() {
 
 void ArnoldPatch::close() {
 	SimulationPatch::close();
-    m_interface.close();
+    m_interface->close();
 }
 
 JSONNode ArnoldPatch::toJSON() {
 	JSONNode root;
 
 	root.push_back(JSONNode("type", getType()));
-	root.push_back(JSONNode("sceneFile", m_interface.getAssFile()));
-	root.push_back(JSONNode("pluginDir", m_interface.getPluginDirectory()));
-	root.push_back(JSONNode("predictive", (m_interface.getPredictive()) ? 1 : 0));
-	root.push_back(JSONNode("gamma", m_interface.getGamma()));
+	root.push_back(JSONNode("sceneFile", m_interface->getAssFile()));
+	root.push_back(JSONNode("pluginDir", m_interface->getPluginDirectory()));
+	root.push_back(JSONNode("predictive", (m_interface->getPredictive()) ? 1 : 0));
+	root.push_back(JSONNode("gamma", m_interface->getGamma()));
 
 	JSONNode lights;
 	lights.set_name("lights");
@@ -422,7 +472,7 @@ JSONNode ArnoldPatch::toJSON() {
 	}
 	root.push_back(lights);
 
-	root.push_back(m_interface.arnoldParameterToJSON());
+	root.push_back(m_interface->arnoldParameterToJSON());
 
 	return root;
 }

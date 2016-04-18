@@ -18,6 +18,7 @@
 #include "../lib/libjson/libjson.h"
 #include "ArnoldParameterVector.h"
 #include "ArnoldInterface.h"
+#include "DistributedArnoldInterface.h"
 
 namespace Lumiverse {
 
@@ -61,7 +62,7 @@ namespace Lumiverse {
     /*!
     * \brief Constructs a ArnoldPatch object.
     */
-    ArnoldPatch() :
+    ArnoldPatch() : m_interface(NULL),
 		SimulationPatch() { }
 
     /*!
@@ -116,9 +117,9 @@ namespace Lumiverse {
     * \return The width of result
     */
     virtual int getWidth() { 
-		if (!m_interface.isOpen())
-			m_interface.init();
-		return m_interface.getWidth();
+		if (!m_interface->isOpen())
+			m_interface->init();
+		return m_interface->getWidth();
 	}
 
     /*!
@@ -127,9 +128,9 @@ namespace Lumiverse {
     * \return The height of result
     */
 	virtual int getHeight() {
-		if (!m_interface.isOpen())
-			m_interface.init();
-		return m_interface.getHeight();
+		if (!m_interface->isOpen())
+			m_interface->init();
+		return m_interface->getHeight();
 	}
       
     /*!
@@ -138,9 +139,9 @@ namespace Lumiverse {
     * \return The pointer to the frame buffer.
     */
 	virtual float *getBufferPointer() { 
-		if (!m_interface.isOpen())
-			m_interface.init();
-		return m_interface.getBufferPointer();
+		if (!m_interface->isOpen())
+			m_interface->init();
+		return m_interface->getBufferPointer();
 	}
       
     /*!
@@ -148,7 +149,7 @@ namespace Lumiverse {
     */
     bool setDims(int w, int h) {
       if (w > 0 && h > 0) {
-        m_interface.setDims(w, h);
+        m_interface->setDims(w, h);
         return true;
       }
       return false;
@@ -163,7 +164,7 @@ namespace Lumiverse {
     *
     * \return The number of AA samples.
     */
-    int getSamples() { return m_interface.getSamples(); }
+    int getSamples() { return m_interface->getSamples(); }
       
     /*!
     * \brief Sets the sample rate (n * n per pixel).
@@ -180,27 +181,34 @@ namespace Lumiverse {
     /*!
     \brief Forcefully stops the current arnold render function.
     */
-    void forceInterrupt() { m_interface.interrupt(); }
+    void forceInterrupt() { m_interface->interrupt(); }
       
     /*!
     * \brief Gets the progress of current frame in percentage.
     *
     * \return The percent.
     */
-    virtual float getPercentage() const { return m_interface.getPercentage(); }
+    virtual float getPercentage() const { return m_interface->getPercentage(); }
 
     /*!
     * \brief Gets the current bucket for each worker thread.
     * \return An array of current buckets.
     */
-    virtual BucketPositionInfo *getBucketPositionInfo() const { return m_interface.getBucketPositionInfo(); }
+    virtual BucketPositionInfo *getBucketPositionInfo() const { return m_interface->getBucketPositionInfo(); }
 
     /*!
     * \brief Gets number of buckets rendered simultanously.
     * This is usually the number of threads supported by hardware.
     * \return The number of buckets rendered simultanously.
     */
-    virtual size_t getBucketNumber() const { return m_interface.getBucketNumber(); }
+    virtual size_t getBucketNumber() const { return m_interface->getBucketNumber(); }
+
+	/*!
+	* \brief Set the interface we're using
+	* Set the ArnoldInterface reference we're using to perform rendering. This is usually
+	* either an ArnoldInterface, or a DistributedArnoldInterface.
+	*/
+	void setArnoldInterface(ArnoldInterface *arnold_interface) { m_interface = arnold_interface; };
 
   protected:
     /*!
@@ -238,8 +246,9 @@ namespace Lumiverse {
 
     /*!
     * \brief Arnold Interface
+	* If we're distributing our rendering this is a DistributedArnoldInterface
     */
-    ArnoldInterface m_interface;
+    ArnoldInterface *m_interface;
 
   private:
     void setOrientation(AtNode *light_ptr, Device *d_ptr, LumiverseOrientation *pan, LumiverseOrientation *tilt);
@@ -252,6 +261,13 @@ namespace Lumiverse {
     * \param white The white spot in sharp RGB. (currently not used)
       */
     void modifyLightColor(Device *d, Eigen::Vector3d white);
+
+	/*!
+	* \brief Check if an Arnold patch should use distributed rendering
+	* \param JSONNode containing a Patch
+	* \sa loadPatches()
+	*/
+	bool useDistributedRendering(JSONNode patch);
   };
 }
 

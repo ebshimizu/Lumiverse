@@ -1,0 +1,26 @@
+{
+  "name": "dumiverse",
+  "version": "1.0.0",
+  "description": "A lightweight server for rendering Arnold ass files",
+  "main": "dumiverse.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "dumiverse",
+    "lumiverse",
+    "arnold"
+  ],
+  "author": "David Vernet",
+  "license": "ISC",
+  "dependencies": {
+    "collections": "^3.0.0",
+    "express": "^4.13.4",
+    "multer": "^1.1.0",
+    "stream-buffers": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ebshimizu/Lumiverse.git"
+  }
+}
