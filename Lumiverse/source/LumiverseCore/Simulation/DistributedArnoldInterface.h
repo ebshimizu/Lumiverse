@@ -18,7 +18,6 @@
 #include <cstdio>
 #include "ArnoldInterface.h"
 #include "../lib/libjson/libjson.h"
-#include "Dumiverse/Dumiverse_endpoints.h"
 #include <thread>
 #include <iostream>
 #include <locale>
