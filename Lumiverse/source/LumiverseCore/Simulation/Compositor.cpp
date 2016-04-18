@@ -9,24 +9,16 @@ namespace Lumiverse {
 
 Compositor::Compositor() {
 
-  // layers
-  layers = std::set<EXRLayer *>();
-  ambient_layer = NULL;
-
   // buffers
   compose_buffer = NULL;
-  output_buffer = NULL;
-
-  //// threshold
-  //amb_diff = 0.01;
 }
 
 Compositor::~Compositor() {
 
-  // free frame buffer if allocated
-  if (compose_buffer)
-    delete[] compose_buffer;
-
+	// free buffer
+	if (compose_buffer) {
+		delete[] compose_buffer;
+	}
   // free all layers
   layers.clear();
 }
@@ -35,7 +27,7 @@ size_t Compositor::get_width() { return w; }
 
 size_t Compositor::get_height() { return h; }
 
-std::set<EXRLayer *> Compositor::get_layers() { return layers; }
+std::unordered_map<std::string, EXRLayer *>& Compositor::get_layers() { return layers; }
 
 void Compositor::add_layer(EXRLayer *layer) {
 
@@ -45,12 +37,11 @@ void Compositor::add_layer(EXRLayer *layer) {
     w = layer->get_width();
     h = layer->get_height();
 
-    // allocate memory for composition buffer
-    compose_buffer = new Pixel3[w * h]();
-    if (!compose_buffer) {
-      std::cerr << "Cannot create composite buffer" << std::endl;
-      return;
-    }
+	compose_buffer = new Pixel3[w * h]();
+	if (!compose_buffer) {
+		std::cerr << "Unable to allocate space for the compose buffer in the compositor" << std::endl;
+		return;
+	}
 
   } else {
 
@@ -63,77 +54,51 @@ void Compositor::add_layer(EXRLayer *layer) {
     }
   }
 
-  layers.insert(layer);
+  std::pair<std::string, EXRLayer *> newLayer(layer->get_name(), layer);
+  layers.insert(newLayer);
 }
 
-void Compositor::del_layer(EXRLayer *layer) { layers.erase(layer); }
+void Compositor::del_layer(EXRLayer *layer) { layers.erase(layer->get_name()); }
 
 EXRLayer *Compositor::get_layer_by_name(const char *layer_name) {
 
-  EXRLayer *layer;
-  std::set<EXRLayer *>::iterator it = layers.begin();
-  while (it != layers.end()) {
-
-    layer = *it;
-    if (layer->get_name() == layer_name) {
-      return layer;
-    }
-
-    ++it;
-  }
-
-  return NULL;
+	if (layers.count(layer_name) > 0) {
+		return layers.at(layer_name);
+	} else {
+		return NULL;
+	}
 }
 
 void Compositor::del_layer_by_name(const char *layer_name) {
 
-	EXRLayer *layer;
-  std::set<EXRLayer *>::iterator it = layers.begin();
-  while (it != layers.end()) {
-
-    layer = *it;
-    if (layer->get_name() == layer_name) {
-      layers.erase(layer);
-      return;
-    }
-
-    ++it;
-  }
-
-  std::cerr << "Layer not found: " << layer_name << std::endl;
-}
-
-void Compositor::set_output_buffer(Pixel3 *buffer) {
-
-  if (buffer)
-    output_buffer = buffer;
+	if (layers.count(layer_name) > 0) {
+		layers.erase(layer_name);
+	} else {
+		std::cerr << "Layer not found for deletion: " << layer_name << std::endl;
+	}
 }
 
 void Compositor::render() {
 
-  // get target buffer
-  Pixel3 *target = output_buffer ? output_buffer : compose_buffer;
-
   // clear previous rendering
-  memset((void *)target, 0, sizeof(Pixel3) * w * h);
+  memset((void *)compose_buffer, 0, sizeof(Pixel3) * w * h);
 
   // composite all active layers
   EXRLayer *layer;
-  std::set<EXRLayer *>::iterator it = layers.begin();
-  while (it != layers.end()) {
+  std::unordered_map<std::string, EXRLayer *>::iterator it = layers.begin();
+  for (auto it = layers.begin(); it != layers.end(); it++) {
 
-    layer = *it;
+    layer = it->second;
     Pixel3 m = layer->get_modulator();
     Pixel3 *pixels = layer->get_pixels();
 
     for (int i = 0; i < w * h; i++) {
       if (layer->is_active()) {
-        target[i].r += m.r * pixels[i].r;
-        target[i].g += m.g * pixels[i].g;
-        target[i].b += m.b * pixels[i].b;
+        compose_buffer[i].r += m.r * pixels[i].r;
+        compose_buffer[i].g += m.g * pixels[i].g;
+        compose_buffer[i].b += m.b * pixels[i].b;
       }
     }
-    it++;
   }
 }
 

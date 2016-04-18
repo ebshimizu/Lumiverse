@@ -19,6 +19,7 @@
 #include "ArnoldParameterVector.h"
 #include "ArnoldInterface.h"
 #include "DistributedArnoldInterface.h"
+#include "CachingArnoldInterface.h"
 
 namespace Lumiverse {
 
@@ -265,9 +266,16 @@ namespace Lumiverse {
 	/*!
 	* \brief Check if an Arnold patch should use distributed rendering
 	* \param JSONNode containing a Patch
-	* \sa loadPatches()
+	* \sa loadPatches(), cacheRendering()
 	*/
-	bool useDistributedRendering(JSONNode patch);
+	bool useDistributedRendering(const JSONNode data);
+
+	/*!
+	* \brief Check if an Arnold patch should used cached rendering
+	* \param JSONNode containing patch
+	* \sa loadPatches(), useDistributedRendering()
+	*/
+	bool cacheRendering(const JSONNode data);
   };
 }
 

@@ -22,7 +22,6 @@ namespace Lumiverse {
 
 		input_buffer = NULL;
 		hdr_output_buffer = NULL;
-		bmp_output_buffer = NULL;
 	}
 
 	ToneMapper::~ToneMapper() {}

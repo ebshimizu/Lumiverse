@@ -44,6 +44,9 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 		ss << "Using DistributedArnoldInterface with host " << host << " and port " << port;
 		Logger::log(INFO, ss.str());
 		m_interface = (DistributedArnoldInterface *)new DistributedArnoldInterface(host, port, outputPath);
+	}
+	else if (cacheRendering(data)) {
+		m_interface = (CachingArnoldInterface *)new CachingArnoldInterface();
 	} else {
 		Logger::log(INFO, "Using ArnoldInterface");
 		m_interface = (ArnoldInterface *)new ArnoldInterface();
@@ -142,6 +145,11 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 
 }
 
+bool ArnoldPatch::cacheRendering(const JSONNode data) {
+	auto cacheNode = data.find("cache_rendering");
+
+	return (cacheNode != data.end()) && (cacheNode->as_bool());
+}
 
 bool ArnoldPatch::useDistributedRendering(const JSONNode data) {
 	auto distributed = data.find("distributed");
