@@ -173,6 +173,15 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/ArnoldParameterVector.h
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/DistributedArnoldInterface.h
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/DistributedArnoldInterface.cpp
+	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/Compositor.h
+	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/Compositor.cpp
+	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/CachingArnoldInterface.cpp
+	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/CachingArnoldInterface.h
+	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/EXRLayer.cpp
+	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/EXRLayer.h
+	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/ToneMapper.h
+	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/ToneMapper.cpp
+	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/Pixel.h
   )
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
