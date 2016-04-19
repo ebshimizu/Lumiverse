@@ -93,7 +93,7 @@ namespace Lumiverse {
 		AiNodeIteratorDestroy(it);
 
 		// temp buffer to hold arnold output
-		AtRGBA *buffer = new AtRGBA[m_width * m_height]();
+		float buffer = new float[m_width * m_height * 4];
 
 		// render each per-light layer
 		std::cout << "Rendering layers" << std::endl;
@@ -121,6 +121,7 @@ namespace Lumiverse {
 				layer_buffer[idx].r = buffer[idx].r;
 				layer_buffer[idx].g = buffer[idx].g;
 				layer_buffer[idx].b = buffer[idx].b;
+				layer_buffer[idx].a = buffer[idx].a;
 			}
 
 			// disable light
@@ -177,4 +178,90 @@ namespace Lumiverse {
 		tone_mapper.set_input(compositor.get_compose_buffer(), m_width, m_height);
 		tone_mapper.apply_hdr();
 	}
+
+	int CachingArnoldInterface::load_exr(const char *file_path) {
+
+		// check header
+		bool isTiled;
+		bool isValid = isOpenExrFile(file_path, isTiled);
+		if (isValid) {
+
+			// check for tiled exr
+			if (isTiled) {
+				std::cerr << "Only scanline images are supported" << std::endl;
+				return -1;
+			}
+
+		} else {
+
+			// file not valid
+			std::cerr << "Invalid input OpenEXR file: " << file_path;
+			return -1;
+		}
+
+		// read dimensions
+		InputFile file(file_path);
+		Box2i dw = file.header().dataWindow();
+		w = dw.max.x - dw.min.x + 1;
+		h = dw.max.y - dw.min.y + 1;
+
+		// read channel information
+		const ChannelList &channels = file.header().channels();
+		set<string> names;
+		channels.layers(names);
+
+		// read layers
+		string layer_name;
+		Pixel3 *pixels;
+		if (names.size()) {
+
+			// read pixels
+			FrameBuffer frame_buffer;
+			for (set<string>::iterator i = names.begin(); i != names.end(); ++i) {
+				// load layers
+				layer_name = *i;
+
+				// allocate memory
+				pixels = new Pixel3[w * h]();
+				if (!pixels)
+					lmerr("Failed to allocate memory for new layer");
+
+				// layer.R
+				frame_buffer.insert((layer_name + ".R").c_str(), // name
+					Slice(FLOAT,                 // type
+						(char *)&pixels[0].r,  // base
+						sizeof(Pixel3) * 1,    // xstride
+						sizeof(Pixel3) * w,    // ystride
+						1, 1,                  // sampling
+						0.0));                 // fill value
+											   // layer.R
+				frame_buffer.insert((layer_name + ".G").c_str(), // name
+					Slice(FLOAT,                 // type
+						(char *)&pixels[0].g,  // base
+						sizeof(Pixel3) * 1,    // xstride
+						sizeof(Pixel3) * w,    // ystride
+						1, 1,                  // sampling
+						0.0));                 // fill value
+											   // layer.R
+				frame_buffer.insert((layer_name + ".B").c_str(), // name
+					Slice(FLOAT,                 // type
+						(char *)&pixels[0].b,  // base
+						sizeof(Pixel3) * 1,    // xstride
+						sizeof(Pixel3) * w,    // ystride
+						1, 1,                  // sampling
+						0.0));                 // fill value
+
+											   // add layer
+				Layer *layer = new Layer(pixels, w, h, layer_name.c_str());
+				compositor->add_layer(layer);
+				lmout(" - Found layer: " << layer_name);
+			}
+
+			// read pixels
+			lmout(" - Loading layers from multi-layered EXR file");
+			file.setFrameBuffer(frame_buffer);
+			file.readPixels(dw.min.y, dw.max.y);
+
+			return 0;
+		}
 }
