@@ -37,7 +37,7 @@ void Compositor::add_layer(EXRLayer *layer) {
     w = layer->get_width();
     h = layer->get_height();
 
-	compose_buffer = new Pixel3[w * h]();
+	compose_buffer = new Pixel4[w * h]();
 	if (!compose_buffer) {
 		std::cerr << "Unable to allocate space for the compose buffer in the compositor" << std::endl;
 		return;
@@ -81,7 +81,7 @@ void Compositor::del_layer_by_name(const char *layer_name) {
 void Compositor::render() {
 
   // clear previous rendering
-  memset((void *)compose_buffer, 0, sizeof(Pixel3) * w * h);
+  memset((void *)compose_buffer, 0, sizeof(Pixel4) * w * h);
 
   // composite all active layers
   EXRLayer *layer;
@@ -89,14 +89,15 @@ void Compositor::render() {
   for (auto it = layers.begin(); it != layers.end(); it++) {
 
     layer = it->second;
-    Pixel3 m = layer->get_modulator();
-    Pixel3 *pixels = layer->get_pixels();
-
-    for (int i = 0; i < w * h; i++) {
-      if (layer->is_active()) {
-        compose_buffer[i].r += m.r * pixels[i].r;
-        compose_buffer[i].g += m.g * pixels[i].g;
-        compose_buffer[i].b += m.b * pixels[i].b;
+    Pixel4 m = layer->get_modulator();
+    Pixel4 *pixels = layer->get_pixels();
+	if (layer->is_active()) {
+	  for (int i = 0; i < w * h; i++) {
+		  if (pixels[i].a > 0) {
+			  compose_buffer[i].r += m.r * pixels[i].r;
+			  compose_buffer[i].g += m.g * pixels[i].g;
+			  compose_buffer[i].b += m.b * pixels[i].b
+		  }
       }
     }
   }

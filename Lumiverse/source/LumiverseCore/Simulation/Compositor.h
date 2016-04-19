@@ -80,14 +80,6 @@ public:
   void del_layer_by_name(const char *layer_name);
 
   /**
-   * Set the output buffer of the compositor.
-   * Applications may specify an output buffer that the compositor
-   * writes the result to. If this is never set, the output will be
-   * saved in the compositor and will only be used by internally.
-   */
-  void set_output_buffer(Pixel3 *buffer);
-
-  /**
    * Render the scene.
    * Updates the frame buffer based on the the current state of the scene.
    */
@@ -123,7 +115,7 @@ private:
    * recent composition. When no application specified output buffer
    * is set, results are saved in the composition buffer.
    */
-  Pixel3 *compose_buffer;
+  Pixel4 *compose_buffer;
 };
 
 }; // namespace Lumiverse
