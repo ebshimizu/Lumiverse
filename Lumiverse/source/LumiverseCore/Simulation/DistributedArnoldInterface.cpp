@@ -3,6 +3,10 @@
 #include "types/LumiverseFloat.h"
 #include <sstream>
 
+#ifdef USE_ARNOLD
+
+#ifdef USE_DUMIVERSE
+
 namespace Lumiverse {
 
 	static size_t write_buffer_callback(void *ptr, size_t size, size_t nmemb, void *userdata) {
@@ -354,3 +358,7 @@ namespace Lumiverse {
 		return parameters_node;
 	}
 }
+
+#endif // USE_DUMIVERSE
+
+#endif // USE_ARNOLD

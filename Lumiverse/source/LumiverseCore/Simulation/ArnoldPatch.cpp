@@ -28,6 +28,8 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 
 	// As of 4/8/2016 this is only implemented for Arnold
 	if (useDistributedRendering(data)) {
+#ifdef USE_DUMIVERSE
+
 		auto distributedNode = data.find("distributed");
 		auto hostNode = distributedNode->find("host");
 		auto portNode = distributedNode->find("port");
@@ -44,6 +46,7 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 		ss << "Using DistributedArnoldInterface with host " << host << " and port " << port;
 		Logger::log(INFO, ss.str());
 		m_interface = (DistributedArnoldInterface *)new DistributedArnoldInterface(host, port, outputPath);
+#endif
 	} else {
 		Logger::log(INFO, "Using ArnoldInterface");
 		m_interface = (ArnoldInterface *)new ArnoldInterface();

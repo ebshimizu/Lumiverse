@@ -1,5 +1,7 @@
 #include "DistributedArnoldInterfaceTests.h"
 
+#ifdef USE_DUMIVERSE
+
 int DistributedArnoldInterfaceTests::runTests() {
   int numPassed = 0;
 
@@ -122,3 +124,5 @@ bool DistributedArnoldInterfaceTests::closeTests() {
 
   return true;
 }
+
+#endif // USE_DUMIVERSE

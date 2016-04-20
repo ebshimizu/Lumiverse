@@ -9,6 +9,7 @@
 #include "LumiverseCoreConfig.h"
 
 #ifdef USE_ARNOLD
+#ifdef USE_DUMIVERSE
 
 #include <curl_easy.h>
 #include <curl_exception.h>
@@ -278,6 +279,6 @@ namespace Lumiverse {
 	};
 }
 
-#endif
-
-#endif
+#endif // USE_DUMIVERSE
+#endif // USE_ARNOLD
+#endif // _ArnoldDISTRIBUTED_INTERFACE_H_
