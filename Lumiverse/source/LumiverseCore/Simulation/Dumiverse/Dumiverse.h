@@ -6,10 +6,11 @@
 
 #include <algorithm>
 #include <cstdio>
-#include <ai.h>
 #include <thread>
+#include <ai.h>
 #include <iostream>
 #include <locale>
+#include "LumiverseCore.h"
 
 /*! \brief Wrapper for unit (bucket) being rendered. */
 struct BucketPositionInfo {
