@@ -155,7 +155,7 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
 
   // Render immediately.
   if (!m_interface->isOpen()) {
-	  m_interface->init();
+	  m_interface->init(this->toJSON());
 	  
 	  // Check if we were able to open a connection
 	  if (!m_interface->isOpen()) {
@@ -172,7 +172,7 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
   m_interface->setDriverFileName(basepath, filename);
 
   updateLight(frame.devices);
-  bool success = ArnoldPatch::renderLoop();
+  bool success = ArnoldPatch::renderLoop(devices);
 
   if (success) {
     unsigned char *bytes = new unsigned char[getWidth() * getHeight() * 4];
@@ -210,7 +210,7 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
 
   // Render immediately.
   if (!m_interface->isOpen()) {
-	  m_interface->init();
+	  m_interface->init(this->toJSON());
 
 	  // Check if we were able to open a connection
 	  if (!m_interface->isOpen()) {
@@ -223,8 +223,8 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
 	  }
   }
 
-  updateLight(frame.devices);
-  bool success = ArnoldPatch::renderLoop();
+  updateLight(devices);
+  bool success = ArnoldPatch::renderLoop(devices);
   frame.clear();
 
   if (success) {
@@ -360,7 +360,7 @@ void ArnoldAnimationPatch::workerRender(FrameDeviceInfo frame) {
 	Logger::log(LDEBUG, ss.str());
 
 	updateLight(frame.devices);
-	bool success = ArnoldPatch::renderLoop();
+	bool success = ArnoldPatch::renderLoop(frame.devices);
 
 	// Dumps only when the image was rendered successfully for rendering.
 	// If the worker was reset while rendering, doesn't dump.

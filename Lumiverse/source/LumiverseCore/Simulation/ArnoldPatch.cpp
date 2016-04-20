@@ -28,6 +28,8 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 
 	// As of 4/8/2016 this is only implemented for Arnold
 	if (useDistributedRendering(data)) {
+#ifdef USE_DUMIVERSE
+
 		auto distributedNode = data.find("distributed");
 		auto hostNode = distributedNode->find("host");
 		auto portNode = distributedNode->find("port");
@@ -44,6 +46,7 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 		ss << "Using DistributedArnoldInterface with host " << host << " and port " << port;
 		Logger::log(INFO, ss.str());
 		m_interface = (DistributedArnoldInterface *)new DistributedArnoldInterface(host, port, outputPath);
+#endif
 	} else {
 		Logger::log(INFO, "Using ArnoldInterface");
 		m_interface = (ArnoldInterface *)new ArnoldInterface();
@@ -142,6 +145,13 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 
 }
 
+void ArnoldPatch::setOptionParameter(std::string paramName, int val) {
+	m_interface->setOptionParameter(paramName, val);
+}
+
+void ArnoldPatch::setOptionParameter(std::string paramName, float val) {
+	m_interface->setOptionParameter(paramName, val);
+}
 
 bool ArnoldPatch::useDistributedRendering(const JSONNode data) {
 	auto distributed = data.find("distributed");
@@ -396,8 +406,14 @@ void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
 	m_interface->updateSurfaceColor(rgb_w);
 }
     
+bool ArnoldPatch::renderLoop(const std::set<Device *> &devices) {
+    int code = m_interface->render(devices);
+
+	return (code == AI_SUCCESS);
+}
+
 bool ArnoldPatch::renderLoop() {
-    int code = m_interface->render();
+	int code = m_interface->render();
 
 	return (code == AI_SUCCESS);
 }
@@ -431,7 +447,9 @@ void ArnoldPatch::update(set<Device *> devices) {
     
     interruptRender();
     
-    m_renderloop = new std::thread(&ArnoldPatch::renderLoop, this);
+	// Use arnold loop with devices
+	int (ArnoldPatch::*renderLoop)() const = renderLoop;
+    m_renderloop = new std::thread(renderLoop, this);
 }
 
 void ArnoldPatch::init() {

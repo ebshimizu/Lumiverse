@@ -8,6 +8,8 @@
 #include <Windows.h>
 #endif
 
+#ifdef USE_DUMIVERSE
+
 using namespace Lumiverse;
 
 class DistributedArnoldInterfaceTests
@@ -44,3 +46,5 @@ private:
   DistributedArnoldInterface *m_test_interface;
 #endif
 };
+
+#endif // USE_DUMIVERSE

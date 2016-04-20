@@ -1,5 +1,7 @@
 #include "DistributedArnoldInterfaceTests.h"
 
+#ifdef USE_DUMIVERSE
+
 int DistributedArnoldInterfaceTests::runTests() {
   int numPassed = 0;
 
@@ -46,12 +48,14 @@ bool DistributedArnoldInterfaceTests::initTests() {
 	  return false;
   }
 
-  m_test_interface->init();
+  // m_test_interface->init();
 
+  /*
   if (m_test_interface->render() != AI_SUCCESS) {
 	  std::cout << "Error rendering. Initialization failed." << endl;
 	  return false;
   }
+  */
 
   return true;
 }
@@ -98,10 +102,12 @@ void DistributedArnoldInterfaceTests::tearDownTestServer() {
 }
 
 bool DistributedArnoldInterfaceTests::renderTests() {
+	/*
   if (m_test_interface->render() != AI_SUCCESS) {
 	  std::cout << "Error rendering." << endl;
 	  return false;
   }
+  */
 
   return true;
 }
@@ -109,10 +115,14 @@ bool DistributedArnoldInterfaceTests::renderTests() {
 bool DistributedArnoldInterfaceTests::closeTests() {
   m_test_interface->close();
 
+  /*
   if (m_test_interface->render() != AI_ERROR) {
 	  std::cout << "Error closing." << endl;
 	  return false;
   }
+  */
 
   return true;
 }
+
+#endif // USE_DUMIVERSE
