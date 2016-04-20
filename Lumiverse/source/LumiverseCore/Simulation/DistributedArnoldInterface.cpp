@@ -32,7 +32,6 @@ namespace Lumiverse {
 			return;
 		}
 
-
 		if (!sendAssFileRequest()) {
 			std::cout << "Unable to send ass file to opened server" << std::endl;
 
@@ -40,6 +39,23 @@ namespace Lumiverse {
 		}
 
 		m_open = true;
+	}
+
+	void DistributedArnoldInterface::init(const std::set<Device *> &devices) {
+		// Only set callbacks if connection was opened
+		if (m_open) {
+
+			// Set all of the devices to use the deviceUpdateCallback
+			for (auto i = devices.begin(); i != devices.end(); i++) {
+				Device::DeviceCallbackFunction callback = std::bind(
+					&DistributedArnoldInterface::deviceUpdateCallback,
+					(DistributedArnoldInterface *)this,
+					std::placeholders::_1);
+				(*i)->addParameterChangedCallback(callback);
+			}
+		} else {
+			std::cerr << "Connection was not opened -- not registering callbacks" << std::endl;
+		}
 	}
 
 	bool DistributedArnoldInterface::openConnection() {
@@ -248,6 +264,7 @@ namespace Lumiverse {
 			}
 		}
 
+
 		m_curl_connection.reset();
 		m_curl_connection.add<CURLOPT_URL>((m_host_name + "/render").c_str());
 		m_curl_connection.add<CURLOPT_PORT>(m_host_port);
@@ -255,6 +272,21 @@ namespace Lumiverse {
 		bindRequestBuffer(&bitmap_buffer);
 
 		try {
+			std::string m_properties_option = "m_properties";
+			std::string m_properties_value = "";
+
+			// If the properties node is not null, set the value here
+			if (properties_node != NULL) {
+				json_string json_params = properties_node->write();
+				std::string m_properties_value = json_params;
+				delete properties_node;
+				properties_node = NULL;
+			}
+			curl::curl_form post_form;
+			curl::curl_pair<CURLformoption, std::string> properties_form(CURLFORM_COPYNAME, m_properties_option);
+			curl::curl_pair<CURLformoption, std::string> properties_cont(CURLFORM_COPYCONTENTS, m_properties_value);
+			post_form.add(properties_form, properties_cont);
+			m_curl_connection.add<CURLOPT_HTTPPOST>(post_form.get());
 			m_curl_connection.perform();
 		} catch (curl::curl_easy_exception error) {
 			curl::curlcpp_traceback errors = error.get_traceback();
@@ -342,5 +374,13 @@ namespace Lumiverse {
 		}
 
 		return wasSuccessful;
+	}
+
+	void DistributedArnoldInterface::deviceUpdateCallback(Device *device) {
+		if (properties_node == NULL) {
+			properties_node = new JSONNode();
+		}
+
+		properties_node->push_back(device->toJSON());
 	}
 }

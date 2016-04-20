@@ -436,9 +436,9 @@ void ArnoldPatch::update(set<Device *> devices) {
 
 void ArnoldPatch::init() {
 	// Init patch and interface
-  m_interface->init();
+	m_interface->init();
 
-  // Find lights and create the light records in the patch
+	// Find lights and create the light records in the patch
 	for (auto light : m_interface->getLights()) {
     ArnoldLightRecord* r = new ArnoldLightRecord();
     r->light = light.second;

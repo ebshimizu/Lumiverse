@@ -485,7 +485,7 @@ namespace Lumiverse {
     unordered_map<string, LumiverseType*>& getRawParameters() { return m_parameters; }
       
     /** Indicates the function signature for parameter and metadata callbacks.
-    Currently a device have to pass in "this" pointer. It seems to be other
+    Currently a device has to pass in "this" pointer. It seems to be other
     way to access fields inside Device class. This typedef makes it easier to
     change signature. */
     typedef function<void(Device*)> DeviceCallbackFunction;
@@ -493,7 +493,7 @@ namespace Lumiverse {
     /*!
     * \brief Registers a callback function for parameter changed event.
     *
-    * All registered functinos would be called when a parameter is changed
+    * All registered functions would be called when a parameter is changed
     * by Device::setParam and Device::reset function.
     * \param func The callback function.
     * \return The int id for the registered function.
@@ -504,7 +504,7 @@ namespace Lumiverse {
     /*!
     * \brief Registers a callback function for metadata changed event.
     *
-    * All registered functinos would be called when a metadata is changed
+    * All registered functions would be called when a metadata is changed
     * by Device::setMetadata, Device::clearMetadataValues, Device::clearAllMetadata,
     * and Device::reset.
     * \param func The callback function.

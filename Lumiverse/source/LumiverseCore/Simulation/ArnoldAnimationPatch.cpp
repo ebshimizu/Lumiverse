@@ -154,8 +154,20 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
   }
 
   // Render immediately.
-  if (!m_interface->isOpen())
-    m_interface->init();
+  if (!m_interface->isOpen()) {
+	  m_interface->init();
+	  
+	  // Check if we were able to open a connection
+	  if (!m_interface->isOpen()) {
+		  std::cerr << "Connection could not be established. " << 
+			  "Check to make sure your host and port " << 
+			  "parameters are correct and that nobody " << 
+			  "else is currently using the remote renderer" << std::endl;
+
+		  return;
+	  }
+  }
+
 
   m_interface->setDriverFileName(basepath, filename);
 
@@ -197,8 +209,19 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
   }
 
   // Render immediately.
-  if (!m_interface->isOpen())
-    m_interface->init();
+  if (!m_interface->isOpen()) {
+	  m_interface->init();
+
+	  // Check if we were able to open a connection
+	  if (!m_interface->isOpen()) {
+		  std::cerr << "Connection could not be established. " <<
+			  "Check to make sure your host and port " <<
+			  "parameters are correct and that nobody " <<
+			  "else is currently using the remote renderer" << std::endl;
+
+		  return;
+	  }
+  }
 
   updateLight(frame.devices);
   bool success = ArnoldPatch::renderLoop();

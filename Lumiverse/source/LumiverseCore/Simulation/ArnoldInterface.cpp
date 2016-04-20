@@ -482,6 +482,12 @@ void ArnoldInterface::init() {
 	m_open = true;
 }
 
+void ArnoldInterface::init(const std::set<Device *> &devices) {
+
+	// For base ArnoldInterface, just call normal init (don't register any callbacks)
+	this->init();
+}
+
 void ArnoldInterface::close() {
 	// Cleans buffer
 	delete[] m_buffer;

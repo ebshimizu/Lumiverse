@@ -19,6 +19,7 @@
 #include <thread>
 #include <iostream>
 #include <locale>
+#include <set>
 
 namespace Lumiverse {
 
@@ -95,6 +96,12 @@ namespace Lumiverse {
     * Opens a new Arnold session. Loads ass file and the plugin (buffer_driver).
     */
     virtual void init();
+
+	/*!
+	* \brief Initialize the Arnold renderer with access to
+	* the devices being rendered.
+	*/
+	virtual void init(const std::set<Device*> &devices);
 
     /*!
     * \brief Closes the Arnold session.

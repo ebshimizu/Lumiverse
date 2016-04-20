@@ -107,6 +107,13 @@ namespace Lumiverse {
 		*/
 		void init();
 
+
+		/*!
+		* \brief After initializing connection with remote renderer, register
+		* callbacks for all of the devices being 
+		*/
+		void init(const std::set<Device *> &devices);
+
 		/*!
 		* \brief Close the connection with the remote arnold host.
 		*
@@ -194,6 +201,12 @@ namespace Lumiverse {
 		*/
 		void setFileOutputPath(std::string outputPath) { m_file_output_path = outputPath; };
 
+		/*!
+		* \brief When a device is updated, JSON encode it so that we can send it over the wire
+		* to the distributed renderer.
+		*/
+		void deviceUpdateCallback(Device *device);
+
 	private:
 
 		/*!
@@ -273,6 +286,8 @@ namespace Lumiverse {
 		* \brief Consume a remote JSON response and determine if the request was successful.
 		*/
 		bool remoteRequestSuccessful(JSONNode response);
+
+		JSONNode *properties_node = NULL;
 	};
 }
 
