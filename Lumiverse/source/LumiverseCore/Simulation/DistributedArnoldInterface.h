@@ -36,8 +36,6 @@
 #define WINDOW_BITS 15
 #define GZIP_ENCODING 16
 
-#define PLUGIN_KEY "m_plugin_directory"
-
 namespace Lumiverse {
 
 	/*!
@@ -107,13 +105,6 @@ namespace Lumiverse {
 		*/
 		void init();
 
-
-		/*!
-		* \brief After initializing connection with remote renderer, register
-		* callbacks for all of the devices being 
-		*/
-		void init(const std::set<Device *> &devices);
-
 		/*!
 		* \brief Close the connection with the remote arnold host.
 		*
@@ -160,13 +151,14 @@ namespace Lumiverse {
 		std::string getHostName() { return m_host_name; };
 
 		/*!
-		* \brief Starts rendering with Arnold.
+		* \brief Perform remote Arnold rendering.
 		* 
-		* Returns the error code of AiRender, so the caller can know if the renderer was interrupted.
+		* Returns the error code of AiRender as returned by the remote renderer, so the caller can know if the renderer was interrupted.
 		* 
+		* \param Set of devices that were updated since the last call to render
 		* \return Error code of remote arnold renderer
 		*/
-		int render();
+		int render(const std::set<Device *> &devices);
 
 		/*!
 		* \brief Interrupts current rendering on the remote host.
@@ -200,12 +192,6 @@ namespace Lumiverse {
 		* Set the path where Arnold will write the output file on the remote renderer
 		*/
 		void setFileOutputPath(std::string outputPath) { m_file_output_path = outputPath; };
-
-		/*!
-		* \brief When a device is updated, JSON encode it so that we can send it over the wire
-		* to the distributed renderer.
-		*/
-		void deviceUpdateCallback(Device *device);
 
 	private:
 
@@ -287,7 +273,8 @@ namespace Lumiverse {
 		*/
 		bool remoteRequestSuccessful(JSONNode response);
 
-		JSONNode *properties_node = NULL;
+		const JSONNode getDevicesJSON(const std::set<Device *> &devices);
+
 	};
 }
 

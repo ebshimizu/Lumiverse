@@ -41,23 +41,6 @@ namespace Lumiverse {
 		m_open = true;
 	}
 
-	void DistributedArnoldInterface::init(const std::set<Device *> &devices) {
-		// Only set callbacks if connection was opened
-		if (m_open) {
-
-			// Set all of the devices to use the deviceUpdateCallback
-			for (auto i = devices.begin(); i != devices.end(); i++) {
-				Device::DeviceCallbackFunction callback = std::bind(
-					&DistributedArnoldInterface::deviceUpdateCallback,
-					(DistributedArnoldInterface *)this,
-					std::placeholders::_1);
-				(*i)->addParameterChangedCallback(callback);
-			}
-		} else {
-			std::cerr << "Connection was not opened -- not registering callbacks" << std::endl;
-		}
-	}
-
 	bool DistributedArnoldInterface::openConnection() {
 
 		// send request to open endpoint
@@ -187,23 +170,11 @@ namespace Lumiverse {
 
 		curl::curl_form post_form;
 
-		// m_gamma
-		std::string m_gamma_option = "m_gamma";
-		std::string m_gamma_value = std::to_string(getGamma());
-		curl::curl_pair<CURLformoption, std::string> gamma_form(CURLFORM_COPYNAME, m_gamma_option);
-		curl::curl_pair<CURLformoption, std::string> gamma_cont(CURLFORM_COPYCONTENTS, m_gamma_value);
-
-		// m_predictive
-		std::string m_predictive_option = "m_predictive";
-		std::string m_predictive_value = std::to_string(getPredictive());
-		curl::curl_pair<CURLformoption, std::string> predictive_form(CURLFORM_COPYNAME, m_predictive_option);
-		curl::curl_pair<CURLformoption, std::string> predictive_cont(CURLFORM_COPYCONTENTS, m_predictive_value);
-
-		// Buffer output
-		std::string m_buffer_option = "m_buffer_output";
-		std::string m_buffer_value = getFileOutputPath();
-		curl::curl_pair<CURLformoption, std::string> output_form(CURLFORM_COPYNAME, m_buffer_option);
-		curl::curl_pair<CURLformoption, std::string> output_cont(CURLFORM_COPYCONTENTS, m_buffer_value);
+		// Rig
+		std::string m_settings_option = "m_settings";
+		std::string m_settings_value = "";
+		curl::curl_pair<CURLformoption, std::string> settings_form(CURLFORM_COPYNAME, m_settings_option);
+		curl::curl_pair<CURLformoption, std::string> settings_cont(CURLFORM_FILE, m_settings_value);
 
 		// Ass file
 		std::string m_ass_option = "ass_file";
@@ -216,10 +187,9 @@ namespace Lumiverse {
 
 		try {
 			// build form and fire off request
-			post_form.add(gamma_form, gamma_cont);
-			post_form.add(predictive_form, predictive_cont);
-			post_form.add(output_form, output_cont);
+			
 			post_form.add(ass_form, ass_cont);
+			post_form.add(settings_form, settings_cont);
 
 			m_curl_connection.add<CURLOPT_HTTPPOST>(post_form.get());
 
@@ -254,7 +224,7 @@ namespace Lumiverse {
 		m_curl_connection.add<CURLOPT_WRITEDATA>(buffer);
 	}
 
-	int DistributedArnoldInterface::render() {
+	int DistributedArnoldInterface::render(const std::set<Device *> &devices) {
 		if (!m_open) {
 			init();
 
@@ -264,28 +234,25 @@ namespace Lumiverse {
 			}
 		}
 
-
+		curl::curl_form post_form;
 		m_curl_connection.reset();
 		m_curl_connection.add<CURLOPT_URL>((m_host_name + "/render").c_str());
 		m_curl_connection.add<CURLOPT_PORT>(m_host_port);
 		struct RequestBuffer bitmap_buffer;
 		bindRequestBuffer(&bitmap_buffer);
 
-		try {
-			std::string m_properties_option = "m_properties";
-			std::string m_properties_value = "";
+		// Devices / parameters node
+		std::string m_parameters_option = "m_parameters";
+		std::string m_parameters_value = this->getDevicesJSON(devices).write();
+		curl::curl_pair<CURLformoption, std::string> m_parameters_form(CURLFORM_COPYNAME, m_parameters_option);
+		curl::curl_pair<CURLformoption, std::string> m_parameters_cont(CURLFORM_COPYCONTENTS, m_parameters_value);
+		
+		// Settings node
+		// @TODO: Add settings node
 
-			// If the properties node is not null, set the value here
-			if (properties_node != NULL) {
-				json_string json_params = properties_node->write();
-				std::string m_properties_value = json_params;
-				delete properties_node;
-				properties_node = NULL;
-			}
-			curl::curl_form post_form;
-			curl::curl_pair<CURLformoption, std::string> properties_form(CURLFORM_COPYNAME, m_properties_option);
-			curl::curl_pair<CURLformoption, std::string> properties_cont(CURLFORM_COPYCONTENTS, m_properties_value);
-			post_form.add(properties_form, properties_cont);
+		try {
+
+			post_form.add(m_parameters_form, m_parameters_cont);
 			m_curl_connection.add<CURLOPT_HTTPPOST>(post_form.get());
 			m_curl_connection.perform();
 		} catch (curl::curl_easy_exception error) {
@@ -376,11 +343,14 @@ namespace Lumiverse {
 		return wasSuccessful;
 	}
 
-	void DistributedArnoldInterface::deviceUpdateCallback(Device *device) {
-		if (properties_node == NULL) {
-			properties_node = new JSONNode();
+	const JSONNode DistributedArnoldInterface::getDevicesJSON(const std::set<Device *> &devices) {
+
+		JSONNode parameters_node;
+
+		for (auto i = devices.begin(); i != devices.end(); i++) {
+			parameters_node.push_back((*i)->toJSON());
 		}
 
-		properties_node->push_back(device->toJSON());
+		return parameters_node;
 	}
 }

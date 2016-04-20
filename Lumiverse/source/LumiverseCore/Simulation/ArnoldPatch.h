@@ -239,10 +239,16 @@ namespace Lumiverse {
     virtual void loadJSON(const JSONNode data) override;
 
     /*!
-      * \brief Calls Arnold render function.
+      * \brief Calls Arnold render function on a set of devices.
       * This function runs in a separate thread.
       */
-    virtual bool renderLoop();
+    virtual bool renderLoop(const std::set<Device *> &devices);
+
+	/*!
+	* \brief Calls Arnold render function.
+	* This function runs in a separate thread.
+	*/
+	virtual bool renderLoop();
 
     /*!
     * \brief Arnold Interface

@@ -396,8 +396,14 @@ void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
 	m_interface->updateSurfaceColor(rgb_w);
 }
     
+bool ArnoldPatch::renderLoop(const std::set<Device *> &devices) {
+    int code = m_interface->render(devices);
+
+	return (code == AI_SUCCESS);
+}
+
 bool ArnoldPatch::renderLoop() {
-    int code = m_interface->render();
+	int code = m_interface->render();
 
 	return (code == AI_SUCCESS);
 }
@@ -431,7 +437,9 @@ void ArnoldPatch::update(set<Device *> devices) {
     
     interruptRender();
     
-    m_renderloop = new std::thread(&ArnoldPatch::renderLoop, this);
+	// Use arnold loop with devices
+	int (ArnoldPatch::*renderLoop)() const = renderLoop;
+    m_renderloop = new std::thread(renderLoop, this);
 }
 
 void ArnoldPatch::init() {
