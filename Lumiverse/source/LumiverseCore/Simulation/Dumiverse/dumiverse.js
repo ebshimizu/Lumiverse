@@ -225,7 +225,7 @@ app.get('/percent', function (req, res) {
  * Receive request to render a file.
  * Render the file, fill the frame buffer, and then zip and return it.
  */
-app.get('/render', function (req, res) {
+app.post('/render', upload.single('ass_file'), function (req, res) {
     // Verify connection open
     if( !connectionOpen ) {
         console.log('Received a request to render when a connection had not been opened');
@@ -235,6 +235,19 @@ app.get('/render', function (req, res) {
         });
         
         return;
+    }
+
+
+    // If there are updated devices then handle it here
+    var m_parameters_str = req.body.m_parameters;
+    if( m_parameters_str.length > 0 ) {
+        try {
+            var m_parameters = JSON.parse(m_parameters_str);
+            console.log(m_parameters);
+        } catch( err ) {
+            console.log('Unable to parse parameters JSON. Error: ' + err);
+            console.log('JSON string received: ' + m_parameters_str);
+        }
     }
 
     // Render the file and get the response
