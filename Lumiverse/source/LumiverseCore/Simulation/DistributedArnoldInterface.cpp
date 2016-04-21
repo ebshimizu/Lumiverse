@@ -93,6 +93,22 @@ namespace Lumiverse {
 		return success;
 	}
 
+	bool DistributedArnoldInterface::setDims(int w, int h) {
+		m_width = w;
+		m_height = h;
+
+		int_options["width"] = w;
+		int_options["height"] = h;
+
+		return true;
+	}
+
+	void DistributedArnoldInterface::setSamples(int samples) {
+		m_samples = samples;
+
+		int_options["AA_samples"] = samples;
+	}
+
 	float DistributedArnoldInterface::getPercentage() {
 
 		if (!m_remote_open) {

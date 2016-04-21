@@ -116,7 +116,17 @@ namespace Lumiverse {
 		* remote arnold host to clean up and free its memory, so this should only
 		* ever be done when there are no more rendering calls to be made.
 		*/
-		void close();
+		void close() override;
+
+		/*!
+		\brief Sets the dimensions of the image, and adds to settings for update on the remote renderer.
+		*/
+		bool setDims(int w, int h) override;
+		
+		/*!
+		\brief Set the sampling rate used on the remote renderer
+		*/
+		void setSamples(int samples) override;
 
 		/*!
 		* \brief Gets the type of this object.
@@ -167,14 +177,14 @@ namespace Lumiverse {
 		/*!
 		* \brief Interrupts current rendering on the remote host.
 		*/
-		void interrupt();
+		void interrupt() override;
 
 		/*!
 		* \brief Gets the progress of current frame as a percentage.
 		*
 		* \return The percent.
 		*/
-		float getPercentage();
+		float getPercentage() override;
 
 		/*!
 		* \brief Gets the curl connection handle
@@ -205,8 +215,8 @@ namespace Lumiverse {
 		* remote renderer. On a render call, a JSON encoding of these parameters
 		* is sent over the wire and applied on the remote rendering side.
 		*/
-		void setOptionParameter(const std::string &paramName, int val);
-		void setOptionParameter(const std::string &paramName, float val);
+		void setOptionParameter(const std::string &paramName, int val) override;
+		void setOptionParameter(const std::string &paramName, float val) override;
 
     /*!
     \brief returns the status of the remote connection

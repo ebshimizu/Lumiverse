@@ -134,7 +134,7 @@ namespace Lumiverse {
     /*!
     \brief Sets the dimensions of the image.
     */
-    bool setDims(int w, int h);
+    virtual bool setDims(int w, int h);
     
     /*!
     * \brief Gets the pointer to the frame buffer.
@@ -267,7 +267,7 @@ namespace Lumiverse {
     * this rate will be used for the current rendering.
     * \param samples The sampling rate.
     */
-    void setSamples(int samples);
+    virtual void setSamples(int samples);
 
     /*!
     * \brief Gets the sampling rate.
