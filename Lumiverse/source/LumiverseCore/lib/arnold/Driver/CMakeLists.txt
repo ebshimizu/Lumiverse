@@ -37,7 +37,7 @@ ENDIF(APPLE)
 if(UNIX)
     add_library(ai SHARED IMPORTED)
 	set_property(TARGET ai PROPERTY IMPORTED_LOCATION
-		${CMAKE_CURRENT_LIST_DIR}/../bin/libai.so)
+		${LumiverseCore_ARNOLD_PATH}/bin/libai.so)
 	target_link_libraries(BufferDriver ai)
 ENDIF(UNIX)
 
