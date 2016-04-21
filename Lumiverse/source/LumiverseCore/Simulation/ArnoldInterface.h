@@ -189,8 +189,8 @@ namespace Lumiverse {
     /*!
     \brief Sets a parameter found in the global options node in arnold
     */
-    void setOptionParameter(const std::string &paramName, int val);
-    void setOptionParameter(const std::string &paramName, float val);
+    virtual void setOptionParameter(const std::string &paramName, int val);
+    virtual void setOptionParameter(const std::string &paramName, float val);
       
     /*!
     \brief Gets a parameter found in the global options node in arnold

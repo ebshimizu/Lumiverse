@@ -2,6 +2,7 @@
 #include "DistributedArnoldInterface.h"
 #include "types/LumiverseFloat.h"
 #include <sstream>
+#include <unordered_map>
 
 #ifdef USE_ARNOLD
 
@@ -250,11 +251,15 @@ namespace Lumiverse {
 		curl::curl_pair<CURLformoption, std::string> m_parameters_cont(CURLFORM_COPYCONTENTS, m_parameters_value);
 		
 		// Settings node
-		// @TODO: Add settings node
+		std::string m_settings_option = "m_settings";
+		std::string m_settings_value = this->getSettingsJSON().write();
+		curl::curl_pair<CURLformoption, std::string> m_settings_form(CURLFORM_COPYNAME, m_settings_option);
+		curl::curl_pair<CURLformoption, std::string> m_settings_cont(CURLFORM_COPYCONTENTS, m_settings_value);
 
 		try {
 
 			post_form.add(m_parameters_form, m_parameters_cont);
+			post_form.add(m_settings_form, m_settings_cont);
 			m_curl_connection.add<CURLOPT_HTTPPOST>(post_form.get());
 			m_curl_connection.perform();
 		} catch (curl::curl_easy_exception error) {
@@ -346,7 +351,6 @@ namespace Lumiverse {
 	}
 
 	const JSONNode DistributedArnoldInterface::getDevicesJSON(const std::set<Device *> &devices) {
-
 		JSONNode parameters_node;
 
 		for (auto i = devices.begin(); i != devices.end(); i++) {
@@ -354,6 +358,30 @@ namespace Lumiverse {
 		}
 
 		return parameters_node;
+	}
+
+	const JSONNode DistributedArnoldInterface::getSettingsJSON() {
+		JSONNode settings_node;
+
+		// First get all int options
+		for (auto i = int_options.begin(); i != int_options.end(); i++) {
+			settings_node.push_back(JSONNode(i->first, i->second));
+		}
+
+		// Then get all float options
+		for (auto i = float_options.begin(); i != float_options.end(); i++) {
+			settings_node.push_back(JSONNode(i->first, i->second));
+		}
+
+		return settings_node;
+	}
+
+	void DistributedArnoldInterface::setOptionParameter(const std::string &paramName, int val) {
+		int_options[paramName] = val;
+	}
+
+	void DistributedArnoldInterface::setOptionParameter(const std::string &paramName, float val) {
+		float_options[paramName] = val;
 	}
 }
 

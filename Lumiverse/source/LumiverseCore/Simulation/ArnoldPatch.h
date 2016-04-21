@@ -228,8 +228,15 @@ namespace Lumiverse {
      * \param The path to this patch's ass
      */
     void setAssFile(std::string assFile) { m_interface->setAssFile(assFile); }
+	
+	/*!
+	* \brief Set global arnold options on the interface
+	*/
+	virtual void setOptionParameter(std::string paramName, int val);
+	virtual void setOptionParameter(std::string paramName, float val);
 
   protected:
+
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.
     * This function updates light node for renderer.

@@ -22,6 +22,7 @@
 #include <thread>
 #include <iostream>
 #include <locale>
+#include <unordered_map>
 
 // Apparently we need this to use zlib on windows to avoid windows being
 // dumb and converting end-of-line characters for binary files
@@ -194,6 +195,17 @@ namespace Lumiverse {
 		*/
 		void setFileOutputPath(std::string outputPath) { m_file_output_path = outputPath; };
 
+		/*!
+		* \brief Sets a parameter for the global options node in arnold to be
+		* used in the remote renderer.
+		*
+		* Sets a parameter for the global options in arnold to be used in the
+		* remote renderer. On a render call, a JSON encoding of these parameters
+		* is sent over the wire and applied on the remote rendering side.
+		*/
+		void setOptionParameter(const std::string &paramName, int val);
+		void setOptionParameter(const std::string &paramName, float val);
+
 	private:
 
 		/*!
@@ -274,8 +286,26 @@ namespace Lumiverse {
 		*/
 		bool remoteRequestSuccessful(JSONNode response);
 
+		/*!
+		* \brief Get a JSON encoding of the devices being rendered on a given frame
+		*
+		* Get a JSON encoding of the devices being rendered on a given frame. These
+		* devices are then sent over the wire to the remote renderer to be updated
+		* between render calls.
+		*/
 		const JSONNode getDevicesJSON(const std::set<Device *> &devices);
 
+		/*!
+		* \brief JSON serialize the currently set arnold options settings
+		*
+		* Returns a JSON node of the currently set arnold options. This is then
+		* sent over the wire to the distributed renderer on a render call.
+		*/
+		const JSONNode getSettingsJSON();
+
+		// Maps containing global Arnold options node settings
+		std::unordered_map<std::string, float> float_options;
+		std::unordered_map<std::string, int> int_options;
 	};
 }
 

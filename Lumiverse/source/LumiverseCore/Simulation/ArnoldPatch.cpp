@@ -145,6 +145,13 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 
 }
 
+void ArnoldPatch::setOptionParameter(std::string paramName, int val) {
+	m_interface->setOptionParameter(paramName, val);
+}
+
+void ArnoldPatch::setOptionParameter(std::string paramName, float val) {
+	m_interface->setOptionParameter(paramName, val);
+}
 
 bool ArnoldPatch::useDistributedRendering(const JSONNode data) {
 	auto distributed = data.find("distributed");
