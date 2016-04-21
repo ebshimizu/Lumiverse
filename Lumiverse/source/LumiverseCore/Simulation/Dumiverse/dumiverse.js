@@ -105,17 +105,7 @@ app.post('/init', upload.single('ass_file'), function (req, res) {
 
     // Get arnold parameters out of the request
     var fileBuffer = req.file.buffer;
-    var m_patch_str = req.body.m_gamma;
-    var m_patch = null;
-    if (m_patch_str.length > 0) {
-        try {
-            m_patch = JSON.parse(m_patch_str);
-            console.log(m_patch);
-        } catch (err) {
-            console.log('Unable to parse patch JSON. Error: ' + err);
-            console.log('JSON string received: ' + m_patch_str);
-        }
-    }
+    var m_patch = req.body.m_patch;
 
     if( m_patch == null || fileBuffer == null ) {
         res.status(500).json({
@@ -242,19 +232,10 @@ app.post('/render', upload.single('ass_file'), function (req, res) {
 
 
     // If there are updated devices then handle it here
-    var m_parameters_str = req.body.m_parameters;
-    if( m_parameters_str.length > 0 ) {
-        try {
-            var m_parameters = JSON.parse(m_parameters_str);
-            console.log(m_parameters);
-        } catch( err ) {
-            console.log('Unable to parse parameters JSON. Error: ' + err);
-            console.log('JSON string received: ' + m_parameters_str);
-        }
-    }
+    var m_parameters = req.body.m_parameters;
 
     // Render the file and get the response
-    var renderResponse = swig.renderWrapper();
+    var renderResponse = swig.renderWrapper(m_parameters);
     if (renderResponse == 0) {
         console.log('Waiting for rendering to complete. Spinning and checking file');
 

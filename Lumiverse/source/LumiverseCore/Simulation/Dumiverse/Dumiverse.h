@@ -7,29 +7,8 @@
 #include <algorithm>
 #include <cstdio>
 #include <thread>
-#include <ai.h>
 #include <iostream>
 #include <locale>
-#include "LumiverseCore.h"
-
-/*! \brief Wrapper for unit (bucket) being rendered. */
-struct BucketPositionInfo {
-  int bucket_xo;
-  int bucket_yo;
-  int bucket_size_x;
-  int bucket_size_y;
-
-  BucketPositionInfo() :
-  bucket_xo(-1), bucket_yo(-1), bucket_size_x(-1), bucket_size_y(-1) { }
-};
-
-/*! \brief Wrapper for progress information computed based on number of buckets. */
-struct ProgressInfo {
-  int bucket_sum;
-  int bucket_cur;
-
-  ProgressInfo() : bucket_sum(-1), bucket_cur(-1) { }
-};
 
 
 /*!
@@ -38,7 +17,7 @@ struct ProgressInfo {
 * Opens a connection to this DistributedArnold node. This includes sending it
 * the ass file and plugin (buffer_driver).
 */
-void init(float m_gamma, bool m_predictive, const char *m_plugins, const char *filename);
+void init(const char *jsonPatchStr, const char *filename);
 
 /*!
 * \brief Fire off an arnold render
@@ -51,7 +30,7 @@ void init(float m_gamma, bool m_predictive, const char *m_plugins, const char *f
 * When the rendering is completed, render
 * writes a local file with the return value.
 */
-int renderWrapper();
+int renderWrapper(const char *jsonDevicesStr);
 
 /*!
 * \brief Render a frame and pass it back to node

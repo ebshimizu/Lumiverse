@@ -210,6 +210,25 @@ namespace Lumiverse {
 	*/
 	void setArnoldInterface(ArnoldInterface *arnold_interface) { m_interface = arnold_interface; };
 
+    /*!
+      * \brief Calls Arnold render function on a set of devices.
+      * This function runs in a separate thread.
+      */
+    virtual bool renderLoop(const std::set<Device *> &devices);
+
+	/*!
+	* \brief Calls Arnold render function.
+	* This function runs in a separate thread.
+	*/
+	virtual bool renderLoop();
+
+    /*!
+     * \brief Set the path to this patch's ass
+     *
+     * \param The path to this patch's ass
+     */
+    void setAssFile(std::string assFile) { m_interface->setAssFile(assFile); }
+
   protected:
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.
@@ -237,18 +256,6 @@ namespace Lumiverse {
     * \param data JSON data to load
     */
     virtual void loadJSON(const JSONNode data) override;
-
-    /*!
-      * \brief Calls Arnold render function on a set of devices.
-      * This function runs in a separate thread.
-      */
-    virtual bool renderLoop(const std::set<Device *> &devices);
-
-	/*!
-	* \brief Calls Arnold render function.
-	* This function runs in a separate thread.
-	*/
-	virtual bool renderLoop();
 
     /*!
     * \brief Arnold Interface
