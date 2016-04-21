@@ -233,9 +233,10 @@ app.post('/render', upload.single('ass_file'), function (req, res) {
 
     // If there are updated devices then handle it here
     var m_parameters = req.body.m_parameters;
+    var m_settings = req.body.m_settings;
 
     // Render the file and get the response
-    var renderResponse = swig.renderWrapper(m_parameters);
+    var renderResponse = swig.renderWrapper(m_parameters, m_settings);
     if (renderResponse == 0) {
         console.log('Waiting for rendering to complete. Spinning and checking file');
 

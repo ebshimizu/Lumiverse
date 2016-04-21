@@ -58,9 +58,10 @@ void render() {
     done_file.close();
 }
 
-int renderWrapper(const char *jsonDevicesStr) {
-    const JSONNode jsonDevices = libjson::parse(jsonDevicesStr);
+int renderWrapper(const char *jsonDevicesStr, const char *jsonSettingsStr) {
 
+    // Update devices
+    const JSONNode jsonDevices = libjson::parse(jsonDevicesStr);
     std::set<Device *> devices;
     for( auto i = jsonDevices.begin(); i != jsonDevices.end(); i++ ) {
         std::string nodeName = i->name();
@@ -72,6 +73,14 @@ int renderWrapper(const char *jsonDevicesStr) {
 
     for( Device *device : devices ) {
         delete device;
+    }
+
+    // Update settings
+    const JSONNode jsonSettings = libjson::parse(jsonDevicesStr);
+    for( auto i = jsonSettings.begin(); i != jsonSettings.end(); i++ ) {
+        float val = i->as_float();
+        std::string name = i->name();
+        m_patch->setOptionParameter(name, val);
     }
 
     std::thread render_thread(render);

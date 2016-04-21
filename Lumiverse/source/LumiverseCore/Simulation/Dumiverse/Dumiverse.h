@@ -30,7 +30,7 @@ void init(const char *jsonPatchStr, const char *filename);
 * When the rendering is completed, render
 * writes a local file with the return value.
 */
-int renderWrapper(const char *jsonDevicesStr);
+int renderWrapper(const char *jsonDevicesStr, const char *jsonSettingsStr);
 
 /*!
 * \brief Render a frame and pass it back to node
