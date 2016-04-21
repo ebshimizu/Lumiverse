@@ -77,10 +77,24 @@ int renderWrapper(const char *jsonDevicesStr, const char *jsonSettingsStr) {
 
     // Update settings
     const JSONNode jsonSettings = libjson::parse(jsonDevicesStr);
+    int new_width = -1, new_height = -1;
     for( auto i = jsonSettings.begin(); i != jsonSettings.end(); i++ ) {
         float val = i->as_float();
         std::string name = i->name();
+        if( strcmp(name.c_str(), "width") == 0 ) {
+            new_width = (int)val;
+        } else if( strcmp(name.c_str(), "height") == 0 ) {
+            new_height = (int)val;
+        }
         m_patch->setOptionParameter(name, val);
+    }
+
+    if( (new_width != -1) && (new_height != -1) ) {
+        m_patch->setDims(new_width, new_height);
+    } else if( new_width != -1 ) {
+        m_patch->setDims(new_width, getHeight());
+    } else if( new_height != -1 ) {
+        m_patch->setDims(getWidth(), new_height);
     }
 
     std::thread render_thread(render);
