@@ -46,6 +46,7 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 		ss << "Using DistributedArnoldInterface with host " << host << " and port " << port;
 		Logger::log(INFO, ss.str());
 		m_interface = (DistributedArnoldInterface *)new DistributedArnoldInterface(host, port, outputPath);
+		m_using_distributed = true;
 #endif
 	} else {
 		Logger::log(INFO, "Using ArnoldInterface");
@@ -453,15 +454,18 @@ void ArnoldPatch::update(set<Device *> devices) {
 }
 
 void ArnoldPatch::init() {
-	// Init patch and interface
-	m_interface->init();
+	if (!m_using_distributed) {
 
-	// Find lights and create the light records in the patch
-	for (auto light : m_interface->getLights()) {
-    ArnoldLightRecord* r = new ArnoldLightRecord();
-    r->light = light.second;
-    r->init();
-    m_lights[light.first] = r;
+		// Init patch and interface
+		m_interface->init();
+
+		// Find lights and create the light records in the patch
+		for (auto light : m_interface->getLights()) {
+			ArnoldLightRecord* r = new ArnoldLightRecord();
+			r->light = light.second;
+			r->init();
+			m_lights[light.first] = r;
+		}
 	}
 }
 
