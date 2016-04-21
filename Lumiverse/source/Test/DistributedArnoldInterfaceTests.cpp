@@ -48,7 +48,7 @@ bool DistributedArnoldInterfaceTests::initTests() {
 	  return false;
   }
 
-  m_test_interface->init();
+  // m_test_interface->init();
 
   /*
   if (m_test_interface->render() != AI_SUCCESS) {

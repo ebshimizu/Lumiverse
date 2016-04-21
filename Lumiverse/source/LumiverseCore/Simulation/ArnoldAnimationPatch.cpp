@@ -155,7 +155,7 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
 
   // Render immediately.
   if (!m_interface->isOpen()) {
-	  m_interface->init();
+	  m_interface->init(this->toJSON());
 	  
 	  // Check if we were able to open a connection
 	  if (!m_interface->isOpen()) {
@@ -210,7 +210,7 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
 
   // Render immediately.
   if (!m_interface->isOpen()) {
-	  m_interface->init();
+	  m_interface->init(this->toJSON());
 
 	  // Check if we were able to open a connection
 	  if (!m_interface->isOpen()) {

@@ -21,7 +21,7 @@ namespace Lumiverse {
 		return num_processed;
 	}
 
-	void DistributedArnoldInterface::init() {
+	void DistributedArnoldInterface::init(const JSONNode jsonPatch) {
 		std::cout << "Initializing connection in DistributedArnoldInterface" << std::endl;
 
 		if (m_open) {
@@ -36,7 +36,7 @@ namespace Lumiverse {
 			return;
 		}
 
-		if (!sendAssFileRequest()) {
+		if (!sendDistributedInitRequest(jsonPatch)) {
 			std::cout << "Unable to send ass file to opened server" << std::endl;
 
 			return;
@@ -162,7 +162,7 @@ namespace Lumiverse {
 		return true;
 	}
 
-	bool DistributedArnoldInterface::sendAssFileRequest() {
+	bool DistributedArnoldInterface::sendDistributedInitRequest(const JSONNode jsonPatch) {
 	
 		// gzip the ass file before we send it over the wire
 		deflateAss();
@@ -174,11 +174,11 @@ namespace Lumiverse {
 
 		curl::curl_form post_form;
 
-		// Rig
-		std::string m_settings_option = "m_settings";
-		std::string m_settings_value = "";
-		curl::curl_pair<CURLformoption, std::string> settings_form(CURLFORM_COPYNAME, m_settings_option);
-		curl::curl_pair<CURLformoption, std::string> settings_cont(CURLFORM_FILE, m_settings_value);
+		// JSON patch
+		std::string m_patch_option = "m_patch";
+		std::string m_patch_value = jsonPatch.write();
+		curl::curl_pair<CURLformoption, std::string> settings_form(CURLFORM_COPYNAME, m_patch_option);
+		curl::curl_pair<CURLformoption, std::string> settings_cont(CURLFORM_COPYCONTENTS, m_patch_value);
 
 		// Ass file
 		std::string m_ass_option = "ass_file";
@@ -230,12 +230,10 @@ namespace Lumiverse {
 
 	int DistributedArnoldInterface::render(const std::set<Device *> &devices) {
 		if (!m_open) {
-			init();
-
-			// If we still weren't able to open a connection, return with a generic arnold error
-			if (!m_open) {
-				return AI_ERROR;
-			}
+			std::cerr << "Cannot send render request -- " << 
+				"you must first initialize the connection " << 
+				"to the remote renderer by calling init" << std::endl;
+			return AI_ERROR;
 		}
 
 		curl::curl_form post_form;

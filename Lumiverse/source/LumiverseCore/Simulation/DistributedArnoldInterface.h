@@ -104,7 +104,7 @@ namespace Lumiverse {
 		* can be at most one open connection to a distributed arnold node at any
 		* given time
 		*/
-		void init();
+		void init(const JSONNode jsonPatch);
 
 		/*!
 		* \brief Close the connection with the remote arnold host.
@@ -227,7 +227,7 @@ namespace Lumiverse {
 		*
 		* \return True if request successful, false otherwise
 		*/
-		bool sendAssFileRequest();
+		bool sendDistributedInitRequest(const JSONNode jsonPatch);
 
 		/*!
 		* \brief Close the connection with the remote arnold renderer host.

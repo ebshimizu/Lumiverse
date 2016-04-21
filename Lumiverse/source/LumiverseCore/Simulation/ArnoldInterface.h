@@ -97,6 +97,14 @@ namespace Lumiverse {
     */
     virtual void init();
 
+	/*!
+	* \brief Initialize the ArnoldRenderer with a reference to a JSON serialized parent patch
+	*
+	* Initializes the ArnoldRenderer with a reference to a JSON serialized parent patch.
+	* This is currently used by the distributed renderer to send a patch over the wire
+	*/
+	virtual void init(const JSONNode jsonPatch) { this->init(); }
+
     /*!
     * \brief Closes the Arnold session.
     */
