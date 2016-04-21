@@ -38,8 +38,6 @@ IF(LumiverseCore_INCLUDE_ARNOLD)
 		ArnoldParameterVectorTests.cpp
 		ArnoldInterfaceTests.h
 		ArnoldInterfaceTests.cpp
-		DistributedArnoldInterfaceTests.h
-		DistributedArnoldInterfaceTests.cpp
 		ArnoldFrameManagerTests.h
 		ArnoldFrameManagerTests.cpp
 		RegressiveTest.h

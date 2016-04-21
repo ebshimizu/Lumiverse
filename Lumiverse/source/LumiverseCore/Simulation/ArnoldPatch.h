@@ -288,6 +288,11 @@ namespace Lumiverse {
 	* \sa loadPatches()
 	*/
 	bool useDistributedRendering(JSONNode patch);
+	
+	/*!
+	* \brief Are we using a distributed renderer with this patch
+	*/
+	bool m_using_distributed = false;
   };
 }
 
