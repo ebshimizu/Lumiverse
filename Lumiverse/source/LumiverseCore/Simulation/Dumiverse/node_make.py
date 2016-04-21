@@ -13,14 +13,14 @@ node_make.py
 @author David Vernet
 """
 def main():
-    includeKey = 'ARNOLD_PATH_INCLUDE'
-    libKey = 'ARNOLD_PATH_LIB'
+    includeKey = 'M_INCLUDE_PATHS'
+    libKey = 'M_LIBS'
     includePath = ''
     libPath = ''
     includePath = os.environ.get(includeKey)
     libPath = os.environ.get(libKey)
     if (includePath is None) or (libPath is None):
-        usage_string = 'usage: ' + sys.argv[0] + ' -i <path_to_arnold_include_dir> -l <path_to_arnold_lib (ailib.so)>'
+        usage_string = 'usage: ' + sys.argv[0] + ' -i <semicolon_delimited_include_paths> -l <semicolon_delimited_paths_to_libs>'
         try:
           opts, args = getopt.getopt(sys.argv[1:],"hi:l:",["include_dir=","ailib="])
         except getopt.GetoptError:
@@ -31,9 +31,9 @@ def main():
           if opt == '-h':
              print usage_string
              sys.exit(0)
-          elif opt in ("-i", "--include_dir"):
+          elif opt in ("-i", "--includes"):
              includePath = arg
-          elif opt in ("-l", "--ailib"):
+          elif opt in ("-l", "--libs"):
              libPath = arg
 
 
@@ -43,6 +43,20 @@ def main():
 
     print 'include dir is: ' + includePath
     print 'lib path is: ' + libPath
+
+
+    # Get array of paths and libs by semicolon delimiter
+    paths = includePath.split(';')
+    libs = libPath.split(';');
+
+    # Populate paths and libs value strings
+    pathsValue = ""
+    for path in paths:
+        pathsValue += "'" + path + "',\n"
+
+    libsValue = ""
+    for lib in libs:
+        libsValue += "'" + lib + "',\n"
 
     # Make sure binding make file is present
     bindingMake = "./binding_make.gyp"
@@ -69,10 +83,9 @@ def main():
         with open(bindingMake, "rt") as fin:
             for line in fin:
                 if line.count(includeKey) > 0:
-                    fout.write(line.replace(includeKey, includePath))
+                    fout.write(line.replace(includeKey, pathsValue))
                 else:
-                    fout.write(line.replace(libKey, libPath))
-
+                    fout.write(line.replace(libKey, libsValue))
                 
     #  Make actual swig and node-gyp calls to build wrapper C++ code and compile into node module
     call(["swig", "-javascript", "-node", "-c++", "-DV8_VERSION=0x051218", "Dumiverse.i"])

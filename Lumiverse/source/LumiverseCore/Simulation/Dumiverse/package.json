@@ -14,9 +14,13 @@
   "author": "David Vernet",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.15.0",
+    "busboy": "^0.2.13",
     "collections": "^3.0.0",
     "express": "^4.13.4",
+    "fs": "0.0.2",
     "multer": "^1.1.0",
+    "path": "^0.12.7",
     "stream-buffers": "^3.0.0"
   },
   "repository": {

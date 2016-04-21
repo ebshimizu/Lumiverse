@@ -9,6 +9,7 @@
 #include "LumiverseCoreConfig.h"
 
 #ifdef USE_ARNOLD
+#ifdef USE_DUMIVERSE
 
 #include <curl_easy.h>
 #include <curl_exception.h>
@@ -21,6 +22,7 @@
 #include <thread>
 #include <iostream>
 #include <locale>
+#include <unordered_map>
 
 // Apparently we need this to use zlib on windows to avoid windows being
 // dumb and converting end-of-line characters for binary files
@@ -35,8 +37,6 @@
 #define CHUNK (1 << 17)
 #define WINDOW_BITS 15
 #define GZIP_ENCODING 16
-
-#define PLUGIN_KEY "m_plugin_directory"
 
 namespace Lumiverse {
 
@@ -105,7 +105,7 @@ namespace Lumiverse {
 		* can be at most one open connection to a distributed arnold node at any
 		* given time
 		*/
-		void init();
+		void init(const JSONNode jsonPatch);
 
 		/*!
 		* \brief Close the connection with the remote arnold host.
@@ -153,13 +153,14 @@ namespace Lumiverse {
 		std::string getHostName() { return m_host_name; };
 
 		/*!
-		* \brief Starts rendering with Arnold.
+		* \brief Perform remote Arnold rendering.
 		* 
-		* Returns the error code of AiRender, so the caller can know if the renderer was interrupted.
+		* Returns the error code of AiRender as returned by the remote renderer, so the caller can know if the renderer was interrupted.
 		* 
+		* \param Set of devices that were updated since the last call to render
 		* \return Error code of remote arnold renderer
 		*/
-		int render();
+		int render(const std::set<Device *> &devices);
 
 		/*!
 		* \brief Interrupts current rendering on the remote host.
@@ -194,6 +195,17 @@ namespace Lumiverse {
 		*/
 		void setFileOutputPath(std::string outputPath) { m_file_output_path = outputPath; };
 
+		/*!
+		* \brief Sets a parameter for the global options node in arnold to be
+		* used in the remote renderer.
+		*
+		* Sets a parameter for the global options in arnold to be used in the
+		* remote renderer. On a render call, a JSON encoding of these parameters
+		* is sent over the wire and applied on the remote rendering side.
+		*/
+		void setOptionParameter(const std::string &paramName, int val);
+		void setOptionParameter(const std::string &paramName, float val);
+
 	private:
 
 		/*!
@@ -227,7 +239,7 @@ namespace Lumiverse {
 		*
 		* \return True if request successful, false otherwise
 		*/
-		bool sendAssFileRequest();
+		bool sendDistributedInitRequest(const JSONNode jsonPatch);
 
 		/*!
 		* \brief Close the connection with the remote arnold renderer host.
@@ -273,9 +285,30 @@ namespace Lumiverse {
 		* \brief Consume a remote JSON response and determine if the request was successful.
 		*/
 		bool remoteRequestSuccessful(JSONNode response);
+
+		/*!
+		* \brief Get a JSON encoding of the devices being rendered on a given frame
+		*
+		* Get a JSON encoding of the devices being rendered on a given frame. These
+		* devices are then sent over the wire to the remote renderer to be updated
+		* between render calls.
+		*/
+		const JSONNode getDevicesJSON(const std::set<Device *> &devices);
+
+		/*!
+		* \brief JSON serialize the currently set arnold options settings
+		*
+		* Returns a JSON node of the currently set arnold options. This is then
+		* sent over the wire to the distributed renderer on a render call.
+		*/
+		const JSONNode getSettingsJSON();
+
+		// Maps containing global Arnold options node settings
+		std::unordered_map<std::string, float> float_options;
+		std::unordered_map<std::string, int> int_options;
 	};
 }
 
-#endif
-
-#endif
+#endif // USE_DUMIVERSE
+#endif // USE_ARNOLD
+#endif // _ArnoldDISTRIBUTED_INTERFACE_H_

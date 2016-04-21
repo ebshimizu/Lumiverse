@@ -1,18 +1,15 @@
 {
-    'variables' : {
-        'arnold_include' : 'ARNOLD_PATH_INCLUDE',
-        'arnold_lib': 'ARNOLD_PATH_LIB',
-    },
     'targets': [
         {
             'target_name' : 'dumiverse_swig',
             'sources': [ 'Dumiverse.cpp', 'Dumiverse_wrap.cxx'],
             'include_dirs': [
-                '<(arnold_include)',
+                M_INCLUDE_PATHS
             ],
             'libraries': [
-                '<(arnold_lib)',
+                M_LIBS
             ],
+            'cflags_cc!': [ '-fno-exceptions' ],
         },
     ],
 }

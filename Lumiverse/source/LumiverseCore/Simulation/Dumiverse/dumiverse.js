@@ -5,16 +5,13 @@ var app = express();
 var swig = require('./build/Release/dumiverse_swig');
 
 // Get command line arguments
-if (process.argv.length < 4) {
+if (process.argv.length < 3) {
     console.log("usage: node dumiverse <port> <path to plugins dir>");
     process.exit(1);
 }
 
 // Port number service is listening on
 var port = process.argv[2];
-
-// Path to directory containing plugins
-var m_plugins = process.argv[3];
 
 // Arnold values passed in POST request
 var path = require('path');
@@ -50,7 +47,7 @@ const zlib = require('zlib');
  * Tell dumiverse to listen on the port specified on the command line
  */
 app.listen(port, function () {
-    console.log('Dumiverse listening for new connections on port: ' + port + ' with plugins dir: ' + m_plugins);
+    console.log('Dumiverse listening for new connections on port: ' + port);
 });
 
 /**
@@ -60,8 +57,8 @@ app.get('/', function( req, res ) {
     res.send(
         'Endpoint options for Dumiverse (distributed Lumiverse renderer):\n' +
         '/open --- Open a connection to this renderer (only one connection allowed at a time)\n' +
-        '/init -F "ass_file=@ass_file.gz" -F "m_gamma=2.2" -F "m_predictive=false" -F "m_buffer_output=/usr3/dcv/test.exr" --- Initialize an open connection\n' +
-        '/render --- Render a scene and receive a returned gzip\'d buffer\n' +
+        '/init -F "ass_file=@ass_file.gz" -F "m_patch={json_patch}" -- Initialize an open connection\n' +
+        '/render --- -F "m_parameters={devices_json}" -F "m_settings={settings_json} Render a scene and return buffer\n' +
         '/interrupt --  Interrupt a currently executing render\n' +
         '/percent -- Get the current percentage of rendering that has completed' +
         '/close --- Close / free an open connection\n\n' +
@@ -108,23 +105,18 @@ app.post('/init', upload.single('ass_file'), function (req, res) {
 
     // Get arnold parameters out of the request
     var fileBuffer = req.file.buffer;
-    m_gamma = Number(req.body.m_gamma);
-    m_predictive = Boolean(req.body.m_predictive);
-    arnoldOutput = String(req.body.m_buffer_output);
+    var m_patch = req.body.m_patch;
 
-    if( m_gamma == null || m_predictive == null || fileBuffer == null ) {
+    if( m_patch == null || fileBuffer == null ) {
         res.status(500).json({
                 success: false,
-                msg: 'Missing request parameters. Need m_gamma, m_predictive, and a gzipped ass file',
-                m_gamma: m_gamma == null,
-                m_predictive: m_predictive == null,
+                msg: 'Missing request parameters. Need m_patch and a gzipped ass file',
+                m_patch: m_patch == null,
                 file_buffer: fileBuffer == null
         });
 
         return;
     }
-
-    console.log('Received initialization with parameters m_gamma: ' + m_gamma + ', m_predictive: ' + m_predictive + ', m_buffer_output: ' + m_buffer_output);
 
     var unzippedBuffer = fileBuffer;
     try {
@@ -135,7 +127,8 @@ app.post('/init', upload.single('ass_file'), function (req, res) {
     }
 
     fs.writeFileSync(assFile, unzippedBuffer);
-    swig.init(m_gamma, m_predictive, m_plugins, assFile);
+
+    swig.init(m_patch, assFile);
 
     var width = swig.getWidth();
     var height = swig.getHeight();
@@ -225,7 +218,7 @@ app.get('/percent', function (req, res) {
  * Receive request to render a file.
  * Render the file, fill the frame buffer, and then zip and return it.
  */
-app.get('/render', function (req, res) {
+app.post('/render', upload.single('ass_file'), function (req, res) {
     // Verify connection open
     if( !connectionOpen ) {
         console.log('Received a request to render when a connection had not been opened');
@@ -237,8 +230,13 @@ app.get('/render', function (req, res) {
         return;
     }
 
+
+    // If there are updated devices then handle it here
+    var m_parameters = req.body.m_parameters;
+    var m_settings = req.body.m_settings;
+
     // Render the file and get the response
-    var renderResponse = swig.renderWrapper();
+    var renderResponse = swig.renderWrapper(m_parameters, m_settings);
     if (renderResponse == 0) {
         console.log('Waiting for rendering to complete. Spinning and checking file');
 

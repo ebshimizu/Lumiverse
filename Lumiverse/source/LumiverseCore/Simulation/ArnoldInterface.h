@@ -19,6 +19,7 @@
 #include <thread>
 #include <iostream>
 #include <locale>
+#include <set>
 
 namespace Lumiverse {
 
@@ -95,6 +96,14 @@ namespace Lumiverse {
     * Opens a new Arnold session. Loads ass file and the plugin (buffer_driver).
     */
     virtual void init();
+
+	/*!
+	* \brief Initialize the ArnoldRenderer with a reference to a JSON serialized parent patch
+	*
+	* Initializes the ArnoldRenderer with a reference to a JSON serialized parent patch.
+	* This is currently used by the distributed renderer to send a patch over the wire
+	*/
+	virtual void init(const JSONNode jsonPatch) { this->init(); }
 
     /*!
     * \brief Closes the Arnold session.
@@ -180,8 +189,8 @@ namespace Lumiverse {
     /*!
     \brief Sets a parameter found in the global options node in arnold
     */
-    void setOptionParameter(const std::string &paramName, int val);
-    void setOptionParameter(const std::string &paramName, float val);
+    virtual void setOptionParameter(const std::string &paramName, int val);
+    virtual void setOptionParameter(const std::string &paramName, float val);
       
     /*!
     \brief Gets a parameter found in the global options node in arnold
@@ -273,6 +282,17 @@ namespace Lumiverse {
     * \return Error code of arnold.
     */
     virtual int render();
+
+	/*!
+	* \brief Fire off a render request using the given set of devices
+	* 
+	* Fires off a render request with the given set of devices being used
+	* in the rendering. This is currently used to notify a distributed
+	* renderer about any changes to nodes.
+	* \return Arnold error code
+	* \sa render()
+	*/
+	virtual int render(const std::set<Device*> &devices) { return this->render(); }
       
     /*!
     * \brief Interrupts current rendering.
