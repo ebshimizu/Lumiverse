@@ -286,6 +286,15 @@ namespace Lumiverse {
 		* responses, and this function binds a RequestBuffer to the request to consume
 		* the response
 		*/
+		void bindRequestBuffer(struct RequestBuffer *buffer, curl::curl_easy &curl_request);
+
+		/*!
+		* \brief Bind a request buffer to the class' curl object
+		*
+		* Overloaded function for binding a request buffer to the m_curl_connection object
+		* instance on this class. Note that this should never be called for getPercentage()
+		* or interrupt(), as these require their own objects
+		*/
 		void bindRequestBuffer(struct RequestBuffer *buffer);
 
 		/*!

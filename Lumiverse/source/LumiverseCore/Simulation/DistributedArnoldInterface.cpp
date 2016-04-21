@@ -103,15 +103,15 @@ namespace Lumiverse {
 			return 0.f;
 		}
 
-		m_curl_connection.reset();
-		m_curl_connection.add<CURLOPT_URL>((m_host_name + "/percent").c_str());
-		m_curl_connection.add<CURLOPT_PORT>(m_host_port);
+		curl::curl_easy percentage_curl;
+		percentage_curl.add<CURLOPT_URL>((m_host_name + "/percent").c_str());
+		percentage_curl.add<CURLOPT_PORT>(m_host_port);
 		struct RequestBuffer request_buffer;
-		bindRequestBuffer(&request_buffer);
+		bindRequestBuffer(&request_buffer, percentage_curl);
 
 		try {
 
-			m_curl_connection.perform();
+			percentage_curl.perform();
 		} catch (curl::curl_easy_exception error) {
 			curl::curlcpp_traceback errors = error.get_traceback();
 			error.print_traceback();
@@ -221,12 +221,16 @@ namespace Lumiverse {
 		return wasSuccessful;
 	}
 
-	void DistributedArnoldInterface::bindRequestBuffer(struct RequestBuffer *buffer) {
+	void DistributedArnoldInterface::bindRequestBuffer(struct RequestBuffer *buffer, curl::curl_easy &curl_request) {
 		buffer->buffer = new char[1];
 		buffer->num_written = 0;
 
-		m_curl_connection.add<CURLOPT_WRITEFUNCTION>(write_buffer_callback);
-		m_curl_connection.add<CURLOPT_WRITEDATA>(buffer);
+		curl_request.add<CURLOPT_WRITEFUNCTION>(write_buffer_callback);
+		curl_request.add<CURLOPT_WRITEDATA>(buffer);
+	}
+
+	void DistributedArnoldInterface::bindRequestBuffer(struct RequestBuffer *buffer) {
+		bindRequestBuffer(buffer, m_curl_connection);
 	}
 
 	int DistributedArnoldInterface::render(const std::set<Device *> &devices) {
@@ -301,12 +305,12 @@ namespace Lumiverse {
 			return;
 		}
 
-		m_curl_connection.reset();
-		m_curl_connection.add<CURLOPT_URL>((m_host_name + "/interrupt").c_str());
-		m_curl_connection.add<CURLOPT_PORT>(m_host_port);
+		curl::curl_easy interrupt_curl;
+		interrupt_curl.add<CURLOPT_URL>((m_host_name + "/interrupt").c_str());
+		interrupt_curl.add<CURLOPT_PORT>(m_host_port);
 
 		try {
-			m_curl_connection.perform();
+			interrupt_curl.perform();
 		}
 		catch (curl::curl_easy_exception error) {
 			curl::curlcpp_traceback errors = error.get_traceback();

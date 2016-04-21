@@ -158,7 +158,7 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
 	  m_interface->init(this->toJSON());
 	  
 	  // Check if we were able to open a connection
-	  if (!m_interface->isOpen()) {
+	  if (!m_interface->isDistributedOpen()) {
 		  std::cerr << "Connection could not be established. " << 
 			  "Check to make sure your host and port " << 
 			  "parameters are correct and that nobody " << 
@@ -213,7 +213,7 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
 	  m_interface->init(this->toJSON());
 
 	  // Check if we were able to open a connection
-	  if (!m_interface->isOpen()) {
+	  if (!m_interface->isDistributedOpen()) {
 		  std::cerr << "Connection could not be established. " <<
 			  "Check to make sure your host and port " <<
 			  "parameters are correct and that nobody " <<
