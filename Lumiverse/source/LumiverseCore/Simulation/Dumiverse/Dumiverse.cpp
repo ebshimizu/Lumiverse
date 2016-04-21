@@ -3,6 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include <thread>
+#include <set>
 #include "LumiverseCore.h"
 
 using namespace Lumiverse;
@@ -58,6 +59,20 @@ void render() {
 }
 
 int renderWrapper(const char *jsonDevicesStr) {
+    const JSONNode jsonDevices = libjson::parse(jsonDevicesStr);
+
+    std::set<Device *> devices;
+    for( auto i = jsonDevices.begin(); i != jsonDevices.end(); i++ ) {
+        std::string nodeName = i->name();
+        Device *device = new Device(nodeName, *i);
+        devices.insert(device);
+    }
+
+    m_patch->update(devices);
+
+    for( Device *device : devices ) {
+        delete device;
+    }
 
     std::thread render_thread(render);
     render_thread.detach();
