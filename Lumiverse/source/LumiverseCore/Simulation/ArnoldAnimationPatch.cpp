@@ -172,7 +172,7 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
   m_interface->setDriverFileName(basepath, filename);
 
   updateLight(frame.devices);
-  bool success = ArnoldPatch::renderLoop(frame.devices);
+  bool success = ArnoldPatch::renderLoop(devices);
 
   if (success) {
     unsigned char *bytes = new unsigned char[getWidth() * getHeight() * 4];
@@ -223,7 +223,7 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
 	  }
   }
 
-  updateLight(frame.devices);
+  updateLight(devices);
   bool success = ArnoldPatch::renderLoop(devices);
   frame.clear();
 

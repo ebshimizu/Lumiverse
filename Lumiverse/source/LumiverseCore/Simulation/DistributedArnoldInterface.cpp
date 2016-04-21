@@ -246,7 +246,7 @@ namespace Lumiverse {
 
 		// Devices / parameters node
 		std::string m_parameters_option = "m_parameters";
-		std::string m_parameters_value = this->getDevicesJSON(devices).write();
+		std::string m_parameters_value = this->getDevicesJSON(devices).write_formatted();
 		curl::curl_pair<CURLformoption, std::string> m_parameters_form(CURLFORM_COPYNAME, m_parameters_option);
 		curl::curl_pair<CURLformoption, std::string> m_parameters_cont(CURLFORM_COPYCONTENTS, m_parameters_value);
 		
@@ -361,22 +361,35 @@ namespace Lumiverse {
 	}
 
 	const JSONNode DistributedArnoldInterface::getSettingsJSON() {
-		JSONNode settings_node;
+		JSONNode root;
 
 		// First get all int options
 		for (auto i = int_options.begin(); i != int_options.end(); i++) {
-			settings_node.push_back(JSONNode(i->first, i->second));
+			JSONNode setting_node;
+			setting_node.push_back(JSONNode("type", "int"));
+			setting_node.push_back(JSONNode("name", i->first));
+			setting_node.push_back(JSONNode("value", i->second));
+			root.push_back(setting_node);
 		}
 
 		// Then get all float options
 		for (auto i = float_options.begin(); i != float_options.end(); i++) {
-			settings_node.push_back(JSONNode(i->first, i->second));
+			JSONNode setting_node;
+			setting_node.push_back(JSONNode("type", "int"));
+			setting_node.push_back(JSONNode("name", i->first));
+			setting_node.push_back(JSONNode("value", i->second));
+			root.push_back(setting_node);
 		}
 
-		return settings_node;
+		return root;
 	}
 
 	void DistributedArnoldInterface::setOptionParameter(const std::string &paramName, int val) {
+		if (strcmp(paramName.c_str(), "width") == 0) {
+			m_width = val;
+		} else if (strcmp(paramName.c_str(), "height") == 0) {
+			m_height = val;
+		}
 		int_options[paramName] = val;
 	}
 
