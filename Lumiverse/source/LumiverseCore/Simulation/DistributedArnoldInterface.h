@@ -80,7 +80,8 @@ namespace Lumiverse {
 			ArnoldInterface(),
 			m_host_name(host),
 			m_host_port(port),
-			m_file_output_path(outputPath) {}
+			m_file_output_path(outputPath),
+      m_remote_open(false) {}
 
 		/*!
 		* \brief Default DistributedArnoldInterface constructor.
@@ -92,7 +93,8 @@ namespace Lumiverse {
 			ArnoldInterface(),
 			m_host_name("localhost"),
 			m_host_port(80),
-			m_file_output_path("./test.out") {}
+			m_file_output_path("./test.out"),
+      m_remote_open(false) {}
 
 
 		~DistributedArnoldInterface() { }
@@ -206,6 +208,11 @@ namespace Lumiverse {
 		void setOptionParameter(const std::string &paramName, int val);
 		void setOptionParameter(const std::string &paramName, float val);
 
+    /*!
+    \brief returns the status of the remote connection
+    */
+    bool isDistributedOpen() override;
+
 	private:
 
 		/*!
@@ -306,6 +313,8 @@ namespace Lumiverse {
 		// Maps containing global Arnold options node settings
 		std::unordered_map<std::string, float> float_options;
 		std::unordered_map<std::string, int> int_options;
+
+    bool m_remote_open;
 	};
 }
 

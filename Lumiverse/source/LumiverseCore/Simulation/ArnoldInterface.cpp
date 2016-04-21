@@ -418,6 +418,11 @@ void ArnoldInterface::setDriverFileName(string base, string filename)
   }
 }
 
+bool ArnoldInterface::isDistributedOpen()
+{
+  return m_open;
+}
+
 void ArnoldInterface::init() {
   // TODO : to use env var (different apis for linux and win)
   // Make sure your environment variables are set properly to check out an arnold license.

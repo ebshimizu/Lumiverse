@@ -25,7 +25,7 @@ namespace Lumiverse {
 	void DistributedArnoldInterface::init(const JSONNode jsonPatch) {
 		std::cout << "Initializing connection in DistributedArnoldInterface" << std::endl;
 
-		if (m_open) {
+		if (m_remote_open) {
 			std::cout << "Tried to open a connection when one was already open. You must close this connection before  opening a new one" << std::endl;
 
 			return;
@@ -43,7 +43,7 @@ namespace Lumiverse {
 			return;
 		}
 
-		m_open = true;
+		m_remote_open = true;
 	}
 
 	bool DistributedArnoldInterface::openConnection() {
@@ -95,7 +95,7 @@ namespace Lumiverse {
 
 	float DistributedArnoldInterface::getPercentage() {
 
-		if (!m_open) {
+		if (!m_remote_open) {
 			std::cout <<
 				"Can't check progress without opening a connection. Send a request to the /open endpoint first by calling init()."
 				<< std::endl;
@@ -230,7 +230,7 @@ namespace Lumiverse {
 	}
 
 	int DistributedArnoldInterface::render(const std::set<Device *> &devices) {
-		if (!m_open) {
+		if (!m_remote_open) {
 			std::cerr << "Cannot send render request -- " << 
 				"you must first initialize the connection " << 
 				"to the remote renderer by calling init" << std::endl;
@@ -281,7 +281,7 @@ namespace Lumiverse {
 	}
 
 	void DistributedArnoldInterface::close() {
-		if (!m_open) {
+		if (!m_remote_open) {
 			std::cout << "Can't close connection -- connection not opened" << std::endl;
 
 			return;
@@ -291,11 +291,11 @@ namespace Lumiverse {
 			std::cout << "Unable to close connection -- error ocurred" << std::endl;
 		}
 
-		m_open = false;
+		m_remote_open = false;
 	}
 
 	void DistributedArnoldInterface::interrupt() {
-		if (!m_open) {
+		if (!m_remote_open) {
 			std::cout << "Can't interrupt rendering -- connection was never opened. You must first make a call to init" << std::endl;
 
 			return;
@@ -396,6 +396,10 @@ namespace Lumiverse {
 	void DistributedArnoldInterface::setOptionParameter(const std::string &paramName, float val) {
 		float_options[paramName] = val;
 	}
+  bool DistributedArnoldInterface::isDistributedOpen()
+  {
+    return m_remote_open;
+  }
 }
 
 #endif // USE_DUMIVERSE

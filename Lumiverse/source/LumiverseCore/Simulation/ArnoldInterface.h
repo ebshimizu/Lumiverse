@@ -372,6 +372,12 @@ namespace Lumiverse {
     */
     void setDriverFileName(string base, string filename);
 
+    /*!
+    \brief Indicates if the distributed interface is currently open
+    In the base class, this is the same as the local status
+    */
+    virtual bool isDistributedOpen();
+
   protected:
     /*!
     * \brief Helper function to sets a arnold non-array parameter.

@@ -27,7 +27,7 @@ void ArnoldAnimationPatch::loadJSON(const JSONNode data) {
 }
 
 void ArnoldAnimationPatch::init() {
-    ArnoldPatch::init();
+  ArnoldPatch::init();
 
 	// Cleans hooks to old callbacks
 	SimulationAnimationPatch::init();
@@ -154,7 +154,7 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
   }
 
   // Render immediately.
-  if (!m_interface->isOpen()) {
+  if (!m_interface->isDistributedOpen()) {
 	  m_interface->init(this->toJSON());
 	  
 	  // Check if we were able to open a connection
@@ -209,7 +209,7 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
   }
 
   // Render immediately.
-  if (!m_interface->isOpen()) {
+  if (!m_interface->isDistributedOpen()) {
 	  m_interface->init(this->toJSON());
 
 	  // Check if we were able to open a connection
