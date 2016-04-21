@@ -69,14 +69,14 @@ int renderWrapper(const char *jsonDevicesStr, const char *jsonSettingsStr) {
         devices.insert(device);
     }
 
-    m_patch->update(devices);
+    m_patch->updateLight(devices);
 
     for( Device *device : devices ) {
         delete device;
     }
 
     // Update settings
-    const JSONNode jsonSettings = libjson::parse(jsonDevicesStr);
+    const JSONNode jsonSettings = libjson::parse(jsonSettingsStr);
     int new_width = -1, new_height = -1;
     for( auto i = jsonSettings.begin(); i != jsonSettings.end(); i++ ) {
 

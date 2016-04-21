@@ -235,14 +235,14 @@ namespace Lumiverse {
 	virtual void setOptionParameter(std::string paramName, int val);
 	virtual void setOptionParameter(std::string paramName, float val);
 
-  protected:
-
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.
     * This function updates light node for renderer.
     * \param devices The device list.
     */
     void updateLight(set<Device *> devices);
+
+  protected:
 
     /*!
     * \brief Loads a arnold light node.

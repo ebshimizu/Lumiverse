@@ -5,7 +5,7 @@ var app = express();
 var swig = require('./build/Release/dumiverse_swig');
 
 // Get command line arguments
-if (process.argv.length < 4) {
+if (process.argv.length < 3) {
     console.log("usage: node dumiverse <port> <path to plugins dir>");
     process.exit(1);
 }
