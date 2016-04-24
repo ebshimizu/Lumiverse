@@ -1,9 +1,15 @@
 
+#ifdef USE_ARNOLD_CACHING
+
 #include "Compositor.h"
 #include "EXRLayer.h"
+#include "Device.h"
 
 #include <string.h>
 #include <chrono>
+#include <unordered_map>
+#include <set>
+#include <assert.h>
 
 namespace Lumiverse {
 
@@ -69,6 +75,10 @@ EXRLayer *Compositor::get_layer_by_name(const char *layer_name) {
 	}
 }
 
+bool Compositor::contains_layer(const char *layer_name) {
+	return layers.count(layer_name) > 0;
+}
+
 void Compositor::del_layer_by_name(const char *layer_name) {
 
 	if (layers.count(layer_name) > 0) {
@@ -78,29 +88,63 @@ void Compositor::del_layer_by_name(const char *layer_name) {
 	}
 }
 
-void Compositor::render() {
+void Compositor::update_dims(int width, int height) {
+	if (compose_buffer != NULL) {
+		delete[] compose_buffer;
+	}
+
+	this->w = width;
+	this->h = height;
+	compose_buffer = new Pixel4[width * height]();
+}
+
+void Compositor::render(const std::set<Device*> &devices) {
 
   // clear previous rendering
-  memset((void *)compose_buffer, 0, sizeof(Pixel4) * w * h);
+  std::memset((void *)compose_buffer, 0, sizeof(Pixel4) * w * h);
 
-  // composite all active layers
-  EXRLayer *layer;
-  std::unordered_map<std::string, EXRLayer *>::iterator it = layers.begin();
-  for (auto it = layers.begin(); it != layers.end(); it++) {
+  for (Device *device : devices) {
+	  std::string name = device->getMetadata("Arnold Node Name");
 
-    layer = it->second;
-    Pixel4 m = layer->get_modulator();
-    Pixel4 *pixels = layer->get_pixels();
-	if (layer->is_active()) {
-	  for (int i = 0; i < w * h; i++) {
-		  if (pixels[i].a > 0) {
-			  compose_buffer[i].r += m.r * pixels[i].r;
-			  compose_buffer[i].g += m.g * pixels[i].g;
-			  compose_buffer[i].b += m.b * pixels[i].b
+	  // Only composite active layers
+	  EXRLayer *layer = this->get_layer_by_name(name.c_str());
+	  if (!layer->is_active()) {
+		  continue;
+	  }
+
+	  float intensity_shift = device->getIntensity()->asPercent();
+	 // float intensity_shift = 1.f;
+
+	  Eigen::Vector3d modulator = device->getColor()->getRGB();
+
+	  float r = modulator.x();
+	  float g = modulator.y();
+	  float b = modulator.z();
+
+	  /*
+	  float r = 1.f;
+	  float g = 1.f;
+	  float b = 1.f;
+	  */
+
+	  Pixel4 *pixels = layer->get_downsampled_pixels(w, h);
+	  if (layer->is_active()) {
+		  for (int i = 0; i < w * h; i++) {
+			  Pixel4 basis_pixel = pixels[i];
+			  if (basis_pixel.a > 0) {
+				  compose_buffer[i].r += (r * intensity_shift * basis_pixel.r);
+				  compose_buffer[i].g += (g * intensity_shift * basis_pixel.g);
+				  compose_buffer[i].b += (b * intensity_shift * basis_pixel.b);
+			  }
 		  }
-      }
-    }
+	  }
+
+	  if (w != layer->get_width() || h != layer->get_height()) {
+		  delete[] pixels;
+	  }
   }
 }
 
 }; // namespace Lumiverse
+
+#endif // USE_ARNOLD_CACHING

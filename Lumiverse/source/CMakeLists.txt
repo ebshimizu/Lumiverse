@@ -12,6 +12,7 @@ ENDIF ()
 set (LumiverseCore_INCLUDE_ARNOLD OFF CACHE BOOL   "Build LumiverseCore with Arnold Simulator")
 set (LumiverseCore_ARNOLD_PATH "" CACHE PATH "Location of Arnold Renderer tree")
 set (LumiverseCore_INCLUDE_DISTRIBUTED_ARNOLD OFF CACHE BOOL "Enable distributed Arnold rendering")
+set (LumiverseCore_INCLUDE_CACHING_ARNOLD OFF CACHE BOOL "Enable cached Arnold rendering")
 
 IF (LumiverseCore_INCLUDE_ARNOLD)
 
@@ -25,6 +26,11 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
   IF (LumiverseCore_INCLUDE_DISTRIBUTED_ARNOLD)
 	ADD_DEFINITIONS(-DUSE_DUMIVERSE)
   ENDIF (LumiverseCore_INCLUDE_DISTRIBUTED_ARNOLD)
+
+  IF (LumiverseCore_INCLUDE_CACHING_ARNOLD)
+	ADD_DEFINITIONS(-DUSE_ARNOLD_CACHING)
+  ENDIF (LumiverseCore_INCLUDE_CACHING_ARNOLD)
+
 
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
@@ -173,6 +179,8 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/ArnoldParameterVector.h
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/DistributedArnoldInterface.h
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/DistributedArnoldInterface.cpp
+	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/DistributedCachingArnoldInterface.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/DistributedCachingArnoldInterface.cpp
 	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/Compositor.h
 	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/Compositor.cpp
 	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/CachingArnoldInterface.cpp
@@ -226,6 +234,8 @@ ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 # Simulation module needs libpng to output png
 # Build with Arnold SDK (ai)
 IF (LumiverseCore_INCLUDE_ARNOLD)
+
+	# Distributed build logic
 	IF (LumiverseCore_INCLUDE_DISTRIBUTED_ARNOLD)
 		set(LIBCURL_INCLUDE_DIR "" CACHE PATH "Path to libcurl include directory")
 		set(LIBCURL_LIBRARY "" CACHE FILEPATH "Path to libcurl library")
@@ -246,6 +256,44 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
 		SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${LIBCURL_LIBRARY})
 		SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${CURLCPP_LIBRARY})
 	ENDIF (LumiverseCore_INCLUDE_DISTRIBUTED_ARNOLD)
+
+	# Caching build logic
+	IF (LumiverseCore_INCLUDE_CACHING_ARNOLD)
+		set(OPENEXR_INCLUDE_DIR "" CACHE PATH "Path to OpenExr include directory")
+		set(OPENEXR_LIBRARY_DIR "" CACHE PATH "Path to OpenExr library")
+		set(ILMBASE_INCLUDE_DIR "" CACHE PATH "Path to IlmBase include directory")
+		set(ILMBASE_LIBRARY_DIR "" CACHE PATH "Path to IlmBase library directory")
+
+		IF("${OPENEXR_INCLUDE_DIR}" STREQUAL "")
+			MESSAGE(FATAL_ERROR "You must include OPENEXR_INCLUDE_DIR if you're using cached Arnold rendering")
+		ELSEIF("${OPENEXR_LIBRARY_DIR}" STREQUAL "")
+			MESSAGE(FATAL_ERROR "You must include OPENEXR_LIBRARY_DIR if you're using cached Arnold rendering")
+		ELSEIF("${ILMBASE_INCLUDE_DIR}" STREQUAL "")
+			MESSAGE(FATAL_ERROR "You must include ILMBASE_INCLUDE_DIR if you're using cached Arnold rendering")
+		ELSEIF("${ILMBASE_LIBRARY_DIR}" STREQUAL "")
+			MESSAGE(FATAL_ERROR "You must include ILMBASE_LIBRARY_DIR if you're using cached Arnold rendering")
+		ENDIF("${OPENEXR_INCLUDE_DIR}" STREQUAL "")
+
+		include_directories(${OPENEXR_INCLUDE_DIR}/OpenEXR)
+		include_directories(${ILMBASE_INCLUDE_DIR}/OpenEXR)
+		IF(WIN32)
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${OPENEXR_LIBRARY_DIR}/IlmImf-2_2.lib)
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${OPENEXR_LIBRARY_DIR}/IlmImfUtil-2_2.lib)
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/Iex-2_2.lib)
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/Half.lib)
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/Imath-2_2.lib)
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/IexMath-2_2.lib)
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/IlmThread-2_2.lib)
+		ELSE()
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${OPENEXR_LIBRARY_DIR}/libIlmImf.so)
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${OPENEXR_LIBRARY_DIR}/libIlmImfUtil.so)
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/libIex.so)
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/libHalf.so)
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/libImath.so)
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/libIexMath.so)
+			SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/libIlmThread.so)
+		ENDIF(WIN32)
+	ENDIF (LumiverseCore_INCLUDE_CACHING_ARNOLD)
 
 	find_package(PNG REQUIRED)
 

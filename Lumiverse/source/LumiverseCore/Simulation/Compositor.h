@@ -1,10 +1,14 @@
 #ifndef Lumiverse_COMPOSITOR_H
 #define Lumiverse_COMPOSITOR_H
 
+#ifdef USE_ARNOLD_CACHING
+
 #include <unordered_map>
+#include <set>
 #include <string>
 
 #include "EXRLayer.h"
+#include "Device.h"
 
 namespace Lumiverse {
 
@@ -83,13 +87,24 @@ public:
    * Render the scene.
    * Updates the frame buffer based on the the current state of the scene.
    */
-  void render();
+  void render(const std::set<Device*> &devices);
 
   /*!
   \brief Get the buffer of composed pixels (i.e. the composition of
   all of the exr layers)
   */
-  Pixel3 *get_compose_buffer() { return compose_buffer; };
+  Pixel4 *get_compose_buffer() { return compose_buffer; };
+
+  /*!
+  \brief Update the compositor to use new dimensions. Note that this also
+  wipes the EXR layer cache buffers (i.e. it clears the cache)
+  */
+  void update_dims(int w, int h);
+
+  /*!
+  \brief Check if this compositor contains a layer at the given name
+  */
+  bool contains_layer(const char *layer_name);
 
 private:
   /**
@@ -119,5 +134,7 @@ private:
 };
 
 }; // namespace Lumiverse
+
+#endif // USE_ARNOLD_CACHING
 
 #endif // Lumiverse_COMPOSITOR_H

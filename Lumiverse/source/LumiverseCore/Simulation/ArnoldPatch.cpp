@@ -41,22 +41,32 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 		if (outputPathNode != distributedNode->end()) {
 			string outputPath = outputPathNode->as_string();
 		}
-		
+
 		stringstream ss;
 		ss << "Using DistributedArnoldInterface with host " << host << " and port " << port;
 		Logger::log(INFO, ss.str());
-		m_interface = (DistributedArnoldInterface *)new DistributedArnoldInterface(host, port, outputPath);
-<<<<<<< HEAD
+
+		// Should we use caching on the distributed side
+		if (cacheRendering(data)) {
+			m_interface = (DistributedCachingArnoldInterface *)new DistributedCachingArnoldInterface(host, port, outputPath);
+			m_interface->setUsingCaching(true);
+		} else {
+			m_interface = (DistributedArnoldInterface *)new DistributedArnoldInterface(host, port, outputPath);
+			m_interface->setUsingCaching(false);
+		}
 		m_using_distributed = true;
 #endif
-=======
->>>>>>> origin/caching_interface
 	}
 	else if (cacheRendering(data)) {
+#ifdef USE_ARNOLD_CACHING
+		Logger::log(INFO, "Using ArnoldInterface with caching");
 		m_interface = (CachingArnoldInterface *)new CachingArnoldInterface();
+		m_interface->setUsingCaching(true);
+#endif
 	} else {
 		Logger::log(INFO, "Using ArnoldInterface");
 		m_interface = (ArnoldInterface *)new ArnoldInterface();
+		m_interface->setUsingCaching(false);
 	}
 
 	while (i != data.end()) {
@@ -80,27 +90,34 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 		}
 
 		if (nodeName == "sceneFile") {
-          JSONNode fileName = *i;
-          m_interface->setAssFile(fileName.as_string());
+			JSONNode fileName = *i;
+			m_interface->setAssFile(fileName.as_string());
 		}
-        
-        if (nodeName == "pluginDir") {
-            JSONNode dir = *i;
+
+		if (nodeName == "pluginDir") {
+			JSONNode dir = *i;
 			std::string plugin = dir.as_string();
 #ifndef _WIN32
 			convertPlugin(plugin);
 #endif
 			m_interface->setPluginDirectory(plugin);
-		}
-        
-        if (nodeName == "gamma") {
-            JSONNode gamma = *i;
-            m_interface->setGamma(gamma.as_float());
+	}
+
+		if (nodeName == "gamma") {
+			JSONNode gamma = *i;
+			m_interface->setGamma(gamma.as_float());
 		}
 
 		if (nodeName == "predictive") {
 			JSONNode predictive = *i;
 			m_interface->setPredictive(predictive.as_bool());
+		}
+
+		// check if m_using_caching flag was passed
+		// this is consumed by the distributed renderer when deciding
+		// which buffer driver to use
+		if (nodeName == "m_using_caching") {
+			m_interface->setUsingCaching(i->as_bool());
 		}
         
     if (nodeName == "samples") {
@@ -152,7 +169,6 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 
 }
 
-<<<<<<< HEAD
 void ArnoldPatch::setOptionParameter(std::string paramName, int val) {
 	m_interface->setOptionParameter(paramName, val);
 }
@@ -161,8 +177,6 @@ void ArnoldPatch::setOptionParameter(std::string paramName, float val) {
 	m_interface->setOptionParameter(paramName, val);
 }
 
-=======
->>>>>>> origin/caching_interface
 bool ArnoldPatch::cacheRendering(const JSONNode data) {
 	auto cacheNode = data.find("cache_rendering");
 
@@ -497,6 +511,7 @@ JSONNode ArnoldPatch::toJSON() {
 	root.push_back(JSONNode("pluginDir", m_interface->getPluginDirectory()));
 	root.push_back(JSONNode("predictive", (m_interface->getPredictive()) ? 1 : 0));
 	root.push_back(JSONNode("gamma", m_interface->getGamma()));
+	root.push_back(JSONNode("m_using_caching", m_interface->isUsingCaching()));
 
 	JSONNode lights;
 	lights.set_name("lights");
