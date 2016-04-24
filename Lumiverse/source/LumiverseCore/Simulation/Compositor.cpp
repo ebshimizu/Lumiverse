@@ -1,4 +1,6 @@
 
+#ifdef USE_ARNOLD_CACHING
+
 #include "Compositor.h"
 #include "EXRLayer.h"
 
@@ -104,3 +106,5 @@ void Compositor::render() {
 }
 
 }; // namespace Lumiverse
+
+#endif // USE_ARNOLD_CACHING

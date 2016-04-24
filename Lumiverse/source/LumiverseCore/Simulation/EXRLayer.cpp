@@ -1,5 +1,7 @@
 #include "EXRLayer.h"
 
+#ifdef USE_ARNOLD_CACHING
+
 namespace Lumiverse {
 
 EXRLayer::EXRLayer(const char *file, const char *name) {
@@ -55,3 +57,5 @@ void EXRLayer::set_modulator(Pixel3 modulator) { this->modulator = modulator; }
 Pixel4 *EXRLayer::get_pixels() { return pixels; }
 
 }; // namespace LightmanCore
+
+#endif // USE_ARNOLD_CACHING

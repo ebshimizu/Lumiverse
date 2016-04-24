@@ -1,6 +1,8 @@
 #ifndef Lumiverse_PIXEL_H
 #define Lumiverse_PIXEL_H
 
+#ifdef USE_ARNOLD_CACHING
+
 #include <iostream>
 
 namespace Lumiverse {
@@ -98,5 +100,7 @@ public:
 inline int clamp(float x) { return x < 0 ? 0 : x > 1 ? 255 : int(x * 255); }
 
 }; // namespace Lumiverse
+
+#endif // USE_ARNOLD_CACHING
 
 #endif // Lumiverse_PIXEL_H

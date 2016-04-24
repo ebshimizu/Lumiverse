@@ -3,6 +3,8 @@
 
 #include "EXRLayer.h"
 
+#ifdef USE_ARNOLD_CACHING
+
 namespace Lumiverse {
 
 /**
@@ -243,5 +245,7 @@ private:
 };
 
 }; // namespace LightmanCore
+
+#endif // USE_ARNOLD_CACHING
 
 #endif // LIGHTMAN_TONEMAPPER_H

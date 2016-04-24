@@ -1,6 +1,8 @@
 #ifndef Lumiverse_COMPOSITOR_H
 #define Lumiverse_COMPOSITOR_H
 
+#ifdef USE_ARNOLD_CACHING
+
 #include <unordered_map>
 #include <string>
 
@@ -119,5 +121,7 @@ private:
 };
 
 }; // namespace Lumiverse
+
+#endif // USE_ARNOLD_CACHING
 
 #endif // Lumiverse_COMPOSITOR_H

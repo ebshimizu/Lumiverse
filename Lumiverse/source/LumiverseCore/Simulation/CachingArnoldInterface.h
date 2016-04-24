@@ -16,6 +16,8 @@
 
 #ifdef USE_ARNOLD
 
+#ifdef USE_ARNOLD_CACHING
+
 #include "ArnoldInterface.h"
 #include <ai.h>
 #include "ArnoldParameterVector.h"
@@ -80,6 +82,8 @@ namespace Lumiverse {
 	};
 }
 
-#endif
+#endif // USE_ARNOLD_CACHING
+
+#endif // USE_ARNOLD
 
 #endif // _Arnold_CACHE_INTERFACE_H_

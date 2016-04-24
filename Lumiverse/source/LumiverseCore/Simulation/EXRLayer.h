@@ -1,6 +1,8 @@
 #ifndef LumiverseEXR_LAYER_H
 #define LumiverseEXR_LAYER_H
 
+#ifdef USE_ARNOLD_CACHING
+
 #include <string>
 #include <vector>
 
@@ -121,5 +123,7 @@ private:
 };
 
 }; // namespace Lumiverse
+
+#endif // USE_ARNOLD_CACHING
 
 #endif // LumiverseEXR_LAYER_H

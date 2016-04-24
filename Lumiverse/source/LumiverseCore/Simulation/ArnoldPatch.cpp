@@ -50,7 +50,9 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 #endif
 	}
 	else if (cacheRendering(data)) {
+#ifdef USE_ARNOLD_CACHING
 		m_interface = (CachingArnoldInterface *)new CachingArnoldInterface();
+#endif
 	} else {
 		Logger::log(INFO, "Using ArnoldInterface");
 		m_interface = (ArnoldInterface *)new ArnoldInterface();

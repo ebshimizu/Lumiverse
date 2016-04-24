@@ -6,8 +6,13 @@
 #include "ImfOutputFile.h"  // Imf file IO
 #include "ImfRgbaFile.h"    // Imf RGBA scaneline
 #include "ImfChannelList.h" // Imf channels
+#include "ImathBox.h"
 
 #include <ai.h>
+
+#ifdef USE_ARNOLD
+
+#ifdef USE_ARNOLD_CACHING
 
 namespace Lumiverse {
 
@@ -191,7 +196,7 @@ namespace Lumiverse {
 
 		// check header
 		bool isTiled;
-		bool isValid = isOpenExrFile(file_path, isTiled);
+		bool isValid = OPENEXR_IMF_INTERNAL_NAMESPACE::isOpenExrFile(file_path, isTiled);
 		if (isValid) {
 
 			// check for tiled exr
@@ -200,7 +205,8 @@ namespace Lumiverse {
 				return -1;
 			}
 
-		} else {
+		}
+		else {
 
 			// file not valid
 			std::cerr << "Invalid input OpenEXR file: " << file_path;
@@ -208,68 +214,73 @@ namespace Lumiverse {
 		}
 
 		// read dimensions
-		InputFile file(file_path);
-		Box2i dw = file.header().dataWindow();
-		w = dw.max.x - dw.min.x + 1;
-		h = dw.max.y - dw.min.y + 1;
+		OPENEXR_IMF_INTERNAL_NAMESPACE::InputFile file(file_path);
+		IMATH_INTERNAL_NAMESPACE::Box2i dw = file.header().dataWindow();
+		m_width = dw.max.x - dw.min.x + 1;
+		m_height = dw.max.y - dw.min.y + 1;
 
 		// read channel information
-		const ChannelList &channels = file.header().channels();
+		const OPENEXR_IMF_INTERNAL_NAMESPACE::ChannelList &channels = file.header().channels();
 		set<string> names;
 		channels.layers(names);
 
 		// read layers
 		string layer_name;
-		Pixel3 *pixels;
+		Pixel4 *pixels;
 		if (names.size()) {
 
 			// read pixels
-			FrameBuffer frame_buffer;
+			OPENEXR_IMF_INTERNAL_NAMESPACE::FrameBuffer frame_buffer;
 			for (set<string>::iterator i = names.begin(); i != names.end(); ++i) {
 				// load layers
 				layer_name = *i;
 
 				// allocate memory
-				pixels = new Pixel4[w * h]();
+				pixels = new Pixel4[m_width * m_height]();
 				if (!pixels)
-					lmerr("Failed to allocate memory for new layer");
+					std::cerr << "Failed to allocate memory for new layer" << std::endl;
 
 				// layer.R
 				frame_buffer.insert((layer_name + ".R").c_str(), // name
-					Slice(FLOAT,                 // type
+					OPENEXR_IMF_INTERNAL_NAMESPACE::Slice(OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT,
 						(char *)&pixels[0].r,  // base
 						sizeof(Pixel3) * 1,    // xstride
-						sizeof(Pixel3) * w,    // ystride
+						sizeof(Pixel3) * m_width,    // ystride
 						1, 1,                  // sampling
 						0.0));                 // fill value
 											   // layer.R
 				frame_buffer.insert((layer_name + ".G").c_str(), // name
-					Slice(FLOAT,                 // type
+					OPENEXR_IMF_INTERNAL_NAMESPACE::Slice(OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT,
 						(char *)&pixels[0].g,  // base
 						sizeof(Pixel3) * 1,    // xstride
-						sizeof(Pixel3) * w,    // ystride
+						sizeof(Pixel3) * m_width,    // ystride
 						1, 1,                  // sampling
 						0.0));                 // fill value
 											   // layer.R
 				frame_buffer.insert((layer_name + ".B").c_str(), // name
-					Slice(FLOAT,                 // type
+					OPENEXR_IMF_INTERNAL_NAMESPACE::Slice(OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT,
 						(char *)&pixels[0].b,  // base
 						sizeof(Pixel3) * 1,    // xstride
-						sizeof(Pixel3) * w,    // ystride
+						sizeof(Pixel3) * m_width,    // ystride
 						1, 1,                  // sampling
 						0.0));                 // fill value
 
 											   // add layer
-				Layer *layer = new Layer(pixels, w, h, layer_name.c_str());
-				compositor->add_layer(layer);
-				lmout(" - Found layer: " << layer_name);
+				EXRLayer *layer = new EXRLayer(pixels, m_width, m_height, layer_name.c_str());
+				compositor.add_layer(layer);
+				std::cout << " - Found layer: " << layer_name << std::endl;
 			}
 
 			// read pixels
-			lmout(" - Loading layers from multi-layered EXR file");
+			std::cout << " - Loading layers from multi-layered EXR file" << std::endl;
 			file.setFrameBuffer(frame_buffer);
 			file.readPixels(dw.min.y, dw.max.y);
 
 			return 0;
 		}
+	}
 }
+
+#endif // USE_ARNOLD_CACHING
+
+#endif // USE_ARNOLD
