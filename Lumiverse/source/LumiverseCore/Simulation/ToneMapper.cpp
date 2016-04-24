@@ -36,7 +36,7 @@ namespace Lumiverse {
 
 	void ToneMapper::set_level(float level) { this->level = level; }
 
-	void ToneMapper::set_input(Pixel3 *buffer, size_t w, size_t h) {
+	void ToneMapper::set_input(Pixel4 *buffer, size_t w, size_t h) {
 
 		this->w = w;
 		this->h = h;
@@ -44,7 +44,7 @@ namespace Lumiverse {
 		this->input_buffer = buffer;
 	}
 
-	void ToneMapper::set_output_hdr(Pixel3 *buffer) {
+	void ToneMapper::set_output_hdr(Pixel4 *buffer) {
 
 		this->hdr_output_buffer = buffer;
 	}
@@ -154,7 +154,7 @@ namespace Lumiverse {
 		float e = sqrt(pow(2, level));
 		for (size_t i = 0; i < w * h; ++i) {
 
-			Pixel3 pixel = input_buffer[i];
+			Pixel4 pixel = input_buffer[i];
 
 			float l = pixel.illum();
 

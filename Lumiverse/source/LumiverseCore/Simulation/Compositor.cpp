@@ -89,14 +89,14 @@ void Compositor::render() {
   for (auto it = layers.begin(); it != layers.end(); it++) {
 
     layer = it->second;
-    Pixel4 m = layer->get_modulator();
+    Pixel3 m = layer->get_modulator();
     Pixel4 *pixels = layer->get_pixels();
 	if (layer->is_active()) {
 	  for (int i = 0; i < w * h; i++) {
 		  if (pixels[i].a > 0) {
 			  compose_buffer[i].r += m.r * pixels[i].r;
 			  compose_buffer[i].g += m.g * pixels[i].g;
-			  compose_buffer[i].b += m.b * pixels[i].b
+			  compose_buffer[i].b += m.b * pixels[i].b;
 		  }
       }
     }

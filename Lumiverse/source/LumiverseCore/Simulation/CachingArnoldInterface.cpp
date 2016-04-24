@@ -1,6 +1,13 @@
 #include "CachingArnoldInterface.h"
 
 #include "types/LumiverseFloat.h"
+#include "ImfTestFile.h"    // Header checks
+#include "ImfInputFile.h"   // Imf file IO
+#include "ImfOutputFile.h"  // Imf file IO
+#include "ImfRgbaFile.h"    // Imf RGBA scaneline
+#include "ImfChannelList.h" // Imf channels
+
+#include <ai.h>
 
 namespace Lumiverse {
 
@@ -20,7 +27,7 @@ namespace Lumiverse {
 		m_width = AiNodeGetInt(options, "xres");
 		m_height = AiNodeGetInt(options, "yres");
 		m_samples = AiNodeGetInt(options, "AA_samples");
-		this->setHDROutputBuffer(new Pixel3[m_width * m_height]);
+		this->setHDROutputBuffer(new Pixel4[m_width * m_height]);
 
 		// setup buffer driver
 		AtNode *driver = AiNode("driver_buffer");
@@ -69,7 +76,7 @@ namespace Lumiverse {
 
 			// create new layer
 			string name = AiNodeGetStr(light, "name");
-			Pixel3 *pixels = new Pixel3[m_width * m_height]();
+			Pixel4 *pixels = new Pixel4[m_width * m_height]();
 			EXRLayer *layer = new EXRLayer(pixels, m_width, m_height, name.c_str());
 
 			// Disable layer by default -- enable when we read light nodes from scene in render()
@@ -93,7 +100,7 @@ namespace Lumiverse {
 		AiNodeIteratorDestroy(it);
 
 		// temp buffer to hold arnold output
-		float buffer = new float[m_width * m_height * 4];
+		float *buffer = new float[m_width * m_height * 4];
 
 		// render each per-light layer
 		std::cout << "Rendering layers" << std::endl;
@@ -116,12 +123,13 @@ namespace Lumiverse {
 			std::string name = AiNodeGetStr(light, "name");
 			EXRLayer *layer = compositor.get_layer_by_name(name.c_str());
 
-			Pixel3 *layer_buffer = layer->get_pixels();
+			Pixel4 *layer_buffer = layer->get_pixels();
 			for (size_t idx = 0; idx < m_width * m_height; ++idx) {
-				layer_buffer[idx].r = buffer[idx].r;
-				layer_buffer[idx].g = buffer[idx].g;
-				layer_buffer[idx].b = buffer[idx].b;
-				layer_buffer[idx].a = buffer[idx].a;
+				int buf_idx = idx * 4;
+				layer_buffer[idx].r = buffer[buf_idx];
+				layer_buffer[idx].g = buffer[buf_idx + 1];
+				layer_buffer[idx].b = buffer[buf_idx + 2];
+				layer_buffer[idx].a = buffer[buf_idx + 3];
 			}
 
 			// disable light
@@ -158,7 +166,7 @@ namespace Lumiverse {
 		return AI_SUCCESS;
 	}
 
-	void CachingArnoldInterface::setHDROutputBuffer(Pixel3 *buffer) {
+	void CachingArnoldInterface::setHDROutputBuffer(Pixel4 *buffer) {
 
 		if (buffer) {
 			this->hdr_output_buffer = buffer;
@@ -222,7 +230,7 @@ namespace Lumiverse {
 				layer_name = *i;
 
 				// allocate memory
-				pixels = new Pixel3[w * h]();
+				pixels = new Pixel4[w * h]();
 				if (!pixels)
 					lmerr("Failed to allocate memory for new layer");
 

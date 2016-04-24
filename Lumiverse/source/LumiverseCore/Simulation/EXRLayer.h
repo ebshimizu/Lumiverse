@@ -25,7 +25,7 @@ public:
    * Constructor.
    * Creates a new layer from allocated buffer.
    */
-  EXRLayer(Pixel3 *pixel_buffer, size_t w, size_t h, const char *name = NULL);
+  EXRLayer(Pixel4 *pixel_buffer, size_t w, size_t h, const char *name = NULL);
 
   /**
    * Destructor.
@@ -80,7 +80,7 @@ public:
   /**
    * Get a pointer to the pixels.
    */
-  Pixel3 *get_pixels();
+  Pixel4 *get_pixels();
 
 private:
   /**
@@ -117,7 +117,7 @@ private:
    * Do note that the pixels have RGB channels only since it does not
    * make sense for an alpha channel to exist in the illuminance space.
    */
-  Pixel3 *pixels;
+  Pixel4 *pixels;
 };
 
 }; // namespace Lumiverse

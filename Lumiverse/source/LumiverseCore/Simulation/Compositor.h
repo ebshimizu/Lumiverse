@@ -89,7 +89,7 @@ public:
   \brief Get the buffer of composed pixels (i.e. the composition of
   all of the exr layers)
   */
-  Pixel3 *get_compose_buffer() { return compose_buffer; };
+  Pixel4 *get_compose_buffer() { return compose_buffer; };
 
 private:
   /**

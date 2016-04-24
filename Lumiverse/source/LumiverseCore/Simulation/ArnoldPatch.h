@@ -288,16 +288,12 @@ namespace Lumiverse {
 	* \param JSONNode containing a Patch
 	* \sa loadPatches(), cacheRendering()
 	*/
-<<<<<<< HEAD
 	bool useDistributedRendering(JSONNode patch);
 	
 	/*!
 	* \brief Are we using a distributed renderer with this patch
 	*/
 	bool m_using_distributed = false;
-=======
-	bool useDistributedRendering(const JSONNode data);
->>>>>>> origin/caching_interface
 
 	/*!
 	* \brief Check if an Arnold patch should used cached rendering

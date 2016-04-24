@@ -61,17 +61,17 @@ public:
    * \param w width of the input.
    * \param h height of the input.
    */
-  void set_input(Pixel3 *buffer, size_t w, size_t h);
+  void set_input(Pixel4 *buffer, size_t w, size_t h);
 
   /*!
    * \brief Set the HDR Pixel output buffer of the tonemapper.
-   * \param buffer pointer to the Pixel3 buffer to be set as output.
+   * \param buffer pointer to the Pixel4 buffer to be set as output.
    */
-  void set_output_hdr(Pixel3 *buffer);
+  void set_output_hdr(Pixel4 *buffer);
 
   /*!
    * \brief Set the bitmap output buffer of the tonemapper.
-   * \param buffer pointer to the Pixel3 buffer to be set as output.
+   * \param buffer pointer to the Pixel4 buffer to be set as output.
    */
   void set_output_bmp(char *buffer);
 
@@ -134,7 +134,7 @@ protected:
    * Behavior of applying the tone map is undefined if the
    * input buffer is corrupted.
    */
-  Pixel3 *input_buffer;
+  Pixel4 *input_buffer;
 
   /*!
    * \brief The output HDR Pixel buffer of the tone mapper.
@@ -143,7 +143,7 @@ protected:
    * Behavior of applying the tone map is undefined if the
    * output buffer is corrupted.
    */
-  Pixel3 *hdr_output_buffer;
+  Pixel4 *hdr_output_buffer;
 
   /*!
    * \brief The output bitmap buffer of the tone mapper.

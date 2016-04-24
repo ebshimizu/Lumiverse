@@ -17,7 +17,7 @@ EXRLayer::EXRLayer(const char *file, const char *name) {
   modulator = Pixel3(1, 1, 1);
 }
 
-EXRLayer::EXRLayer(Pixel3 *pixel_buffer, size_t width, size_t height,
+EXRLayer::EXRLayer(Pixel4 *pixel_buffer, size_t width, size_t height,
              const char *name) {
 
   if (name) {
@@ -52,6 +52,6 @@ Pixel3 EXRLayer::get_modulator() { return modulator; }
 
 void EXRLayer::set_modulator(Pixel3 modulator) { this->modulator = modulator; }
 
-Pixel3 *EXRLayer::get_pixels() { return pixels; }
+Pixel4 *EXRLayer::get_pixels() { return pixels; }
 
 }; // namespace LightmanCore

@@ -53,7 +53,7 @@ namespace Lumiverse {
 		/*!
 		* \brief Set the HDR output buffer
 		*/
-		void setHDROutputBuffer(Pixel3 *buffer);
+		void setHDROutputBuffer(Pixel4 *buffer);
 
 		/*!
 		* \brief Dump to the HDR buffer
@@ -69,12 +69,14 @@ namespace Lumiverse {
 		/**
 		* Compositor output. (internal)
 		*/
-		Pixel3 *compositor_output;
+		Pixel4 *compositor_output;
 
 		/**
 		* Buffer to write illuminance pixel output of the compositor.
 		*/
-		Pixel3 *hdr_output_buffer;
+		Pixel4 *hdr_output_buffer;
+
+		int load_exr(const char *file_path);
 	};
 }
 
