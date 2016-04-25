@@ -50,12 +50,12 @@ namespace Lumiverse {
 		* \brief Now that all of the EXR layers have been rendered (i.e. the cache has been filled),
 		* render an image per the light node parameters.
 		*/
-		int render();
+		int render(const std::set<Device *> &devices);
 
 		/*!
 		* \brief Set the HDR output buffer
 		*/
-		void setHDROutputBuffer(Pixel4 *buffer);
+		void setHDROutputBuffer();
 
 		/*!
 		* \brief Dump to the HDR buffer
@@ -68,17 +68,24 @@ namespace Lumiverse {
 
 		ToneMapper tone_mapper;
 
-		/**
+		/*!
 		* Compositor output. (internal)
 		*/
 		Pixel4 *compositor_output;
 
-		/**
-		* Buffer to write illuminance pixel output of the compositor.
+		/*!
+		* \brief Load layers from an EXR file
 		*/
-		Pixel4 *hdr_output_buffer;
-
 		int load_exr(const char *file_path);
+
+		void updateDevicesLayers(const std::set<Device *> &devices);
+
+		/*!
+		* \brief A map from a device name to the device. This is used
+		* to determine when a device has changed and needs to be updated
+		* in the cache on a render call.
+		*/
+		std::unordered_map<std::string, Device*> cached_devices;
 	};
 }
 

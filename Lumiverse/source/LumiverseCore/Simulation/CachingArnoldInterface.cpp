@@ -32,7 +32,8 @@ namespace Lumiverse {
 		m_width = AiNodeGetInt(options, "xres");
 		m_height = AiNodeGetInt(options, "yres");
 		m_samples = AiNodeGetInt(options, "AA_samples");
-		this->setHDROutputBuffer(new Pixel4[m_width * m_height]);
+		m_buffer = new float[m_width * m_height * 4];
+		this->setHDROutputBuffer();
 
 		// setup buffer driver
 		AtNode *driver = AiNode("driver_buffer");
@@ -74,6 +75,7 @@ namespace Lumiverse {
 
 		// find all mesh lights
 		size_t num_lights = 0;
+		AtString rgb_str("color");
 		AtNodeIterator *it = AiUniverseGetNodeIterator(AI_NODE_LIGHT);
 		while (!AiNodeIteratorFinished(it)) {
 
@@ -86,6 +88,13 @@ namespace Lumiverse {
 
 			// Disable layer by default -- enable when we read light nodes from scene in render()
 			layer->disable();
+
+			AtRGB rgb = AiNodeGetRGB(light, "color");
+			float intensity = AiNodeGetFlt(light, "intensity");
+			layer->set_modulator(Pixel3(rgb.r, rgb.g, rgb.b) * intensity);
+
+			AiNodeSetFlt(light, "intensity", 1.f);
+			AiNodeSetRGBAtString(light, rgb_str, 1.f, 1.f, 1.f);
 
 			// add layer to compositor (render later)
 			compositor.add_layer(layer);
@@ -104,15 +113,52 @@ namespace Lumiverse {
 		}
 		AiNodeIteratorDestroy(it);
 
-		// temp buffer to hold arnold output
+		/*
+		 Note that we don't actually render any layers on init. We wait until
+		 render is called with a set of devices because we want to be able
+		 to check if any of the layers need to be re-rendered (i.e. if a
+		 light is rotated).
+		*/
+
+		m_open = true;
+	}
+
+	void CachingArnoldInterface::updateDevicesLayers(const std::set<Device *> &devices) {
+		std::unordered_map<std::string, Device *> to_update;
+		for (Device *device : devices) {
+			std::string device_name = device->getMetadata("Arnold Node Name");
+			if (cached_devices.count(device_name) > 0) {
+				Device *cached = cached_devices.at(device_name);
+				if (!device->isValidCacheCopy(cached)) {
+					to_update[device_name] = device;
+				}
+			} else {
+				cached_devices[device_name] = device;
+				to_update[device_name] = device;
+			}
+		}
+
+		// If no updates are necessary just return to avoid the overhead
+		// of calling malloc, iterating over the light nodes, etc
+		if (to_update.size() == 0) {
+			return;
+		}
+
 		float *buffer = new float[m_width * m_height * 4];
 
 		// render each per-light layer
 		std::cout << "Rendering layers" << std::endl;
-		it = AiUniverseGetNodeIterator(AI_NODE_LIGHT);
+		AtNodeIterator *it = AiUniverseGetNodeIterator(AI_NODE_LIGHT);
+		AtNode *driver = AiNodeLookUpByName("driver_buffer");
 		while (!AiNodeIteratorFinished(it)) {
 
 			AtNode *light = AiNodeIteratorGetNext(it);
+			std::string name = AiNodeGetStr(light, "name");
+
+			// Only re-render if the node has been updated
+			if (to_update.count(name) == 0) {
+				continue;
+			}
 
 			// enable light
 			AiNodeSetDisabled(light, false);
@@ -125,8 +171,8 @@ namespace Lumiverse {
 			AiRender(AI_RENDER_MODE_CAMERA);
 
 			// copy to layer buffer
-			std::string name = AiNodeGetStr(light, "name");
 			EXRLayer *layer = compositor.get_layer_by_name(name.c_str());
+			layer->clear_buffer();
 
 			Pixel4 *layer_buffer = layer->get_pixels();
 			for (size_t idx = 0; idx < m_width * m_height; ++idx) {
@@ -137,53 +183,36 @@ namespace Lumiverse {
 				layer_buffer[idx].a = buffer[buf_idx + 3];
 			}
 
+			layer->enable();
+
 			// disable light
 			AiNodeSetDisabled(light, true);
 		}
 		AiNodeIteratorDestroy(it);
 
-		// free temp buffer
 		delete[] buffer;
-
-		AiEnd();
 	}
 
-	int CachingArnoldInterface::render() {
+	int CachingArnoldInterface::render(const std::set<Device *> &devices) {
+
+		updateDevicesLayers(devices);
+
 		tone_mapper.set_gamma(m_gamma);
-
-		AtNodeIterator *it = AiUniverseGetNodeIterator(AI_NODE_LIGHT);
-		while (!AiNodeIteratorFinished(it)) {
-
-			AtNode *light = AiNodeIteratorGetNext(it);
-
-			// create new layer
-			std::string name = AiNodeGetStr(light, "name");
-			EXRLayer *layer = compositor.get_layer_by_name(name.c_str());
-			AtRGB rgb = AiNodeGetRGB(light, "color");
-			float intensity = AiNodeGetFlt(light, "intensity");
-			layer->set_modulator(Pixel3(rgb.r, rgb.g, rgb.b) * intensity);
-			layer->enable();
-		}
-		AiNodeIteratorDestroy(it);
 
 		dumpHDRToBuffer();
 
 		return AI_SUCCESS;
 	}
 
-	void CachingArnoldInterface::setHDROutputBuffer(Pixel4 *buffer) {
+	void CachingArnoldInterface::setHDROutputBuffer() {
 
-		if (buffer) {
-			this->hdr_output_buffer = buffer;
-		}
-
-		tone_mapper.set_output_hdr(hdr_output_buffer);
+		tone_mapper.set_output_hdr(m_buffer);
 	}
 
 	void CachingArnoldInterface::dumpHDRToBuffer() {
 
-		if (!hdr_output_buffer) {
-			std::cerr << "No HDR output buffer is set" << std::endl;
+		if (m_buffer == NULL) {
+			std::cerr << "Buffer not set" << std::endl;
 			return;
 		}
 

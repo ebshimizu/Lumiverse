@@ -84,6 +84,11 @@ public:
    */
   Pixel4 *get_pixels();
 
+  /*!
+  \brief Set all bits of the buffer to 0
+  */
+  void clear_buffer();
+
 private:
   /**
    * Name of the layer.

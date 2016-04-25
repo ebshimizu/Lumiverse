@@ -1,3 +1,6 @@
+
+#ifdef USE_ARNOLD_CACHING
+
 /*!
 * \brief File containing code for tonemapping images
 *
@@ -44,7 +47,7 @@ namespace Lumiverse {
 		this->input_buffer = buffer;
 	}
 
-	void ToneMapper::set_output_hdr(Pixel4 *buffer) {
+	void ToneMapper::set_output_hdr(float *buffer) {
 
 		this->hdr_output_buffer = buffer;
 	}
@@ -68,9 +71,11 @@ namespace Lumiverse {
 		float g = 1.0f / gamma;
 		float e = sqrt(pow(2, level));
 		for (size_t i = 0; i < w * h; ++i) {
-			hdr_output_buffer[i].r = pow(input_buffer[i].r * e, g);
-			hdr_output_buffer[i].g = pow(input_buffer[i].g * e, g);
-			hdr_output_buffer[i].b = pow(input_buffer[i].b * e, g);
+			int actual_index = 4 * i;
+			hdr_output_buffer[actual_index] = pow(input_buffer[i].r * e, g);
+			hdr_output_buffer[actual_index + 1] = pow(input_buffer[i].g * e, g);
+			hdr_output_buffer[actual_index + 2] = pow(input_buffer[i].b * e, g);
+			hdr_output_buffer[actual_index + 3] = 1.f;
 		}
 	}
 
@@ -161,9 +166,11 @@ namespace Lumiverse {
 			pixel *= key / avg;
 			pixel *= ((l + 1) / (wht * wht)) / (l + 1);
 
-			hdr_output_buffer[i].r = pow(pixel.r * e, g);
-			hdr_output_buffer[i].g = pow(pixel.g * e, g);
-			hdr_output_buffer[i].b = pow(pixel.b * e, g);
+			int real_index = 4 * i;
+			hdr_output_buffer[real_index] = pow(pixel.r * e, g);
+			hdr_output_buffer[real_index + 1] = pow(pixel.g * e, g);
+			hdr_output_buffer[real_index + 2] = pow(pixel.b * e, g);
+			hdr_output_buffer[real_index + 3] = 1.f;
 		}
 	}
 
@@ -182,7 +189,7 @@ namespace Lumiverse {
 		float e = sqrt(pow(2, level));
 		for (size_t i = 0; i < w * h; ++i) {
 
-			Pixel3 pixel = input_buffer[i];
+			Pixel4 pixel = input_buffer[i];
 
 			float l = pixel.illum();
 
@@ -206,3 +213,5 @@ namespace Lumiverse {
 	}
 
 }; // namespace Lumiverse
+
+#endif // USE_ARNOLD_CACHING

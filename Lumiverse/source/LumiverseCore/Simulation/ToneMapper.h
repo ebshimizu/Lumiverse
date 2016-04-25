@@ -69,7 +69,7 @@ public:
    * \brief Set the HDR Pixel output buffer of the tonemapper.
    * \param buffer pointer to the Pixel4 buffer to be set as output.
    */
-  void set_output_hdr(Pixel4 *buffer);
+  void set_output_hdr(float *buffer);
 
   /*!
    * \brief Set the bitmap output buffer of the tonemapper.
@@ -145,7 +145,7 @@ protected:
    * Behavior of applying the tone map is undefined if the
    * output buffer is corrupted.
    */
-  Pixel4 *hdr_output_buffer;
+  float *hdr_output_buffer;
 
   /*!
    * \brief The output bitmap buffer of the tone mapper.

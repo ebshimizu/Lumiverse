@@ -56,6 +56,10 @@ void EXRLayer::set_modulator(Pixel3 modulator) { this->modulator = modulator; }
 
 Pixel4 *EXRLayer::get_pixels() { return pixels; }
 
+void EXRLayer::clear_buffer() {
+	memset(pixels, 0, sizeof(Pixel4) * get_size());
+}
+
 }; // namespace LightmanCore
 
 #endif // USE_ARNOLD_CACHING
