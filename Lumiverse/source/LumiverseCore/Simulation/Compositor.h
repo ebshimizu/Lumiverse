@@ -93,6 +93,12 @@ public:
   */
   Pixel4 *get_compose_buffer() { return compose_buffer; };
 
+  /*!
+  \brief Update the compositor to use new dimensions. Note that this also
+  wipes the EXR layer cache buffers (i.e. it clears the cache)
+  */
+  void update_dims(int w, int h);
+
 private:
   /**
    * Width.

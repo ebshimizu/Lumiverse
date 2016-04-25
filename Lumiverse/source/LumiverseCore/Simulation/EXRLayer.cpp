@@ -60,6 +60,16 @@ void EXRLayer::clear_buffer() {
 	memset(pixels, 0, sizeof(Pixel4) * get_size());
 }
 
+void EXRLayer::resize_buffer(int new_width, int new_height) {
+	w = new_width;
+	h = new_height;
+	if (pixels != NULL) {
+		delete[] pixels;
+	}
+
+	pixels = new Pixel4[new_width * new_height];
+}
+
 }; // namespace LightmanCore
 
 #endif // USE_ARNOLD_CACHING

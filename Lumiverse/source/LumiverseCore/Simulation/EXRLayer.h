@@ -89,6 +89,8 @@ public:
   */
   void clear_buffer();
 
+  void resize_buffer(int new_width, int new_height);
+
 private:
   /**
    * Name of the layer.

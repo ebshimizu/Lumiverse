@@ -80,6 +80,19 @@ void Compositor::del_layer_by_name(const char *layer_name) {
 	}
 }
 
+void Compositor::update_dims(int w, int h) {
+	if (compose_buffer != NULL) {
+		delete[] compose_buffer;
+	}
+
+	compose_buffer = new Pixel4[w * h]();
+
+	for (auto i = layers.begin(); i != layers.end(); i++) {
+		EXRLayer *curr = i->second;
+		curr->resize_buffer(w, h);
+	}
+}
+
 void Compositor::render() {
 
   // clear previous rendering

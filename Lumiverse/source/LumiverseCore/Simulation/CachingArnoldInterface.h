@@ -62,6 +62,11 @@ namespace Lumiverse {
 		*/
 		void dumpHDRToBuffer();
 
+		/*!
+		\brief Override set dims so that we know if we should force a re-loading of the cache
+		*/
+		bool setDims(int w, int h) override;
+
 	private:
 
 		Compositor compositor;
@@ -86,6 +91,11 @@ namespace Lumiverse {
 		* in the cache on a render call.
 		*/
 		std::unordered_map<std::string, Device*> cached_devices;
+		
+		/*!
+		\brief Should we force an update on the next render call?
+		*/
+		bool force_cache_reload = false;
 	};
 }
 

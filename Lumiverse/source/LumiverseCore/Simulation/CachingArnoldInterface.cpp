@@ -123,11 +123,23 @@ namespace Lumiverse {
 		m_open = true;
 	}
 
+	bool CachingArnoldInterface::setDims(int w, int h) {
+		force_cache_reload = true;
+		compositor.update_dims(w, h);
+
+		bool success = ArnoldInterface::setDims(w, h);
+		if (success) {
+			setHDROutputBuffer();
+		}
+
+		return success;
+	}
+
 	void CachingArnoldInterface::updateDevicesLayers(const std::set<Device *> &devices) {
 		std::unordered_map<std::string, Device *> to_update;
 		for (Device *device : devices) {
 			std::string device_name = device->getMetadata("Arnold Node Name");
-			if (cached_devices.count(device_name) > 0) {
+			if (!force_cache_reload && (cached_devices.count(device_name) > 0)) {
 				Device *cached = cached_devices.at(device_name);
 				if (!device->isValidCacheCopy(cached)) {
 					to_update[device_name] = device;
@@ -149,7 +161,6 @@ namespace Lumiverse {
 		// render each per-light layer
 		std::cout << "Rendering layers" << std::endl;
 		AtNodeIterator *it = AiUniverseGetNodeIterator(AI_NODE_LIGHT);
-		AtNode *driver = AiNodeLookUpByName("driver_buffer");
 		while (!AiNodeIteratorFinished(it)) {
 
 			AtNode *light = AiNodeIteratorGetNext(it);
@@ -162,10 +173,6 @@ namespace Lumiverse {
 
 			// enable light
 			AiNodeSetDisabled(light, false);
-
-			// render to layer buffer
-			// since RGB is not supported, we nned to use rgba here
-			AiNodeSetPtr(driver, "buffer_pointer", buffer);
 
 			// render image
 			AiRender(AI_RENDER_MODE_CAMERA);
@@ -200,6 +207,8 @@ namespace Lumiverse {
 		tone_mapper.set_gamma(m_gamma);
 
 		dumpHDRToBuffer();
+
+		force_cache_reload = false;
 
 		return AI_SUCCESS;
 	}
