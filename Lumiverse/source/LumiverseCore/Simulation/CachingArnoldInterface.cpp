@@ -44,8 +44,6 @@ namespace Lumiverse {
 		m_bufDriverName = m_bufDriverName.append(ss.str());
 
 		AiNodeSetStr(driver, "name", "driver_buffer");
-		AiNodeSetInt(driver, "width", m_width);
-		AiNodeSetInt(driver, "height", m_height);
 		AiNodeSetFlt(driver, "gamma", 1);
 		AiNodeSetBool(driver, "predictive", m_predictive);
 
@@ -157,6 +155,11 @@ namespace Lumiverse {
 		}
 
 		float *buffer = new float[m_width * m_height * 4];
+		memset(buffer, 0, m_width * m_height * 4 * sizeof(float));
+		AtNode *driver = AiNodeLookUpByName("driver_buffer");
+		AiNodeSetInt(driver, "width", m_width);
+		AiNodeSetInt(driver, "height", m_height);
+		AiNodeSetPtr(driver, "buffer_pointer", buffer);
 
 		// render each per-light layer
 		std::cout << "Rendering layers" << std::endl;
@@ -194,6 +197,7 @@ namespace Lumiverse {
 
 			// disable light
 			AiNodeSetDisabled(light, true);
+			memset(buffer, 0, m_width * m_height * 4 * sizeof(float));
 		}
 		AiNodeIteratorDestroy(it);
 
