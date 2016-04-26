@@ -3,9 +3,12 @@
 
 #include "Compositor.h"
 #include "EXRLayer.h"
+#include "Device.h"
 
 #include <string.h>
 #include <chrono>
+#include <unordered_map>
+#include <set>
 
 namespace Lumiverse {
 
@@ -93,28 +96,34 @@ void Compositor::update_dims(int w, int h) {
 	}
 }
 
-void Compositor::render() {
+void Compositor::render(const std::set<Device*> &devices) {
 
   // clear previous rendering
-  memset((void *)compose_buffer, 0, sizeof(Pixel4) * w * h);
+  std::memset((void *)compose_buffer, 0, sizeof(Pixel4) * w * h);
 
   // composite all active layers
-  EXRLayer *layer;
-  std::unordered_map<std::string, EXRLayer *>::iterator it = layers.begin();
-  for (auto it = layers.begin(); it != layers.end(); it++) {
+  for (Device *device : devices) {
+	  std::string name = device->getMetadata("Arnold Node Name");
 
-    layer = it->second;
-    Pixel3 m = layer->get_modulator();
-    Pixel4 *pixels = layer->get_pixels();
-	if (layer->is_active()) {
-	  for (int i = 0; i < w * h; i++) {
-		  if (pixels[i].a > 0) {
-			  compose_buffer[i].r += m.r * pixels[i].r;
-			  compose_buffer[i].g += m.g * pixels[i].g;
-			  compose_buffer[i].b += m.b * pixels[i].b;
+	  // Only composite active layers
+	  EXRLayer *layer = this->get_layer_by_name(name.c_str());
+	  if (!layer->is_active()) {
+		  continue;
+	  }
+
+	  float intensity_shift = device->getIntensity()->asPercent();
+
+	  Pixel3 m = layer->get_modulator();
+	  Pixel4 *pixels = layer->get_pixels();
+	  if (layer->is_active()) {
+		  for (int i = 0; i < w * h; i++) {
+			  if (pixels[i].a > 0) {
+				  compose_buffer[i].r += m.r * intensity_shift * pixels[i].r;
+				  compose_buffer[i].g += m.g * intensity_shift * pixels[i].g;
+				  compose_buffer[i].b += m.b * intensity_shift * pixels[i].b;
+			  }
 		  }
-      }
-    }
+	  }
   }
 }
 

@@ -4,9 +4,11 @@
 #ifdef USE_ARNOLD_CACHING
 
 #include <unordered_map>
+#include <set>
 #include <string>
 
 #include "EXRLayer.h"
+#include "Device.h"
 
 namespace Lumiverse {
 
@@ -85,7 +87,7 @@ public:
    * Render the scene.
    * Updates the frame buffer based on the the current state of the scene.
    */
-  void render();
+  void render(const std::set<Device*> &devices);
 
   /*!
   \brief Get the buffer of composed pixels (i.e. the composition of

@@ -7,6 +7,7 @@
 #include "ImfRgbaFile.h"    // Imf RGBA scaneline
 #include "ImfChannelList.h" // Imf channels
 #include "ImathBox.h"
+#include <assert.h>
 
 #include <ai.h>
 
@@ -44,7 +45,7 @@ namespace Lumiverse {
 		m_bufDriverName = m_bufDriverName.append(ss.str());
 
 		AiNodeSetStr(driver, "name", "driver_buffer");
-		AiNodeSetFlt(driver, "gamma", 1);
+		AiNodeSetFlt(driver, "gamma", 1.f);
 		AiNodeSetBool(driver, "predictive", m_predictive);
 
 		delete[] m_bucket_pos;
@@ -88,10 +89,8 @@ namespace Lumiverse {
 			layer->disable();
 
 			AtRGB rgb = AiNodeGetRGB(light, "color");
-			float intensity = AiNodeGetFlt(light, "intensity");
-			layer->set_modulator(Pixel3(rgb.r, rgb.g, rgb.b) * intensity);
+			layer->set_modulator(Pixel3(rgb.r, rgb.g, rgb.b));
 
-			AiNodeSetFlt(light, "intensity", 1.f);
 			AiNodeSetRGBAtString(light, rgb_str, 1.f, 1.f, 1.f);
 
 			// add layer to compositor (render later)
@@ -174,6 +173,15 @@ namespace Lumiverse {
 				continue;
 			}
 
+			Device *curr_device = to_update.at(name);
+			LumiverseFloat *intensity_float = curr_device->getIntensity();
+
+			// A light device should always have an intensity parameter
+			assert(intensity_float != nullptr);
+
+			float max_intensity = intensity_float->getMax();
+			AiNodeSetFlt(light, "intensity", max_intensity);
+
 			// enable light
 			AiNodeSetDisabled(light, false);
 
@@ -190,7 +198,7 @@ namespace Lumiverse {
 				layer_buffer[idx].r = buffer[buf_idx];
 				layer_buffer[idx].g = buffer[buf_idx + 1];
 				layer_buffer[idx].b = buffer[buf_idx + 2];
-				layer_buffer[idx].a = buffer[buf_idx + 3];
+				layer_buffer[idx].a = !!buffer[buf_idx + 3];
 			}
 
 			layer->enable();
@@ -210,7 +218,7 @@ namespace Lumiverse {
 
 		tone_mapper.set_gamma(m_gamma);
 
-		dumpHDRToBuffer();
+		dumpHDRToBuffer(devices);
 
 		force_cache_reload = false;
 
@@ -222,14 +230,14 @@ namespace Lumiverse {
 		tone_mapper.set_output_hdr(m_buffer);
 	}
 
-	void CachingArnoldInterface::dumpHDRToBuffer() {
+	void CachingArnoldInterface::dumpHDRToBuffer(const std::set<Device *> &devices) {
 
 		if (m_buffer == NULL) {
 			std::cerr << "Buffer not set" << std::endl;
 			return;
 		}
 
-		compositor.render();
+		compositor.render(devices);
 		tone_mapper.set_input(compositor.get_compose_buffer(), m_width, m_height);
 		tone_mapper.apply_hdr();
 	}

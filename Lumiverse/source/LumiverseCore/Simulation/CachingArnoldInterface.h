@@ -27,6 +27,7 @@
 #include <thread>
 #include <algorithm>
 #include <unordered_map>
+#include <set>
 
 namespace Lumiverse {
 	struct CachedDevice {
@@ -60,7 +61,7 @@ namespace Lumiverse {
 		/*!
 		* \brief Dump to the HDR buffer
 		*/
-		void dumpHDRToBuffer();
+		void dumpHDRToBuffer(const std::set<Device *> &devices);
 
 		/*!
 		\brief Override set dims so that we know if we should force a re-loading of the cache
