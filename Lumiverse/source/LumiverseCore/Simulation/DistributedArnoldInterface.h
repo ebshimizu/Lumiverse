@@ -80,8 +80,7 @@ namespace Lumiverse {
 			ArnoldInterface(),
 			m_host_name(host),
 			m_host_port(port),
-			m_file_output_path(outputPath),
-      m_remote_open(false) {}
+			m_file_output_path(outputPath) {}
 
 		/*!
 		* \brief Default DistributedArnoldInterface constructor.
@@ -333,7 +332,10 @@ namespace Lumiverse {
 		std::unordered_map<std::string, float> float_options;
 		std::unordered_map<std::string, int> int_options;
 
-    bool m_remote_open;
+		/*!
+		\brief Is a connection open to the remote renderer
+		*/
+		bool m_remote_open;
 	};
 }
 
