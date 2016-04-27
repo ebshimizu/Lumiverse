@@ -74,7 +74,7 @@ namespace Lumiverse {
 
 		// find all mesh lights
 		size_t num_lights = 0;
-		AtString rgb_str("color");
+		// AtString rgb_str("color");
 		AtNodeIterator *it = AiUniverseGetNodeIterator(AI_NODE_LIGHT);
 		while (!AiNodeIteratorFinished(it)) {
 
@@ -90,8 +90,6 @@ namespace Lumiverse {
 
 			AtRGB rgb = AiNodeGetRGB(light, "color");
 			layer->set_modulator(Pixel3(rgb.r, rgb.g, rgb.b));
-
-			AiNodeSetRGBAtString(light, rgb_str, 1.f, 1.f, 1.f);
 
 			// add layer to compositor (render later)
 			compositor.add_layer(layer);
@@ -179,8 +177,12 @@ namespace Lumiverse {
 			// A light device should always have an intensity parameter
 			assert(intensity_float != nullptr);
 
+			/*
 			float max_intensity = intensity_float->getMax();
 			AiNodeSetFlt(light, "intensity", max_intensity);
+			*/
+			// AiNodeSetRGB(light, "color", 1.f, 1.f, 1.f);
+			// AtRGB rgb_get = AiNodeGetRGB(light, "color");
 
 			// enable light
 			AiNodeSetDisabled(light, false);

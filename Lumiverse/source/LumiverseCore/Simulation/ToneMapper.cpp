@@ -72,9 +72,16 @@ namespace Lumiverse {
 		float e = sqrt(pow(2, level));
 		for (size_t i = 0; i < w * h; ++i) {
 			int actual_index = 4 * i;
-			hdr_output_buffer[actual_index] = pow(input_buffer[i].r * e, g);
-			hdr_output_buffer[actual_index + 1] = pow(input_buffer[i].g * e, g);
-			hdr_output_buffer[actual_index + 2] = pow(input_buffer[i].b * e, g);
+			Pixel4 curr_pixel = input_buffer[i];
+			/*
+			hdr_output_buffer[actual_index] = pow(curr_pixel.r * e, g);
+			hdr_output_buffer[actual_index + 1] = pow(curr_pixel.g * e, g);
+			hdr_output_buffer[actual_index + 2] = pow(curr_pixel.b * e, g);
+			hdr_output_buffer[actual_index + 3] = 1.f;
+			*/
+			hdr_output_buffer[actual_index] = curr_pixel.r;
+			hdr_output_buffer[actual_index + 1] = curr_pixel.g;
+			hdr_output_buffer[actual_index + 2] = curr_pixel.b;
 			hdr_output_buffer[actual_index + 3] = 1.f;
 		}
 	}
@@ -93,123 +100,16 @@ namespace Lumiverse {
 		float g = 1.0f / gamma;
 		float e = sqrt(pow(2, level));
 		for (size_t i = 0; i < w * h; ++i) {
-			bmp_output_buffer[i * 3] = clamp(pow(input_buffer[i].r * e, g));
-			bmp_output_buffer[i * 3 + 1] = clamp(pow(input_buffer[i].g * e, g));
-			bmp_output_buffer[i * 3 + 2] = clamp(pow(input_buffer[i].b * e, g));
+			int buf_idx = 4 * i;
+			bmp_output_buffer[buf_idx] = clamp(pow(input_buffer[i].r * e, g));
+			bmp_output_buffer[buf_idx + 1] = clamp(pow(input_buffer[i].g * e, g));
+			bmp_output_buffer[buf_idx + 2] = clamp(pow(input_buffer[i].b * e, g));
 		}
 	}
 
 	void ToneMapper::reset() {
 		gamma = 2.2f;
 		level = 1.0f;
-	}
-
-	/////////////////////////////
-	// Reinhard Implementation //
-	/////////////////////////////
-
-	TMReinhard::TMReinhard() {
-
-		type = "Reinhard";
-
-		gamma = 2.2f;
-		level = 1.0f;
-
-		input_buffer = NULL;
-		hdr_output_buffer = NULL;
-		bmp_output_buffer = NULL;
-
-		key = 0.18;
-		wht = 1.0f;
-		avg = 0.18;
-	}
-
-	float TMReinhard::get_key() { return key; }
-
-	void TMReinhard::set_key(float key) { this->key = key; }
-
-	float TMReinhard::get_wht() { return wht; }
-
-	void TMReinhard::set_wht(float wht) { this->wht = wht; }
-
-	void TMReinhard::auto_adjust() {
-
-		float num_pixels = w * h;
-		for (size_t i = 0; i < num_pixels; ++i) {
-
-			// the small delta value below avoids singularity
-			avg += log(0.0000001 + input_buffer[i].illum());
-		}
-
-		avg = exp(avg / num_pixels);
-	}
-
-	void TMReinhard::apply_hdr() {
-
-		if (!input_buffer) {
-			std::cerr << "Tone mapper has no input buffer" << std::endl;
-			return;
-		}
-		if (!bmp_output_buffer) {
-			std::cerr << "Tone mapper has no bitmap output buffer" << std::endl;
-			return;
-		}
-
-		float g = 1.0f / gamma;
-		float e = sqrt(pow(2, level));
-		for (size_t i = 0; i < w * h; ++i) {
-
-			Pixel4 pixel = input_buffer[i];
-
-			float l = pixel.illum();
-
-			pixel *= key / avg;
-			pixel *= ((l + 1) / (wht * wht)) / (l + 1);
-
-			int real_index = 4 * i;
-			hdr_output_buffer[real_index] = pow(pixel.r * e, g);
-			hdr_output_buffer[real_index + 1] = pow(pixel.g * e, g);
-			hdr_output_buffer[real_index + 2] = pow(pixel.b * e, g);
-			hdr_output_buffer[real_index + 3] = 1.f;
-		}
-	}
-
-	void TMReinhard::apply_bmp() {
-
-		if (!input_buffer) {
-			std::cerr << "Tone mapper has no input buffer" << std::endl;
-			return;
-		}
-		if (!bmp_output_buffer) {
-			std::cerr << "Tone mapper has no bitmap output buffer" << std::endl;
-			return;
-		}
-
-		float g = 1.0f / gamma;
-		float e = sqrt(pow(2, level));
-		for (size_t i = 0; i < w * h; ++i) {
-
-			Pixel4 pixel = input_buffer[i];
-
-			float l = pixel.illum();
-
-			pixel *= key / avg;
-			pixel *= ((l + 1) / (wht * wht)) / (l + 1);
-
-			bmp_output_buffer[i * 3] = clamp(pow(pixel.r * e, g));
-			bmp_output_buffer[i * 3 + 1] = clamp(pow(pixel.g * e, g));
-			bmp_output_buffer[i * 3 + 2] = clamp(pow(pixel.b * e, g));
-		}
-	}
-
-	void TMReinhard::reset() {
-
-		gamma = 2.2f;
-		level = 1.0f;
-
-		key = 0.18;
-		wht = 1.0f;
-		avg = 0.18;
 	}
 
 }; // namespace Lumiverse

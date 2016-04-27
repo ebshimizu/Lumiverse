@@ -455,7 +455,8 @@ void ArnoldInterface::init() {
   AiNodeSetStr(driver, "name", m_bufDriverName.c_str());
   AiNodeSetInt(driver, "width", m_width);
   AiNodeSetInt(driver, "height", m_height);
-  AiNodeSetFlt(driver, "gamma", m_gamma);
+  AiNodeSetFlt(driver, "gamma", 1.f);
+  //AiNodeSetFlt(driver, "gamma", m_gamma);
 	AiNodeSetBool(driver, "predictive", m_predictive);
     
   // Assume we are using RGBA
@@ -526,7 +527,7 @@ int ArnoldInterface::render() {
 	std::stringstream ss;
 	ss << "Done: " << code;
   Logger::log(INFO, ss.str().c_str());
-    
+
   return code;
 }
     
