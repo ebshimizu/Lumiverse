@@ -69,19 +69,14 @@ namespace Lumiverse {
 		}
 
 		float g = 1.0f / gamma;
-		float e = sqrt(pow(2, level));
+		// float e = sqrt(pow(2, level));
+		float e = 1.f;
 		for (size_t i = 0; i < w * h; ++i) {
 			int actual_index = 4 * i;
 			Pixel4 curr_pixel = input_buffer[i];
-			/*
 			hdr_output_buffer[actual_index] = pow(curr_pixel.r * e, g);
 			hdr_output_buffer[actual_index + 1] = pow(curr_pixel.g * e, g);
 			hdr_output_buffer[actual_index + 2] = pow(curr_pixel.b * e, g);
-			hdr_output_buffer[actual_index + 3] = 1.f;
-			*/
-			hdr_output_buffer[actual_index] = curr_pixel.r;
-			hdr_output_buffer[actual_index + 1] = curr_pixel.g;
-			hdr_output_buffer[actual_index + 2] = curr_pixel.b;
 			hdr_output_buffer[actual_index + 3] = 1.f;
 		}
 	}

@@ -114,19 +114,24 @@ void Compositor::render(const std::set<Device*> &devices) {
 	  // float intensity_shift = device->getIntensity()->asPercent();
 	  float intensity_shift = 1.f;
 
-	  Pixel3 m = layer->get_modulator();
+	  Eigen::Vector3d modulator = device->getColor()->getRGB();
+	  double r = modulator.x();
+	  double g = modulator.y();
+	  double b = modulator.z();
+
 	  Pixel4 *pixels = layer->get_pixels();
 	  if (layer->is_active()) {
 		  for (int i = 0; i < w * h; i++) {
 			  if (pixels[i].a > 0) {
+				  compose_buffer[i].r += (r * intensity_shift * pixels[i].r);
+				  compose_buffer[i].g += (g * intensity_shift * pixels[i].g);
+				  compose_buffer[i].b += (b * intensity_shift * pixels[i].b);
+
 				  /*
-				  compose_buffer[i].r += m.r * intensity_shift * pixels[i].r;
-				  compose_buffer[i].g += m.g * intensity_shift * pixels[i].g;
-				  compose_buffer[i].b += m.b * intensity_shift * pixels[i].b;
-				  */
 				  compose_buffer[i].r += intensity_shift * pixels[i].r;
 				  compose_buffer[i].g += intensity_shift * pixels[i].g;
 				  compose_buffer[i].b += intensity_shift * pixels[i].b;
+				  */
 			  }
 		  }
 	  }

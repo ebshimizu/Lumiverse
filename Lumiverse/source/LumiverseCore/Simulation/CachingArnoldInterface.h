@@ -68,6 +68,15 @@ namespace Lumiverse {
 		*/
 		bool setDims(int w, int h) override;
 
+		/*!
+		\brief Set a new sample rate and force a reload of the cache
+		*
+		* Set a new sample rate and force a reload of the cache. We force a reload because
+		* the values of the cache are going to be useless because we are likely only ever
+		* going to upsample.
+		*/
+		void setSamples(int samples) override;
+
 	private:
 
 		Compositor compositor;

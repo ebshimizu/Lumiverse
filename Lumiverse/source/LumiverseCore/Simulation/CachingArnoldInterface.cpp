@@ -177,17 +177,12 @@ namespace Lumiverse {
 			// A light device should always have an intensity parameter
 			assert(intensity_float != nullptr);
 
-			/*
-			float max_intensity = intensity_float->getMax();
-			AiNodeSetFlt(light, "intensity", max_intensity);
-			*/
-			// AiNodeSetRGB(light, "color", 1.f, 1.f, 1.f);
-			// AtRGB rgb_get = AiNodeGetRGB(light, "color");
-
 			// enable light
 			AiNodeSetDisabled(light, false);
-
+			
+			AiNodeSetRGB(light, "color", 1.f, 1.f, 1.f);
 			// render image
+			// AiNodeSetFlt(light, "intensity", intensity_float->getMax());
 			AiRender(AI_RENDER_MODE_CAMERA);
 
 			// copy to layer buffer
@@ -212,6 +207,12 @@ namespace Lumiverse {
 		AiNodeIteratorDestroy(it);
 
 		delete[] buffer;
+	}
+
+	void CachingArnoldInterface::setSamples(int samples) {
+		force_cache_reload = true;
+
+		ArnoldInterface::setSamples(samples);
 	}
 
 	int CachingArnoldInterface::render(const std::set<Device *> &devices) {
