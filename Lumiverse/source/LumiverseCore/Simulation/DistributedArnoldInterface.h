@@ -80,7 +80,8 @@ namespace Lumiverse {
 			ArnoldInterface(),
 			m_host_name(host),
 			m_host_port(port),
-			m_file_output_path(outputPath) {}
+			m_file_output_path(outputPath),
+			m_remote_open(false) {}
 
 		/*!
 		* \brief Default DistributedArnoldInterface constructor.
@@ -93,7 +94,7 @@ namespace Lumiverse {
 			m_host_name("localhost"),
 			m_host_port(80),
 			m_file_output_path("./test.out"),
-      m_remote_open(false) {}
+			m_remote_open(false) {}
 
 
 		~DistributedArnoldInterface() { }

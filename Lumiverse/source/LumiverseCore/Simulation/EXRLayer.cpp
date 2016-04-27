@@ -1,4 +1,5 @@
 #include "EXRLayer.h"
+#include <cstring>
 
 #ifdef USE_ARNOLD_CACHING
 
@@ -57,7 +58,7 @@ void EXRLayer::set_modulator(Pixel3 modulator) { this->modulator = modulator; }
 Pixel4 *EXRLayer::get_pixels() { return pixels; }
 
 void EXRLayer::clear_buffer() {
-	memset(pixels, 0, sizeof(Pixel4) * get_size());
+	std::memset(pixels, 0, sizeof(Pixel4) * get_size());
 }
 
 void EXRLayer::resize_buffer(int new_width, int new_height) {
