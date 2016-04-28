@@ -529,8 +529,6 @@ namespace Lumiverse {
     */
     void deleteMetadataChangedCallback(int id);
 
-	bool isValidCacheCopy(Device *d);
-
     /*!
     \brief Returns true if the device is identical to the given device.
 

@@ -121,6 +121,8 @@ namespace Lumiverse {
 		float *m_render_buffer;
 
 		bool paramRequiresCacheReload(const std::string &paramName);
+
+		bool isValidCacheCopy(Device *cached_device, Device *other_device);
 	};
 }
 

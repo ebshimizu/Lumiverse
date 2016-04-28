@@ -518,32 +518,6 @@ void Device::deleteMetadataChangedCallback(int id) {
   }
 }
 
-bool Device::isValidCacheCopy(Device *d) {
-	if (m_id != d->getId()) return false;
-	if (m_channel != d->getChannel()) return false;
-	if (m_type != d->getType()) return false;
-
-	// parameter check
-	if (m_parameters.size() != d->m_parameters.size())
-		return false;
-
-	for (auto p : m_parameters) {
-		// If a parameter doesn't exist in the other device, return false
-		// immediately, they must have the same parameter count at this point.
-		if (!d->paramExists(p.first)) {
-			return false;
-		}
-
-		if ((p.first == "intensity") || (p.first == "color")) {
-			continue;
-		} else if (!LumiverseTypeUtils::equals(p.second, d->getParam(p.first))) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
 bool Device::isIdentical(Device* d) {
   if (m_id != d->getId()) return false;
   if (m_channel != d->getChannel()) return false;

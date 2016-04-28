@@ -154,7 +154,8 @@ namespace Lumiverse {
 			std::string device_name = device->getMetadata("Arnold Node Name");
 			if (!force_cache_reload && (cached_devices.count(device_name) > 0)) {
 				Device *cached = cached_devices.at(device_name);
-				if (!device->isValidCacheCopy(cached)) {
+				if (!isValidCacheCopy(cached, device)) {
+					cached_devices[device_name] = device;
 					to_update[device_name] = device;
 				}
 			} else {
@@ -194,7 +195,8 @@ namespace Lumiverse {
 			
 			// render image
 			// AiNodeSetFlt(light, "intensity", intensity_float->getMax());
-			AiNodeSetRGB(light, "color", 1.f, 1.f, 1.f);
+			AiNodeSetFlt(light, "intensity", intensity_float->getVal());
+			// AiNodeSetRGB(light, "color", 1.f, 1.f, 1.f);
 			AiRender(AI_RENDER_MODE_CAMERA);
 
 			// copy to layer buffer
@@ -208,16 +210,6 @@ namespace Lumiverse {
 				layer_buffer[idx].g = m_render_buffer[buf_idx + 1];
 				layer_buffer[idx].b = m_render_buffer[buf_idx + 2];
 				layer_buffer[idx].a = !!m_render_buffer[buf_idx + 3];
-				
-				/*
-				float max_f = 1.0;
-				if (layer_buffer[idx].r >= max_f) max_f = layer_buffer[idx].r;
-				if (layer_buffer[idx].g >= max_f) max_f = layer_buffer[idx].g;
-				if (layer_buffer[idx].b >= max_f) max_f = layer_buffer[idx].b;
-				layer_buffer[idx].r /= max_f;
-				layer_buffer[idx].g /= max_f;
-				layer_buffer[idx].b /= max_f;
-				*/
 			}
 
 			layer->enable();
@@ -276,6 +268,61 @@ namespace Lumiverse {
 		ArnoldInterface::setOptionParameter(paramName, val);
 	}
 
+
+	bool CachingArnoldInterface::isValidCacheCopy(Device *cached_device, Device *other_device) {
+		if (cached_device->getId() != other_device->getId()) return false;
+		if (cached_device->getType() != other_device->getType()) return false;
+
+		// num parameter check
+		if (cached_device->getRawParameters().size() != other_device->getRawParameters().size()) {
+			return false;
+		}
+
+		// penumbra angle
+		if (cached_device->paramExists("penumbraAngle")) {
+			if (((LumiverseFloat *)(cached_device->getParam("penumbraAngle")))->getVal() != ((LumiverseFloat *)other_device->getParam("penumbraAngle"))->getVal()) {
+				return false;
+			}
+		}
+
+		// position
+		if (cached_device->paramExists("lookAtX") && cached_device->paramExists("lookAtY") && cached_device->paramExists("lookAtZ")) {
+			LumiverseFloat *cachedX = (LumiverseFloat *)cached_device->getParam("lookAtX");
+			LumiverseFloat *cachedY = (LumiverseFloat *)cached_device->getParam("lookAtY");
+			LumiverseFloat *cachedZ = (LumiverseFloat *)cached_device->getParam("lookAtZ");
+
+			LumiverseFloat *otherX = (LumiverseFloat *)other_device->getParam("lookAtX");
+			LumiverseFloat *otherY = (LumiverseFloat *)other_device->getParam("lookAtY");
+			LumiverseFloat *otherZ = (LumiverseFloat *)other_device->getParam("lookAtZ");
+
+			if ((cachedX->getVal() != otherX->getVal()) || (cachedY->getVal() != otherY->getVal()) || (cachedZ->getVal() != otherZ->getVal())) {
+				return false;
+			}
+		}
+
+		// rotation
+		if (cached_device->paramExists("polar") && cached_device->paramExists("azimuth")) {
+			LumiverseFloat *cachedPolar = (LumiverseFloat *)cached_device->getParam("polar");
+			LumiverseFloat *cachedAzim = (LumiverseFloat *)cached_device->getParam("azimuth");
+
+			LumiverseFloat *otherPolar = (LumiverseFloat *)cached_device->getParam("polar");
+			LumiverseFloat *otherAzim = (LumiverseFloat *)cached_device->getParam("azimuth");
+
+			if ((cachedPolar->getVal() != otherPolar->getVal()) || (cachedAzim->getVal() != otherAzim->getVal())) {
+				return false;
+			}
+		}
+
+		// distance?
+		if (cached_device->paramExists("distance")) {
+			return ((LumiverseFloat *)cached_device->getParam("distance"))->getVal() == 
+				((LumiverseFloat*)other_device->getParam("distance"))->getVal();
+		}
+
+		return true;
+	}
+
+
 	void CachingArnoldInterface::setOptionParameter(const std::string &paramName, float val) {
 		if (paramRequiresCacheReload(paramName)) {
 			force_cache_reload = true;
@@ -285,16 +332,7 @@ namespace Lumiverse {
 	}
 
 	bool CachingArnoldInterface::paramRequiresCacheReload(const std::string &paramName) {
-		return
-			(paramName == "lookAtX") ||
-			(paramName == "lookAtY") ||
-			(paramName == "lookAtZ") ||
-			(paramName == "polar") ||
-			(paramName == "azimuth") ||
-			(paramName == "penumbraAngle") ||
-			(paramName == "penumbra") ||
-			(paramName == "AA_samples") ||
-			(paramName == "distance");
+		return paramName == "AA_samples";
 	}
 
 	int CachingArnoldInterface::load_exr(const char *file_path) {
