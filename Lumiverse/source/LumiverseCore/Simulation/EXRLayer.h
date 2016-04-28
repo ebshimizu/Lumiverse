@@ -91,6 +91,8 @@ public:
 
   void resize_buffer(int new_width, int new_height);
 
+  Pixel4 *get_downsampled_pixels(int width, int height);
+
 private:
   /**
    * Name of the layer.

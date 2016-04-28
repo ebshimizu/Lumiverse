@@ -90,11 +90,6 @@ void Compositor::update_dims(int w, int h) {
 	}
 
 	compose_buffer = new Pixel4[w * h]();
-
-	for (auto i = layers.begin(); i != layers.end(); i++) {
-		EXRLayer *curr = i->second;
-		curr->resize_buffer(w, h);
-	}
 }
 
 void Compositor::render(const std::set<Device*> &devices) {
@@ -134,18 +129,23 @@ void Compositor::render(const std::set<Device*> &devices) {
 		  continue;
 	  }
 
-	  // float intensity_shift = device->getIntensity()->asPercent();
+	  //float intensity_shift = device->getIntensity()->asPercent();
 	  float intensity_shift = 1.f;
 
 	  Eigen::Vector3d modulator = device->getColor()->getRGB();
 
-	  modulator = sharp * modulator;
-
+	  // modulator = sharp * modulator;
+	  /*
 	  float r = modulator.x();
 	  float g = modulator.y();
 	  float b = modulator.z();
+	  */
 
-	  Pixel4 *pixels = layer->get_pixels();
+	  float r = 1.f;
+	  float g = 1.f;
+	  float b = 1.f;
+
+	  Pixel4 *pixels = layer->get_downsampled_pixels(w, h);
 	  if (layer->is_active()) {
 		  for (int i = 0; i < w * h; i++) {
 			  Pixel4 basis_pixel = pixels[i];
@@ -158,14 +158,11 @@ void Compositor::render(const std::set<Device*> &devices) {
 				  assert(compose_buffer[i].g <= 1.f);
 				  assert(compose_buffer[i].b <= 1.f);
 				  */
-				  /*
-				  compose_buffer[i].r += intensity_shift * pixels[i].r;
-				  compose_buffer[i].g += intensity_shift * pixels[i].g;
-				  compose_buffer[i].b += intensity_shift * pixels[i].b;
-				  */
 			  }
 		  }
 	  }
+
+	  delete[] pixels;
   }
 }
 

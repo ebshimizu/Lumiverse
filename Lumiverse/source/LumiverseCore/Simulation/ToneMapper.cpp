@@ -76,11 +76,22 @@ namespace Lumiverse {
 		for (size_t i = 0; i < w * h; ++i) {
 			int actual_index = 4 * i;
 			Pixel4 curr_pixel = input_buffer[i];
+			float max_f = 1.0;
+			if (hdr_output_buffer[actual_index] >= max_f) max_f = hdr_output_buffer[actual_index];
+			if (hdr_output_buffer[actual_index + 1] >= max_f) max_f = hdr_output_buffer[actual_index + 1];
+			if (hdr_output_buffer[actual_index + 2] >= max_f) max_f = hdr_output_buffer[actual_index  + 2];
+
+			hdr_output_buffer[actual_index] /= max_f;
+			hdr_output_buffer[actual_index + 1] /= max_f;
+			hdr_output_buffer[actual_index + 2] /= max_f;
+
 			hdr_output_buffer[actual_index] = pow(curr_pixel.r * e, g);
 			hdr_output_buffer[actual_index + 1] = pow(curr_pixel.g * e, g);
 			hdr_output_buffer[actual_index + 2] = pow(curr_pixel.b * e, g);
 			hdr_output_buffer[actual_index + 3] = 1.f;
 		}
+
+
 	}
 
 	void ToneMapper::apply_bmp() {
@@ -109,6 +120,10 @@ namespace Lumiverse {
 		level = 1.0f;
 	}
 
+	void ToneMapper::update_dims(int width, int height) {
+		w = width;
+		h = height;
+	}
 }; // namespace Lumiverse
 
 #endif // USE_ARNOLD_CACHING

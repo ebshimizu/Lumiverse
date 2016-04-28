@@ -30,8 +30,16 @@ namespace Lumiverse {
 
 		// get size information
 		AtNode *options = AiUniverseGetOptions();
+		/*
 		m_width = AiNodeGetInt(options, "xres");
 		m_height = AiNodeGetInt(options, "yres");
+		*/
+		// By default, render a big image
+		this->setDims(1920, 1080);
+		m_width = 1920;
+		m_height = 1080;
+		AiNodeSetInt(options, "xres", m_width);
+		AiNodeSetInt(options, "yres", m_height);
 		m_samples = AiNodeGetInt(options, "AA_samples");
 		delete[] m_buffer;
 		m_buffer = new float[m_width * m_height * 4];
@@ -49,6 +57,7 @@ namespace Lumiverse {
 		AiNodeSetStr(driver, "name", m_bufDriverName.c_str());
 		AiNodeSetInt(driver, "width", m_width);
 		AiNodeSetInt(driver, "height", m_height);
+		AiNodeSetFlt(driver, "gamma", 1.f);
 
 		m_render_buffer = new float[m_width * m_height * 4];
 		AiNodeSetPtr(driver, "buffer_pointer", m_render_buffer);
@@ -128,15 +137,14 @@ namespace Lumiverse {
 		ArnoldInterface::close();
 	}
 
-	bool CachingArnoldInterface::setDims(int w, int h) {
-		force_cache_reload = true;
-		compositor.update_dims(w, h);
-
+	bool CachingArnoldInterface::setDims(int w, int h)  {
 		bool success = ArnoldInterface::setDims(w, h);
+
 		if (success) {
 			setHDROutputBuffer();
+			compositor.update_dims(w, h);
+			tone_mapper.update_dims(w, h);
 		}
-
 		return success;
 	}
 
@@ -166,12 +174,7 @@ namespace Lumiverse {
 		// render each per-light layer
 		std::cout << "Rendering layers" << std::endl;
 		AtNodeIterator *it = AiUniverseGetNodeIterator(AI_NODE_LIGHT);
-		int i = 0;
-		while (!AiNodeIteratorFinished(it) && (i < 1)) {
-			i++;
-			if (i < 1) {
-				continue;
-			}
+		while (!AiNodeIteratorFinished(it)) {
 			AtNode *light = AiNodeIteratorGetNext(it);
 			std::string name = AiNodeGetStr(light, "name");
 
@@ -189,9 +192,9 @@ namespace Lumiverse {
 			// enable light
 			AiNodeSetDisabled(light, false);
 			
-			// AiNodeSetRGB(light, "color", 1.f, 1.f, 1.f);
 			// render image
 			// AiNodeSetFlt(light, "intensity", intensity_float->getMax());
+			AiNodeSetRGB(light, "color", 1.f, 1.f, 1.f);
 			AiRender(AI_RENDER_MODE_CAMERA);
 
 			// copy to layer buffer
@@ -205,6 +208,16 @@ namespace Lumiverse {
 				layer_buffer[idx].g = m_render_buffer[buf_idx + 1];
 				layer_buffer[idx].b = m_render_buffer[buf_idx + 2];
 				layer_buffer[idx].a = !!m_render_buffer[buf_idx + 3];
+				
+				/*
+				float max_f = 1.0;
+				if (layer_buffer[idx].r >= max_f) max_f = layer_buffer[idx].r;
+				if (layer_buffer[idx].g >= max_f) max_f = layer_buffer[idx].g;
+				if (layer_buffer[idx].b >= max_f) max_f = layer_buffer[idx].b;
+				layer_buffer[idx].r /= max_f;
+				layer_buffer[idx].g /= max_f;
+				layer_buffer[idx].b /= max_f;
+				*/
 			}
 
 			layer->enable();
@@ -252,6 +265,38 @@ namespace Lumiverse {
 		tone_mapper.apply_hdr();
 	}
 
+	/*!
+	\brief Sets a parameter found in the global options node in arnold
+	*/
+	void CachingArnoldInterface::setOptionParameter(const std::string &paramName, int val) {
+		if (paramRequiresCacheReload(paramName)) {
+			force_cache_reload = true;
+		}
+
+		ArnoldInterface::setOptionParameter(paramName, val);
+	}
+
+	void CachingArnoldInterface::setOptionParameter(const std::string &paramName, float val) {
+		if (paramRequiresCacheReload(paramName)) {
+			force_cache_reload = true;
+		}
+
+		ArnoldInterface::setOptionParameter(paramName, val);
+	}
+
+	bool CachingArnoldInterface::paramRequiresCacheReload(const std::string &paramName) {
+		return
+			(paramName == "lookAtX") ||
+			(paramName == "lookAtY") ||
+			(paramName == "lookAtZ") ||
+			(paramName == "polar") ||
+			(paramName == "azimuth") ||
+			(paramName == "penumbraAngle") ||
+			(paramName == "penumbra") ||
+			(paramName == "AA_samples") ||
+			(paramName == "distance");
+	}
+
 	int CachingArnoldInterface::load_exr(const char *file_path) {
 
 		// check header
@@ -297,8 +342,9 @@ namespace Lumiverse {
 
 				// allocate memory
 				pixels = new Pixel4[m_width * m_height]();
-				if (!pixels)
+				if (!pixels) {
 					std::cerr << "Failed to allocate memory for new layer" << std::endl;
+				}
 
 				// layer.R
 				frame_buffer.insert((layer_name + ".R").c_str(), // name

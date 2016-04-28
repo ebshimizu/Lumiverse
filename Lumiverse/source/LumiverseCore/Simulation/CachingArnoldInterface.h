@@ -82,6 +82,12 @@ namespace Lumiverse {
 		*/
 		void setSamples(int samples) override;
 
+		/*!
+		\brief Sets a parameter found in the global options node in arnold
+		*/
+		void setOptionParameter(const std::string &paramName, int val) override;
+		void setOptionParameter(const std::string &paramName, float val) override;
+
 	private:
 
 		Compositor compositor;
@@ -113,6 +119,8 @@ namespace Lumiverse {
 		bool force_cache_reload = false;
 	
 		float *m_render_buffer;
+
+		bool paramRequiresCacheReload(const std::string &paramName);
 	};
 }
 

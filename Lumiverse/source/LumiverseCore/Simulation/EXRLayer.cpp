@@ -1,4 +1,8 @@
 #include "EXRLayer.h"
+
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
+#include "../../lib/stb/stb_image_resize.h"
+
 #include <cstring>
 
 #ifdef USE_ARNOLD_CACHING
@@ -69,6 +73,41 @@ void EXRLayer::resize_buffer(int new_width, int new_height) {
 	}
 
 	pixels = new Pixel4[new_width * new_height];
+}
+
+Pixel4 *EXRLayer::get_downsampled_pixels(int width, int height) {
+	if ((width == w) && (height == h)) {
+		return pixels;
+	}
+	Pixel4 *downsampled_pixels = new Pixel4[width * height];
+
+	float *output_pixels = new float[width * height * 4];
+	float *input_pixels = new float[w * h * 4];
+	for (int i = 0; i < w * h; i++) {
+		int input_idx = 4 * i;
+		input_pixels[input_idx] = pixels[i].r;
+		input_pixels[input_idx + 1] = pixels[i].g;
+		input_pixels[input_idx + 2] = pixels[i].b;
+		input_pixels[input_idx + 3] = pixels[i].a;
+	}
+
+	stbir_resize_float(
+		input_pixels, w, h, 0,
+		output_pixels, width, height, 0,
+		4
+	);
+
+	for (int i = 0; i < w * h; i++) {
+		int output_idx = 4 * i;
+		downsampled_pixels[i].r = output_pixels[output_idx];
+		downsampled_pixels[i].g = output_pixels[output_idx + 1];
+		downsampled_pixels[i].b = output_pixels[output_idx + 2];
+		downsampled_pixels[i].a = output_pixels[output_idx + 3];
+	}
+
+	delete[] input_pixels;
+	delete[] output_pixels;
+	return downsampled_pixels;
 }
 
 }; // namespace LightmanCore
