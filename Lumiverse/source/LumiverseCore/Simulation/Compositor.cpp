@@ -9,6 +9,7 @@
 #include <chrono>
 #include <unordered_map>
 #include <set>
+#include <assert.h>
 
 namespace Lumiverse {
 
@@ -102,6 +103,28 @@ void Compositor::render(const std::set<Device*> &devices) {
   std::memset((void *)compose_buffer, 0, sizeof(Pixel4) * w * h);
 
   // composite all active layers
+  Eigen::Matrix3d sharp;
+  /*
+  sharp(0, 0) = 3.2406;
+  sharp(0, 1) = -1.5372;
+  sharp(0, 2) = -.4986;
+  sharp(1, 0) = -.9689;
+  sharp(1, 1) = 1.8758;
+  sharp(1, 2) = .0415;
+  sharp(2, 0) = .0557;
+  sharp(2, 1) = -.2040;
+  sharp(2, 2) = 1.0570;
+  */
+  sharp(0, 0) = .4124;
+  sharp(0, 1) = .3576;
+  sharp(0, 2) = .1805;
+  sharp(1, 0) = .2126;
+  sharp(1, 1) = .7152;
+  sharp(1, 2) = .0722;
+  sharp(2, 0) = .0193;
+  sharp(2, 1) = .1192;
+  sharp(2, 2) = .9505;
+
   for (Device *device : devices) {
 	  std::string name = device->getMetadata("Arnold Node Name");
 
@@ -115,18 +138,26 @@ void Compositor::render(const std::set<Device*> &devices) {
 	  float intensity_shift = 1.f;
 
 	  Eigen::Vector3d modulator = device->getColor()->getRGB();
-	  double r = modulator.x();
-	  double g = modulator.y();
-	  double b = modulator.z();
+
+	  modulator = sharp * modulator;
+
+	  float r = modulator.x();
+	  float g = modulator.y();
+	  float b = modulator.z();
 
 	  Pixel4 *pixels = layer->get_pixels();
 	  if (layer->is_active()) {
 		  for (int i = 0; i < w * h; i++) {
-			  if (pixels[i].a > 0) {
-				  compose_buffer[i].r += (r * intensity_shift * pixels[i].r);
-				  compose_buffer[i].g += (g * intensity_shift * pixels[i].g);
-				  compose_buffer[i].b += (b * intensity_shift * pixels[i].b);
-
+			  Pixel4 basis_pixel = pixels[i];
+			  if (basis_pixel.a > 0) {
+				  compose_buffer[i].r += (r * intensity_shift * basis_pixel.r);
+				  compose_buffer[i].g += (g * intensity_shift * basis_pixel.g);
+				  compose_buffer[i].b += (b * intensity_shift * basis_pixel.b);
+				  /*
+				  assert(compose_buffer[i].r <= 1.f);
+				  assert(compose_buffer[i].g <= 1.f);
+				  assert(compose_buffer[i].b <= 1.f);
+				  */
 				  /*
 				  compose_buffer[i].r += intensity_shift * pixels[i].r;
 				  compose_buffer[i].g += intensity_shift * pixels[i].g;

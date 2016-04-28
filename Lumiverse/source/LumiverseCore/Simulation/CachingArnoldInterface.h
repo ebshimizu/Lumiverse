@@ -48,6 +48,11 @@ namespace Lumiverse {
 		void init();
 
 		/*!
+		\brief Close this caching interface
+		*/
+		void close() override;
+
+		/*!
 		* \brief Now that all of the EXR layers have been rendered (i.e. the cache has been filled),
 		* render an image per the light node parameters.
 		*/
@@ -106,6 +111,8 @@ namespace Lumiverse {
 		\brief Should we force an update on the next render call?
 		*/
 		bool force_cache_reload = false;
+	
+		float *m_render_buffer;
 	};
 }
 

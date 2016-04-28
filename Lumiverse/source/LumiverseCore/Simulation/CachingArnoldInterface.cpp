@@ -33,24 +33,29 @@ namespace Lumiverse {
 		m_width = AiNodeGetInt(options, "xres");
 		m_height = AiNodeGetInt(options, "yres");
 		m_samples = AiNodeGetInt(options, "AA_samples");
+		delete[] m_buffer;
 		m_buffer = new float[m_width * m_height * 4];
 		this->setHDROutputBuffer();
 
-		// setup buffer driver
-		AtNode *driver = AiNode("driver_buffer");
-		m_bufDriverName = "buffer_driver";
+		// Set a driver to output result into a float buffer
+		AtNode *driver = AiNode("cache_buffer");
+
+		m_bufDriverName = "cache_buffer";
 		std::stringstream ss;
 		ss << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() -
 			chrono::system_clock::from_time_t(0)).count() % 1000;
 		m_bufDriverName = m_bufDriverName.append(ss.str());
 
-		AiNodeSetStr(driver, "name", "driver_buffer");
-		AiNodeSetFlt(driver, "gamma", 1.f);
-		AiNodeSetBool(driver, "predictive", m_predictive);
+		AiNodeSetStr(driver, "name", m_bufDriverName.c_str());
+		AiNodeSetInt(driver, "width", m_width);
+		AiNodeSetInt(driver, "height", m_height);
+
+		m_render_buffer = new float[m_width * m_height * 4];
+		AiNodeSetPtr(driver, "buffer_pointer", m_render_buffer);
+		// Swapping threads more than hardware supports may cause problem.
+		m_bucket_num = std::thread::hardware_concurrency();
 
 		delete[] m_bucket_pos;
-		m_bucket_pos = NULL;
-		m_bucket_num = std::thread::hardware_concurrency();
 		m_bucket_pos = new BucketPositionInfo[m_bucket_num];
 		AiNodeSetPtr(driver, "bucket_pos_pointer", m_bucket_pos);
 
@@ -61,9 +66,8 @@ namespace Lumiverse {
 		AiNodeSetStr(filter, "name", "filter");
 		AiNodeSetFlt(filter, "width", 2);
 
-		// use buffer driver for output
-		AtArray *outputs = AiNodeGetArray(options, "outputs");
-		AiArraySetStr(outputs, 0, "RGBA RGBA filter driver_buffer");
+		std::string command("RGBA RGBA filter ");
+		appendToOutputs(command.append(m_bufDriverName).c_str());
 
 		// add layers
 		// this first records each of the light's color and intensity
@@ -118,6 +122,12 @@ namespace Lumiverse {
 		m_open = true;
 	}
 
+	void CachingArnoldInterface::close() {
+		delete[] m_render_buffer;
+
+		ArnoldInterface::close();
+	}
+
 	bool CachingArnoldInterface::setDims(int w, int h) {
 		force_cache_reload = true;
 		compositor.update_dims(w, h);
@@ -151,18 +161,17 @@ namespace Lumiverse {
 			return;
 		}
 
-		float *buffer = new float[m_width * m_height * 4];
-		memset(buffer, 0, m_width * m_height * 4 * sizeof(float));
-		AtNode *driver = AiNodeLookUpByName("driver_buffer");
-		AiNodeSetInt(driver, "width", m_width);
-		AiNodeSetInt(driver, "height", m_height);
-		AiNodeSetPtr(driver, "buffer_pointer", buffer);
+		memset(m_render_buffer, 0, m_width * m_height * 4 * sizeof(float));
 
 		// render each per-light layer
 		std::cout << "Rendering layers" << std::endl;
 		AtNodeIterator *it = AiUniverseGetNodeIterator(AI_NODE_LIGHT);
-		while (!AiNodeIteratorFinished(it)) {
-
+		int i = 0;
+		while (!AiNodeIteratorFinished(it) && (i < 1)) {
+			i++;
+			if (i < 1) {
+				continue;
+			}
 			AtNode *light = AiNodeIteratorGetNext(it);
 			std::string name = AiNodeGetStr(light, "name");
 
@@ -180,7 +189,7 @@ namespace Lumiverse {
 			// enable light
 			AiNodeSetDisabled(light, false);
 			
-			AiNodeSetRGB(light, "color", 1.f, 1.f, 1.f);
+			// AiNodeSetRGB(light, "color", 1.f, 1.f, 1.f);
 			// render image
 			// AiNodeSetFlt(light, "intensity", intensity_float->getMax());
 			AiRender(AI_RENDER_MODE_CAMERA);
@@ -192,21 +201,19 @@ namespace Lumiverse {
 			Pixel4 *layer_buffer = layer->get_pixels();
 			for (size_t idx = 0; idx < m_width * m_height; ++idx) {
 				int buf_idx = idx * 4;
-				layer_buffer[idx].r = buffer[buf_idx];
-				layer_buffer[idx].g = buffer[buf_idx + 1];
-				layer_buffer[idx].b = buffer[buf_idx + 2];
-				layer_buffer[idx].a = !!buffer[buf_idx + 3];
+				layer_buffer[idx].r = m_render_buffer[buf_idx];
+				layer_buffer[idx].g = m_render_buffer[buf_idx + 1];
+				layer_buffer[idx].b = m_render_buffer[buf_idx + 2];
+				layer_buffer[idx].a = !!m_render_buffer[buf_idx + 3];
 			}
 
 			layer->enable();
 
 			// disable light
 			AiNodeSetDisabled(light, true);
-			memset(buffer, 0, m_width * m_height * 4 * sizeof(float));
+			memset(m_render_buffer, 0, m_width * m_height * 4 * sizeof(float));
 		}
 		AiNodeIteratorDestroy(it);
-
-		delete[] buffer;
 	}
 
 	void CachingArnoldInterface::setSamples(int samples) {

@@ -71,6 +71,8 @@ namespace Lumiverse {
 		float g = 1.0f / gamma;
 		// float e = sqrt(pow(2, level));
 		float e = 1.f;
+
+		std::memset(hdr_output_buffer, 0, w * h * 4 * sizeof(float));
 		for (size_t i = 0; i < w * h; ++i) {
 			int actual_index = 4 * i;
 			Pixel4 curr_pixel = input_buffer[i];
