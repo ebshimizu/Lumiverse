@@ -9,6 +9,7 @@
 #include "ToneMapper.h"
 
 #include <cmath>
+#include <cstring>
 
 namespace Lumiverse {
 
