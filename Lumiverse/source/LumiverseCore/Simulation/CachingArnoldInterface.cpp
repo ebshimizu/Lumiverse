@@ -17,7 +17,7 @@
 
 namespace Lumiverse {
 
-	void CachingArnoldInterface::init() {
+	void CachingArnoldInterface::init(std::string driver_name) {
 		AiBegin();
 
 		setLogFileName("arnold.log");
@@ -57,7 +57,6 @@ namespace Lumiverse {
 		AiNodeSetStr(driver, "name", m_bufDriverName.c_str());
 		AiNodeSetInt(driver, "width", m_width);
 		AiNodeSetInt(driver, "height", m_height);
-		AiNodeSetFlt(driver, "gamma", 1.f);
 
 		m_render_buffer = new float[m_width * m_height * 4];
 		AiNodeSetPtr(driver, "buffer_pointer", m_render_buffer);

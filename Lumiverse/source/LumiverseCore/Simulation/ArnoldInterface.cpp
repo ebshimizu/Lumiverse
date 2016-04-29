@@ -423,7 +423,7 @@ bool ArnoldInterface::isDistributedOpen()
   return m_open;
 }
 
-void ArnoldInterface::init() {
+void ArnoldInterface::init(std::string driver_str) {
   // TODO : to use env var (different apis for linux and win)
   // Make sure your environment variables are set properly to check out an arnold license.
 
@@ -444,9 +444,17 @@ void ArnoldInterface::init() {
   m_samples = AiNodeGetInt(options, "AA_samples");
  
   // Set a driver to output result into a float buffer
-  AtNode *driver = AiNode("driver_buffer");
+  AtNode *driver;
+  if (driver_str == "driver_buffer") {
+	  driver = AiNode("driver_buffer");
+	  m_bufDriverName = "buffer_driver";
+	  AiNodeSetFlt(driver, "gamma", m_gamma);
+	  AiNodeSetBool(driver, "predictive", m_predictive);
+  } else if (driver_str == "cache_buffer") {
+	  driver = AiNode("cache_buffer");
+	  m_bufDriverName = "cache_buffer";
+  }
   
-  m_bufDriverName = "buffer_driver";
   std::stringstream ss;
   ss << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() -
                                                chrono::system_clock::from_time_t(0)).count() % 1000;
@@ -455,8 +463,6 @@ void ArnoldInterface::init() {
   AiNodeSetStr(driver, "name", m_bufDriverName.c_str());
   AiNodeSetInt(driver, "width", m_width);
   AiNodeSetInt(driver, "height", m_height);
-  AiNodeSetFlt(driver, "gamma", m_gamma);
-	AiNodeSetBool(driver, "predictive", m_predictive);
     
   // Assume we are using RGBA
 	delete[] m_buffer;

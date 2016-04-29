@@ -95,7 +95,6 @@ namespace Lumiverse {
     *
     * Opens a new Arnold session. Loads ass file and the plugin (buffer_driver).
     */
-    virtual void init();
 
 	/*!
 	* \brief Initialize the ArnoldRenderer with a reference to a JSON serialized parent patch
