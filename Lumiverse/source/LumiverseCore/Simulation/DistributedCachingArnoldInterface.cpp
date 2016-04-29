@@ -37,6 +37,11 @@ namespace Lumiverse {
 
 	void DistributedCachingArnoldInterface::updateDevicesLayers(const std::set<Device *> &devices) {
 		const std::unordered_map<std::string, Device *> &to_update = getDevicesToUpdate(devices);
+		
+		// Don't bother with the rest of the function if there are no devices to update
+		if (to_update.size() == 0) {
+			return;
+		}
 
 		// Maps to hold the intensities and colors of the devices
 		std::unordered_map<std::string, LumiverseFloat*> current_intensities;
