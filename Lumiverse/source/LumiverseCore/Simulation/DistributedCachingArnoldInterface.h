@@ -75,9 +75,12 @@ namespace Lumiverse {
 		void setOptionParameter(const std::string &paramName, int val) override;
 		void setOptionParameter(const std::string &paramName, float val) override;
 
+		float *getBufferPointer() override;
+
 	protected:
 		void dumpHDRToBuffer(const std::set<Device *> &devices) override;
 		void updateDevicesLayers(const std::set<Device *> &devices) override;
+		void setHDROutputBuffer() override;
 	};
 }
 

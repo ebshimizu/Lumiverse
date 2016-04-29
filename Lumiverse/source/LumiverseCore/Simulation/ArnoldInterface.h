@@ -141,7 +141,7 @@ namespace Lumiverse {
     *
     * \return The pointer to the frame buffer.
     */
-    float *getBufferPointer() { return m_buffer; }
+    virtual float *getBufferPointer() { return m_buffer; }
 
     /*!
     \brief Sets an integer parameter for an arnold light

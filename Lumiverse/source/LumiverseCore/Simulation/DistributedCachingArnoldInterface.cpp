@@ -17,15 +17,18 @@ namespace Lumiverse {
 	void DistributedCachingArnoldInterface::init(const JSONNode jsonPatch) {
 		DistributedArnoldInterface::init(jsonPatch);
 		DistributedArnoldInterface::setDims(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-		DistributedArnoldInterface::m_gamma = 1.f;
+		setOptionParameter("m_gamma", 1.f);
 		m_width = DEFAULT_WIDTH;
 		m_height = DEFAULT_HEIGHT;
+		m_open = true;
 	}
 
 	void DistributedCachingArnoldInterface::close() {
 		delete[] m_render_buffer;
+		compositor.get_layers().clear();
 
 		DistributedArnoldInterface::close();
+		m_open = false;
 	}
 
 	bool DistributedCachingArnoldInterface::setDims(int w, int h) {
@@ -92,7 +95,7 @@ namespace Lumiverse {
 
 		updateDevicesLayers(devices);
 
-		tone_mapper.set_gamma(DistributedArnoldInterface::m_gamma);
+		tone_mapper.set_gamma(2.2f);
 
 		dumpHDRToBuffer(devices);
 
@@ -110,26 +113,34 @@ namespace Lumiverse {
 
 		compositor.render(devices);
 		tone_mapper.set_input(compositor.get_compose_buffer(), CachingArnoldInterface::m_width, CachingArnoldInterface::m_height);
+		setHDROutputBuffer();
 		tone_mapper.apply_hdr();
+	}
+
+	void DistributedCachingArnoldInterface::setHDROutputBuffer() {
+		if (m_render_buffer != NULL) {
+			delete[] m_render_buffer;
+		}
+		m_render_buffer = new float[m_width * m_height * 4];
+
+		tone_mapper.set_output_hdr(m_render_buffer);
+	}
+
+	float *DistributedCachingArnoldInterface::getBufferPointer() {
+		return m_render_buffer;
 	}
 
 	/*!
 	\brief Sets a parameter found in the global options node in arnold
 	*/
 	void DistributedCachingArnoldInterface::setOptionParameter(const std::string &paramName, int val) {
-		if (optionRequiresCacheReload(paramName)) {
-			force_cache_reload = true;
-		}
-
-		ArnoldInterface::setOptionParameter(paramName, val);
+		DistributedArnoldInterface::setOptionParameter(paramName, val);
+		CachingArnoldInterface::setOptionParameter(paramName, val);
 	}
 
 	void DistributedCachingArnoldInterface::setOptionParameter(const std::string &paramName, float val) {
-		if (optionRequiresCacheReload(paramName)) {
-			force_cache_reload = true;
-		}
-
-		ArnoldInterface::setOptionParameter(paramName, val);
+		DistributedArnoldInterface::setOptionParameter(paramName, val);
+		CachingArnoldInterface::setOptionParameter(paramName, val);
 	}
 }
 

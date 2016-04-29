@@ -55,11 +55,6 @@ namespace Lumiverse {
 		int render(const std::set<Device *> &devices);
 
 		/*!
-		* \brief Set the HDR output buffer
-		*/
-		void setHDROutputBuffer();
-
-		/*!
 		* \brief Dump to the HDR buffer
 		*/
 		virtual void dumpHDRToBuffer(const std::set<Device *> &devices);
@@ -125,7 +120,11 @@ namespace Lumiverse {
 		*/
 		bool force_cache_reload = false;
 	
-		float *m_render_buffer;
+		/*!
+		* \brief Buffer that holds temporary rendered results from each
+		* lighting node when the cache is being filled.
+		*/
+		float *m_render_buffer = NULL;
 
 		/*!
 		* \brief Check if an option change requires a complete reloading of the cache
@@ -141,6 +140,11 @@ namespace Lumiverse {
 		* such as position, rotation, penumbra angle, and distance.
 		*/
 		bool isValidCacheCopy(Device *cached_device, Device *other_device);
+
+		/*!
+		* \brief Set the HDR output buffer
+		*/
+		virtual void setHDROutputBuffer();
 	};
 }
 

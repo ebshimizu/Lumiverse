@@ -135,6 +135,7 @@ namespace Lumiverse {
 		
 		// @TODO: Clean stuff up
 		delete[] m_render_buffer;
+		compositor.get_layers().clear();
 
 		ArnoldInterface::close();
 	}
