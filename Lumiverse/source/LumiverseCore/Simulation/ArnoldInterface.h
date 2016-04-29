@@ -141,7 +141,7 @@ namespace Lumiverse {
     *
     * \return The pointer to the frame buffer.
     */
-    float *getBufferPointer() { return m_buffer; }
+    virtual float *getBufferPointer() { return m_buffer; }
 
     /*!
     \brief Sets an integer parameter for an arnold light
@@ -378,6 +378,16 @@ namespace Lumiverse {
     */
     virtual bool isDistributedOpen();
 
+	/*!
+	\brief Check whether this patch has caching enabled
+	*/
+	bool isUsingCaching() { return m_using_caching; }
+
+	/*!
+	\brief Set whether this interface is using caching
+	*/
+	void setUsingCaching(bool usingCaching) { m_using_caching = usingCaching; }
+
   protected:
     /*!
     * \brief Helper function to sets a arnold non-array parameter.
@@ -505,6 +515,13 @@ namespace Lumiverse {
 
     // Buffer driver name
     string m_bufDriverName;
+
+	/*!
+	* \brief Is this interface using caching -- currently only used for
+	* notifying the distributed renderer that it should use the caching
+	* driver instead of the buffer driver
+	*/
+	bool m_using_caching;
   };
 
   /*!

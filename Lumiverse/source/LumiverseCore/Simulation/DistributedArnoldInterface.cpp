@@ -44,6 +44,7 @@ namespace Lumiverse {
 		}
 
 		m_remote_open = true;
+		m_open = true;
 	}
 
 	bool DistributedArnoldInterface::openConnection() {
@@ -312,6 +313,7 @@ namespace Lumiverse {
 		}
 
 		m_remote_open = false;
+		m_open = false;
 	}
 
 	void DistributedArnoldInterface::interrupt() {
