@@ -94,25 +94,16 @@ namespace Lumiverse {
 
 			// create new layer
 			string name = AiNodeGetStr(light, "name");
-			Pixel4 *pixels = new Pixel4[m_width * m_height]();
-			EXRLayer *layer = new EXRLayer(pixels, m_width, m_height, name.c_str());
+			EXRLayer *layer = new EXRLayer(m_width, m_height, name.c_str());
 
 			// Disable layer by default -- enable when we read light nodes from scene in render()
 			layer->disable();
-
-			AtRGB rgb = AiNodeGetRGB(light, "color");
-			layer->set_modulator(Pixel3(rgb.r, rgb.g, rgb.b));
 
 			// add layer to compositor (render later)
 			compositor.add_layer(layer);
 			std::cout << "Created layer: " << name << std::endl;
 
 			// disable light
-			// note that this does not disable the mesh
-			// and the light shape will be rendered as white
-			// will need to override the mesh light metarial
-			// color to completely take the light out of
-			// the scene
 			AiNodeSetDisabled(light, true);
 
 			// increment count
@@ -220,7 +211,7 @@ namespace Lumiverse {
 
 			// copy to layer buffer
 			EXRLayer *layer = compositor.get_layer_by_name(name.c_str());
-			layer->clear_buffer();
+			layer->clear_buffers();
 
 			Pixel4 *layer_buffer = layer->get_pixels();
 			for (size_t idx = 0; idx < m_width * m_height; ++idx) {
@@ -429,7 +420,7 @@ namespace Lumiverse {
 						0.0));                 // fill value
 
 											   // add layer
-				EXRLayer *layer = new EXRLayer(pixels, m_width, m_height, layer_name.c_str());
+				EXRLayer *layer = new EXRLayer(m_width, m_height, layer_name.c_str());
 				compositor.add_layer(layer);
 				std::cout << " - Found layer: " << layer_name << std::endl;
 			}
