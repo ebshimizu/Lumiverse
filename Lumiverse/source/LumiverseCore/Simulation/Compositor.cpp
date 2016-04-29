@@ -75,6 +75,10 @@ EXRLayer *Compositor::get_layer_by_name(const char *layer_name) {
 	}
 }
 
+bool Compositor::contains_layer(const char *layer_name) {
+	return layers.count(layer_name) > 0;
+}
+
 void Compositor::del_layer_by_name(const char *layer_name) {
 
 	if (layers.count(layer_name) > 0) {

@@ -101,6 +101,11 @@ public:
   */
   void update_dims(int w, int h);
 
+  /*!
+  \brief Check if this compositor contains a layer at the given name
+  */
+  bool contains_layer(const char *layer_name);
+
 private:
   /**
    * Width.

@@ -106,7 +106,9 @@ Pixel4 *EXRLayer::get_downsampled_pixels(int width, int height) {
 
 void EXRLayer::set_pixels(float *buffer) {
 	
-	delete[] pixels;
+	if (pixels != NULL) {
+		delete[] pixels;
+	}
 	pixels = new Pixel4[w * h];
 
 	for (int i = 0; i < w * h; i++) {

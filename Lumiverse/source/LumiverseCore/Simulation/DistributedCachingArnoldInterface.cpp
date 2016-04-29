@@ -17,6 +17,9 @@ namespace Lumiverse {
 	void DistributedCachingArnoldInterface::init(const JSONNode jsonPatch) {
 		DistributedArnoldInterface::init(jsonPatch);
 		DistributedArnoldInterface::setDims(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		DistributedArnoldInterface::m_gamma = 1.f;
+		m_width = DEFAULT_WIDTH;
+		m_height = DEFAULT_HEIGHT;
 	}
 
 	void DistributedCachingArnoldInterface::close() {
@@ -36,11 +39,21 @@ namespace Lumiverse {
 		std::unordered_map<std::string, LumiverseFloat*> current_intensities;
 		std::unordered_map<std::string, LumiverseColor*> current_channels;
 
+		// Add devices to compositor if they don't exist
+		for (auto i = to_update.begin(); i != to_update.end(); i++) {
+			std::string device_name = i->first;
+			if (!compositor.contains_layer(device_name.c_str())) {
+				Pixel4 *pixels = new Pixel4[m_width * m_height];
+				EXRLayer *new_layer = new EXRLayer(pixels, m_width, m_height, device_name.c_str());
+				compositor.add_layer(new_layer);
+			}
+		}
+
 		// Set intensity to 0 and color to 1.f 1.f 1.f for all devices
 		for (Device *device : devices) {
 			std::string device_name = device->getMetadata("Arnold Node Name");
-			current_intensities[device_name] = device->getIntensity();
-			current_channels[device_name] = device->getColor();
+			current_intensities[device_name] = new LumiverseFloat(device->getIntensity());
+			current_channels[device_name] = new LumiverseColor(device->getColor());
 			device->setIntensity(0.0);
 			device->setColorRGB("color", 1.f, 1.f, 1.f);
 		}

@@ -231,7 +231,7 @@ Lumiverse/docs
 Driver/source/lib/
 Lumiverse/source/Demos/JuceWindowApplication/JuceLibraryCode/*
 Arnold-4.1.3.3-darwin/*
-Lumiverse/source/LumiverseCore/lib/arnold/*
+
 
 # Juce App builds
 Lumiverse/source/Demos/JuceWindowApplication/Builds/
