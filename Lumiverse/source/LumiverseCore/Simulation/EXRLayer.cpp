@@ -24,7 +24,7 @@ EXRLayer::EXRLayer(const char *file, const char *name) {
   modulator = Pixel3(1, 1, 1);
 }
 
-EXRLayer::EXRLayer(Pixel4 *pixel_buffer, size_t width, size_t height,
+EXRLayer::EXRLayer(size_t width, size_t height,
              const char *name) {
 
   if (name) {
@@ -33,7 +33,8 @@ EXRLayer::EXRLayer(Pixel4 *pixel_buffer, size_t width, size_t height,
 
   w = width;
   h = height;
-  pixels = pixel_buffer;
+  pixels = new Pixel4[w * h];
+  memset(pixels, 0, w * h * sizeof(Pixel4));
 
   active = true;
   modulator = Pixel3(1, 1, 1);
@@ -61,14 +62,28 @@ void EXRLayer::set_modulator(Pixel3 modulator) { this->modulator = modulator; }
 
 Pixel4 *EXRLayer::get_pixels() { return pixels; }
 
-void EXRLayer::clear_buffer() {
+void EXRLayer::clear_buffers() {
+	for (auto i = pixel_size_bases.begin(); i != pixel_size_bases.end(); i++) {
+		delete(i->second);
+	}
+	pixel_size_bases.clear();
 	std::memset(pixels, 0, sizeof(Pixel4) * get_size());
+}
+
+int inline EXRLayer::get_size_key(int width, int height) {
+	return width << 2 + height;
 }
 
 Pixel4 *EXRLayer::get_downsampled_pixels(int width, int height) {
 	if ((width == w) && (height == h)) {
 		return pixels;
 	}
+
+	int key = get_size_key(width, height);
+	if (pixel_size_bases.count(key) > 0) {
+		return pixel_size_bases.at(key);
+	}
+
 	Pixel4 *downsampled_pixels = new Pixel4[width * height];
 
 	float *output_pixels = new float[width * height * 4];
@@ -101,6 +116,10 @@ Pixel4 *EXRLayer::get_downsampled_pixels(int width, int height) {
 
 	delete[] input_pixels;
 	delete[] output_pixels;
+
+	// Add this buffer to the map for future use
+	pixel_size_bases[key] = downsampled_pixels;
+
 	return downsampled_pixels;
 }
 
