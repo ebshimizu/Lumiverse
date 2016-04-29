@@ -151,9 +151,9 @@ void Compositor::render(const std::set<Device*> &devices) {
 		  for (int i = 0; i < w * h; i++) {
 			  Pixel4 basis_pixel = pixels[i];
 			  if (basis_pixel.a > 0) {
-				  compose_buffer[i].r += (r * .5 * intensity_shift * basis_pixel.r);
-				  compose_buffer[i].g += (g * .5 * intensity_shift * basis_pixel.g);
-				  compose_buffer[i].b += (b * .5 * intensity_shift * basis_pixel.b);
+				  compose_buffer[i].r += (r * intensity_shift * basis_pixel.r);
+				  compose_buffer[i].g += (g * intensity_shift * basis_pixel.g);
+				  compose_buffer[i].b += (b * intensity_shift * basis_pixel.b);
 			  }
 		  }
 	  }

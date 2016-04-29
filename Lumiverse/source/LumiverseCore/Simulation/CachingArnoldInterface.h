@@ -120,8 +120,19 @@ namespace Lumiverse {
 	
 		float *m_render_buffer;
 
-		bool paramRequiresCacheReload(const std::string &paramName);
+		/*!
+		* \brief Check if an option change requires a complete reloading of the cache
+		*
+		* When an option is changed with setParam, check if the entire cache needs to
+		* be reloaded. This should likely only happen if an image is upsampled
+		*/
+		bool optionRequiresCacheReload(const std::string &paramName);
 
+		/*
+		* \brief Test whether a device parameter has changed such that its cache
+		* basis image should be re-rendered. This can happen on updates to params
+		* such as position, rotation, penumbra angle, and distance.
+		*/
 		bool isValidCacheCopy(Device *cached_device, Device *other_device);
 	};
 }

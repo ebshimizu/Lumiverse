@@ -195,7 +195,7 @@ namespace Lumiverse {
 			
 			// render image
 			// AiNodeSetFlt(light, "intensity", intensity_float->getMax());
-			AiNodeSetFlt(light, "intensity", intensity_float->getVal());
+			// AiNodeSetFlt(light, "intensity", intensity_float->getVal());
 			// AiNodeSetRGB(light, "color", 1.f, 1.f, 1.f);
 			AiRender(AI_RENDER_MODE_CAMERA);
 
@@ -261,7 +261,7 @@ namespace Lumiverse {
 	\brief Sets a parameter found in the global options node in arnold
 	*/
 	void CachingArnoldInterface::setOptionParameter(const std::string &paramName, int val) {
-		if (paramRequiresCacheReload(paramName)) {
+		if (optionRequiresCacheReload(paramName)) {
 			force_cache_reload = true;
 		}
 
@@ -313,7 +313,7 @@ namespace Lumiverse {
 			}
 		}
 
-		// distance?
+		// distance
 		if (cached_device->paramExists("distance")) {
 			return ((LumiverseFloat *)cached_device->getParam("distance"))->getVal() == 
 				((LumiverseFloat*)other_device->getParam("distance"))->getVal();
@@ -324,14 +324,14 @@ namespace Lumiverse {
 
 
 	void CachingArnoldInterface::setOptionParameter(const std::string &paramName, float val) {
-		if (paramRequiresCacheReload(paramName)) {
+		if (optionRequiresCacheReload(paramName)) {
 			force_cache_reload = true;
 		}
 
 		ArnoldInterface::setOptionParameter(paramName, val);
 	}
 
-	bool CachingArnoldInterface::paramRequiresCacheReload(const std::string &paramName) {
+	bool CachingArnoldInterface::optionRequiresCacheReload(const std::string &paramName) {
 		return paramName == "AA_samples";
 	}
 

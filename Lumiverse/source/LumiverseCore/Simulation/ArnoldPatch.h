@@ -301,11 +301,6 @@ namespace Lumiverse {
 	* \sa loadPatches(), useDistributedRendering()
 	*/
 	bool cacheRendering(const JSONNode data);
-
-	/*!
-	Should we use caching on the remote renderer
-	*/
-	bool m_use_caching;
   };
 }
 
