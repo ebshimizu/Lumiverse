@@ -194,9 +194,18 @@ namespace Lumiverse {
 			AiNodeSetDisabled(light, false);
 			
 			// render image
-			// AiNodeSetFlt(light, "intensity", intensity_float->getMax());
+			AiNodeSetFlt(light, "intensity", intensity_float->getMax());
 			// AiNodeSetFlt(light, "intensity", intensity_float->getVal());
-			// AiNodeSetRGB(light, "color", 1.f, 1.f, 1.f);
+
+			Eigen::Vector3d modulator = curr_device->getColor()->getRGB();
+			/*
+			float r = modulator.x();
+			float g = modulator.y();
+			float b = modulator.z();
+			*/
+			// AiNodeSetRGB(light, "color", r, g, b);
+
+			AiNodeSetRGB(light, "color", 1.f, 1.f, 1.f);
 			AiRender(AI_RENDER_MODE_CAMERA);
 
 			// copy to layer buffer

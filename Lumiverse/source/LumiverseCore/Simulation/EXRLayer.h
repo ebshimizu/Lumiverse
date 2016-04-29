@@ -89,8 +89,9 @@ public:
   */
   void clear_buffer();
 
-  void resize_buffer(int new_width, int new_height);
-
+  /*!
+  \brief Get a downsampled image basis
+  */
   Pixel4 *get_downsampled_pixels(int width, int height);
 
 private:

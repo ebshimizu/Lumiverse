@@ -84,41 +84,20 @@ void Compositor::del_layer_by_name(const char *layer_name) {
 	}
 }
 
-void Compositor::update_dims(int w, int h) {
+void Compositor::update_dims(int width, int height) {
 	if (compose_buffer != NULL) {
 		delete[] compose_buffer;
 	}
 
-	compose_buffer = new Pixel4[w * h]();
+	this->w = width;
+	this->h = height;
+	compose_buffer = new Pixel4[width * height]();
 }
 
 void Compositor::render(const std::set<Device*> &devices) {
 
   // clear previous rendering
   std::memset((void *)compose_buffer, 0, sizeof(Pixel4) * w * h);
-
-  // composite all active layers
-  Eigen::Matrix3d sharp;
-  /*
-  sharp(0, 0) = 3.2406;
-  sharp(0, 1) = -1.5372;
-  sharp(0, 2) = -.4986;
-  sharp(1, 0) = -.9689;
-  sharp(1, 1) = 1.8758;
-  sharp(1, 2) = .0415;
-  sharp(2, 0) = .0557;
-  sharp(2, 1) = -.2040;
-  sharp(2, 2) = 1.0570;
-  */
-  sharp(0, 0) = .4124;
-  sharp(0, 1) = .3576;
-  sharp(0, 2) = .1805;
-  sharp(1, 0) = .2126;
-  sharp(1, 1) = .7152;
-  sharp(1, 2) = .0722;
-  sharp(2, 0) = .0193;
-  sharp(2, 1) = .1192;
-  sharp(2, 2) = .9505;
 
   for (Device *device : devices) {
 	  std::string name = device->getMetadata("Arnold Node Name");
@@ -129,22 +108,20 @@ void Compositor::render(const std::set<Device*> &devices) {
 		  continue;
 	  }
 
-	  //float intensity_shift = device->getIntensity()->asPercent();
-	  float intensity_shift = 1.f;
+	  float intensity_shift = device->getIntensity()->asPercent();
+	 // float intensity_shift = 1.f;
 
 	  Eigen::Vector3d modulator = device->getColor()->getRGB();
-
-	  // modulator = sharp * modulator;
-	  	  /*
 
 	  float r = modulator.x();
 	  float g = modulator.y();
 	  float b = modulator.z();
-	  */
 
+	  /*
 	  float r = 1.f;
 	  float g = 1.f;
 	  float b = 1.f;
+	  */
 
 	  Pixel4 *pixels = layer->get_downsampled_pixels(w, h);
 	  if (layer->is_active()) {
@@ -158,7 +135,9 @@ void Compositor::render(const std::set<Device*> &devices) {
 		  }
 	  }
 
-	  delete[] pixels;
+	  if (w != layer->get_width() || h != layer->get_height()) {
+		  delete[] pixels;
+	  }
   }
 }
 

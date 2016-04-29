@@ -65,16 +65,6 @@ void EXRLayer::clear_buffer() {
 	std::memset(pixels, 0, sizeof(Pixel4) * get_size());
 }
 
-void EXRLayer::resize_buffer(int new_width, int new_height) {
-	w = new_width;
-	h = new_height;
-	if (pixels != NULL) {
-		delete[] pixels;
-	}
-
-	pixels = new Pixel4[new_width * new_height];
-}
-
 Pixel4 *EXRLayer::get_downsampled_pixels(int width, int height) {
 	if ((width == w) && (height == h)) {
 		return pixels;
@@ -85,10 +75,14 @@ Pixel4 *EXRLayer::get_downsampled_pixels(int width, int height) {
 	float *input_pixels = new float[w * h * 4];
 	for (int i = 0; i < w * h; i++) {
 		int input_idx = 4 * i;
-		input_pixels[input_idx] = pixels[i].r;
-		input_pixels[input_idx + 1] = pixels[i].g;
-		input_pixels[input_idx + 2] = pixels[i].b;
-		input_pixels[input_idx + 3] = pixels[i].a;
+		float r = pixels[i].r;
+		float g = pixels[i].g;
+		float b = pixels[i].b;
+		float a = pixels[i].a;
+		input_pixels[input_idx] = r;
+		input_pixels[input_idx + 1] = g;
+		input_pixels[input_idx + 2] = b;
+		input_pixels[input_idx + 3] = a;
 	}
 
 	stbir_resize_float(
@@ -97,7 +91,7 @@ Pixel4 *EXRLayer::get_downsampled_pixels(int width, int height) {
 		4
 	);
 
-	for (int i = 0; i < w * h; i++) {
+	for (int i = 0; i < width * height; i++) {
 		int output_idx = 4 * i;
 		downsampled_pixels[i].r = output_pixels[output_idx];
 		downsampled_pixels[i].g = output_pixels[output_idx + 1];
