@@ -35,9 +35,9 @@ namespace Lumiverse {
 		m_height = AiNodeGetInt(options, "yres");
 		*/
 		// By default, render a big image
-		this->setDims(1920, 1080);
-		m_width = 1920;
-		m_height = 1080;
+		this->setDims(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		m_width = DEFAULT_WIDTH;
+		m_height = DEFAULT_HEIGHT;
 		AiNodeSetInt(options, "xres", m_width);
 		AiNodeSetInt(options, "yres", m_height);
 		m_samples = AiNodeGetInt(options, "AA_samples");
@@ -132,6 +132,8 @@ namespace Lumiverse {
 	}
 
 	void CachingArnoldInterface::close() {
+		
+		// @TODO: Clean stuff up
 		delete[] m_render_buffer;
 
 		ArnoldInterface::close();
@@ -148,8 +150,9 @@ namespace Lumiverse {
 		return success;
 	}
 
-	void CachingArnoldInterface::updateDevicesLayers(const std::set<Device *> &devices) {
+	const std::unordered_map<std::string, Device*> CachingArnoldInterface::getDevicesToUpdate(const std::set<Device *> &devices) {
 		std::unordered_map<std::string, Device *> to_update;
+
 		for (Device *device : devices) {
 			std::string device_name = device->getMetadata("Arnold Node Name");
 			if (!force_cache_reload && (cached_devices.count(device_name) > 0)) {
@@ -158,11 +161,18 @@ namespace Lumiverse {
 					cached_devices[device_name] = device;
 					to_update[device_name] = device;
 				}
-			} else {
+			}
+			else {
 				cached_devices[device_name] = device;
 				to_update[device_name] = device;
 			}
 		}
+
+		return to_update;
+	}
+
+	void CachingArnoldInterface::updateDevicesLayers(const std::set<Device *> &devices) {
+		const std::unordered_map<std::string, Device *> &to_update = getDevicesToUpdate(devices);
 
 		// If no updates are necessary just return to avoid the overhead
 		// of calling malloc, iterating over the light nodes, etc

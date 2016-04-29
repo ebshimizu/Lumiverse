@@ -94,6 +94,11 @@ public:
   */
   Pixel4 *get_downsampled_pixels(int width, int height);
 
+  /*!
+  \brief Set the pixel buffer to the rgba value from the given buffer
+  */
+  void set_pixels(float *buffer);
+
 private:
   /**
    * Name of the layer.

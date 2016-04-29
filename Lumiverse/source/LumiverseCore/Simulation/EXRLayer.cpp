@@ -104,6 +104,20 @@ Pixel4 *EXRLayer::get_downsampled_pixels(int width, int height) {
 	return downsampled_pixels;
 }
 
+void EXRLayer::set_pixels(float *buffer) {
+	
+	delete[] pixels;
+	pixels = new Pixel4[w * h];
+
+	for (int i = 0; i < w * h; i++) {
+		int buf_idx = 4 * i;
+		pixels[i].r = buffer[buf_idx];
+		pixels[i].g = buffer[buf_idx + 1];
+		pixels[i].b = buffer[buf_idx + 2];
+		pixels[i].a = buffer[buf_idx + 3];
+	}
+}
+
 }; // namespace LightmanCore
 
 #endif // USE_ARNOLD_CACHING

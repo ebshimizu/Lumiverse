@@ -67,7 +67,7 @@ namespace Lumiverse {
 	* from metadata ids to Arnold types. ArnoldInterface also creates and closes Arnold session.
 	* \sa ArnoldPatch
 	*/
-	class DistributedArnoldInterface : public ArnoldInterface
+	class DistributedArnoldInterface : public virtual ArnoldInterface
 	{
 	public:
 		/*!

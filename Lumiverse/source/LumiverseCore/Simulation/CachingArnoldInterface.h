@@ -30,12 +30,8 @@
 #include <set>
 
 namespace Lumiverse {
-	struct CachedDevice {
-		Device device;
-		float *buffer;
-	};
 
-	class CachingArnoldInterface : public ArnoldInterface
+	class CachingArnoldInterface : public virtual ArnoldInterface
 	{
 	public:
 		CachingArnoldInterface() : ArnoldInterface() {}
@@ -66,7 +62,7 @@ namespace Lumiverse {
 		/*!
 		* \brief Dump to the HDR buffer
 		*/
-		void dumpHDRToBuffer(const std::set<Device *> &devices);
+		virtual void dumpHDRToBuffer(const std::set<Device *> &devices);
 
 		/*!
 		\brief Override set dims so that we know if we should force a re-loading of the cache
@@ -88,7 +84,10 @@ namespace Lumiverse {
 		void setOptionParameter(const std::string &paramName, int val) override;
 		void setOptionParameter(const std::string &paramName, float val) override;
 
-	private:
+	protected:
+
+		const static int DEFAULT_WIDTH = 1920;
+		const static int DEFAULT_HEIGHT = 980;
 
 		Compositor compositor;
 
@@ -104,7 +103,15 @@ namespace Lumiverse {
 		*/
 		int load_exr(const char *file_path);
 
-		void updateDevicesLayers(const std::set<Device *> &devices);
+		/*!
+		\brief Update each lighting device's basis layer if necessary
+		*/
+		virtual void updateDevicesLayers(const std::set<Device *> &devices);
+
+		/*!
+		\brief Get a list of devices that need to be updated / re-rendered
+		*/
+		const std::unordered_map<std::string, Device*> getDevicesToUpdate(const std::set<Device *> &devices);
 
 		/*!
 		* \brief A map from a device name to the device. This is used

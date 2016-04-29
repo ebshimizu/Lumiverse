@@ -20,6 +20,7 @@
 #include "ArnoldInterface.h"
 #include "DistributedArnoldInterface.h"
 #include "CachingArnoldInterface.h"
+#include "DistributedCachingArnoldInterface.h"
 
 namespace Lumiverse {
 

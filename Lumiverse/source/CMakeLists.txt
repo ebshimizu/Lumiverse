@@ -179,6 +179,8 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/ArnoldParameterVector.h
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/DistributedArnoldInterface.h
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/DistributedArnoldInterface.cpp
+	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/DistributedCachingArnoldInterface.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/DistributedCachingArnoldInterface.cpp
 	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/Compositor.h
 	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/Compositor.cpp
 	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/CachingArnoldInterface.cpp

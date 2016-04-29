@@ -47,7 +47,11 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 		Logger::log(INFO, ss.str());
 
 		// Should we use caching on the distributed side
-		m_interface = (DistributedArnoldInterface *)new DistributedArnoldInterface(host, port, outputPath);
+		if (cacheRendering(data)) {
+			m_interface = (DistributedCachingArnoldInterface *)new DistributedCachingArnoldInterface(host, port, outputPath);
+		} else {
+			m_interface = (DistributedArnoldInterface *)new DistributedArnoldInterface(host, port, outputPath);
+		}
 		m_using_distributed = true;
 #endif
 	}
