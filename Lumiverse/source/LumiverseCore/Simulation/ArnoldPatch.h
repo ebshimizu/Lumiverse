@@ -244,6 +244,11 @@ namespace Lumiverse {
     */
     void updateLight(set<Device *> devices);
 
+	/*!
+	\brief Check whether this patch has caching enabled
+	*/
+	bool caching_enabled() { return m_using_caching; }
+
   protected:
 
     /*!
