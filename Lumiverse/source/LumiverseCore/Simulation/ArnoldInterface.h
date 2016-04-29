@@ -95,7 +95,7 @@ namespace Lumiverse {
     *
     * Opens a new Arnold session. Loads ass file and the plugin (buffer_driver).
     */
-    virtual void init(std::string driver = "driver_buffer");
+    virtual void init();
 
 	/*!
 	* \brief Initialize the ArnoldRenderer with a reference to a JSON serialized parent patch
@@ -378,6 +378,16 @@ namespace Lumiverse {
     */
     virtual bool isDistributedOpen();
 
+	/*!
+	\brief Check whether this patch has caching enabled
+	*/
+	bool isUsingCaching() { return m_using_caching; }
+
+	/*!
+	\brief Set whether this interface is using caching
+	*/
+	void setUsingCaching(bool usingCaching) { m_using_caching = usingCaching; }
+
   protected:
     /*!
     * \brief Helper function to sets a arnold non-array parameter.
@@ -505,6 +515,13 @@ namespace Lumiverse {
 
     // Buffer driver name
     string m_bufDriverName;
+
+	/*!
+	* \brief Is this interface using caching -- currently only used for
+	* notifying the distributed renderer that it should use the caching
+	* driver instead of the buffer driver
+	*/
+	bool m_using_caching;
   };
 
   /*!

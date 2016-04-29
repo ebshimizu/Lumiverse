@@ -17,7 +17,7 @@
 
 namespace Lumiverse {
 
-	void CachingArnoldInterface::init(std::string driver_name) {
+	void CachingArnoldInterface::init() {
 		AiBegin();
 
 		setLogFileName("arnold.log");

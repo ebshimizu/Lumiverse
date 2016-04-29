@@ -423,7 +423,7 @@ bool ArnoldInterface::isDistributedOpen()
   return m_open;
 }
 
-void ArnoldInterface::init(std::string driver_str) {
+void ArnoldInterface::init() {
   // TODO : to use env var (different apis for linux and win)
   // Make sure your environment variables are set properly to check out an arnold license.
 
@@ -445,14 +445,15 @@ void ArnoldInterface::init(std::string driver_str) {
  
   // Set a driver to output result into a float buffer
   AtNode *driver;
-  if (driver_str == "driver_buffer") {
+
+  if (m_using_caching) {
+	  driver = AiNode("cache_buffer");
+	  m_bufDriverName = "cache_buffer";
+  } else {
 	  driver = AiNode("driver_buffer");
 	  m_bufDriverName = "buffer_driver";
 	  AiNodeSetFlt(driver, "gamma", m_gamma);
 	  AiNodeSetBool(driver, "predictive", m_predictive);
-  } else if (driver_str == "cache_buffer") {
-	  driver = AiNode("cache_buffer");
-	  m_bufDriverName = "cache_buffer";
   }
   
   std::stringstream ss;

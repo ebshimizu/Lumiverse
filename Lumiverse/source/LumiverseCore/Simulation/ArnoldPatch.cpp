@@ -49,10 +49,10 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 		// Should we use caching on the distributed side
 		if (cacheRendering(data)) {
 			m_interface = (DistributedCachingArnoldInterface *)new DistributedCachingArnoldInterface(host, port, outputPath);
-			m_using_caching = true;
+			m_interface->setUsingCaching(true);
 		} else {
 			m_interface = (DistributedArnoldInterface *)new DistributedArnoldInterface(host, port, outputPath);
-			m_using_caching = false;
+			m_interface->setUsingCaching(false);
 		}
 		m_using_distributed = true;
 #endif
@@ -61,12 +61,12 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 #ifdef USE_ARNOLD_CACHING
 		Logger::log(INFO, "Using ArnoldInterface with caching");
 		m_interface = (CachingArnoldInterface *)new CachingArnoldInterface();
-		m_using_caching = true;
+		m_interface->setUsingCaching(true);
 #endif
 	} else {
 		Logger::log(INFO, "Using ArnoldInterface");
 		m_interface = (ArnoldInterface *)new ArnoldInterface();
-		m_using_caching = false;
+		m_interface->setUsingCaching(false);
 	}
 
 	while (i != data.end()) {
@@ -117,7 +117,7 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 		// this is consumed by the distributed renderer when deciding
 		// which buffer driver to use
 		if (nodeName == "m_using_caching") {
-			m_using_caching = i->as_bool();
+			m_interface->setUsingCaching(i->as_bool());
 		}
         
     if (nodeName == "samples") {
@@ -511,7 +511,7 @@ JSONNode ArnoldPatch::toJSON() {
 	root.push_back(JSONNode("pluginDir", m_interface->getPluginDirectory()));
 	root.push_back(JSONNode("predictive", (m_interface->getPredictive()) ? 1 : 0));
 	root.push_back(JSONNode("gamma", m_interface->getGamma()));
-	root.push_back(JSONNode("m_using_caching", m_using_caching));
+	root.push_back(JSONNode("m_using_caching", m_interface->isUsingCaching()));
 
 	JSONNode lights;
 	lights.set_name("lights");

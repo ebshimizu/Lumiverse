@@ -244,11 +244,6 @@ namespace Lumiverse {
     */
     void updateLight(set<Device *> devices);
 
-	/*!
-	\brief Check whether this patch has caching enabled
-	*/
-	bool caching_enabled() { return m_using_caching; }
-
   protected:
 
     /*!
@@ -307,14 +302,6 @@ namespace Lumiverse {
 	* \sa loadPatches(), useDistributedRendering()
 	*/
 	bool cacheRendering(const JSONNode data);
-
-
-	/*!
-	* \brief Is this interface using caching -- currently only used for
-	* notifying the distributed renderer that it should use the caching
-	* driver instead of the buffer driver
-	*/
-	bool m_using_caching;
   };
 }
 

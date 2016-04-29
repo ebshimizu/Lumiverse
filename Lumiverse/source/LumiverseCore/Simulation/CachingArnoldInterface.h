@@ -41,7 +41,7 @@ namespace Lumiverse {
 		* This can take quite a long time depending on how many light sources are
 		* in a scene and the sampling rate used when rendering.
 		*/
-		void init(std::string driver_name = "cache_buffer");
+		void init();
 
 		/*!
 		\brief Close this caching interface
