@@ -26,6 +26,9 @@ Compositor::~Compositor() {
 		delete[] compose_buffer;
 	}
   // free all layers
+	for (auto i = layers.begin(); i != layers.end(); i++) {
+		delete(i->second);
+	}
   layers.clear();
 }
 
@@ -113,19 +116,12 @@ void Compositor::render(const std::set<Device*> &devices) {
 	  }
 
 	  float intensity_shift = device->getIntensity()->asPercent();
-	 // float intensity_shift = 1.f;
 
 	  Eigen::Vector3d modulator = device->getColor()->getRGB();
 
 	  float r = modulator.x();
 	  float g = modulator.y();
 	  float b = modulator.z();
-
-	  /*
-	  float r = 1.f;
-	  float g = 1.f;
-	  float b = 1.f;
-	  */
 
 	  Pixel4 *pixels = layer->get_downsampled_pixels(w, h);
 	  if (layer->is_active()) {
@@ -137,10 +133,6 @@ void Compositor::render(const std::set<Device*> &devices) {
 				  compose_buffer[i].b += (b * intensity_shift * basis_pixel.b);
 			  }
 		  }
-	  }
-
-	  if (w != layer->get_width() || h != layer->get_height()) {
-		  delete[] pixels;
 	  }
   }
 }

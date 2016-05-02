@@ -51,8 +51,7 @@ namespace Lumiverse {
 		for (auto i = to_update.begin(); i != to_update.end(); i++) {
 			std::string device_name = i->first;
 			if (!compositor.contains_layer(device_name.c_str())) {
-				Pixel4 *pixels = new Pixel4[m_width * m_height];
-				EXRLayer *new_layer = new EXRLayer(pixels, m_width, m_height, device_name.c_str());
+				EXRLayer *new_layer = new EXRLayer(m_width, m_height, device_name.c_str());
 				compositor.add_layer(new_layer);
 			}
 		}
@@ -75,6 +74,7 @@ namespace Lumiverse {
 			render_device->setIntensity(current_intensities[device_name]->getMax());
 			DistributedArnoldInterface::render(devices);
 			EXRLayer *layer = compositor.get_layer_by_name(device_name.c_str());
+			layer->clear_buffers();
 			layer->set_pixels(DistributedArnoldInterface::m_buffer);
 
 			// Now that we have the buffer in the layer, set intensity back to 0 for next device

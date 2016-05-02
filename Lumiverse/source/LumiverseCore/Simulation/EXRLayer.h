@@ -5,7 +5,7 @@
 
 #include <string>
 #include <vector>
-
+#include <unordered_map>
 #include "Pixel.h"
 
 namespace Lumiverse {
@@ -27,7 +27,7 @@ public:
    * Constructor.
    * Creates a new layer from allocated buffer.
    */
-  EXRLayer(Pixel4 *pixel_buffer, size_t w, size_t h, const char *name = NULL);
+  EXRLayer(size_t w, size_t h, const char *name = NULL);
 
   /**
    * Destructor.
@@ -87,7 +87,7 @@ public:
   /*!
   \brief Set all bits of the buffer to 0
   */
-  void clear_buffer();
+  void clear_buffers();
 
   /*!
   \brief Get a downsampled image basis
@@ -135,6 +135,18 @@ private:
    * make sense for an alpha channel to exist in the illuminance space.
    */
   Pixel4 *pixels;
+
+  /*!
+   * \brief Map from an integer (width << 2 + height) key to a basis image
+   * of pixels for this EXR layer
+   */
+  std::unordered_map<int, Pixel4*> pixel_size_bases;
+
+  /*!
+  * \brief Get the key for the size basis map from the given
+  * width and height
+  */
+  int inline get_size_key(int width, int height);
 };
 
 }; // namespace Lumiverse
