@@ -231,8 +231,9 @@ namespace Lumiverse {
 		}
 
 		if (wasSuccessful) {
-			m_width = data.find("m_width")->as_int();
-			m_height = data.find("m_height")->as_int();
+			// width and height are known on local load
+      //m_width = data.find("m_width")->as_int();
+			//m_height = data.find("m_height")->as_int();
 		}
 		
 		return wasSuccessful;
@@ -293,6 +294,10 @@ namespace Lumiverse {
 
 			return AI_ERROR;
 		}
+
+    if (m_buffer != NULL) {
+      free(m_buffer);
+    }
 
 		m_buffer = (float *)bitmap_buffer.buffer;
 
