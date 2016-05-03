@@ -437,15 +437,24 @@ void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
 }
     
 bool ArnoldPatch::renderLoop(const std::set<Device *> &devices) {
+  if (!m_rendering) {
+    m_rendering = true;
     int code = m_interface->render(devices);
-
-	return (code == AI_SUCCESS);
+    m_rendering = false;
+    return (code == AI_SUCCESS);
+  }
+  else
+    return false;
 }
 
 bool ArnoldPatch::renderLoop() {
-	int code = m_interface->render();
+  if (!m_rendering) {
+    m_rendering = true;
+    int code = m_interface->render();
+    m_rendering = false;
 
-	return (code == AI_SUCCESS);
+    return (code == AI_SUCCESS);
+  }
 }
 
 void ArnoldPatch::interruptRender() {
@@ -483,6 +492,8 @@ void ArnoldPatch::update(set<Device *> devices) {
 }
 
 void ArnoldPatch::init() {
+  m_rendering = false;
+
 	if (!m_using_distributed) {
 
 		// Init patch and interface
