@@ -206,7 +206,7 @@ namespace Lumiverse {
 			*/
 			// AiNodeSetRGB(light, "color", r, g, b);
 
-			AiNodeSetRGB(light, "color", 1.f, 1.f, 1.f);
+			AiNodeSetRGB(light, "color", 1, 1, 1);
 			AiRender(AI_RENDER_MODE_CAMERA);
 
 			// copy to layer buffer
@@ -222,7 +222,7 @@ namespace Lumiverse {
 				layer_buffer[idx].a = !!m_render_buffer[buf_idx + 3];
 			}
 
-			layer->enable();
+      layer->enable();
 
 			// disable light
 			AiNodeSetDisabled(light, true);
@@ -263,7 +263,7 @@ namespace Lumiverse {
 		}
 
 		compositor.render(devices);
-		tone_mapper.set_input(compositor.get_compose_buffer(), m_width, m_height);
+		tone_mapper.set_input(compositor.get_compose_buffer(), compositor.get_width(), compositor.get_height());
 		tone_mapper.apply_hdr();
 	}
 

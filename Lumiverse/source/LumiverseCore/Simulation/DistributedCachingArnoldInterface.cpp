@@ -117,7 +117,7 @@ namespace Lumiverse {
 		}
 
 		compositor.render(devices);
-		tone_mapper.set_input(compositor.get_compose_buffer(), CachingArnoldInterface::m_width, CachingArnoldInterface::m_height);
+		tone_mapper.set_input(compositor.get_compose_buffer(), compositor.get_width(), compositor.get_height());
 		setHDROutputBuffer();
 		tone_mapper.apply_hdr();
 	}

@@ -98,6 +98,7 @@ public:
  * Clamp an illuminance value to 8 bit color
  */
 inline int clamp(float x) { return x < 0 ? 0 : x > 1 ? 255 : int(x * 255); }
+inline float clamp(float x, float min, float max) { return x < min ? min : (x > max) ? max : x; }
 
 }; // namespace Lumiverse
 

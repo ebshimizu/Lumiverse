@@ -10,6 +10,7 @@
 
 #include <cmath>
 #include <cstring>
+#include <fstream>
 
 namespace Lumiverse {
 
@@ -78,21 +79,19 @@ namespace Lumiverse {
 			int actual_index = 4 * i;
 			Pixel4 curr_pixel = input_buffer[i];
 			float max_f = 1.0;
-			if (hdr_output_buffer[actual_index] >= max_f) max_f = hdr_output_buffer[actual_index];
-			if (hdr_output_buffer[actual_index + 1] >= max_f) max_f = hdr_output_buffer[actual_index + 1];
-			if (hdr_output_buffer[actual_index + 2] >= max_f) max_f = hdr_output_buffer[actual_index  + 2];
+			//if (hdr_output_buffer[actual_index] >= max_f) max_f = hdr_output_buffer[actual_index];
+			//if (hdr_output_buffer[actual_index + 1] >= max_f) max_f = hdr_output_buffer[actual_index + 1];
+			//if (hdr_output_buffer[actual_index + 2] >= max_f) max_f = hdr_output_buffer[actual_index  + 2];
 
-			hdr_output_buffer[actual_index] /= max_f;
-			hdr_output_buffer[actual_index + 1] /= max_f;
-			hdr_output_buffer[actual_index + 2] /= max_f;
+			//hdr_output_buffer[actual_index] /= max_f;
+			//hdr_output_buffer[actual_index + 1] /= max_f;
+			//hdr_output_buffer[actual_index + 2] /= max_f;
 
-			hdr_output_buffer[actual_index] = pow(curr_pixel.r * e, g);
-			hdr_output_buffer[actual_index + 1] = pow(curr_pixel.g * e, g);
-			hdr_output_buffer[actual_index + 2] = pow(curr_pixel.b * e, g);
+			hdr_output_buffer[actual_index] = clamp(pow(curr_pixel.r * e, g), 0, 1);
+			hdr_output_buffer[actual_index + 1] = clamp(pow(curr_pixel.g * e, g), 0, 1);
+			hdr_output_buffer[actual_index + 2] = clamp(pow(curr_pixel.b * e, g), 0, 1);
 			hdr_output_buffer[actual_index + 3] = 1.f;
 		}
-
-
 	}
 
 	void ToneMapper::apply_bmp() {
