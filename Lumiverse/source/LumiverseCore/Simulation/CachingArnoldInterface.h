@@ -34,7 +34,7 @@ namespace Lumiverse {
 	class CachingArnoldInterface : public virtual ArnoldInterface
 	{
 	public:
-		CachingArnoldInterface() : ArnoldInterface() {}
+    CachingArnoldInterface();
 
 		/*!
 		* \brief Initialize the interface by building the EXR layer basis.
@@ -64,12 +64,16 @@ namespace Lumiverse {
 		*/
 		bool setDims(int w, int h) override;
 
+    /*!
+    \brief Changes the size of the cache and forces a reload.
+    */
+    void setCacheDims(int w, int h);
+
 		/*!
-		\brief Set a new sample rate and force a reload of the cache
-		*
-		* Set a new sample rate and force a reload of the cache. We force a reload because
-		* the values of the cache are going to be useless because we are likely only ever
-		* going to upsample.
+		* \brief Set a new sample rate and force a reload of the cache if needed.
+    *
+    * A reload is required if the new AA sample rate is higher than the current cached
+    * sample rate.
 		*/
 		void setSamples(int samples) override;
 
@@ -125,6 +129,17 @@ namespace Lumiverse {
 		* lighting node when the cache is being filled.
 		*/
 		float *m_render_buffer = NULL;
+
+    /*!
+    \brief Cache frame width
+    */
+    int _cache_width;
+
+    /*! \brief Cache frame height */
+    int _cache_height;
+
+    /*! \brief Cache sample rate. */
+    int _cache_aa_samples;
 
 		/*!
 		* \brief Check if an option change requires a complete reloading of the cache

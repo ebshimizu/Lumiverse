@@ -25,7 +25,6 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 	// Load options for raytracer application. (window, ray tracer, filter)
 	JSONNode::const_iterator i = data.begin();
 
-
 	// As of 4/8/2016 this is only implemented for Arnold
 	if (useDistributedRendering(data)) {
 #ifdef USE_DUMIVERSE
@@ -60,10 +59,26 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 	else if (cacheRendering(data)) {
 #ifdef USE_ARNOLD_CACHING
 		Logger::log(INFO, "Using ArnoldInterface with caching");
-		m_interface = (CachingArnoldInterface *)new CachingArnoldInterface();
-		m_interface->setUsingCaching(true);
+	  auto cacheInterface = (CachingArnoldInterface *)new CachingArnoldInterface();
 
     // Find caching options and set them in the caching interface
+    auto cacheSettings = data.find("cache_options");
+    if (cacheSettings != data.end()) {
+      // load settings
+      auto width = cacheSettings->find("width");
+      auto height = cacheSettings->find("height");
+      if (width != cacheSettings->end() && height != cacheSettings->end()) {
+        cacheInterface->setCacheDims(width->as_int(), height->as_int());
+      }
+
+      auto aa = cacheSettings->find("samples");
+      if (aa != cacheSettings->end()) {
+        cacheInterface->setSamples(aa->as_int());
+      }
+    }
+
+    m_interface = cacheInterface;
+		m_interface->setUsingCaching(true);
 #endif
 	} else {
 		Logger::log(INFO, "Using ArnoldInterface");

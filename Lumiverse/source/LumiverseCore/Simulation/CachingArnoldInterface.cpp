@@ -16,8 +16,13 @@
 #ifdef USE_ARNOLD_CACHING
 
 namespace Lumiverse {
+  CachingArnoldInterface::CachingArnoldInterface() : ArnoldInterface(),
+    _cache_aa_samples(1), _cache_width(1920), _cache_height(980)
+  {
+  }
 
-	void CachingArnoldInterface::init() {
+
+  void CachingArnoldInterface::init() {
 		AiBegin();
 
 		setLogFileName("arnold.log");
@@ -153,6 +158,19 @@ namespace Lumiverse {
 		return true;
 	}
 
+  void CachingArnoldInterface::setCacheDims(int w, int h)
+  {
+    if (_cache_width != w || _cache_height != h)
+    {
+      force_cache_reload = true;
+
+      _cache_width = w;
+      _cache_height = h;
+
+      compositor.update_dims(_cache_width, _cache_height);
+    }
+  }
+
 	const std::unordered_map<std::string, Device*> CachingArnoldInterface::getDevicesToUpdate(const std::set<Device *> &devices) {
 		std::unordered_map<std::string, Device *> to_update;
 
@@ -186,7 +204,7 @@ namespace Lumiverse {
 			return;
 		}
 
-		memset(m_render_buffer, 0, m_width * m_height * 4 * sizeof(float));
+		memset(m_render_buffer, 0, _cache_width * _cache_height * 4 * sizeof(float));
 
 		// render each per-light layer
 		std::cout << "Rendering layers" << std::endl;
@@ -209,17 +227,16 @@ namespace Lumiverse {
 			// enable light
 			AiNodeSetDisabled(light, false);
 			
+      // update width and height and samples for this operation.
+      AtNode* options = AiUniverseGetOptions();
+      AiNodeSetInt(options, "xres", _cache_width);
+      AiNodeSetInt(options, "yres", _cache_height);
+      setSamples(_cache_aa_samples);
+
 			// render image
 			AiNodeSetFlt(light, "intensity", intensity_float->getMax());
-			// AiNodeSetFlt(light, "intensity", intensity_float->getVal());
 
 			Eigen::Vector3d modulator = curr_device->getColor()->getRGB();
-			/*
-			float r = modulator.x();
-			float g = modulator.y();
-			float b = modulator.z();
-			*/
-			// AiNodeSetRGB(light, "color", r, g, b);
 
 			AiNodeSetRGB(light, "color", 1, 1, 1);
 			AiRender(AI_RENDER_MODE_CAMERA);
@@ -229,7 +246,7 @@ namespace Lumiverse {
 			layer->clear_buffers();
 
 			Pixel4 *layer_buffer = layer->get_pixels();
-			for (size_t idx = 0; idx < layer->get_width() * layer->get_height(); ++idx) {
+			for (size_t idx = 0; idx < _cache_width * _cache_height; ++idx) {
 				int buf_idx = idx * 4;
 				layer_buffer[idx].r = m_render_buffer[buf_idx];
 				layer_buffer[idx].g = m_render_buffer[buf_idx + 1];
@@ -241,15 +258,16 @@ namespace Lumiverse {
 
 			// disable light
 			AiNodeSetDisabled(light, true);
-			memset(m_render_buffer, 0, m_width * m_height * 4 * sizeof(float));
+			memset(m_render_buffer, 0, _cache_width * _cache_height * 4 * sizeof(float));
 		}
 		AiNodeIteratorDestroy(it);
 	}
 
 	void CachingArnoldInterface::setSamples(int samples) {
-		//force_cache_reload = true;
+    if (_cache_aa_samples < samples)
+      _cache_aa_samples = samples;
 
-		ArnoldInterface::setSamples(samples);
+		ArnoldInterface::setSamples(_cache_aa_samples);
 	}
 
 	int CachingArnoldInterface::render(const std::set<Device *> &devices) {
