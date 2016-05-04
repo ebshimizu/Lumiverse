@@ -35,7 +35,7 @@ namespace Lumiverse {
 		m_height = AiNodeGetInt(options, "yres");
 		*/
 		// By default, render a big image
-		this->setDims(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		ArnoldInterface::setDims(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		m_width = DEFAULT_WIDTH;
 		m_height = DEFAULT_HEIGHT;
 		AiNodeSetInt(options, "xres", m_width);
@@ -131,14 +131,26 @@ namespace Lumiverse {
 	}
 
 	bool CachingArnoldInterface::setDims(int w, int h)  {
-		bool success = ArnoldInterface::setDims(w, h);
+    // We skip setting the arnold options node dimensions and let the
+    // cached compositing object do its work.
+		// bool success = ArnoldInterface::setDims(w, h);
 
-		if (success) {
-			setHDROutputBuffer();
-			compositor.update_dims(w, h);
-			tone_mapper.update_dims(w, h);
-		}
-		return success;
+    if (m_open) {
+      // Adjust global options
+      m_width = w;
+      m_height = h;
+
+      if (m_buffer != nullptr) {
+        delete[] m_buffer;
+        m_buffer = new float[m_width * m_height * 4];
+      }
+    }
+
+    setHDROutputBuffer();
+    compositor.update_dims(w, h);
+    tone_mapper.update_dims(w, h);
+
+		return true;
 	}
 
 	const std::unordered_map<std::string, Device*> CachingArnoldInterface::getDevicesToUpdate(const std::set<Device *> &devices) {
@@ -149,12 +161,15 @@ namespace Lumiverse {
 			if (!force_cache_reload && (cached_devices.count(device_name) > 0)) {
 				Device *cached = cached_devices.at(device_name);
 				if (!isValidCacheCopy(cached, device)) {
-					cached_devices[device_name] = device;
+          if (cached_devices[device_name] != nullptr)
+            delete cached_devices[device_name];
+
+					cached_devices[device_name] = new Device(device);
 					to_update[device_name] = device;
 				}
 			}
 			else {
-				cached_devices[device_name] = device;
+				cached_devices[device_name] = new Device(device);
 				to_update[device_name] = device;
 			}
 		}
@@ -214,7 +229,7 @@ namespace Lumiverse {
 			layer->clear_buffers();
 
 			Pixel4 *layer_buffer = layer->get_pixels();
-			for (size_t idx = 0; idx < m_width * m_height; ++idx) {
+			for (size_t idx = 0; idx < layer->get_width() * layer->get_height(); ++idx) {
 				int buf_idx = idx * 4;
 				layer_buffer[idx].r = m_render_buffer[buf_idx];
 				layer_buffer[idx].g = m_render_buffer[buf_idx + 1];
@@ -232,7 +247,7 @@ namespace Lumiverse {
 	}
 
 	void CachingArnoldInterface::setSamples(int samples) {
-		force_cache_reload = true;
+		//force_cache_reload = true;
 
 		ArnoldInterface::setSamples(samples);
 	}
@@ -251,7 +266,6 @@ namespace Lumiverse {
 	}
 
 	void CachingArnoldInterface::setHDROutputBuffer() {
-
 		tone_mapper.set_output_hdr(m_buffer);
 	}
 

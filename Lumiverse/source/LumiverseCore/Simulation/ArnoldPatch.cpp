@@ -62,6 +62,8 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 		Logger::log(INFO, "Using ArnoldInterface with caching");
 		m_interface = (CachingArnoldInterface *)new CachingArnoldInterface();
 		m_interface->setUsingCaching(true);
+
+    // Find caching options and set them in the caching interface
 #endif
 	} else {
 		Logger::log(INFO, "Using ArnoldInterface");
@@ -128,24 +130,6 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
     // Light loading is now done via automatic matching based
     // on the "Arnold Node Name" metadata field that should be
     // included by lights used in an arnold simulation
-
-		//if (nodeName == "lights") {
-		//	JSONNode lights = *i;
-		//	JSONNode::const_iterator light = lights.begin();
-		//	while (light != lights.end()) {
-		//		std::string light_name = light->name();
-
-		//		m_lights[light_name] = new ArnoldLightRecord();
-		//		m_lights[light_name]->metadata = light->find("type")->as_string();
-
-		//		std::stringstream sstm;
-		//		sstm << "Added light " << light_name << ": " << m_lights[light_name]->metadata;
-
-	  //	  Logger::log(INFO, sstm.str());
-
-		//    light++;
-		//	}
-		//}
         
     if (nodeName == "arnoldParamMaps") {
 			JSONNode params = *i;
@@ -153,10 +137,10 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 			while (param != params.end()) {
 				std::string param_name = param->name();
 
-                m_interface->loadArnoldParam(*param);
-                
-                std::stringstream sstm;
-                sstm << "Added param " << param_name;
+        m_interface->loadArnoldParam(*param);
+        
+        std::stringstream sstm;
+        sstm << "Added param " << param_name;
                 
 				Logger::log(INFO, sstm.str());
                 

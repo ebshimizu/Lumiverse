@@ -242,3 +242,9 @@ Lumiverse/source/LumiverseCore/LumiverseCoreConfig.h
 *.psd
 Lumiverse/source/LumiverseCore/lib/arnold/plugin/BufferDriver.dll
 Lumiverse/source/Demos/LumiverseDemo/LumiverseDemoConfig.h
+Lumiverse/source/LumiverseCore/lib/arnold/doc*
+Lumiverse/source/LumiverseCore/lib/arnold/license*
+Lumiverse/source/LumiverseCore/lib/arnold/lib*
+Lumiverse/source/LumiverseCore/lib/arnold/bin*
+Lumiverse/source/LumiverseCore/lib/arnold/python*
+Lumiverse/source/LumiverseCore/lib/arnold/Changes.html
