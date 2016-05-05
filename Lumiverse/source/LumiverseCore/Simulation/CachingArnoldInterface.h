@@ -77,11 +77,27 @@ namespace Lumiverse {
 		*/
 		void setSamples(int samples) override;
 
+    /*!
+    \brief Sets the location the cache saves and loads exr files from
+    */
+    void setPath(string path) { _cache_file_path = path; }
+
 		/*!
 		\brief Sets a parameter found in the global options node in arnold
 		*/
 		void setOptionParameter(const std::string &paramName, int val) override;
 		void setOptionParameter(const std::string &paramName, float val) override;
+
+    /*!
+    \brief Saves cache layers to exr files for reuse.
+    */
+    void dumpCache();
+
+    /*!
+    \brief If the interface is caching it should use this function to perform any
+    preload operations it may be doing.
+    */
+    virtual void loadIfUsingCaching(const set<Device*>& devices);
 
 	protected:
 
@@ -100,7 +116,7 @@ namespace Lumiverse {
 		/*!
 		* \brief Load layers from an EXR file
 		*/
-		int load_exr(const char *file_path);
+		int load_exr(string& filename);
 
 		/*!
 		\brief Update each lighting device's basis layer if necessary
@@ -141,6 +157,9 @@ namespace Lumiverse {
     /*! \brief Cache sample rate. */
     int _cache_aa_samples;
 
+    /*! \brief Sets the path where cache files will be written to. */
+    string _cache_file_path;
+
 		/*!
 		* \brief Check if an option change requires a complete reloading of the cache
 		*
@@ -160,6 +179,16 @@ namespace Lumiverse {
 		* \brief Set the HDR output buffer
 		*/
 		virtual void setHDROutputBuffer();
+
+    /*!
+    \brief Saves a layer to a file
+    */
+    void saveLayer(EXRLayer* l);
+
+    /*!
+    \brief Loads cache layers from exr files. Assumes cache is up to date after load.
+    */
+    void loadCache(const set<Device*>& devices);
 	};
 }
 

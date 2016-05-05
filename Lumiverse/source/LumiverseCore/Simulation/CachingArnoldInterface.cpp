@@ -17,7 +17,7 @@
 
 namespace Lumiverse {
   CachingArnoldInterface::CachingArnoldInterface() : ArnoldInterface(),
-    _cache_aa_samples(1), _cache_width(1920), _cache_height(980)
+    _cache_aa_samples(-1), _cache_width(1920), _cache_height(980), _cache_file_path("")
   {
   }
 
@@ -40,9 +40,9 @@ namespace Lumiverse {
 		m_height = AiNodeGetInt(options, "yres");
 		*/
 		// By default, render a big image
-		ArnoldInterface::setDims(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-		m_width = DEFAULT_WIDTH;
-		m_height = DEFAULT_HEIGHT;
+		ArnoldInterface::setDims(_cache_width, _cache_height);
+		m_width = _cache_width;
+		m_height = _cache_height;
 		AiNodeSetInt(options, "xres", m_width);
 		AiNodeSetInt(options, "yres", m_height);
 		m_samples = AiNodeGetInt(options, "AA_samples");
@@ -239,6 +239,7 @@ namespace Lumiverse {
 			Eigen::Vector3d modulator = curr_device->getColor()->getRGB();
 
 			AiNodeSetRGB(light, "color", 1, 1, 1);
+      Logger::log(INFO, "Rendering " + name + " for cache");
 			AiRender(AI_RENDER_MODE_CAMERA);
 
 			// copy to layer buffer
@@ -261,6 +262,9 @@ namespace Lumiverse {
 			memset(m_render_buffer, 0, _cache_width * _cache_height * 4 * sizeof(float));
 		}
 		AiNodeIteratorDestroy(it);
+
+    // autosave to disk
+    dumpCache();
 	}
 
 	void CachingArnoldInterface::setSamples(int samples) {
@@ -271,6 +275,7 @@ namespace Lumiverse {
 	}
 
 	int CachingArnoldInterface::render(const std::set<Device *> &devices) {
+    m_progress.bucket_sum = 0;
 
 		updateDevicesLayers(devices);
 
@@ -280,12 +285,62 @@ namespace Lumiverse {
 
 		force_cache_reload = false;
 
+    m_progress.bucket_cur = 1;
+    m_progress.bucket_sum = 1;
+
 		return AI_SUCCESS;
 	}
 
 	void CachingArnoldInterface::setHDROutputBuffer() {
 		tone_mapper.set_output_hdr(m_buffer);
 	}
+
+  void CachingArnoldInterface::saveLayer(EXRLayer * l)
+  {
+    if (l == nullptr)
+      return;
+
+    // set file path
+    string file = _cache_file_path + "/" + l->get_name() + ".exr";
+    OPENEXR_IMF_INTERNAL_NAMESPACE::Header header(l->get_width(), l->get_height());
+    header.channels().insert("R", OPENEXR_IMF_INTERNAL_NAMESPACE::Channel(OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT));
+    header.channels().insert("G", OPENEXR_IMF_INTERNAL_NAMESPACE::Channel(OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT));
+    header.channels().insert("B", OPENEXR_IMF_INTERNAL_NAMESPACE::Channel(OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT));
+
+    Pixel4* pixels = l->get_pixels();
+
+    OPENEXR_IMF_INTERNAL_NAMESPACE::OutputFile out(file.c_str(), header);
+    OPENEXR_IMF_INTERNAL_NAMESPACE::FrameBuffer fb;
+
+    // gather data
+    fb.insert("R", OPENEXR_IMF_INTERNAL_NAMESPACE::Slice(
+      OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT,
+      (char *)&pixels[0].r,
+      sizeof(Pixel4) * 1,
+      sizeof(Pixel4) * l->get_width(),
+      1, 1, 0)
+    );
+
+    fb.insert("G", OPENEXR_IMF_INTERNAL_NAMESPACE::Slice(
+      OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT,
+      (char *)&pixels[0].g,
+      sizeof(Pixel4) * 1,
+      sizeof(Pixel4) * l->get_width(),
+      1, 1, 0)
+    );
+
+    fb.insert("B", OPENEXR_IMF_INTERNAL_NAMESPACE::Slice(
+      OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT,
+      (char *)&pixels[0].b,
+      sizeof(Pixel4) * 1,
+      sizeof(Pixel4) * l->get_width(),
+      1, 1, 0)
+    );
+
+    // save data
+    out.setFrameBuffer(fb);
+    out.writePixels(l->get_height());
+  }
 
 	void CachingArnoldInterface::dumpHDRToBuffer(const std::set<Device *> &devices) {
 
@@ -373,98 +428,116 @@ namespace Lumiverse {
 		ArnoldInterface::setOptionParameter(paramName, val);
 	}
 
+  void CachingArnoldInterface::dumpCache()
+  {
+    if (_cache_file_path == "") {
+      Logger::log(ERR, "Can't save cache when path is not set.");
+      return;
+    }
+
+    for (auto& d : cached_devices) {
+      string name = d.second->getMetadata("Arnold Node Name");
+      saveLayer(compositor.get_layer_by_name(name.c_str()));
+    }
+  }
+
+  void CachingArnoldInterface::loadCache(const set<Device*>& devices)
+  {
+    for (auto& d : devices) {
+      if (load_exr(d->getMetadata("Arnold Node Name")) == 0) {
+        cached_devices[d->getMetadata("Arnold Node Name")] = new Device(d);
+      }
+    }
+
+    force_cache_reload = false;
+  }
+
+  void CachingArnoldInterface::loadIfUsingCaching(const set<Device*>& devices)
+  {
+    loadCache(devices);
+  }
+
 	bool CachingArnoldInterface::optionRequiresCacheReload(const std::string &paramName) {
 		return paramName == "AA_samples";
 	}
 
-	int CachingArnoldInterface::load_exr(const char *file_path) {
+  int CachingArnoldInterface::load_exr(string& filename) {
+    string file_path = _cache_file_path + "/" + filename + ".exr";
 
-		// check header
-		bool isTiled;
-		bool isValid = OPENEXR_IMF_INTERNAL_NAMESPACE::isOpenExrFile(file_path, isTiled);
-		if (isValid) {
+    // check header
+    bool isTiled;
+    bool isValid = OPENEXR_IMF_INTERNAL_NAMESPACE::isOpenExrFile(file_path.c_str(), isTiled);
+    if (isValid) {
 
-			// check for tiled exr
-			if (isTiled) {
-				std::cerr << "Only scanline images are supported" << std::endl;
-				return -1;
-			}
+      // check for tiled exr
+      if (isTiled) {
+        std::cerr << "Only scanline images are supported" << std::endl;
+        return -1;
+      }
 
-		}
-		else {
+    }
+    else {
+      // file not valid
+      std::cerr << "Invalid input OpenEXR file: " << file_path;
+      return -1;
+    }
 
-			// file not valid
-			std::cerr << "Invalid input OpenEXR file: " << file_path;
-			return -1;
-		}
+    // read dimensions
+    OPENEXR_IMF_INTERNAL_NAMESPACE::InputFile file(file_path.c_str());
+    IMATH_INTERNAL_NAMESPACE::Box2i dw = file.header().dataWindow();
+    _cache_width = dw.max.x - dw.min.x + 1;
+    _cache_height = dw.max.y - dw.min.y + 1;
 
-		// read dimensions
-		OPENEXR_IMF_INTERNAL_NAMESPACE::InputFile file(file_path);
-		IMATH_INTERNAL_NAMESPACE::Box2i dw = file.header().dataWindow();
-		m_width = dw.max.x - dw.min.x + 1;
-		m_height = dw.max.y - dw.min.y + 1;
+    // Assuming the files were saved with Lumiverse, there will be 3 channels here.
 
-		// read channel information
-		const OPENEXR_IMF_INTERNAL_NAMESPACE::ChannelList &channels = file.header().channels();
-		set<string> names;
-		channels.layers(names);
+    // read layers
+    Pixel4 *pixels;
+    // read pixels
+    OPENEXR_IMF_INTERNAL_NAMESPACE::FrameBuffer frame_buffer;
+    // each file is assumed to be one layer
 
-		// read layers
-		string layer_name;
-		Pixel4 *pixels;
-		if (names.size()) {
+    // allocate memory
+    pixels = new Pixel4[_cache_width * _cache_height]();
+    if (!pixels) {
+      Logger::log(ERR, "Failed to allocate memory for new layer");
+    }
 
-			// read pixels
-			OPENEXR_IMF_INTERNAL_NAMESPACE::FrameBuffer frame_buffer;
-			for (set<string>::iterator i = names.begin(); i != names.end(); ++i) {
-				// load layers
-				layer_name = *i;
+    // layer.R
+    frame_buffer.insert("R", // name
+      OPENEXR_IMF_INTERNAL_NAMESPACE::Slice(OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT,
+      (char *)&pixels[0].r,  // base
+        sizeof(Pixel4) * 1,    // xstride
+        sizeof(Pixel4) * _cache_width,    // ystride
+        1, 1,                  // sampling
+        0.0));                 // fill value
+                     // layer.R
+    frame_buffer.insert("G", // name
+      OPENEXR_IMF_INTERNAL_NAMESPACE::Slice(OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT,
+      (char *)&pixels[0].g,  // base
+        sizeof(Pixel4) * 1,    // xstride
+        sizeof(Pixel4) * _cache_width,    // ystride
+        1, 1,                  // sampling
+        0.0));                 // fill value
+                     // layer.R
+    frame_buffer.insert("B", // name
+      OPENEXR_IMF_INTERNAL_NAMESPACE::Slice(OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT,
+      (char *)&pixels[0].b,  // base
+        sizeof(Pixel4) * 1,    // xstride
+        sizeof(Pixel4) * _cache_width,    // ystride
+        1, 1,                  // sampling
+        0.0));                 // fill value
 
-				// allocate memory
-				pixels = new Pixel4[m_width * m_height]();
-				if (!pixels) {
-					std::cerr << "Failed to allocate memory for new layer" << std::endl;
-				}
+    // add layer
+    EXRLayer *layer = new EXRLayer(_cache_width, _cache_height, filename.c_str());
+    layer->set_pixels(pixels);
+    compositor.add_layer(layer);
 
-				// layer.R
-				frame_buffer.insert((layer_name + ".R").c_str(), // name
-					OPENEXR_IMF_INTERNAL_NAMESPACE::Slice(OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT,
-						(char *)&pixels[0].r,  // base
-						sizeof(Pixel3) * 1,    // xstride
-						sizeof(Pixel3) * m_width,    // ystride
-						1, 1,                  // sampling
-						0.0));                 // fill value
-											   // layer.R
-				frame_buffer.insert((layer_name + ".G").c_str(), // name
-					OPENEXR_IMF_INTERNAL_NAMESPACE::Slice(OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT,
-						(char *)&pixels[0].g,  // base
-						sizeof(Pixel3) * 1,    // xstride
-						sizeof(Pixel3) * m_width,    // ystride
-						1, 1,                  // sampling
-						0.0));                 // fill value
-											   // layer.R
-				frame_buffer.insert((layer_name + ".B").c_str(), // name
-					OPENEXR_IMF_INTERNAL_NAMESPACE::Slice(OPENEXR_IMF_INTERNAL_NAMESPACE::FLOAT,
-						(char *)&pixels[0].b,  // base
-						sizeof(Pixel3) * 1,    // xstride
-						sizeof(Pixel3) * m_width,    // ystride
-						1, 1,                  // sampling
-						0.0));                 // fill value
+    // read pixels
+    file.setFrameBuffer(frame_buffer);
+    file.readPixels(dw.min.y, dw.max.y);
 
-											   // add layer
-				EXRLayer *layer = new EXRLayer(m_width, m_height, layer_name.c_str());
-				compositor.add_layer(layer);
-				std::cout << " - Found layer: " << layer_name << std::endl;
-			}
-
-			// read pixels
-			std::cout << " - Loading layers from multi-layered EXR file" << std::endl;
-			file.setFrameBuffer(frame_buffer);
-			file.readPixels(dw.min.y, dw.max.y);
-
-			return 0;
-		}
-	}
+    return 0;
+  }
 }
 
 #endif // USE_ARNOLD_CACHING

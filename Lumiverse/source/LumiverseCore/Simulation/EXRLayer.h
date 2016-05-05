@@ -99,6 +99,12 @@ public:
   */
   void set_pixels(float *buffer);
 
+  /*!
+  \brief Set the pizel buffer to the specified Pixel4 buffer.
+  EXRLayer takes ownership of this buffer.
+  */
+  void set_pixels(Pixel4* buffer);
+
 private:
   /**
    * Name of the layer.

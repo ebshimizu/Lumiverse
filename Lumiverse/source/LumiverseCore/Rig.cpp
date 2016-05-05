@@ -164,8 +164,9 @@ void Rig::loadPatches(JSONNode root) {
 		}
 	}
     else if (patchType == "ArnoldAnimationPatch") {
-	  i->push_back(*root.find("jsonPath"));
-      patch = (Patch*) new ArnoldAnimationPatch(*i);
+      i->push_back(*root.find("jsonPath"));
+      ArnoldAnimationPatch* aap = new ArnoldAnimationPatch(*i);
+      patch = (Patch*) aap;
       addPatch(nodeName, patch);
       Device::DeviceCallbackFunction callback = std::bind(&ArnoldAnimationPatch::onDeviceChanged,
                                                             (ArnoldAnimationPatch*)patch,
@@ -173,6 +174,12 @@ void Rig::loadPatches(JSONNode root) {
       for (Device *d : getDeviceRaw()) {
           d->addParameterChangedCallback(callback);
           d->addMetadataChangedCallback(callback);
+      }
+
+      // we assume here the devices are loaded and will also load the
+      // cached files if applicable.
+      if (aap->getArnoldInterface()->isUsingCaching()) {
+        aap->getArnoldInterface()->loadIfUsingCaching(getDeviceRaw());
       }
     }
     else if (patchType == "ArnoldPatch") {

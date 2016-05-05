@@ -97,13 +97,13 @@ namespace Lumiverse {
     */
     virtual void init();
 
-	/*!
-	* \brief Initialize the ArnoldRenderer with a reference to a JSON serialized parent patch
-	*
-	* Initializes the ArnoldRenderer with a reference to a JSON serialized parent patch.
-	* This is currently used by the distributed renderer to send a patch over the wire
-	*/
-	virtual void init(const JSONNode jsonPatch) { this->init(); }
+    /*!
+    * \brief Initialize the ArnoldRenderer with a reference to a JSON serialized parent patch
+    *
+    * Initializes the ArnoldRenderer with a reference to a JSON serialized parent patch.
+    * This is currently used by the distributed renderer to send a patch over the wire
+    */
+    virtual void init(const JSONNode jsonPatch) { this->init(); }
 
     /*!
     * \brief Closes the Arnold session.
@@ -283,16 +283,16 @@ namespace Lumiverse {
     */
     virtual int render();
 
-	/*!
-	* \brief Fire off a render request using the given set of devices
-	* 
-	* Fires off a render request with the given set of devices being used
-	* in the rendering. This is currently used to notify a distributed
-	* renderer about any changes to nodes.
-	* \return Arnold error code
-	* \sa render()
-	*/
-	virtual int render(const std::set<Device*> &devices) { return this->render(); }
+    /*!
+    * \brief Fire off a render request using the given set of devices
+    * 
+    * Fires off a render request with the given set of devices being used
+    * in the rendering. This is currently used to notify a distributed
+    * renderer about any changes to nodes.
+    * \return Arnold error code
+    * \sa render()
+    */
+    virtual int render(const std::set<Device*> &devices) { return this->render(); }
       
     /*!
     * \brief Interrupts current rendering.
@@ -378,15 +378,21 @@ namespace Lumiverse {
     */
     virtual bool isDistributedOpen();
 
-	/*!
-	\brief Check whether this patch has caching enabled
-	*/
-	bool isUsingCaching() { return m_using_caching; }
+    /*!
+    \brief Check whether this patch has caching enabled
+    */
+    bool isUsingCaching() { return m_using_caching; }
 
-	/*!
-	\brief Set whether this interface is using caching
-	*/
-	void setUsingCaching(bool usingCaching) { m_using_caching = usingCaching; }
+    /*!
+    \brief Set whether this interface is using caching
+    */
+    void setUsingCaching(bool usingCaching) { m_using_caching = usingCaching; }
+
+    /*!
+    \brief If the interface is caching it should use this function to perform any
+    preload operations it may be doing.
+    */
+    virtual void loadIfUsingCaching(const set<Device*>& devices) { };
 
   protected:
     /*!

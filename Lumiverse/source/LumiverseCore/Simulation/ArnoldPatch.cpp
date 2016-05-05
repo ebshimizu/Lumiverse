@@ -75,6 +75,11 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
       if (aa != cacheSettings->end()) {
         cacheInterface->setSamples(aa->as_int());
       }
+
+      auto path = cacheSettings->find("path");
+      if (path != cacheSettings->end()) {
+        cacheInterface->setPath(path->as_string());
+      }
     }
 
     m_interface = cacheInterface;

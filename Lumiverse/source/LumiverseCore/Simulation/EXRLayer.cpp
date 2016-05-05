@@ -139,6 +139,14 @@ void EXRLayer::set_pixels(float *buffer) {
 	}
 }
 
+void EXRLayer::set_pixels(Pixel4 * buffer)
+{
+  if (pixels != NULL)
+    delete[] pixels;
+
+  pixels = buffer;
+}
+
 }; // namespace LightmanCore
 
 #endif // USE_ARNOLD_CACHING
