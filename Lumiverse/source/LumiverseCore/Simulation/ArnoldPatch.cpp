@@ -99,7 +99,7 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 
 			// TODO: better separator
 			std::string directory = path.as_string();
-			int slash;
+			size_t slash;
 			if ((slash = directory.find_last_of("/")) != string::npos) {
 				directory = directory.substr(0, slash + 1);
 			}
@@ -127,7 +127,7 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 
 		if (nodeName == "gamma") {
 			JSONNode gamma = *i;
-			m_interface->setGamma(gamma.as_float());
+			m_interface->setGamma((float)gamma.as_float());
 		}
 
 		if (nodeName == "predictive") {
@@ -144,7 +144,7 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
         
     if (nodeName == "samples") {
       JSONNode samples = *i;
-      m_interface->setSamples(samples.as_int());
+      m_interface->setSamples((int)samples.as_int());
 		}
 
     // Light loading is now done via automatic matching based

@@ -94,6 +94,41 @@ namespace Lumiverse {
 		}
 	}
 
+  void ToneMapper::apply_hdr_inplace(Pixel4 * in, float * out, size_t w, size_t h)
+  {
+    if (!in) {
+      std::cerr << "Tone mapper has no input buffer" << std::endl;
+      return;
+    }
+    if (!out) {
+      std::cerr << "Tone mapper has no HDR output buffer" << std::endl;
+      return;
+    }
+
+    float g = 1.0f / gamma;
+    // float e = sqrt(pow(2, level));
+    float e = 1.f;
+
+    std::memset(out, 0, w * h * 4 * sizeof(float));
+    for (size_t i = 0; i < w * h; ++i) {
+      int actual_index = 4 * i;
+      Pixel4 curr_pixel = in[i];
+      float max_f = 1.0;
+      //if (hdr_output_buffer[actual_index] >= max_f) max_f = hdr_output_buffer[actual_index];
+      //if (hdr_output_buffer[actual_index + 1] >= max_f) max_f = hdr_output_buffer[actual_index + 1];
+      //if (hdr_output_buffer[actual_index + 2] >= max_f) max_f = hdr_output_buffer[actual_index  + 2];
+
+      //hdr_output_buffer[actual_index] /= max_f;
+      //hdr_output_buffer[actual_index + 1] /= max_f;
+      //hdr_output_buffer[actual_index + 2] /= max_f;
+
+      out[actual_index] = clamp(pow(curr_pixel.r * e, g), 0, 1);
+      out[actual_index + 1] = clamp(pow(curr_pixel.g * e, g), 0, 1);
+      out[actual_index + 2] = clamp(pow(curr_pixel.b * e, g), 0, 1);
+      out[actual_index + 3] = 1.f;
+    }
+  }
+
 	void ToneMapper::apply_bmp() {
 
 		if (!input_buffer) {

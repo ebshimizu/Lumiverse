@@ -60,6 +60,10 @@ namespace Lumiverse {
 		*/
 		bool setDims(int w, int h) override;
 
+    virtual float getPercentage() override {
+      return CachingArnoldInterface::getPercentage();
+    }
+
 		/*!
 		\brief Set a new sample rate and force a reload of the cache
 		*
@@ -78,7 +82,9 @@ namespace Lumiverse {
 		float *getBufferPointer() override;
 
 	protected:
-		void dumpHDRToBuffer(const std::set<Device *> &devices) override;
+    Compositor compositor;
+		
+    void dumpHDRToBuffer(const std::set<Device *> &devices);
 		void updateDevicesLayers(const std::set<Device *> &devices) override;
 		void setHDROutputBuffer() override;
 	};

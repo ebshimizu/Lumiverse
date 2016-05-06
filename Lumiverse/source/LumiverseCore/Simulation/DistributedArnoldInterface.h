@@ -184,7 +184,7 @@ namespace Lumiverse {
 		*
 		* \return The percent.
 		*/
-		float getPercentage() override;
+		virtual float getPercentage() override;
 
 		/*!
 		* \brief Gets the curl connection handle

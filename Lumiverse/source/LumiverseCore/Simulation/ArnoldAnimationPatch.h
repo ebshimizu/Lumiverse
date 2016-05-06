@@ -178,7 +178,7 @@ namespace Lumiverse {
 
     Buffer format is RGBA 32-bit, buffer return order is RGBA
     */
-    void renderSingleFrameToBuffer(const set<Device*>& devices, unsigned char* buff);
+    void renderSingleFrameToBuffer(const set<Device*>& devices, unsigned char* buff, int w = -1, int h = -1);
 
     /*!
     \brief Sets the position of the light in terms of spherical coordinates.

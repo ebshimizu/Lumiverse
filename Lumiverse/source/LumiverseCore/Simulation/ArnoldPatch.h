@@ -111,7 +111,7 @@ namespace Lumiverse {
     *
     * \return String containing "ArnoldPatch"
     */
-	virtual string getType() override { return "ArnoldPatch"; }
+    virtual string getType() override { return "ArnoldPatch"; }
       
     /*!
     * \brief Gets the width of result.
@@ -205,12 +205,12 @@ namespace Lumiverse {
     */
     virtual size_t getBucketNumber() const { return m_interface->getBucketNumber(); }
 
-	/*!
-	* \brief Set the interface we're using
-	* Set the ArnoldInterface reference we're using to perform rendering. This is usually
-	* either an ArnoldInterface, or a DistributedArnoldInterface.
-	*/
-	void setArnoldInterface(ArnoldInterface *arnold_interface) { m_interface = arnold_interface; };
+    /*!
+    * \brief Set the interface we're using
+    * Set the ArnoldInterface reference we're using to perform rendering. This is usually
+    * either an ArnoldInterface, or a DistributedArnoldInterface.
+    */
+    void setArnoldInterface(ArnoldInterface *arnold_interface) { m_interface = arnold_interface; };
 
     /*!
       * \brief Calls Arnold render function on a set of devices.
@@ -218,11 +218,11 @@ namespace Lumiverse {
       */
     virtual bool renderLoop(const std::set<Device *> &devices);
 
-	/*!
-	* \brief Calls Arnold render function.
-	* This function runs in a separate thread.
-	*/
-	virtual bool renderLoop();
+    /*!
+    * \brief Calls Arnold render function.
+    * This function runs in a separate thread.
+    */
+    virtual bool renderLoop();
 
     /*!
      * \brief Set the path to this patch's ass
@@ -230,12 +230,12 @@ namespace Lumiverse {
      * \param The path to this patch's ass
      */
     void setAssFile(std::string assFile) { m_interface->setAssFile(assFile); }
-	
-	/*!
-	* \brief Set global arnold options on the interface
-	*/
-	virtual void setOptionParameter(std::string paramName, int val);
-	virtual void setOptionParameter(std::string paramName, float val);
+    
+    /*!
+    * \brief Set global arnold options on the interface
+    */
+    virtual void setOptionParameter(std::string paramName, int val);
+    virtual void setOptionParameter(std::string paramName, float val);
 
     /*!
     * \brief Resets the arnold light node with updated parameters of deices.

@@ -52,7 +52,7 @@ public:
 	}
 
 	inline float illum() {
-		return 0.2126*r + 0.7152*g + 0.0722*b;
+		return (float) (0.2126*r + 0.7152*g + 0.0722*b);
 	}
 };
 
@@ -79,7 +79,7 @@ public:
 	float r, g, b, a;
 
   inline float illum() {
-	  return 0.2126*r + 0.7152*g + 0.0722*b;
+	  return (float) (0.2126*r + 0.7152*g + 0.0722*b);
   }
 
   Pixel4 operator *(float scalar) {

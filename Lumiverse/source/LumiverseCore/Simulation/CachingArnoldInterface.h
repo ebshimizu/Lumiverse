@@ -28,8 +28,31 @@
 #include <algorithm>
 #include <unordered_map>
 #include <set>
+#include <thread>
+#include <mutex>
 
 namespace Lumiverse {
+
+  class CachingRenderContext
+  {
+  public:
+    CachingRenderContext(Compositor* c, int w, int h);
+    ~CachingRenderContext();
+
+    void setSize(int w, int h);
+    void setContext(const set<Device*>& d, int w, int h);
+    void render();
+
+    Compositor* _compositor;
+    float* _buffer;
+    int _w;
+    int _h;
+    unique_lock<mutex> _lock;
+    set<Device*>& _devices;
+
+  private:
+    mutex _inUse;
+  };
 
 	class CachingArnoldInterface : public virtual ArnoldInterface
 	{
@@ -48,16 +71,13 @@ namespace Lumiverse {
 		*/
 		void close() override;
 
+    virtual float getPercentage() override;
+
 		/*!
 		* \brief Now that all of the EXR layers have been rendered (i.e. the cache has been filled),
 		* render an image per the light node parameters.
 		*/
-		int render(const std::set<Device *> &devices);
-
-		/*!
-		* \brief Dump to the HDR buffer
-		*/
-		virtual void dumpHDRToBuffer(const std::set<Device *> &devices);
+		int render(const std::set<Device *> &devices, int w, int h, int& cid);
 
 		/*!
 		\brief Override set dims so that we know if we should force a re-loading of the cache
@@ -99,14 +119,19 @@ namespace Lumiverse {
     */
     virtual void loadIfUsingCaching(const set<Device*>& devices);
 
+    /*! \brief Returns the buffer associated with the given context. */
+    float* getBufferForContext(int contextId);
+
+    /*! \brief Releases the specified context back into the pool. */
+    void closeContext(int contextId);
+
 	protected:
 
 		const static int DEFAULT_WIDTH = 1920;
 		const static int DEFAULT_HEIGHT = 980;
 
-		Compositor compositor;
-
-		ToneMapper tone_mapper;
+  	//Compositor compositor;
+    ToneMapper tone_mapper;
 
 		/*!
 		* Compositor output. (internal)
@@ -189,6 +214,22 @@ namespace Lumiverse {
     \brief Loads cache layers from exr files. Assumes cache is up to date after load.
     */
     void loadCache(const set<Device*>& devices);
+
+    // Variables for thread safety and parallel rendering of cached images
+    /*! \brief Container for shared layer data */
+    map<string, EXRLayer*> _layers;
+
+    /*! \brief Render context containing separate buffers to support threaded rendering from cache */
+    vector<CachingRenderContext*> _contexts;
+
+    /*! \brief list of active cache workers */
+    vector<thread*> _workers;
+
+    /*! \brief lock for accessing workers, buffers, layers, and compositors. */
+    mutex _workerLock;
+
+    /*! \brief Maximum number of threads allowed by the renderer. */
+    int _maxThreads;
 	};
 }
 

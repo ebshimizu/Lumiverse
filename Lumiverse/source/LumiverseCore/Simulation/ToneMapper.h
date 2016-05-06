@@ -85,6 +85,12 @@ public:
   virtual void apply_hdr();
 
   /*!
+  \brief Applies HDR to the specified input and places the result in the 
+  specified output buffer. Assumes both buffers are allocated and the same size.
+  */
+  virtual void apply_hdr_inplace(Pixel4* in, float* out, size_t w, size_t h);
+
+  /*!
    * \brief Compresses the dynamic range and convert illuminance space pixels
    * to color space. The result is save to the the bitmap output buffer.
    * If the output buffer has not been set, the call has no effect.

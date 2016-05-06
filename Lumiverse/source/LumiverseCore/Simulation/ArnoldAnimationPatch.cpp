@@ -188,7 +188,7 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
   }
 }
 
-void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices, unsigned char* buff) {
+void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices, unsigned char* buff, int w, int h) {
   if (m_mode != SimulationAnimationMode::STOPPED)
     disableContinuousRenderMode();
 
@@ -223,12 +223,23 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
 	  }
   }
 
-  updateLight(devices);
-  bool success = ArnoldPatch::renderLoop(devices);
-  frame.clear();
+  bool success = false;
+  float* bp = nullptr;
+  int cid;
+
+  if (CachingArnoldInterface* ci = dynamic_cast<CachingArnoldInterface*>(m_interface)) {
+    ci->render(devices, w, h, cid);
+    // we need to pull the proper buffer from the right context
+    bp = ci->getBufferForContext(cid);
+  }
+  else {
+    updateLight(devices);
+    success = ArnoldPatch::renderLoop(devices);
+    frame.clear();
+    bp = getBufferPointer();
+  }
 
   if (success) {
-    auto bp = getBufferPointer();
     for (int j = 0; j < getHeight(); j++) {
       for (int i = 0; i < getWidth(); i++) {
         int offset = (j * getWidth() + i) * 4;
@@ -240,6 +251,10 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
         buff[offset + 3] = static_cast<unsigned char>(bp[offset + 3] * 0xff);
       }
     }
+  }
+
+  if (CachingArnoldInterface* ci = dynamic_cast<CachingArnoldInterface*>(m_interface)) {
+    ci->closeContext(cid);
   }
 }
 

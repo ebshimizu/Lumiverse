@@ -16,6 +16,47 @@
 #ifdef USE_ARNOLD_CACHING
 
 namespace Lumiverse {
+  CachingRenderContext::CachingRenderContext(Compositor * c, int w, int h) :
+    _compositor(c), _w(w), _h(h), _devices(set<Device*>())
+  {
+    _buffer = new float[4 * _w * _h];
+    _lock = unique_lock<mutex>(_inUse);
+  }
+
+  CachingRenderContext::~CachingRenderContext()
+  {
+    // remove layers from compositor before delete, so we only do 1 delete
+    _compositor->get_layers().clear();
+    delete _compositor;
+    
+    if (_buffer != nullptr)
+      delete _buffer;
+  }
+
+  void CachingRenderContext::setSize(int w, int h)
+  {
+    _w = w;
+    _h = h;
+
+    if (_buffer != nullptr) {
+      delete[] _buffer;
+      _buffer = new float[_w * _h * 4];
+    }
+
+    _compositor->update_dims(_w, _h);
+  }
+
+  void CachingRenderContext::setContext(const set<Device*>& d, int w, int h)
+  {
+    setSize(w, h);
+    _devices = d;
+  }
+
+  void CachingRenderContext::render()
+  {
+    _compositor->render(_devices);
+  }
+
   CachingArnoldInterface::CachingArnoldInterface() : ArnoldInterface(),
     _cache_aa_samples(-1), _cache_width(1920), _cache_height(980), _cache_file_path("")
   {
@@ -105,7 +146,7 @@ namespace Lumiverse {
 			layer->disable();
 
 			// add layer to compositor (render later)
-			compositor.add_layer(layer);
+			_layers[name] = layer;
 			std::cout << "Created layer: " << name << std::endl;
 
 			// disable light
@@ -122,38 +163,60 @@ namespace Lumiverse {
 		 to check if any of the layers need to be re-rendered (i.e. if a
 		 light is rotated).
 		*/
+    
+    // We also set up the data needed for running multiple threads in this caching renderer.
+    _maxThreads = thread::hardware_concurrency();
+    if (_maxThreads == 0)
+      _maxThreads = 1;
+    _workers.resize(_maxThreads);
+
+    for (int i = 0; i < _maxThreads; i++) {
+      Compositor* c = new Compositor();
+      for (const auto& l : _layers) {
+        c->add_layer(l.second);
+      }
+
+      CachingRenderContext* con = new CachingRenderContext(c, m_width, m_height);
+      _contexts.push_back(con);
+    }
+
 
 		m_open = true;
 	}
 
 	void CachingArnoldInterface::close() {
-		
 		// @TODO: Clean stuff up
 		delete[] m_render_buffer;
-		compositor.get_layers().clear();
+    
+    // wait for remaining threads
+    for (auto& t : _workers)
+      t->join();
+
+    // delete layers and contexts
+    for (auto l : _layers)
+      delete l.second;
+
+    for (auto c : _contexts)
+      delete c;
 
 		ArnoldInterface::close();
 	}
+
+  float CachingArnoldInterface::getPercentage()
+  {
+    // here we don't actually do anything and I don't particularly want
+    // to deal with determining which context we're asking for,
+    // so just say we're done.
+    return 1;
+  }
 
 	bool CachingArnoldInterface::setDims(int w, int h)  {
     // We skip setting the arnold options node dimensions and let the
     // cached compositing object do its work.
 		// bool success = ArnoldInterface::setDims(w, h);
 
-    if (m_open) {
-      // Adjust global options
-      m_width = w;
-      m_height = h;
-
-      if (m_buffer != nullptr) {
-        delete[] m_buffer;
-        m_buffer = new float[m_width * m_height * 4];
-      }
-    }
-
-    setHDROutputBuffer();
-    compositor.update_dims(w, h);
-    tone_mapper.update_dims(w, h);
+    // with each context maintaining its own width and height, this
+    // operation is basicaly useless and does a nullop here.
 
 		return true;
 	}
@@ -167,7 +230,7 @@ namespace Lumiverse {
       _cache_width = w;
       _cache_height = h;
 
-      compositor.update_dims(_cache_width, _cache_height);
+      // compositors will update their sizes at cache reload.
     }
   }
 
@@ -203,6 +266,11 @@ namespace Lumiverse {
 		if (to_update.size() == 0) {
 			return;
 		}
+    
+    // this executes before we start the thread, so the lock still holds
+    // wait for other threads to finish
+    for (auto& t : _workers)
+      t->join();
 
 		memset(m_render_buffer, 0, _cache_width * _cache_height * 4 * sizeof(float));
 
@@ -243,7 +311,7 @@ namespace Lumiverse {
 			AiRender(AI_RENDER_MODE_CAMERA);
 
 			// copy to layer buffer
-			EXRLayer *layer = compositor.get_layer_by_name(name.c_str());
+			EXRLayer *layer = _layers[name];
 			layer->clear_buffers();
 
 			Pixel4 *layer_buffer = layer->get_pixels();
@@ -274,20 +342,52 @@ namespace Lumiverse {
 		ArnoldInterface::setSamples(_cache_aa_samples);
 	}
 
-	int CachingArnoldInterface::render(const std::set<Device *> &devices) {
-    m_progress.bucket_sum = 0;
+	int CachingArnoldInterface::render(const std::set<Device *> &devices, int w, int h, int& cid) {
+		// allocate active worker
+    unique_lock<mutex> wlock(_workerLock);
+    wlock.lock();
 
-		updateDevicesLayers(devices);
+    while (_workers.size() >= _maxThreads)
+      this_thread::sleep_for(chrono::milliseconds(50));
+    
+    // pick a context to use
+    cid = 0;
+    CachingRenderContext* selected;
+    for (auto& c : _contexts) {
+      if (c->_lock.try_lock()) {
+        selected = c;
+        break;
+      }
+      cid++;
+    }
 
+    // set up context
+    selected->setContext(devices, w, h);
+    updateDevicesLayers(devices);
 		tone_mapper.set_gamma(m_gamma);
 
-		dumpHDRToBuffer(devices);
+    // start the thread
+    thread t([=]() {
+      selected->render();
+      tone_mapper.apply_hdr_inplace(selected->_compositor->get_compose_buffer(), selected->_buffer, selected->_w, selected->_h);
+    });
+    _workers[cid] = &t;
+
+    // unlock
+    wlock.unlock();
+
+    // join
+    t.join();
+
+    // remove from workers list
+    wlock.lock();
+    _workers[cid] = nullptr;
+    wlock.unlock();
+
+    // note that we don't unlock the context yet, we wait for the patch to copy the
+    // proper buffer over and unlock it.
 
 		force_cache_reload = false;
-
-    m_progress.bucket_cur = 1;
-    m_progress.bucket_sum = 1;
-
 		return AI_SUCCESS;
 	}
 
@@ -341,18 +441,6 @@ namespace Lumiverse {
     out.setFrameBuffer(fb);
     out.writePixels(l->get_height());
   }
-
-	void CachingArnoldInterface::dumpHDRToBuffer(const std::set<Device *> &devices) {
-
-		if (m_buffer == NULL) {
-			std::cerr << "Buffer not set" << std::endl;
-			return;
-		}
-
-		compositor.render(devices);
-		tone_mapper.set_input(compositor.get_compose_buffer(), compositor.get_width(), compositor.get_height());
-		tone_mapper.apply_hdr();
-	}
 
 	/*!
 	\brief Sets a parameter found in the global options node in arnold
@@ -437,7 +525,8 @@ namespace Lumiverse {
 
     for (auto& d : cached_devices) {
       string name = d.second->getMetadata("Arnold Node Name");
-      saveLayer(compositor.get_layer_by_name(name.c_str()));
+
+      saveLayer(_layers[name.c_str()]);
     }
   }
 
@@ -455,6 +544,16 @@ namespace Lumiverse {
   void CachingArnoldInterface::loadIfUsingCaching(const set<Device*>& devices)
   {
     loadCache(devices);
+  }
+
+  float * CachingArnoldInterface::getBufferForContext(int contextId)
+  {
+    return _contexts[contextId]->_buffer;
+  }
+
+  void CachingArnoldInterface::closeContext(int contextId)
+  {
+    _contexts[contextId]->_lock.unlock();
   }
 
 	bool CachingArnoldInterface::optionRequiresCacheReload(const std::string &paramName) {
@@ -530,7 +629,7 @@ namespace Lumiverse {
     // add layer
     EXRLayer *layer = new EXRLayer(_cache_width, _cache_height, filename.c_str());
     layer->set_pixels(pixels);
-    compositor.add_layer(layer);
+    _layers[filename] = layer;
 
     // read pixels
     file.setFrameBuffer(frame_buffer);
