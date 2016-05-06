@@ -17,10 +17,9 @@
 
 namespace Lumiverse {
   CachingRenderContext::CachingRenderContext(Compositor * c, int w, int h) :
-    _compositor(c), _w(w), _h(h), _devices(set<Device*>())
+    _compositor(c), _w(w), _h(h)
   {
     _buffer = new float[4 * _w * _h];
-    _lock = unique_lock<mutex>(_inUse);
   }
 
   CachingRenderContext::~CachingRenderContext()
@@ -46,15 +45,9 @@ namespace Lumiverse {
     _compositor->update_dims(_w, _h);
   }
 
-  void CachingRenderContext::setContext(const set<Device*>& d, int w, int h)
+  void CachingRenderContext::render(const set<Device*>& d)
   {
-    setSize(w, h);
-    _devices = d;
-  }
-
-  void CachingRenderContext::render()
-  {
-    _compositor->render(_devices);
+    _compositor->render(d);
   }
 
   CachingArnoldInterface::CachingArnoldInterface() : ArnoldInterface(),
@@ -124,38 +117,41 @@ namespace Lumiverse {
 		appendToOutputs(command.append(m_bufDriverName).c_str());
 
 		// add layers
-		// this first records each of the light's color and intensity
-		// as the layer multiplier information and then disables all lights.
-		// Then enable one light at a time and generates per-light renderings
-		// using arnold.
-		std::cout << "Filling cache..." << std::endl;
+    // if we haven't loaded any. We assume when we load that we have all layers.
+    if (_layers.size() == 0) {
+      // this first records each of the light's color and intensity
+      // as the layer multiplier information and then disables all lights.
+      // Then enable one light at a time and generates per-light renderings
+      // using arnold.
+      std::cout << "Filling cache..." << std::endl;
 
-		// find all mesh lights
-		size_t num_lights = 0;
-		// AtString rgb_str("color");
-		AtNodeIterator *it = AiUniverseGetNodeIterator(AI_NODE_LIGHT);
-		while (!AiNodeIteratorFinished(it)) {
+      // find all mesh lights
+      size_t num_lights = 0;
+      // AtString rgb_str("color");
+      AtNodeIterator *it = AiUniverseGetNodeIterator(AI_NODE_LIGHT);
+      while (!AiNodeIteratorFinished(it)) {
 
-			AtNode *light = AiNodeIteratorGetNext(it);
+        AtNode *light = AiNodeIteratorGetNext(it);
 
-			// create new layer
-			string name = AiNodeGetStr(light, "name");
-			EXRLayer *layer = new EXRLayer(m_width, m_height, name.c_str());
+        // create new layer
+        string name = AiNodeGetStr(light, "name");
+        EXRLayer *layer = new EXRLayer(m_width, m_height, name.c_str());
 
-			// Disable layer by default -- enable when we read light nodes from scene in render()
-			layer->disable();
+        // Disable layer by default -- enable when we read light nodes from scene in render()
+        layer->enable();
 
-			// add layer to compositor (render later)
-			_layers[name] = layer;
-			std::cout << "Created layer: " << name << std::endl;
+        // add layer to compositor (render later)
+        _layers[name] = layer;
+        std::cout << "Created layer: " << name << std::endl;
 
-			// disable light
-			AiNodeSetDisabled(light, true);
+        // disable light
+        AiNodeSetDisabled(light, true);
 
-			// increment count
-			num_lights++;
-		}
-		AiNodeIteratorDestroy(it);
+        // increment count
+        num_lights++;
+      }
+      AiNodeIteratorDestroy(it);
+    }
 
 		/*
 		 Note that we don't actually render any layers on init. We wait until
@@ -189,8 +185,10 @@ namespace Lumiverse {
 		delete[] m_render_buffer;
     
     // wait for remaining threads
-    for (auto& t : _workers)
-      t->join();
+    for (auto& t : _workers) {
+      if (t != nullptr)
+        t->join();
+    }
 
     // delete layers and contexts
     for (auto l : _layers)
@@ -207,7 +205,7 @@ namespace Lumiverse {
     // here we don't actually do anything and I don't particularly want
     // to deal with determining which context we're asking for,
     // so just say we're done.
-    return 1;
+    return 100;
   }
 
 	bool CachingArnoldInterface::setDims(int w, int h)  {
@@ -217,6 +215,8 @@ namespace Lumiverse {
 
     // with each context maintaining its own width and height, this
     // operation is basicaly useless and does a nullop here.
+    m_width = w;
+    m_height = h;
 
 		return true;
 	}
@@ -269,8 +269,10 @@ namespace Lumiverse {
     
     // this executes before we start the thread, so the lock still holds
     // wait for other threads to finish
-    for (auto& t : _workers)
-      t->join();
+    for (auto& t : _workers) {
+      if (t != nullptr)
+        t->join();
+    }
 
 		memset(m_render_buffer, 0, _cache_width * _cache_height * 4 * sizeof(float));
 
@@ -344,45 +346,45 @@ namespace Lumiverse {
 
 	int CachingArnoldInterface::render(const std::set<Device *> &devices, int w, int h, int& cid) {
 		// allocate active worker
-    unique_lock<mutex> wlock(_workerLock);
-    wlock.lock();
+    _workerLock.lock();
 
-    while (_workers.size() >= _maxThreads)
-      this_thread::sleep_for(chrono::milliseconds(50));
-    
     // pick a context to use
     cid = 0;
-    CachingRenderContext* selected;
-    for (auto& c : _contexts) {
-      if (c->_lock.try_lock()) {
-        selected = c;
-        break;
+    CachingRenderContext* selected = nullptr;
+
+    while (selected == nullptr) {
+      for (auto& c : _contexts) {
+        if (c->_inUse.try_lock()) {
+          selected = c;
+          break;
+        }
+        cid++;
       }
-      cid++;
+      this_thread::sleep_for(chrono::milliseconds(50));
     }
 
     // set up context
-    selected->setContext(devices, w, h);
+    selected->setSize(w, h);
     updateDevicesLayers(devices);
 		tone_mapper.set_gamma(m_gamma);
 
     // start the thread
     thread t([=]() {
-      selected->render();
+      selected->render(devices);
       tone_mapper.apply_hdr_inplace(selected->_compositor->get_compose_buffer(), selected->_buffer, selected->_w, selected->_h);
     });
     _workers[cid] = &t;
 
     // unlock
-    wlock.unlock();
+    _workerLock.unlock();
 
     // join
     t.join();
 
     // remove from workers list
-    wlock.lock();
+    _workerLock.lock();
     _workers[cid] = nullptr;
-    wlock.unlock();
+    _workerLock.unlock();
 
     // note that we don't unlock the context yet, we wait for the patch to copy the
     // proper buffer over and unlock it.
@@ -553,7 +555,7 @@ namespace Lumiverse {
 
   void CachingArnoldInterface::closeContext(int contextId)
   {
-    _contexts[contextId]->_lock.unlock();
+    _contexts[contextId]->_inUse.unlock();
   }
 
 	bool CachingArnoldInterface::optionRequiresCacheReload(const std::string &paramName) {
@@ -629,6 +631,7 @@ namespace Lumiverse {
     // add layer
     EXRLayer *layer = new EXRLayer(_cache_width, _cache_height, filename.c_str());
     layer->set_pixels(pixels);
+    layer->enable();
     _layers[filename] = layer;
 
     // read pixels

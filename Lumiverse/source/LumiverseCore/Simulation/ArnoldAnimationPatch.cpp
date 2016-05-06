@@ -228,7 +228,7 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
   int cid;
 
   if (CachingArnoldInterface* ci = dynamic_cast<CachingArnoldInterface*>(m_interface)) {
-    ci->render(devices, w, h, cid);
+    success = ci->render(devices, w, h, cid) == AI_SUCCESS;
     // we need to pull the proper buffer from the right context
     bp = ci->getBufferForContext(cid);
   }
@@ -320,11 +320,11 @@ void ArnoldAnimationPatch::getPositionFromAss(const set<Device*>& devices)
         d->setParam("lookAtZ", new LumiverseFloat());
 
       d->getParam<LumiverseFloat>("distance")->setVals(1, 1, 1, 1);
-      d->getParam<LumiverseOrientation>("polar")->setVals(polar, polar, polar, polar);
-      d->getParam<LumiverseOrientation>("azimuth")->setVals(azimuth, azimuth, azimuth, azimuth);
-      d->getParam<LumiverseFloat>("lookAtX")->setVals(look(0), look(0), look(0), look(0));
-      d->getParam<LumiverseFloat>("lookAtY")->setVals(look(1), look(1), look(1), look(1));
-      d->getParam<LumiverseFloat>("lookAtZ")->setVals(look(2), look(2), look(2), look(2));
+      d->getParam<LumiverseOrientation>("polar")->setVals((float)polar, (float)polar, (float)polar, (float)polar);
+      d->getParam<LumiverseOrientation>("azimuth")->setVals((float)azimuth, (float)azimuth, (float)azimuth, (float)azimuth);
+      d->getParam<LumiverseFloat>("lookAtX")->setVals((float)look(0), (float)look(0), (float)look(0), (float)look(0));
+      d->getParam<LumiverseFloat>("lookAtY")->setVals((float)look(1), (float)look(1), (float)look(1), (float)look(1));
+      d->getParam<LumiverseFloat>("lookAtZ")->setVals((float)look(2), (float)look(2), (float)look(2), (float)look(2));
     }
   }
 

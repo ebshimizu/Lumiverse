@@ -40,17 +40,12 @@ namespace Lumiverse {
     ~CachingRenderContext();
 
     void setSize(int w, int h);
-    void setContext(const set<Device*>& d, int w, int h);
-    void render();
+    void render(const set<Device*>& d);
 
     Compositor* _compositor;
     float* _buffer;
     int _w;
     int _h;
-    unique_lock<mutex> _lock;
-    set<Device*>& _devices;
-
-  private:
     mutex _inUse;
   };
 

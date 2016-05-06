@@ -318,7 +318,7 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
   // Color
   if (d_ptr->paramExists("color")) {
     LumiverseColor* color = (LumiverseColor*)d_ptr->getParam("color");
-    m_interface->setParameter(light_name, "color", color->getColorChannel("Red"), color->getColorChannel("Green"), color->getColorChannel("Blue"));
+    m_interface->setParameter(light_name, "color", (float)color->getColorChannel("Red"), (float)color->getColorChannel("Green"), (float)color->getColorChannel("Blue"));
   }
 
   // Softness
@@ -403,7 +403,7 @@ void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
 		float luminant;
 		float color_intensity;
 		if (d->getColor() != NULL)
-			color_intensity = d->getColor()->getY();
+			color_intensity = (float)d->getColor()->getY();
 		else {
 			color_intensity = 100;// white.getY();
 		}
@@ -468,7 +468,7 @@ void ArnoldPatch::interruptRender() {
         try {
             m_renderloop->join();
         }
-        catch (const std::system_error& e) {
+        catch (const std::system_error& /* e */) {
             Logger::log(ERR, "Thread doesn't exist.");
         }
         m_renderloop = NULL;
