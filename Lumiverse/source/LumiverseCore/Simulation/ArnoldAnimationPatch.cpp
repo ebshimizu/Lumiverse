@@ -231,6 +231,7 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
     success = ci->render(devices, w, h, cid) == AI_SUCCESS;
     // we need to pull the proper buffer from the right context
     bp = ci->getBufferForContext(cid);
+    frame.clear();
   }
   else {
     updateLight(devices);

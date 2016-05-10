@@ -197,6 +197,10 @@ namespace Lumiverse {
     for (auto c : _contexts)
       delete c;
 
+    for (auto& device : cached_devices) {
+      delete device.second;
+    }
+
 		ArnoldInterface::close();
 	}
 
@@ -360,7 +364,7 @@ namespace Lumiverse {
         }
         cid++;
       }
-      this_thread::sleep_for(chrono::milliseconds(50));
+      this_thread::sleep_for(chrono::microseconds(50));
     }
 
     // set up context

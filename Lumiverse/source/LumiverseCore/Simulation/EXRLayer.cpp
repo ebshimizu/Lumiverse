@@ -40,7 +40,13 @@ EXRLayer::EXRLayer(size_t width, size_t height,
   modulator = Pixel3(1, 1, 1);
 }
 
-EXRLayer::~EXRLayer() { delete[] pixels; }
+EXRLayer::~EXRLayer() {
+  delete[] pixels;
+
+  for (auto& base : pixel_size_bases) {
+    delete base.second;
+  }
+}
 
 std::string EXRLayer::get_name() { return name; }
 
