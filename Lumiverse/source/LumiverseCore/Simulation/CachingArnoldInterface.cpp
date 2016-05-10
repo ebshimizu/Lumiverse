@@ -364,7 +364,7 @@ namespace Lumiverse {
         }
         cid++;
       }
-      this_thread::sleep_for(chrono::microseconds(50));
+      this_thread::sleep_for(chrono::microseconds(5));
     }
 
     // set up context
