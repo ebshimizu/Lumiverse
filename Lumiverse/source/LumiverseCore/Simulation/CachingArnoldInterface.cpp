@@ -162,9 +162,6 @@ namespace Lumiverse {
     
     // We also set up the data needed for running multiple threads in this caching renderer.
     _maxThreads = thread::hardware_concurrency();
-    if (_maxThreads == 0)
-      _maxThreads = 1;
-    _workers.resize(_maxThreads);
 
     for (int i = 0; i < _maxThreads; i++) {
       Compositor* c = new Compositor();
@@ -183,12 +180,6 @@ namespace Lumiverse {
 	void CachingArnoldInterface::close() {
 		// @TODO: Clean stuff up
 		delete[] m_render_buffer;
-    
-    // wait for remaining threads
-    for (auto& t : _workers) {
-      if (t != nullptr)
-        t->join();
-    }
 
     // delete layers and contexts
     for (auto l : _layers)
@@ -263,6 +254,9 @@ namespace Lumiverse {
 	}
 
 	void CachingArnoldInterface::updateDevicesLayers(const std::set<Device *> &devices) {
+    // lock this section down. Typically should go fairly fast due to not needing to update this very often.
+    lock_guard<mutex> lock(_updateLock);
+
 		const std::unordered_map<std::string, Device *> &to_update = getDevicesToUpdate(devices);
 
 		// If no updates are necessary just return to avoid the overhead
@@ -270,13 +264,6 @@ namespace Lumiverse {
 		if (to_update.size() == 0) {
 			return;
 		}
-    
-    // this executes before we start the thread, so the lock still holds
-    // wait for other threads to finish
-    for (auto& t : _workers) {
-      if (t != nullptr)
-        t->join();
-    }
 
 		memset(m_render_buffer, 0, _cache_width * _cache_height * 4 * sizeof(float));
 
@@ -349,9 +336,6 @@ namespace Lumiverse {
 	}
 
 	int CachingArnoldInterface::render(const std::set<Device *> &devices, int w, int h, int& cid) {
-		// allocate active worker
-    _workerLock.lock();
-
     // pick a context to use
     cid = 0;
     CachingRenderContext* selected = nullptr;
@@ -372,25 +356,11 @@ namespace Lumiverse {
     updateDevicesLayers(devices);
 		tone_mapper.set_gamma(m_gamma);
 
-    // start the thread
-    thread t([=]() {
-      selected->render(devices);
-      tone_mapper.apply_hdr_inplace(selected->_compositor->get_compose_buffer(), selected->_buffer, selected->_w, selected->_h);
-    });
-    _workers[cid] = &t;
+    // do the render
+    selected->render(devices);
+    tone_mapper.apply_hdr_inplace(selected->_compositor->get_compose_buffer(), selected->_buffer, selected->_w, selected->_h);
 
-    // unlock
-    _workerLock.unlock();
-
-    // join
-    t.join();
-
-    // remove from workers list
-    _workerLock.lock();
-    _workers[cid] = nullptr;
-    _workerLock.unlock();
-
-    // note that we don't unlock the context yet, we wait for the patch to copy the
+    // note that we don't unlock the context yet we wait for the patch to copy the
     // proper buffer over and unlock it.
 
 		force_cache_reload = false;

@@ -217,11 +217,8 @@ namespace Lumiverse {
     /*! \brief Render context containing separate buffers to support threaded rendering from cache */
     vector<CachingRenderContext*> _contexts;
 
-    /*! \brief list of active cache workers */
-    vector<thread*> _workers;
-
     /*! \brief lock for accessing workers, buffers, layers, and compositors. */
-    mutex _workerLock;
+    mutex _updateLock;
 
     /*! \brief Maximum number of threads allowed by the renderer. */
     int _maxThreads;

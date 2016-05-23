@@ -11,6 +11,8 @@ IF (LumiverseDemos_BUILD_SPEED_TEST)
 	add_subdirectory(SpeedTest)
 ENDIF(LumiverseDemos_BUILD_SPEED_TEST)
 
+add_subdirectory(ArnoldDebug)
+
 #IF (LumiverseDemos_BUILD_FEATURE_GENERATOR)
 #	add_subdirectory(FeatureGenerator)
 #ENDIF(LumiverseDemos_BUILD_FEATURE_GENERATOR)

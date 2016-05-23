@@ -241,9 +241,9 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
   }
 
   if (success) {
-    for (int j = 0; j < getHeight(); j++) {
-      for (int i = 0; i < getWidth(); i++) {
-        int offset = (j * getWidth() + i) * 4;
+    for (int j = 0; j < h; j++) {
+      for (int i = 0; i < w; i++) {
+        int offset = (j * w + i) * 4;
 
         // convert to bytes
         buff[offset] = static_cast<unsigned char>(bp[offset + 2] * 0xff);
