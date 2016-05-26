@@ -303,7 +303,7 @@ namespace Lumiverse {
     * \brief Parses the arnold parameter map to a JSON node.
     * \return The Json node.
     */
-    JSONNode arnoldParameterToJSON();
+    virtual JSONNode toJSON();
 
     /*!
     * \brief Gets the progress of current frame as a percentage.

@@ -120,6 +120,8 @@ namespace Lumiverse {
     /*! \brief Releases the specified context back into the pool. */
     void closeContext(int contextId);
 
+    virtual JSONNode toJSON() override;
+
 	protected:
 
 		const static int DEFAULT_WIDTH = 1920;

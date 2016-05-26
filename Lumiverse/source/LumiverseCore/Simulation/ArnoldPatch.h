@@ -307,6 +307,11 @@ namespace Lumiverse {
     \brief Internal flag used to ensure thread safety
     */
     bool m_rendering;
+
+    /*!
+    \brief Internal flag used to see if cached rendering is being used
+    */
+    bool _caching;
   };
 }
 

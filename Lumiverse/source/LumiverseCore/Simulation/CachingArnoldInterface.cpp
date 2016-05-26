@@ -532,6 +532,18 @@ namespace Lumiverse {
     _contexts[contextId]->_inUse.unlock();
   }
 
+  JSONNode CachingArnoldInterface::toJSON()
+  {
+    JSONNode opts;
+    opts.set_name("cache_options");
+    opts.push_back(JSONNode("width", _cache_width));
+    opts.push_back(JSONNode("height", _cache_height));
+    opts.push_back(JSONNode("samples", _cache_aa_samples));
+    opts.push_back(JSONNode("path", _cache_file_path));
+
+    return opts;
+  }
+
 	bool CachingArnoldInterface::optionRequiresCacheReload(const std::string &paramName) {
 		return paramName == "AA_samples";
 	}

@@ -184,7 +184,12 @@ void ArnoldPatch::setOptionParameter(std::string paramName, float val) {
 bool ArnoldPatch::cacheRendering(const JSONNode data) {
 	auto cacheNode = data.find("cache_rendering");
 
-	return (cacheNode != data.end()) && (cacheNode->as_bool());
+  _caching = false;
+  if (cacheNode != data.end()) {
+    _caching = cacheNode->as_bool();
+  }
+
+  return _caching;
 }
 
 bool ArnoldPatch::useDistributedRendering(const JSONNode data) {
@@ -459,6 +464,8 @@ bool ArnoldPatch::renderLoop() {
 
     return (code == AI_SUCCESS);
   }
+
+  return false;
 }
 
 void ArnoldPatch::interruptRender() {
@@ -539,7 +546,12 @@ JSONNode ArnoldPatch::toJSON() {
 	}
 	root.push_back(lights);
 
-	root.push_back(m_interface->arnoldParameterToJSON());
+  root.push_back(JSONNode("cache_rendering", _caching));
+
+  JSONNode interf = m_interface->toJSON();
+  if (!interf.empty()) {
+    root.push_back(interf);
+  }
 
 	return root;
 }

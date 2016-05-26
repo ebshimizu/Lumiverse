@@ -544,19 +544,10 @@ void ArnoldInterface::interrupt() {
   }
 }
 
-JSONNode ArnoldInterface::arnoldParameterToJSON() {
-	JSONNode map;
-	map.set_name("arnoldParamMaps");
-
-	for (auto aparam : m_arnold_params) {
-		JSONNode param;
-		param.set_name(aparam.first);
-		param.push_back(JSONNode("dimension", (int)aparam.second.dimension));
-		param.push_back(JSONNode("arnoldType", aparam.second.arnoldTypeName));
-		map.push_back(param);
-	}
-
-	return map;
+JSONNode ArnoldInterface::toJSON() {
+  // the base ArnoldInterface class doesn't actually have much to
+  // say about itself, and returns an empty node.
+  return JSONNode();
 }
 
 }
