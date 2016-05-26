@@ -248,3 +248,5 @@ Lumiverse/source/LumiverseCore/lib/arnold/lib*
 Lumiverse/source/LumiverseCore/lib/arnold/bin*
 Lumiverse/source/LumiverseCore/lib/arnold/python*
 Lumiverse/source/LumiverseCore/lib/arnold/Changes.html
+Lumiverse/debug_build*
+Lumiverse/release_build*
