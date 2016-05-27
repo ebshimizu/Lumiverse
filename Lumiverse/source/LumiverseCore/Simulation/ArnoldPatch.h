@@ -7,7 +7,6 @@
 #pragma once
 
 #include "LumiverseCoreConfig.h"
-#ifdef USE_ARNOLD
 
 #include <iostream>
 #include <thread>
@@ -24,6 +23,7 @@
 
 namespace Lumiverse {
 
+#ifdef USE_ARNOLD
   struct ArnoldParam;
 
   /*! \brief Record that denotes if a arnold light node requires
@@ -49,7 +49,8 @@ namespace Lumiverse {
 
       AtNode *light;
   };
-    
+#endif  
+
   /*!
   * \brief The Arnold Patch object is responsible for the communication
   * between the Arnold renderer and the Lumiverse devices. The major part
@@ -273,9 +274,10 @@ namespace Lumiverse {
     ArnoldInterface *m_interface;
 
   private:
+#ifdef USE_ARNOLD
     void setOrientation(AtNode *light_ptr, Device *d_ptr, LumiverseOrientation *pan, LumiverseOrientation *tilt);
-
     void setOrientation(AtNode *light_ptr, Device *d_ptr, std::string pan_str, std::string tilt_str);
+#endif
 
     /*!
       * \brief Modifies light color according to Picture Perfect RGB Rendering Using Spectral Prefiltering and Sharp Color Primaries.
@@ -314,7 +316,5 @@ namespace Lumiverse {
     bool _caching;
   };
 }
-
-#endif
 
 #endif

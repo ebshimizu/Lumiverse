@@ -7,6 +7,7 @@
 #pragma once
 
 #include "LumiverseCoreConfig.h"
+#ifdef USE_ARNOLD
 
 #include "../lib/libjson/libjson.h"
 #include "Logger.h"
@@ -140,5 +141,7 @@ namespace Lumiverse {
     };
     
 }
+
+#endif
 
 #endif

@@ -1,5 +1,6 @@
 
 #include "ArnoldMemoryFrameManager.h"
+#ifdef USE_ARNOLD
 
 namespace Lumiverse {
 
@@ -75,3 +76,5 @@ void ArnoldMemoryFrameManager::clear() {
 }
 
 }
+
+#endif

@@ -14,12 +14,14 @@
 
 #include "LumiverseCoreConfig.h"
 
-#ifdef USE_ARNOLD
-
 #ifdef USE_ARNOLD_CACHING
 
 #include "ArnoldInterface.h"
-#include <ai.h>
+
+#ifdef USE_ARNOLD
+  #include <ai.h>
+#endif
+
 #include "ArnoldParameterVector.h"
 #include "Compositor.h"
 #include "ToneMapper.h"
@@ -49,6 +51,13 @@ namespace Lumiverse {
     mutex _inUse;
   };
 
+  /*!
+  \brief The CachingArnoldInterface renders out each light to an exr file and then
+  does rendering by compositing the images for each individual light.
+
+  It is possible to use the interface without having Arnold, however you will need
+  to have all of the images rendered already, and will not be able to re-render the images
+  */
 	class CachingArnoldInterface : public virtual ArnoldInterface
 	{
 	public:
@@ -97,11 +106,13 @@ namespace Lumiverse {
     */
     void setPath(string path) { _cache_file_path = path; }
 
+#ifdef USE_ARNOLD
 		/*!
 		\brief Sets a parameter found in the global options node in arnold
 		*/
 		void setOptionParameter(const std::string &paramName, int val) override;
 		void setOptionParameter(const std::string &paramName, float val) override;
+#endif
 
     /*!
     \brief Saves cache layers to exr files for reuse.
@@ -228,7 +239,5 @@ namespace Lumiverse {
 }
 
 #endif // USE_ARNOLD_CACHING
-
-#endif // USE_ARNOLD
 
 #endif // _Arnold_CACHE_INTERFACE_H_

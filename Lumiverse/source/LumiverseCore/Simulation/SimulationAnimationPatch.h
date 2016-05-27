@@ -7,7 +7,6 @@
 #pragma once
 
 #include "LumiverseCoreConfig.h"
-#ifdef USE_ARNOLD
 
 #include "../lib/libjson/libjson.h"
 #include "SimulationPatch.h"
@@ -81,7 +80,9 @@ namespace Lumiverse {
     */
     SimulationAnimationPatch() : m_worker(NULL), 
 	  m_startPoint(std::chrono::system_clock::from_time_t(0)),
-	  m_mem_frameManager(NULL), m_file_frameManager(NULL), 
+#ifdef USE_ARNOLD
+      m_mem_frameManager(NULL), m_file_frameManager(NULL),
+#endif
 	  m_mode(SimulationAnimationMode::STOPPED) { }
 
     /*!
@@ -96,12 +97,12 @@ namespace Lumiverse {
     */
     virtual ~SimulationAnimationPatch();
 
-	// Callbacks
-	typedef function<void()> FinishedCallbackFunction;
-	typedef function<bool(set<Device *>)> IsUpdateRequiredFunction;
-	typedef function<void(FrameDeviceInfo&)> CreateFrameInfoBodyFunction;
-	typedef function<void()> InterruptFunction;
-	typedef function<void()> ClearUpdateFlagsFunction;
+    // Callbacks
+    typedef function<void()> FinishedCallbackFunction;
+    typedef function<bool(set<Device *>)> IsUpdateRequiredFunction;
+    typedef function<void(FrameDeviceInfo&)> CreateFrameInfoBodyFunction;
+    typedef function<void()> InterruptFunction;
+    typedef function<void()> ClearUpdateFlagsFunction;
 
     /*!
     * \brief Initializes Arnold with function of its parent class and
@@ -114,14 +115,16 @@ namespace Lumiverse {
     * Main thread starts to send frame labeled as RECORDING info to worker.
     */
     virtual void startRecording() { 
-		m_mem_frameManager->clear();
+#ifdef USE_ARNOLD
+      m_mem_frameManager->clear();
 
-		// Overwrite existing frames instead of clearing all
-		if (m_file_frameManager)
-			m_file_frameManager->reset();
+      // Overwrite existing frames instead of clearing all
+      if (m_file_frameManager)
+        m_file_frameManager->reset();
 
-		m_mode = SimulationAnimationMode::RECORDING; 
-	}
+      m_mode = SimulationAnimationMode::RECORDING; 
+#endif
+    }
     
 	/*!
 	* \brief Ends recording.
@@ -170,8 +173,9 @@ namespace Lumiverse {
     * Then the thread would wait to join the worker thread. After all
     * there are done, closes the arnold session as the parent class.
     */
-	void close();
+    void close();
 
+#ifdef USE_ARNOLD
     /*!
     * \brief Returns the ArnoldFrameManager to reconstruction the 
     * animation.
@@ -180,7 +184,8 @@ namespace Lumiverse {
     * and their corresponding time point.
     */
     virtual ArnoldFrameManager *getFrameManager() const;
-    
+#endif
+
     /*!
     * \brief Resets the object to its initial state.
     *
@@ -263,10 +268,12 @@ namespace Lumiverse {
     // time.
     std::chrono::time_point<std::chrono::system_clock> m_startPoint;
 
+#ifdef USE_ARNOLD
     // The ArnoldFrameManager object. Used to store frame buffers.
     ArnoldMemoryFrameManager *m_mem_frameManager;
-	ArnoldFileFrameManager *m_file_frameManager;
-      
+    ArnoldFileFrameManager *m_file_frameManager;
+#endif  
+
     /*! \brief Indicates the mode of SimulationAnimationPatch.
     */
     SimulationAnimationMode m_mode;
@@ -277,7 +284,5 @@ namespace Lumiverse {
   };
     
 }
-
-#endif
 
 #endif

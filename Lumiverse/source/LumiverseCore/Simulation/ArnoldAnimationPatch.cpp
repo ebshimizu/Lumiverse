@@ -8,9 +8,12 @@ namespace Lumiverse {
 // Uses chrono::system_clock::from_time_t(0) as an invalid value.
 ArnoldAnimationPatch::ArnoldAnimationPatch(const JSONNode data)
 	: SimulationAnimationPatch() {
-    // TODO: type for frame manager
-	m_mem_frameManager = new ArnoldMemoryFrameManager();
-    loadJSON(data);
+  // TODO: type for frame manager
+#ifdef USE_ARNOLD
+  m_mem_frameManager = new ArnoldMemoryFrameManager();
+#endif
+
+  loadJSON(data);
 	m_preview_samples = m_interface->getSamples();
 	m_render_samples = m_interface->getSamples();
 }
@@ -108,12 +111,14 @@ float ArnoldAnimationPatch::getPercentage() const {
   // Rough number.
 	if (m_mode == SimulationAnimationMode::RENDERING) {
 		// Don't forget the frame being processed
+#ifdef USE_ARNOLD
 		size_t finished = m_mem_frameManager->getFrameNum();
 		size_t sum = finished + m_queuedFrameDeviceInfo.size() + 1;
 		float renderingPer = m_interface->getPercentage();
 		sum = (sum == 0) ? 1 : sum;
 
 		return ((float)finished * 100.f + renderingPer) / sum;
+#endif
 	}
 
   return ArnoldPatch::getPercentage();
@@ -168,8 +173,9 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
 	  }
   }
 
-
+#ifdef USE_ARNOLD
   m_interface->setDriverFileName(basepath, filename);
+#endif
 
   updateLight(frame.devices);
   bool success = ArnoldPatch::renderLoop(devices);
@@ -228,7 +234,11 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
   int cid;
 
   if (CachingArnoldInterface* ci = dynamic_cast<CachingArnoldInterface*>(m_interface)) {
+#ifdef USE_ARNOLD
     success = ci->render(devices, w, h, cid) == AI_SUCCESS;
+#else
+    success = ci->render(devices, w, h, cid) == 0;
+#endif
     // we need to pull the proper buffer from the right context
     bp = ci->getBufferForContext(cid);
     frame.clear();
@@ -261,6 +271,7 @@ void ArnoldAnimationPatch::renderSingleFrameToBuffer(const set<Device*>& devices
 
 void ArnoldAnimationPatch::getPositionFromAss(const set<Device*>& devices)
 {
+#ifdef USE_ARNOLD
   // by default in y-up coordinate systems, the light faces -z to start with.
   // The procedure here will be to grab the translation component of the arnold matrix
   // (which is actually just the position of the light in 3-d space) and set the
@@ -328,11 +339,12 @@ void ArnoldAnimationPatch::getPositionFromAss(const set<Device*>& devices)
       d->getParam<LumiverseFloat>("lookAtZ")->setVals((float)look(2), (float)look(2), (float)look(2), (float)look(2));
     }
   }
-
+#endif
 }
 
 void ArnoldAnimationPatch::getBeamPropsFromAss(const set<Device*>& devices)
 {
+#ifdef USE_ARNOLD
   for (auto d : devices) {
     string nodeName = d->getMetadata("Arnold Node Name");
     AtNode* light = AiNodeLookUpByName(nodeName.c_str());
@@ -354,6 +366,7 @@ void ArnoldAnimationPatch::getBeamPropsFromAss(const set<Device*>& devices)
       d->getParam<LumiverseFloat>("penumbraAngle")->setVal(pangle);
     }
   }
+#endif
 }
 
 void ArnoldAnimationPatch::createFrameInfoBody(set<Device *> devices, FrameDeviceInfo &frame, bool forceUpdate) {
@@ -378,6 +391,7 @@ void ArnoldAnimationPatch::workerRender(FrameDeviceInfo frame) {
 	updateLight(frame.devices);
 	bool success = ArnoldPatch::renderLoop(frame.devices);
 
+#ifdef USE_ARNOLD
 	// Dumps only when the image was rendered successfully for rendering.
 	// If the worker was reset while rendering, doesn't dump.
 	if (success && frame.mode == SimulationAnimationMode::RENDERING) {
@@ -387,6 +401,7 @@ void ArnoldAnimationPatch::workerRender(FrameDeviceInfo frame) {
 			m_file_frameManager->dump(frame.time, getBufferPointer(),
 			getWidth(), getHeight());
 	}
+#endif
 }
 
 }

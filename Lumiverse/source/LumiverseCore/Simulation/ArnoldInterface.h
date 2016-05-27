@@ -8,11 +8,13 @@
 
 #include "LumiverseCoreConfig.h"
 
-#ifdef USE_ARNOLD
-
 #include <algorithm>
 #include <cstdio>
-#include "../lib/arnold/include/ai.h"
+
+#ifdef USE_ARNOLD
+  #include "../lib/arnold/include/ai.h"
+#endif
+
 #include "../Patch.h"
 #include "../lib/libjson/libjson.h"
 #include "ArnoldParameterVector.h"
@@ -22,7 +24,7 @@
 #include <set>
 
 namespace Lumiverse {
-
+#ifdef USE_ARNOLD
   /*! \brief Wrapper struct for a arnold parameter. */
   struct ArnoldParam {
 	  ArnoldParam()
@@ -40,7 +42,8 @@ namespace Lumiverse {
     void (*AiNodeSetter3D)(AtNode *, const char *, T, T, T);
     void (*AiNodeSetter4D)(AtNode *, const char *, T, T, T, T);
   };
-    
+#endif
+
   /*! \brief Wrapper for unit (bucket) being rendered. */
   struct BucketPositionInfo {
 	  int bucket_xo;
@@ -143,6 +146,7 @@ namespace Lumiverse {
     */
     virtual float *getBufferPointer() { return m_buffer; }
 
+#ifdef USE_ARNOLD
     /*!
     \brief Sets an integer parameter for an arnold light
     */
@@ -202,8 +206,9 @@ namespace Lumiverse {
     *
     * \param data The json node containing the mapping.
     */
-    void loadArnoldParam(const JSONNode data);
-      
+    void loadArnoldParam(const JSONNode data);      
+#endif
+
     /*!
     * \brief Sets the path to ass file.
     *
@@ -328,11 +333,13 @@ namespace Lumiverse {
     */
     size_t getBucketNumber() const { return m_bucket_num; }
 
+#ifdef USE_ARNOLD
     /*!
     * \brief Modifies the surface color according to Picture Perfect RGB Rendering Using Spectral Prefiltering and Sharp Color Primaries.
     * Currently only converts sRGB to sharp RGB.
     */
     void updateSurfaceColor(Eigen::Vector3d white);
+#endif
 
     /*!
     * \brief Sets the default path.
@@ -354,7 +361,8 @@ namespace Lumiverse {
     * \return If it's open.
     */
     bool isOpen() { return m_open; }
-        
+
+#ifdef USE_ARNOLD
     void addGobo(AtNode *light_ptr, std::string file, float deg, float rot);
 
     /*!
@@ -371,6 +379,7 @@ namespace Lumiverse {
     \brief Sets the driver file path. Assumes default arnold renderers
     */
     void setDriverFileName(string base, string filename);
+#endif
 
     /*!
     \brief Indicates if the distributed interface is currently open
@@ -395,6 +404,7 @@ namespace Lumiverse {
     virtual void loadIfUsingCaching(const set<Device*>& devices) { };
 
   protected:
+#ifdef USE_ARNOLD
     /*!
     * \brief Helper function to sets a arnold non-array parameter.
     *
@@ -430,6 +440,7 @@ namespace Lumiverse {
     * \param buffer_output The output command (typically using a driver_buffer node).
     */
     void appendToOutputs(const std::string buffer_output);
+#endif
 
 	/*!
 	* \brief Checks to see if this arnold STRING parameter is a file.
@@ -456,12 +467,14 @@ namespace Lumiverse {
 	*/
 	inline std::string toRelativePath(std::string file);
 
-    /*!
-    * \brief The list containing the mappings between metadata to Arnold parameter.
-    * \sa ArnoldParam
-    */
-	map<string, ArnoldParam> m_arnold_params;
-      
+#ifdef USE_ARNOLD
+  /*!
+  * \brief The list containing the mappings between metadata to Arnold parameter.
+  * \sa ArnoldParam
+  */
+  map<string, ArnoldParam> m_arnold_params;
+#endif    
+
     /*!
     * \brief The path to ass file.
     */
@@ -579,7 +592,5 @@ namespace Lumiverse {
 	  return ret;
   }
 }
-
-#endif
 
 #endif

@@ -4,7 +4,7 @@
 #include <sstream>
 
 namespace Lumiverse {
-    
+#ifdef USE_ARNOLD
 void ArnoldInterface::loadArnoldParam(const JSONNode data) {
   ArnoldParam arnold_param;
   JSONNode::const_iterator i = data.begin();
@@ -84,7 +84,7 @@ void ArnoldInterface::setArrayParameter(AtNode *node, const std::string &paramNa
     
     AiNodeSetArray(node, paramName.c_str(), array_ptr);
 }
-    
+
 void ArnoldInterface::setArrayParameter(AtNode *light_ptr, const std::string &paramName, const std::string &value) {
     ArnoldParam param = m_arnold_params[paramName];
     
@@ -135,17 +135,17 @@ int ArnoldInterface::getOptionParameter(const std::string & paramName)
   AtNode* options = AiUniverseGetOptions();
   return AiNodeGetInt(options, paramName.c_str());
 }
-    
+#endif
+
 bool ArnoldInterface::setDims(int w, int h)
 {
   if (m_open) {
+
+#ifdef USE_ARNOLD
     // Adjust global options
     AtNode* options = AiUniverseGetOptions();
     AiNodeSetInt(options, "xres", w);
     AiNodeSetInt(options, "yres", h);
-
-    m_width = w;
-    m_height = h;
 
     if (m_buffer != nullptr) {
       delete[] m_buffer;
@@ -158,6 +158,10 @@ bool ArnoldInterface::setDims(int w, int h)
         AiNodeSetInt(driverBuf, "height", m_height);
       }
     }
+#endif
+
+    m_width = w;
+    m_height = h;
 
     return true;
   }
@@ -165,6 +169,7 @@ bool ArnoldInterface::setDims(int w, int h)
   return false;
 }
 
+#ifdef USE_ARNOLD
 void ArnoldInterface::setParameter(string lightName, string param, int val)
 {
   AtNode* light = AiNodeLookUpByName(lightName.c_str());
@@ -342,12 +347,15 @@ void ArnoldInterface::appendToOutputs(const std::string buffer_output) {
   AiNodeSetArray(options, "outputs", outputs_array);
 }
 
+#endif 
+
 inline std::string ArnoldInterface::toRelativePath(std::string file) {
 	if (!isRelativeFileName(file))
 		return file;
 	return m_default_path + file;
 }
 
+#ifdef USE_ARNOLD
 void ArnoldInterface::updateSurfaceColor(Eigen::Vector3d white) {
 	Eigen::Matrix3d toxyz = RGBToXYZ[sRGB];
 	// TODO: To query names of existing surface
@@ -417,6 +425,7 @@ void ArnoldInterface::setDriverFileName(string base, string filename)
     AiNodeSetStr(png, "filename", (base + "/png/" + filename + ".png").c_str());
   }
 }
+#endif
 
 bool ArnoldInterface::isDistributedOpen()
 {
@@ -426,7 +435,7 @@ bool ArnoldInterface::isDistributedOpen()
 void ArnoldInterface::init() {
   // TODO : to use env var (different apis for linux and win)
   // Make sure your environment variables are set properly to check out an arnold license.
-
+#ifdef USE_ARNOLD
   // Starts a arnold session
   AiBegin();
 
@@ -490,11 +499,14 @@ void ArnoldInterface::init() {
   // The function keeps the output options from ass file
   std::string command("RGBA RGBA filter ");
   appendToOutputs(command.append(m_bufDriverName).c_str());
+#endif
 
 	m_open = true;
 }
 
 void ArnoldInterface::close() {
+  // buffer was never allocated if arnold not being used
+#ifdef USE_ARNOLD
 	// Cleans buffer
 	delete[] m_buffer;
 	m_buffer = NULL;
@@ -507,26 +519,29 @@ void ArnoldInterface::close() {
 
 		AiEnd();
 	}
-	
+#endif
+
 	m_open = false;
 }
     
 void ArnoldInterface::setSamples(int samples)
 {
   m_samples = samples;
+#ifdef USE_ARNOLD
   AtNode *options = AiUniverseGetOptions();
   AiNodeSetInt(options, "AA_samples", m_samples);
+#endif
 }
 
 int ArnoldInterface::render() {
 	if (!m_open)
 		init();
 
+#ifdef USE_ARNOLD
   int code;
 
 	// Sets the sampling rate with the current rate
 	//setSamplesOption();
-
   Logger::log(INFO, "Rendering...");
   code = AiRender(AI_RENDER_MODE_CAMERA);
 
@@ -535,13 +550,20 @@ int ArnoldInterface::render() {
   Logger::log(INFO, ss.str().c_str());
 
   return code;
+#else
+  Logger::log(WARN, "Render request not processed. Compiled without Arnold support.");
+
+  return -1;
+#endif
 }
     
 void ArnoldInterface::interrupt() {
+#ifdef USE_ARNOLD
   if (AiRendering()) {
     AiRenderInterrupt();
     Logger::log(INFO, "Aborted rendering to restart.");
   }
+#endif
 }
 
 JSONNode ArnoldInterface::toJSON() {

@@ -27,9 +27,9 @@
 
 #ifdef USE_ARNOLD
 #include "lib/arnold/include/ai.h"
+#endif
 #include "Simulation/ArnoldPatch.h"
 #include "Simulation/ArnoldAnimationPatch.h"
-#endif
 
 
 namespace Lumiverse {

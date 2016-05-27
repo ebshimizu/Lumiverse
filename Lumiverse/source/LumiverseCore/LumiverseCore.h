@@ -86,6 +86,8 @@
 
 #ifdef USE_ARNOLD
 #include <png.h>
+#endif
+
 #include "Simulation/ArnoldPatch.h"
 #include "Simulation/ArnoldAnimationPatch.h"
 #include "Simulation/SimulationPatch.h"
@@ -94,6 +96,5 @@
 #include "Simulation/PhotoAnimationPatch.h"
 #include "Simulation/ArnoldFrameManager.h"
 #include "Simulation/ArnoldMemoryFrameManager.h"
-#endif
 
 #endif

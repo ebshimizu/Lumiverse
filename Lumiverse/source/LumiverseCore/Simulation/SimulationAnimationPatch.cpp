@@ -1,6 +1,5 @@
 #include "SimulationAnimationPatch.h"
 
-#ifdef USE_ARNOLD
 #include <sstream>
 
 namespace Lumiverse {
@@ -8,8 +7,11 @@ namespace Lumiverse {
 // Uses chrono::system_clock::from_time_t(0) as an invalid value.
 SimulationAnimationPatch::SimulationAnimationPatch(const JSONNode data)
 : m_worker(NULL), m_startPoint(chrono::system_clock::from_time_t(0)),
-    m_mode(SimulationAnimationMode::STOPPED), 
-	m_mem_frameManager(new ArnoldMemoryFrameManager()), m_file_frameManager(NULL) {
+m_mode(SimulationAnimationMode::STOPPED)
+#ifdef USE_ARNOLD
+,m_mem_frameManager(new ArnoldMemoryFrameManager()), m_file_frameManager(NULL)
+#endif
+{
     // TODO: type for frame manager
 	//m_mem_frameManager = new ArnoldMemoryFrameManager();
 	//m_file_frameManager = NULL;
@@ -17,12 +19,14 @@ SimulationAnimationPatch::SimulationAnimationPatch(const JSONNode data)
 }
     
 SimulationAnimationPatch::~SimulationAnimationPatch() {
-    delete m_mem_frameManager;
+#ifdef USE_ARNOLD
+  delete m_mem_frameManager;
 	delete m_file_frameManager;
+#endif
 
-    // If close() hasn't been called, closes here.
-    if (m_worker != NULL)
-        close();
+  // If close() hasn't been called, closes here.
+  if (m_worker != NULL)
+    close();
 }
 
 void SimulationAnimationPatch::loadJSON(const JSONNode data) {
@@ -36,7 +40,9 @@ void SimulationAnimationPatch::loadJSON(const JSONNode data) {
 
 		if (nodeName == "frameDirectory") {
 			JSONNode fileName = *i;
+#ifdef USE_ARNOLD
 			m_file_frameManager = new ArnoldFileFrameManager(fileName.as_string());
+#endif
 		}
 
 		i++;
@@ -143,9 +149,11 @@ void SimulationAnimationPatch::close() {
     m_mode = SimulationAnimationMode::STOPPED;
 }
 
+#ifdef USE_ARNOLD
 ArnoldFrameManager *SimulationAnimationPatch::getFrameManager() const {
     return m_mem_frameManager;
 }
+#endif
 
 void SimulationAnimationPatch::reset(InterruptFunction interruptRender) {
     // We want to block both worker and main thread during resetting
@@ -172,11 +180,13 @@ void SimulationAnimationPatch::reset(InterruptFunction interruptRender) {
         m_worker = new std::thread(&SimulationAnimationPatch::workerLoop, this);
     }
     
+#ifdef USE_ARNOLD
 	// Resets the frame manager to the beginning of current video.
-    m_mem_frameManager->reset();
+  m_mem_frameManager->reset();
 	if (m_file_frameManager)
 		m_file_frameManager->reset();
-    
+#endif  
+
     m_queue.unlock();
 }
 
@@ -298,4 +308,3 @@ void SimulationAnimationPatch::workerLoop() {
 }
 
 }
-#endif

@@ -9,10 +9,6 @@
 #include "ImathBox.h"
 #include <assert.h>
 
-#include <ai.h>
-
-#ifdef USE_ARNOLD
-
 #ifdef USE_ARNOLD_CACHING
 
 namespace Lumiverse {
@@ -57,6 +53,7 @@ namespace Lumiverse {
 
 
   void CachingArnoldInterface::init() {
+#ifdef USE_ARNOLD
 		AiBegin();
 
 		setLogFileName("arnold.log");
@@ -152,7 +149,7 @@ namespace Lumiverse {
       }
       AiNodeIteratorDestroy(it);
     }
-
+#endif
 		/*
 		 Note that we don't actually render any layers on init. We wait until
 		 render is called with a set of devices because we want to be able
@@ -169,7 +166,13 @@ namespace Lumiverse {
         c->add_layer(l.second);
       }
 
-      CachingRenderContext* con = new CachingRenderContext(c, m_width, m_height);
+      // correct width and height here if they are negative
+      if (m_width < 0 || m_height < 0) {
+        m_width = c->get_width();
+        m_height = c->get_height();
+      }
+
+      CachingRenderContext* con = new CachingRenderContext(c, c->get_width(), c->get_height());
       _contexts.push_back(con);
     }
 
@@ -254,6 +257,7 @@ namespace Lumiverse {
 	}
 
 	void CachingArnoldInterface::updateDevicesLayers(const std::set<Device *> &devices) {
+#ifdef USE_ARNOLD
     // lock this section down. Typically should go fairly fast due to not needing to update this very often.
     lock_guard<mutex> lock(_updateLock);
 
@@ -326,6 +330,9 @@ namespace Lumiverse {
 
     // autosave to disk
     dumpCache();
+#else
+    // Logger::log(WARN, "Cannot rengenerate cache, compiled without Arnold support.");
+#endif
 	}
 
 	void CachingArnoldInterface::setSamples(int samples) {
@@ -364,7 +371,7 @@ namespace Lumiverse {
     // proper buffer over and unlock it.
 
 		force_cache_reload = false;
-		return AI_SUCCESS;
+		return 0;
 	}
 
 	void CachingArnoldInterface::setHDROutputBuffer() {
@@ -418,9 +425,7 @@ namespace Lumiverse {
     out.writePixels(l->get_height());
   }
 
-	/*!
-	\brief Sets a parameter found in the global options node in arnold
-	*/
+#ifdef USE_ARNOLD
 	void CachingArnoldInterface::setOptionParameter(const std::string &paramName, int val) {
 		if (optionRequiresCacheReload(paramName)) {
 			force_cache_reload = true;
@@ -428,7 +433,7 @@ namespace Lumiverse {
 
 		ArnoldInterface::setOptionParameter(paramName, val);
 	}
-
+#endif
 
 	bool CachingArnoldInterface::isValidCacheCopy(Device *cached_device, Device *other_device) {
 		if (cached_device->getId() != other_device->getId()) return false;
@@ -483,7 +488,7 @@ namespace Lumiverse {
 		return true;
 	}
 
-
+#ifdef USE_ARNOLD
 	void CachingArnoldInterface::setOptionParameter(const std::string &paramName, float val) {
 		if (optionRequiresCacheReload(paramName)) {
 			force_cache_reload = true;
@@ -491,6 +496,7 @@ namespace Lumiverse {
 
 		ArnoldInterface::setOptionParameter(paramName, val);
 	}
+#endif
 
   void CachingArnoldInterface::dumpCache()
   {
@@ -629,5 +635,3 @@ namespace Lumiverse {
 }
 
 #endif // USE_ARNOLD_CACHING
-
-#endif // USE_ARNOLD

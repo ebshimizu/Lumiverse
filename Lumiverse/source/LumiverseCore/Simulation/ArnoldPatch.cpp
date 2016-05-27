@@ -157,8 +157,10 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 			while (param != params.end()) {
 				std::string param_name = param->name();
 
+#ifdef USE_ARNOLD
         m_interface->loadArnoldParam(*param);
-        
+#endif
+
         std::stringstream sstm;
         sstm << "Added param " << param_name;
                 
@@ -174,11 +176,15 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
 }
 
 void ArnoldPatch::setOptionParameter(std::string paramName, int val) {
+#ifdef USE_ARNOLD
 	m_interface->setOptionParameter(paramName, val);
+#endif
 }
 
 void ArnoldPatch::setOptionParameter(std::string paramName, float val) {
+#ifdef USE_ARNOLD
 	m_interface->setOptionParameter(paramName, val);
+#endif
 }
 
 bool ArnoldPatch::cacheRendering(const JSONNode data) {
@@ -215,7 +221,7 @@ bool ArnoldPatch::useDistributedRendering(const JSONNode data) {
 	return true;
 }
 
-
+#ifdef USE_ARNOLD
 void ArnoldPatch::setOrientation(AtNode *light_ptr, Device *d_ptr, std::string pan_str, std::string tilt_str) {
 	float pan_val;
 	float tilt_val;
@@ -262,6 +268,7 @@ void ArnoldPatch::setOrientation(AtNode *light_ptr, Device *d_ptr, LumiverseOrie
 
 	m_interface->setParameter(light_ptr, "matrix", ss.str());
 }
+#endif
 
 void ArnoldPatch::loadLight(Device *d_ptr) {    
 	if (!d_ptr->metadataExists("Arnold Node Name"))
@@ -283,7 +290,10 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
       *scaledVal *= (float)(ColorUtils::getTotalTrans(d_ptr->getMetadata("gel")));
     }
 
+#ifdef USE_ARNOLD
     m_interface->setParameter(light_name, "intensity", scaledVal->getVal());
+#endif
+
     delete scaledVal;
   }
 
@@ -315,7 +325,9 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
     // Assumes y-up
     Eigen::Matrix3f rot = LumiverseTypeUtils::getRotationMatrix(dir, Eigen::Vector3f(0, 0, -1));
 
+#ifdef USE_ARNOLD
     m_interface->setParameter(light_name, "matrix", rot, pos);
+#endif
   }
   // method 2: xyz position + roll + pitch + yaw
   // method 3: xyz position + lookAt
@@ -323,13 +335,17 @@ void ArnoldPatch::loadLight(Device *d_ptr) {
   // Color
   if (d_ptr->paramExists("color")) {
     LumiverseColor* color = (LumiverseColor*)d_ptr->getParam("color");
+#ifdef USE_ARNOLD
     m_interface->setParameter(light_name, "color", (float)color->getColorChannel("Red"), (float)color->getColorChannel("Green"), (float)color->getColorChannel("Blue"));
+#endif
   }
 
   // Softness
   if (d_ptr->paramExists("penumbraAngle")) {
     LumiverseFloat* angle = d_ptr->getParam<LumiverseFloat>("penumbraAngle");
+#ifdef USE_ARNOLD
     m_interface->setParameter(light_name, "penumbra_angle", angle->getVal());
+#endif
   }
 
 	//ArnoldLightRecord *record = (ArnoldLightRecord *)m_lights[light_name];
@@ -441,8 +457,9 @@ void ArnoldPatch::updateLightPredictive(set<Device *> devices) {
 			continue;
 		modifyLightColor(d, rgb_w);
 	}
-
+#ifdef USE_ARNOLD
 	m_interface->updateSurfaceColor(rgb_w);
+#endif
 }
     
 bool ArnoldPatch::renderLoop(const std::set<Device *> &devices) {
@@ -450,7 +467,11 @@ bool ArnoldPatch::renderLoop(const std::set<Device *> &devices) {
     m_rendering = true;
     int code = m_interface->render(devices);
     m_rendering = false;
+#ifdef USE_ARNOLD
     return (code == AI_SUCCESS);
+#else
+    return (code == 0);
+#endif
   }
   else
     return false;
@@ -462,7 +483,11 @@ bool ArnoldPatch::renderLoop() {
     int code = m_interface->render();
     m_rendering = false;
 
+#ifdef USE_ARNOLD
     return (code == AI_SUCCESS);
+#else
+    return (code == 0);
+#endif
   }
 
   return false;
@@ -510,6 +535,7 @@ void ArnoldPatch::init() {
 		// Init patch and interface
 		m_interface->init();
 
+#ifdef USE_ARNOLD
 		// Find lights and create the light records in the patch
 		for (auto light : m_interface->getLights()) {
 			ArnoldLightRecord* r = new ArnoldLightRecord();
@@ -517,6 +543,7 @@ void ArnoldPatch::init() {
 			r->init();
 			m_lights[light.first] = r;
 		}
+#endif
 	}
 }
 

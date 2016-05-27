@@ -1,5 +1,6 @@
 
 #include "ArnoldFileFrameManager.h"
+#ifdef USE_ARNOLD
 
 namespace Lumiverse {
 ArnoldFileFrameManager::~ArnoldFileFrameManager() {
@@ -130,3 +131,5 @@ size_t ArnoldFileFrameManager::getFrameNum() const {
 }
 
 }
+
+#endif

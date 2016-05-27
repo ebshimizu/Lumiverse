@@ -7,13 +7,14 @@
 #pragma once
 
 #include "LumiverseCoreConfig.h"
-#ifdef USE_ARNOLD
 
 #include "../lib/libjson/libjson.h"
 #include "SimulationAnimationPatch.h"
 #include "ArnoldPatch.h"
 #include "ArnoldMemoryFrameManager.h"
 #include "ArnoldFileFrameManager.h"
+#include "imageio.h"
+#include "../lib/libpng/png.h"
 
 #include <thread>
 #include <chrono>
@@ -219,7 +220,5 @@ namespace Lumiverse {
   };
     
 }
-
-#endif
 
 #endif
