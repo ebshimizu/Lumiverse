@@ -33,6 +33,9 @@ namespace ShowControl {
     if (pb != nullptr) {
       m_playbackData = pb->toJSON();
     }
+    else {
+      m_playbackData = JSONNode();
+    }
   }
 
   void Snapshot::loadSnapshot(Rig* targetRig, Playback* targetPb) {
@@ -61,6 +64,7 @@ namespace ShowControl {
     if (running)
       targetPb->start();
   }
+
   set<Device*> Snapshot::getDevices()
   {
     set<Device*> devices;

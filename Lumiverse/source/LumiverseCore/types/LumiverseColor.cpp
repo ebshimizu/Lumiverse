@@ -515,7 +515,7 @@ namespace Lumiverse {
     }
 
     if (S < 0 || S > 1 || V < 0 || V > 1) {
-      Logger::log(ERR, "Invalid HSV tuple specified.");
+      Logger::log(LDEBUG, "Invalid HSV tuple specified.");
       return false;
     }
 
