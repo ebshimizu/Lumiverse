@@ -167,7 +167,7 @@ bool PlaybackTests::layerToggle() {
 bool PlaybackTests::snapshot() {
   m_pb->getProgrammer()->setParam("s41", "intensity", 1.0f);
 
-  Snapshot state1(m_testRig, m_pb);
+  PlaybackSnapshot state1(m_testRig, m_pb);
 
   m_pb->getProgrammer()->clearAndReset();
   m_pb->stop();
