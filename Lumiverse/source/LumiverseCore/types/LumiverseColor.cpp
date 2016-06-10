@@ -273,10 +273,7 @@ namespace Lumiverse {
     if (m_mode == BASIC_RGB)
       refWhite /= 100.0;
 
-    double L = 116 * labf(getY() / refWhite[1]) - 16;
-    double a = 500 * (labf(getX() / refWhite[0]) - labf(getY() / refWhite[1]));
-    double b = 200 * (labf(getY() / refWhite[1]) - labf(getZ() / refWhite[2]));
-    return Eigen::Vector3d(L, a, b);
+    return ColorUtils::convXYZtoLab(Eigen::Vector3d(getX(), getY(), getZ()), refWhite);
   }
 
   Eigen::Vector3d LumiverseColor::getLCHab(ReferenceWhite refWhite) {
@@ -691,29 +688,7 @@ namespace Lumiverse {
   }
 
   Eigen::Vector3d LumiverseColor::RGBtoXYZ(double r, double g, double b, RGBColorSpace cs) {
-    r = ColorUtils::clamp(r, 0, 1);
-    g = ColorUtils::clamp(g, 0, 1);
-    b = ColorUtils::clamp(b, 0, 1);
-
-    if (cs == sRGB) {
-      r = ColorUtils::sRGBtoXYZCompand(r);
-      g = ColorUtils::sRGBtoXYZCompand(g);
-      b = ColorUtils::sRGBtoXYZCompand(b);
-    }
-
-#ifdef USE_C11_MAPS
-    Eigen::Matrix3d M = RGBToXYZ[cs];
-#else
-	Eigen::Matrix3d M = RGBToXYZ(cs);
-#endif
-    Eigen::Vector3d rgb(r, g, b);
-    Eigen::Vector3d XYZ = M * rgb;
-
-    return XYZ;
-  }
-
-  double LumiverseColor::labf(double val) {
-    return (val > 216.0 / 24389.0) ? pow(val, 1.0 / 3.0) : ((24389.0 / 27.0) * val + 16) / 116.0;
+    return ColorUtils::convRGBtoXYZ(r, g, b, cs);
   }
 
   void LumiverseColor::matchChroma(double x, double y, double weight) {

@@ -301,9 +301,24 @@ namespace Lumiverse {
     Eigen::Vector3d convXYZtoRGB(Eigen::Vector3d color, RGBColorSpace cs = sRGB);
 
     /*!
+    \brief Converts RGB to XYZ using the specified color space
+    */
+    Eigen::Vector3d convRGBtoXYZ(Eigen::Vector3d rgb, RGBColorSpace cs = sRGB);
+    Eigen::Vector3d convRGBtoXYZ(double r, double g, double b, RGBColorSpace cs = sRGB);
+
+    /*!
     \brief Converts an XYZ color to an xyY color.
     */
     Eigen::Vector3d convXYZtoxyY(Eigen::Vector3d color);
+
+    /*!
+    \brief Convert XYZ to Lab with given reference white
+    */
+    Eigen::Vector3d convXYZtoLab(Eigen::Vector3d xyz, ReferenceWhite rw = D65);
+    Eigen::Vector3d convXYZtoLab(Eigen::Vector3d xyz, Eigen::Vector3d rw);
+
+    /*! \brief Lab helper function. */
+    double labf(double val);
 
     /*!
     \brief Converts an xy(Y) color to a u', v' pair

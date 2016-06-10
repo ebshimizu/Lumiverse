@@ -124,12 +124,57 @@ Eigen::Vector3d convXYZtoRGB(Eigen::Vector3d color, RGBColorSpace cs) {
   return rgb;
 }
 
+Eigen::Vector3d convRGBtoXYZ(Eigen::Vector3d rgb, RGBColorSpace cs)
+{
+  return convRGBtoXYZ(rgb[0], rgb[1], rgb[2], cs);
+}
+
+Eigen::Vector3d convRGBtoXYZ(double r, double g, double b, RGBColorSpace cs)
+{
+  r = ColorUtils::clamp(r, 0, 1);
+  g = ColorUtils::clamp(g, 0, 1);
+  b = ColorUtils::clamp(b, 0, 1);
+
+  if (cs == sRGB) {
+    r = ColorUtils::sRGBtoXYZCompand(r);
+    g = ColorUtils::sRGBtoXYZCompand(g);
+    b = ColorUtils::sRGBtoXYZCompand(b);
+  }
+
+#ifdef USE_C11_MAPS
+  Eigen::Matrix3d M = RGBToXYZ[cs];
+#else
+  Eigen::Matrix3d M = RGBToXYZ(cs);
+#endif
+  Eigen::Vector3d rgb(r, g, b);
+  Eigen::Vector3d XYZ = M * rgb;
+
+  return XYZ;
+}
+
 Eigen::Vector3d convXYZtoxyY(Eigen::Vector3d color) {
   if (color[0] == 0 && color[1] == 0 && color[2] == 0)
     return Eigen::Vector3d(0, 0, 0);
 
   double denom = color[0] + color[1] + color[2];
   return Eigen::Vector3d(color[0] / denom, color[1] / denom, color[1]);
+}
+
+Eigen::Vector3d convXYZtoLab(Eigen::Vector3d xyz, ReferenceWhite rw)
+{
+  return convXYZtoLab(xyz, refWhites[rw]);
+}
+
+Eigen::Vector3d convXYZtoLab(Eigen::Vector3d xyz, Eigen::Vector3d rw)
+{
+  double L = 116 * labf(xyz[1] / rw[1]) - 16;
+  double a = 500 * (labf(xyz[0] / rw[0]) - labf(xyz[1] / rw[1]));
+  double b = 200 * (labf(xyz[1] / rw[1]) - labf(xyz[2] / rw[2]));
+  return Eigen::Vector3d(L, a, b);
+}
+
+double labf(double val) {
+  return (val > 216.0 / 24389.0) ? pow(val, 1.0 / 3.0) : ((24389.0 / 27.0) * val + 16) / 116.0;
 }
 
 Eigen::Vector2d convxytouv(Eigen::Vector3d xyY) {

@@ -482,12 +482,6 @@ namespace Lumiverse {
     /*! \brief Helper for converting RGB to XYZ */
     Eigen::Vector3d RGBtoXYZ(double r, double g, double b, RGBColorSpace cs);
 
-    /*! \brief Lab f() function.
-    * 
-    * Function used in the Lab color conversion.
-    */
-    double labf(double val);
-
     /*! \brief Runs a linear optimization to find a combination of the basis vectors
     *   that will match the target chroma value.
     *
