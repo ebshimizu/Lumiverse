@@ -520,6 +520,8 @@ namespace Lumiverse {
       }
     }
 
+    m_width = _layers.begin()->second->get_width();
+    m_height = _layers.begin()->second->get_height();
     force_cache_reload = false;
   }
 
