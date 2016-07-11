@@ -297,7 +297,7 @@ namespace Lumiverse {
     * \return Arnold error code
     * \sa render()
     */
-    virtual int render(const std::set<Device*> &devices) { return this->render(); }
+    virtual int render(const std::set<Device*>& /* devices */) { return this->render(); }
       
     /*!
     * \brief Interrupts current rendering.

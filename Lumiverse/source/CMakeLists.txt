@@ -376,6 +376,10 @@ INSTALL(FILES ${pngbinfiles} DESTINATION Release/lib CONFIGURATIONS Release)
 FILE(GLOB pngfiles ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/libpng/*.h)
 INSTALL(FILES ${pngfiles} DESTINATION include/lib/libpng)
 
+#FILE(GLOB eigenfiles ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/Eigen/*)
+SET(eigenfiles "${PROJECT_SOURCE_DIR}/LumiverseCore/lib/Eigen")
+INSTALL(DIRECTORY ${eigenfiles} DESTINATION include/lib/)
+
 IF (LumiverseCore_INCLUDE_ARNOLD)
     FILE(GLOB arnoldfiles ${LumiverseCore_ARNOLD_PATH}/include/*.h)
     INSTALL(FILES ${arnoldfiles} DESTINATION include/lib/arnold/include)

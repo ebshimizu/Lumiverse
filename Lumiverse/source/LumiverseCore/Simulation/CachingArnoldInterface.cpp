@@ -520,9 +520,11 @@ namespace Lumiverse {
       }
     }
 
-    m_width = _layers.begin()->second->get_width();
-    m_height = _layers.begin()->second->get_height();
-    force_cache_reload = false;
+		if (_layers.size() > 0) {
+			m_width = _layers.begin()->second->get_width();
+			m_height = _layers.begin()->second->get_height();
+			force_cache_reload = false;
+		}
   }
 
   void CachingArnoldInterface::loadIfUsingCaching(const set<Device*>& devices)
