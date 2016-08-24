@@ -401,7 +401,7 @@ namespace Lumiverse {
     \brief If the interface is caching it should use this function to perform any
     preload operations it may be doing.
     */
-    virtual void loadIfUsingCaching(const set<Device*>& devices) { };
+    virtual void loadIfUsingCaching(const set<Device*>& /* devices */) { };
 
   protected:
 #ifdef USE_ARNOLD

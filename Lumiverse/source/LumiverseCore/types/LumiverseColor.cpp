@@ -512,8 +512,9 @@ namespace Lumiverse {
     }
 
     if (S < 0 || S > 1 || V < 0 || V > 1) {
-      Logger::log(LDEBUG, "Invalid HSV tuple specified.");
-      return false;
+      Logger::log(LDEBUG, "Invalid HSV tuple specified. Clamping...");
+			S = ColorUtils::clamp(S, 0, 1);
+			V = ColorUtils::clamp(V, 0, 1);
     }
 
     m_weight = weight;
