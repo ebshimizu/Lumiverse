@@ -561,22 +561,26 @@ namespace Lumiverse {
   int CachingArnoldInterface::load_exr(string& filename) {
     string file_path = _cache_file_path + "/" + filename + ".exr";
 
+    // check for existence before loading
+    ifstream fileCheck(file_path);
+    if (!fileCheck.good())
+      return -1;
+
     // check header
     bool isTiled;
     bool isValid = OPENEXR_IMF_INTERNAL_NAMESPACE::isOpenExrFile(file_path.c_str(), isTiled);
     if (isValid) {
-
       // check for tiled exr
       if (isTiled) {
         std::cerr << "Only scanline images are supported" << std::endl;
-        return -1;
+        return -2;
       }
 
     }
     else {
       // file not valid
       std::cerr << "Invalid input OpenEXR file: " << file_path;
-      return -1;
+      return -3;
     }
 
     // read dimensions
@@ -597,6 +601,7 @@ namespace Lumiverse {
     pixels = new Pixel4[_cache_width * _cache_height]();
     if (!pixels) {
       Logger::log(ERR, "Failed to allocate memory for new layer");
+      return -4;
     }
 
     // layer.R

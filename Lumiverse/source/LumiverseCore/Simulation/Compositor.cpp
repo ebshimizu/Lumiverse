@@ -17,6 +17,9 @@ Compositor::Compositor() {
 
   // buffers
   compose_buffer = NULL;
+
+  w = 0;
+  h = 0;
 }
 
 Compositor::~Compositor() {
@@ -74,7 +77,7 @@ EXRLayer *Compositor::get_layer_by_name(const char *layer_name) {
 	if (layers.count(layer_name) > 0) {
 		return layers.at(layer_name);
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -103,6 +106,9 @@ void Compositor::update_dims(int width, int height) {
 
 void Compositor::render(const std::set<Device*> &devices) {
 
+  if (layers.size() == 0)
+    return;
+
   // clear previous rendering
   std::memset((void *)compose_buffer, 0, sizeof(Pixel4) * w * h);
 
@@ -111,7 +117,7 @@ void Compositor::render(const std::set<Device*> &devices) {
 
 	  // Only composite active layers
 	  EXRLayer *layer = this->get_layer_by_name(name.c_str());
-	  if (!layer->is_active()) {
+	  if (layer == nullptr || !layer->is_active()) {
 		  continue;
 	  }
 
