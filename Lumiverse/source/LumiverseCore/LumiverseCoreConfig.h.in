@@ -8,3 +8,4 @@
 @LumiverseCore_USE_ARNOLD@
 @LumiverseCore_USE_ARTNET@
 @LumiverseCore_USE_OLA@
+@LumiverseCore_USE_CACHING_ARNOLD@

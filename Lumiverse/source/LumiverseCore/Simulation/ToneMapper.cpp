@@ -1,3 +1,4 @@
+#include "LumiverseCoreConfig.h"
 
 #ifdef USE_ARNOLD_CACHING
 

@@ -1,3 +1,4 @@
+#include "LumiverseCoreConfig.h"
 #include "EXRLayer.h"
 
 #define STB_IMAGE_RESIZE_IMPLEMENTATION

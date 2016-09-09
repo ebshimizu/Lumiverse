@@ -96,5 +96,7 @@
 #include "Simulation/PhotoAnimationPatch.h"
 #include "Simulation/ArnoldFrameManager.h"
 #include "Simulation/ArnoldMemoryFrameManager.h"
+#include "Simulation/CachingArnoldInterface.h"
+#include "Simulation/DistributedArnoldInterface.h"
 
 #endif

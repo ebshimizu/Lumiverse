@@ -19,7 +19,7 @@
 #include "ArnoldInterface.h"
 
 #ifdef USE_ARNOLD
-  #include <ai.h>
+  #include "ai.h"
 #endif
 
 #include "ArnoldParameterVector.h"
@@ -105,6 +105,7 @@ namespace Lumiverse {
     \brief Sets the location the cache saves and loads exr files from
     */
     void setPath(string path) { _cache_file_path = path; }
+    string getPath() { return _cache_file_path; }
 
 #ifdef USE_ARNOLD
 		/*!

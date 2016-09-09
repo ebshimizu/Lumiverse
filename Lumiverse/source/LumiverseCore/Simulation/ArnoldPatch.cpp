@@ -562,16 +562,16 @@ JSONNode ArnoldPatch::toJSON() {
 	root.push_back(JSONNode("gamma", m_interface->getGamma()));
 	root.push_back(JSONNode("m_using_caching", m_interface->isUsingCaching()));
 
-	JSONNode lights;
-	lights.set_name("lights");
+	//JSONNode lights;
+	//lights.set_name("lights");
 
-	for (auto light : m_lights) {
-		JSONNode lightNode;
-		lightNode.set_name(light.first);
-		lightNode.push_back(JSONNode("type", light.second->metadata));
-		lights.push_back(lightNode);
-	}
-	root.push_back(lights);
+	//for (auto light : m_lights) {
+	//	JSONNode lightNode;
+	//	lightNode.set_name(light.first);
+	//	lightNode.push_back(JSONNode("type", light.second->metadata));
+	//	lights.push_back(lightNode);
+	//}
+	//root.push_back(lights);
 
   root.push_back(JSONNode("cache_rendering", _caching));
 
