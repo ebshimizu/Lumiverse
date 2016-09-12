@@ -18,10 +18,6 @@
 
 #include "ArnoldInterface.h"
 
-#ifdef USE_ARNOLD
-  #include "ai.h"
-#endif
-
 #include "ArnoldParameterVector.h"
 #include "Compositor.h"
 #include "ToneMapper.h"

@@ -52,6 +52,8 @@ namespace Lumiverse {
       m_preview_samples(m_interface->getSamples()),
       m_render_samples(m_interface->getSamples()) { }
 
+    ArnoldAnimationPatch(ArnoldInterface* itf);
+
     /*!
     * \brief Constructs ArnoldPatch from JSON data.
     *

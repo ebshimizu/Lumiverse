@@ -5,7 +5,14 @@
 
 namespace Lumiverse {
 
-// Uses chrono::system_clock::from_time_t(0) as an invalid value.
+  ArnoldAnimationPatch::ArnoldAnimationPatch(ArnoldInterface * itf) : SimulationAnimationPatch()
+  {
+    setArnoldInterface(itf);
+    m_preview_samples = m_interface->getSamples();
+    m_render_samples = m_interface->getSamples();
+  }
+
+  // Uses chrono::system_clock::from_time_t(0) as an invalid value.
 ArnoldAnimationPatch::ArnoldAnimationPatch(const JSONNode data)
 	: SimulationAnimationPatch() {
   // TODO: type for frame manager
