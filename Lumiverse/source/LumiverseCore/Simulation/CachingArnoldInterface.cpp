@@ -213,8 +213,10 @@ namespace Lumiverse {
 
     // with each context maintaining its own width and height, this
     // operation is basicaly useless and does a nullop here.
-    m_width = w;
-    m_height = h;
+    _cache_width = w;
+    _cache_height = h;
+    m_width = _cache_width;
+    m_height = _cache_height;
 
 		return true;
 	}
