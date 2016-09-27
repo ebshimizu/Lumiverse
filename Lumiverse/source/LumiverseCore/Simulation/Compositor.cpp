@@ -124,6 +124,9 @@ void Compositor::render(const std::set<Device*> &devices) {
 
 	  float intensity_shift = device->getIntensity()->asPercent();
 
+    if (intensity_shift == 0)
+      return;
+
     Eigen::Vector3d modulator(1, 1, 1);
     
     if (device->getColor() != nullptr)
