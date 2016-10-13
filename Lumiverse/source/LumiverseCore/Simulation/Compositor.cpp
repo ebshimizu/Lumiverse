@@ -132,21 +132,21 @@ void Compositor::render(const std::set<Device*> &devices) {
     if (device->getColor() != nullptr)
 	    modulator = device->getColor()->getRGB();
 
-	  float r = modulator.x();
-	  float g = modulator.y();
-	  float b = modulator.z();
+	  float r = modulator.x() * intensity_shift;
+	  float g = modulator.y() * intensity_shift;
+	  float b = modulator.z() * intensity_shift;
 
 	  Pixel4 *pixels = layer->get_downsampled_pixels(w, h);
-	  if (layer->is_active()) {
-		  for (int i = 0; i < w * h; i++) {
-			  Pixel4 basis_pixel = pixels[i];
-			  if (basis_pixel.a > 0) {
-				  compose_buffer[i].r += (r * intensity_shift * basis_pixel.r);
-				  compose_buffer[i].g += (g * intensity_shift * basis_pixel.g);
-				  compose_buffer[i].b += (b * intensity_shift * basis_pixel.b);
-			  }
-		  }
-	  }
+    int numPixels = w * h;
+
+    for (int i = 0; i < numPixels; i++) {
+      Pixel4* basis_pixel = &pixels[i];
+      //if (basis_pixel.a > 0) {
+      compose_buffer[i].r += (r * basis_pixel->r);
+      compose_buffer[i].g += (g * basis_pixel->g);
+      compose_buffer[i].b += (b * basis_pixel->b);
+      //}
+    }
   }
 }
 

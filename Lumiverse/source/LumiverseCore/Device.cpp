@@ -253,6 +253,26 @@ bool Device::setParam(string param, double x, double y, double weight) {
   return true;
 }
 
+bool Device::addFloatParam(string name, float val, float def, float max, float min)
+{
+  if (!paramExists(name)) {
+    LumiverseFloat* newParam = new LumiverseFloat(val, def, max, min);
+    return setParam(name, newParam);
+  }
+
+  return false;
+}
+
+bool Device::addColorParam(string name, int m)
+{
+  if (!paramExists(name)) {
+    LumiverseColor* newParam = new LumiverseColor((ColorMode) m);
+    return setParam(name, newParam);
+  }
+
+  return false;
+}
+
 bool Device::setColorRGBRaw(string param, double r, double g, double b, double weight) {
   if (m_parameters.count(param) == 0 ||
       m_parameters[param]->getTypeName() != "color") {

@@ -299,6 +299,16 @@ namespace Lumiverse {
     */
     bool setParam(string param, double x, double y, double weight = 1.0);
 
+    /*!
+    * \ brief Adds a float parameter with the specified name to the Device
+    */
+    bool addFloatParam(string name, float val, float def, float max = 1.0f, float min = 0.0f);
+
+    /*!
+    * \ brief Adds a color parameter with the specified name to the Device
+    */
+    bool addColorParam(string name, int m);
+
     /*! \brief Sets the value of a LumiverseColor parameter
     *
     * Does not create a new parameter if the key doesn't exist.
