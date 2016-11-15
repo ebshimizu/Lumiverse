@@ -372,7 +372,13 @@ void Device::copyParamByValue(string param, LumiverseType* source) {
 bool Device::paramExists(string param) {
   unordered_map<string, LumiverseType*>::iterator it = m_parameters.find(param);
   if (it != m_parameters.end()) {
-    return true;
+    if (it->second != nullptr)
+      return true;
+    else {
+      // remove parameter to be safe if it's null
+      m_parameters.erase(param);
+      return false;
+    }
   }
   return false;
 }
