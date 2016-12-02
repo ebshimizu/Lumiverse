@@ -47,7 +47,7 @@ namespace Lumiverse {
   }
 
   CachingArnoldInterface::CachingArnoldInterface() : ArnoldInterface(),
-    _cache_aa_samples(-1), _cache_width(1920), _cache_height(980), _cache_file_path("")
+    _cache_aa_samples(-1), _cache_width(1920), _cache_height(980), _cache_file_path(""), _exposure(1)
   {
   }
 
@@ -171,6 +171,8 @@ namespace Lumiverse {
         m_width = c->get_width();
         m_height = c->get_height();
       }
+
+      c->_exposure = _exposure;
 
       CachingRenderContext* con = new CachingRenderContext(c, c->get_width(), c->get_height());
       _contexts.push_back(con);
@@ -352,6 +354,7 @@ namespace Lumiverse {
     while (selected == nullptr) {
       for (auto& c : _contexts) {
         if (c->_inUse.try_lock()) {
+          c->_compositor->_exposure = _exposure;
           selected = c;
           break;
         }
@@ -552,8 +555,19 @@ namespace Lumiverse {
     opts.push_back(JSONNode("height", _cache_height));
     opts.push_back(JSONNode("samples", _cache_aa_samples));
     opts.push_back(JSONNode("path", _cache_file_path));
+    opts.push_back(JSONNode("exposure", _exposure));
 
     return opts;
+  }
+
+  float CachingArnoldInterface::getExposure()
+  {
+    return _exposure;
+  }
+
+  void CachingArnoldInterface::setExposure(float e)
+  {
+    _exposure = e;
   }
 
 	bool CachingArnoldInterface::optionRequiresCacheReload(const std::string &paramName) {

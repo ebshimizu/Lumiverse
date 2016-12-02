@@ -106,6 +106,13 @@ public:
   */
   bool contains_layer(const char *layer_name);
 
+  /*!
+  \brief Exposure level of the compositor.
+
+  Multiplicative factor applied to each lighting layer before compositing
+  */
+  float _exposure;
+
 private:
   /**
    * Width.

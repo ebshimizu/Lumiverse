@@ -130,6 +130,9 @@ namespace Lumiverse {
 
     virtual JSONNode toJSON() override;
 
+    float getExposure();
+    void setExposure(float e);
+
 	protected:
 
 		const static int DEFAULT_WIDTH = 1920;
@@ -189,6 +192,11 @@ namespace Lumiverse {
 
     /*! \brief Sets the path where cache files will be written to. */
     string _cache_file_path;
+
+    /*!
+    \brief Compositor's exposure setting
+    */
+    float _exposure;
 
 		/*!
 		* \brief Check if an option change requires a complete reloading of the cache

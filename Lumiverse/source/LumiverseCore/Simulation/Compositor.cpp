@@ -21,6 +21,7 @@ Compositor::Compositor() {
 
   w = 0;
   h = 0;
+  _exposure = 1;
 }
 
 Compositor::~Compositor() {
@@ -132,9 +133,9 @@ void Compositor::render(const std::set<Device*> &devices) {
     if (device->getColor() != nullptr)
 	    modulator = device->getColor()->getRGB();
 
-	  float r = modulator.x() * intensity_shift;
-	  float g = modulator.y() * intensity_shift;
-	  float b = modulator.z() * intensity_shift;
+	  float r = modulator.x() * intensity_shift * _exposure;
+	  float g = modulator.y() * intensity_shift * _exposure;
+	  float b = modulator.z() * intensity_shift * _exposure;
 
 	  Pixel4 *pixels = layer->get_downsampled_pixels(w, h);
     int numPixels = w * h;

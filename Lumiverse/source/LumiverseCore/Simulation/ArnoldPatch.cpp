@@ -80,6 +80,11 @@ void ArnoldPatch::loadJSON(const JSONNode data) {
       if (path != cacheSettings->end()) {
         cacheInterface->setPath(path->as_string());
       }
+
+      auto exposure = cacheSettings->find("exposure");
+      if (exposure != cacheSettings->end()) {
+        cacheInterface->setExposure(exposure->as_float());
+      }
     }
 
     m_interface = cacheInterface;
