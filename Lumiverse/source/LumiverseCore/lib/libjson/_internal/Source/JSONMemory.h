@@ -166,10 +166,13 @@ static inline void clearString(json_string & str) json_nothrow {
 }
 
 //Shrinks a string
+#ifdef JSON_LESS_MEMORY
 static inline void shrinkString(json_string & str) json_nothrow {
-    #ifdef JSON_LESS_MEMORY
-        if (str.capacity() != str.length()) str = json_string(str.begin(), str.end());
-    #endif
+  if (str.capacity() != str.length()) str = json_string(str.begin(), str.end());
 }
+#else
+static inline void shrinkString(json_string & /* str */) json_nothrow {
+}
+#endif
 
 #endif

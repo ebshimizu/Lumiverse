@@ -348,10 +348,10 @@ namespace Lumiverse {
 
 	int CachingArnoldInterface::render(const std::set<Device *> &devices, int w, int h, int& cid) {
     // pick a context to use
-    cid = 0;
     CachingRenderContext* selected = nullptr;
 
     while (selected == nullptr) {
+      cid = 0;
       for (auto& c : _contexts) {
         if (c->_inUse.try_lock()) {
           c->_compositor->_exposure = _exposure;
