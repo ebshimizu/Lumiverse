@@ -124,6 +124,22 @@ LumiverseColor* Device::getColor(string param) {
   return nullptr;
 }
 
+LumiverseOrientation * Device::getOri(string param)
+{
+  auto ret = getParam(param);
+  if (ret != nullptr) {
+    if (ret->getTypeName() == "orientation") {
+      return (LumiverseOrientation*)(ret);
+    }
+    else {
+      stringstream ss;
+      ss << "Parameter " << param << " is not a LumiverseOrientation";
+      Logger::log(WARN, ss.str());
+    }
+  }
+  return nullptr;
+}
+
 bool Device::setParam(string param, LumiverseType* val) {
   bool ret = true;
 
@@ -144,6 +160,7 @@ bool Device::setParam(string param, LumiverseType* val) {
   return ret;
 }
 
+/*
 bool Device::setParam(string param, shared_ptr<LumiverseFloat>* val) {
   return setParam(param, LumiverseTypeUtils::copy(val->get()));
 }
@@ -159,6 +176,7 @@ bool Device::setParam(string param, shared_ptr<LumiverseColor>* val) {
 bool Device::setParam(string param, shared_ptr<LumiverseOrientation>* val) {
   return setParam(param, LumiverseTypeUtils::copy(val->get()));
 }
+*/
 
 bool Device::setParam(string param, float val) {
   bool ret = true;

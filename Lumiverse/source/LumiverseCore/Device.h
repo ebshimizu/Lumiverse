@@ -196,6 +196,11 @@ namespace Lumiverse {
     LumiverseColor* getColor(string param = "color");
 
     /*!
+    \brief Returns a pointer to a LumiverseOrientation
+    */
+    LumiverseOrientation* getOri(string param);
+
+    /*!
     * \brief Sets the value of a parameter.
     * 
     * Can set arbitrary data with this version of the function.
@@ -235,10 +240,10 @@ namespace Lumiverse {
     bool setParam(string param, LumiverseOrientation* val) { return setParam(param, (LumiverseType*)val); }
 
     // Mainly used for the python version of Lumiverse. 
-    bool setParam(string param, shared_ptr<LumiverseFloat>* val);
-    bool setParam(string param, shared_ptr<LumiverseEnum>* val);
-    bool setParam(string param, shared_ptr<LumiverseColor>* val);
-    bool setParam(string param, shared_ptr<LumiverseOrientation>* val);
+    //bool setParam(string param, shared_ptr<LumiverseFloat>* val);
+    //bool setParam(string param, shared_ptr<LumiverseEnum>* val);
+    //bool setParam(string param, shared_ptr<LumiverseColor>* val);
+    //bool setParam(string param, shared_ptr<LumiverseOrientation>* val);
 
     /*!
     * \brief Sets the value of a LumiverseFloat or LumiverseOrientation parameter

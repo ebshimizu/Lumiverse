@@ -368,4 +368,19 @@ LumiverseType* LumiverseTypeUtils::loadFromJSON(JSONNode node) {
   return nullptr;
 }
 
+LumiverseOrientation & LumiverseTypeUtils::typeToOrientationRef(LumiverseType * data)
+{
+  return *dynamic_cast<LumiverseOrientation*>(data);
+}
+
+LumiverseColor & LumiverseTypeUtils::typeToColorRef(LumiverseType * data)
+{
+  return *dynamic_cast<LumiverseColor*>(data);
+}
+
+LumiverseFloat & LumiverseTypeUtils::typeToFloatRef(LumiverseType * data)
+{
+  return *dynamic_cast<LumiverseFloat*>(data);
+}
+
 }

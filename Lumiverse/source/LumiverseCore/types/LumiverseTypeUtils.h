@@ -101,6 +101,10 @@ namespace Lumiverse {
 
     /*! \brief Loads a LumiverseType from a JSON node. */
     LumiverseType* loadFromJSON(JSONNode node);
+
+    LumiverseOrientation& typeToOrientationRef(LumiverseType* data);
+    LumiverseColor& typeToColorRef(LumiverseType* data);
+    LumiverseFloat& typeToFloatRef(LumiverseType* data);
   }
 }
 #endif
