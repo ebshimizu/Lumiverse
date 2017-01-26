@@ -1,5 +1,7 @@
 #include "CachingArnoldInterface.h"
 
+#ifdef USE_ARNOLD_CACHING
+
 #include "types/LumiverseFloat.h"
 #include "ImfTestFile.h"    // Header checks
 #include "ImfInputFile.h"   // Imf file IO
@@ -8,8 +10,6 @@
 #include "ImfChannelList.h" // Imf channels
 #include "ImathBox.h"
 #include <assert.h>
-
-#ifdef USE_ARNOLD_CACHING
 
 namespace Lumiverse {
   CachingRenderContext::CachingRenderContext(Compositor * c, int w, int h) :

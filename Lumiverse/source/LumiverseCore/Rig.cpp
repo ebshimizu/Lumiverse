@@ -164,6 +164,7 @@ void Rig::loadPatches(JSONNode root) {
 		}
 	}
 #endif
+#if defined(USE_ARNOLD) || defined(USE_ARNOLD_CACHING)
     else if (patchType == "ArnoldAnimationPatch") {
       i->push_back(*root.find("jsonPath"));
       ArnoldAnimationPatch* aap = new ArnoldAnimationPatch(*i);
@@ -196,6 +197,7 @@ void Rig::loadPatches(JSONNode root) {
             d->addMetadataChangedCallback(callback);
         }
     }
+#endif
     else {
       // Check custom parsers
       try {

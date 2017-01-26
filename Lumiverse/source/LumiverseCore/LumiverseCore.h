@@ -84,9 +84,8 @@
 #include "DMX/ArtNetInterface.h"
 #endif
 
-#ifdef USE_ARNOLD
+#if defined(USE_ARNOLD) || defined(USE_ARNOLD_CACHING)
 #include <png.h>
-#endif
 
 #include "Simulation/ArnoldPatch.h"
 #include "Simulation/ArnoldAnimationPatch.h"
@@ -98,5 +97,6 @@
 #include "Simulation/ArnoldMemoryFrameManager.h"
 #include "Simulation/CachingArnoldInterface.h"
 #include "Simulation/DistributedArnoldInterface.h"
+#endif
 
 #endif

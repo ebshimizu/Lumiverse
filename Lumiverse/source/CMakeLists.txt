@@ -15,7 +15,6 @@ set (LumiverseCore_INCLUDE_DISTRIBUTED_ARNOLD OFF CACHE BOOL "Enable distributed
 set (LumiverseCore_INCLUDE_CACHING_ARNOLD OFF CACHE BOOL "Enable cached Arnold rendering")
 
 IF (LumiverseCore_INCLUDE_ARNOLD)
-
   # make sure the an Arnold path was given
   IF (NOT EXISTS ${LumiverseCore_ARNOLD_PATH})
   	message( FATAL_ERROR "INCLUDE_ARNOLD is TRUE but no ARNOLD_PATH specified." )
@@ -151,7 +150,8 @@ IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 
 # Add Arnold simulation code
-#IF (LumiverseCore_INCLUDE_ARNOLD)
+IF (LumiverseCore_INCLUDE_ARNOLD OR LumiverseCore_INCLUDE_CACHING_ARNOLD)
+  MESSAGE("Including Arnold Source Files")
   SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE}
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/SimulationPatch.h
     ${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/SimulationPatch.cpp
@@ -189,7 +189,7 @@ ENDIF(LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
 	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/ToneMapper.cpp
 	${PROJECT_SOURCE_DIR}/LumiverseCore/Simulation/Pixel.h
   )
-#ENDIF (LumiverseCore_INCLUDE_ARNOLD)
+ENDIF (LumiverseCore_INCLUDE_ARNOLD OR LumiverseCore_INCLUDE_CACHING_ARNOLD)
 
 # Add ArtNet code if used
 IF (LumiverseCore_INCLUDE_ARTNET)
@@ -287,6 +287,8 @@ ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
 # Caching build logic
 IF (LumiverseCore_INCLUDE_CACHING_ARNOLD AND NOT LumiverseCore_INCLUDE_ARNOLD)
+    MESSAGE("Lumiverse building without full Arnold renderer but including caching capability.")
+
 	find_package(PNG REQUIRED)
 
 	IF(PNG_FOUND)
@@ -305,6 +307,9 @@ IF (LumiverseCore_INCLUDE_CACHING_ARNOLD)
 	set(ILMBASE_INCLUDE_DIR "" CACHE PATH "Path to IlmBase include directory")
 	set(ILMBASE_LIBRARY_DIR "" CACHE PATH "Path to IlmBase library directory")
 
+	set(OPENEXR_DLIBRARY_DIR "" CACHE PATH "Path to OpenExr debug library")
+	set(ILMBASE_DLIBRARY_DIR "" CACHE PATH "Path to IlmBase debug library directory")
+
 	IF("${OPENEXR_INCLUDE_DIR}" STREQUAL "")
 		MESSAGE(FATAL_ERROR "You must include OPENEXR_INCLUDE_DIR if you're using cached Arnold rendering")
 	ELSEIF("${OPENEXR_LIBRARY_DIR}" STREQUAL "")
@@ -317,14 +322,14 @@ IF (LumiverseCore_INCLUDE_CACHING_ARNOLD)
 
 	include_directories(${OPENEXR_INCLUDE_DIR}/OpenEXR)
 	include_directories(${ILMBASE_INCLUDE_DIR}/OpenEXR)
+
 	IF(WIN32)
-		SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${OPENEXR_LIBRARY_DIR}/IlmImf-2_2.lib)
-		SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${OPENEXR_LIBRARY_DIR}/IlmImfUtil-2_2.lib)
-		SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/Iex-2_2.lib)
-		SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/Half.lib)
-		SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/Imath-2_2.lib)
-		SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/IexMath-2_2.lib)
-		SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${ILMBASE_LIBRARY_DIR}/IlmThread-2_2.lib)
+		LIST(APPEND ACTIVE_LIBRARIES optimized ${OPENEXR_LIBRARY_DIR}/IlmImf-2_2.lib debug ${OPENEXR_DLIBRARY_DIR}/IlmImf-2_2.lib)
+		LIST(APPEND ACTIVE_LIBRARIES optimized ${ILMBASE_LIBRARY_DIR}/Iex-2_2.lib debug ${ILMBASE_DLIBRARY_DIR}/Iex-2_2.lib)
+		LIST(APPEND ACTIVE_LIBRARIES optimized ${ILMBASE_LIBRARY_DIR}/Half.lib debug ${ILMBASE_DLIBRARY_DIR}/Half.lib)
+		LIST(APPEND ACTIVE_LIBRARIES optimized ${ILMBASE_LIBRARY_DIR}/Imath-2_2.lib debug ${ILMBASE_DLIBRARY_DIR}/Imath-2_2.lib)
+		LIST(APPEND ACTIVE_LIBRARIES optimized ${ILMBASE_LIBRARY_DIR}/IexMath-2_2.lib debug ${ILMBASE_DLIBRARY_DIR}/IexMath-2_2.lib)
+		LIST(APPEND ACTIVE_LIBRARIES optimized ${ILMBASE_LIBRARY_DIR}/IlmThread-2_2.lib debug ${ILMBASE_DLIBRARY_DIR}/IlmThread-2_2.lib)
 	ELSE()
 		SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${OPENEXR_LIBRARY_DIR}/libIlmImf.so)
 		SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ${OPENEXR_LIBRARY_DIR}/libIlmImfUtil.so)
@@ -464,7 +469,7 @@ IF (LumiverseCore_PYTHON_BINDINGS OR LumiverseCore_CSHARP_BINDINGS OR LumiverseC
 
 	IF (LumiverseCore_CSHARP_BINDINGS)
 		MESSAGE("Including C# bindings...")
-		SWIG_ADD_MODULE(lumiversecsharp csharp ${LUMIVERSE_CORE_SOURCE} LumiverseCore.i)
+		SWIG_ADD_MODULE(lumiversecsharp csharp ${LUMIVERSE_CORE_SOURCE} ${LUMIVERSE_SHOW_CONTROL_SOURCE} LumiverseCore.i)
 
 		SWIG_LINK_LIBRARIES(lumiversecsharp ${ACTIVE_LIBRARIES})
 	ENDIF (LumiverseCore_CSHARP_BINDINGS)

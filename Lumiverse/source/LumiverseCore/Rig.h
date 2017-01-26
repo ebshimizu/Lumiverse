@@ -18,8 +18,6 @@
 #include "LumiverseCoreConfig.h"
 #include "Patch.h"
 #include "DMX/DMXPatch.h"
-#include "Simulation/PhotoPatch.h"
-#include "Simulation/PhotoAnimationPatch.h"
 #include "Device.h"
 #include "Logger.h"
 #include "DeviceSet.h"
@@ -27,10 +25,15 @@
 
 #ifdef USE_ARNOLD
 #include "lib/arnold/include/ai.h"
+
+#include "Simulation/PhotoPatch.h"
+#include "Simulation/PhotoAnimationPatch.h"
 #endif
+
+#if defined(USE_ARNOLD) || defined(USE_ARNOLD_CACHING)
 #include "Simulation/ArnoldPatch.h"
 #include "Simulation/ArnoldAnimationPatch.h"
-
+#endif
 
 namespace Lumiverse {
   typedef function<Patch*(JSONNode&)> patchParseFunc;

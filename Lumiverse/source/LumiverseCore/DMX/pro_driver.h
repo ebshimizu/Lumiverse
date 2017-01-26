@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
-#include "../lib/ftd2xx/FTD2XX.H"
+#include "FTD2XX.H"
 
 //#ifdef _MSC_VER
 //	#include "ms_stdint.h"
