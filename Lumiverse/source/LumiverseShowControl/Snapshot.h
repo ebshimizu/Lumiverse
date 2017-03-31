@@ -61,6 +61,11 @@ namespace ShowControl {
     */
     set<Device*> getDevices();
 
+    /*!
+    \brief Arbitrary use metadata map for a snapshot object.
+    */
+    map<string, string> _metadata;
+
   protected:
     /*!
     \brief Stores the device data from the rig

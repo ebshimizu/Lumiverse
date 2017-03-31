@@ -520,26 +520,6 @@
 					"universe" : 0
 				}
 			}
-		},
-    "arnold" : {
-      "type" : "ArnoldAnimationPatch",
-      "sceneFile" : "E:/Users/falindrith/Documents/Programming/Lumiverse/Core/Lumiverse/data/cornell.ass",
-      "pluginDir" : "C:/lib/Lumiverse/lib/arnold/plugin",
-      "gamma" : 2.2,
-      "lights" : {
-        "inno" : { "type" : "photometric_light" }, 
-        "vizi" : { "type" : "photometric_light" }
-      },
-      "arnoldParamMaps" : {
-        "filename" : { "dimension" : 1, "arnoldType" : "string" },
-        "intensity" : { "dimension" : 1, "arnoldType" : "float" },
-        "position" : { "dimension" : 3, "arnoldType" : "point" },
-        "color" : { "dimension" : 3, "arnoldType" : "rgb" },
-        "exposure" : { "dimension" : 1, "arnoldType" : "float" },
-        "samples" : { "dimension" : 1, "arnoldType" : "int" },
-        "volume_samples" : { "dimension" : 1, "arnoldType" : "int" },
-        "matrix" : { "dimension" : 16, "arnoldType" : "matrix" }
-      }
-    }
+		}
 	}
 }

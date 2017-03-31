@@ -53,8 +53,9 @@ set (LumiverseCore_INCLUDE_KINET ON CACHE BOOL "Build LumiverseCore with KiNet D
 set (LumiverseCore_INCLUDE_ARTNET OFF CACHE BOOL "Build LumiverseCore with ArtNet Driver")
 set (LumiverseCore_PYTHON_BINDINGS ON CACHE BOOL "Build LumiverseCore bindings for Python")
 set (LumiverseCore_INCLUDE_OLA OFF CACHE BOOL "Build LumiverseCore with OLA Driver")
-set (LumiverseCore_CSHARP_BINDINGS OFF CACHE BOOL "Build LumiverseCore bindings for C#")
+set (LumiverseCore_CSHARP_BINDINGS OFF CACHE BOOL "Build Lumiverse bindings for C#")
 set (LumiverseCore_NODEJS_BINDINGS OFF CACHE BOOL "Build Lumiverse bindings for Node.js")
+set (LumiverseCore_INCLUDE_OSC OFF CACHE BOOL "Build LumiverseCore with OSC Driver")
 
 # Config interface options
 IF (LumiverseCore_INCLUDE_DMXPRO2INTERFACE)
@@ -72,6 +73,10 @@ ENDIF (LumiverseCore_INCLUDE_ARTNET)
 IF (LumiverseCore_INCLUDE_OLA)
     SET (LumiverseCore_USE_OLA "#define USE_OLA")
 ENDIF (LumiverseCore_INCLUDE_OLA)
+
+IF (LumiverseCore_INCLUDE_OSC)
+  SET (LumiverseCore_USE_OSC "#define USE_OSC")
+ENDIF (LumiverseCore_INCLUDE_OSC)
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/LumiverseCore/LumiverseCoreConfig.h.in"
@@ -208,6 +213,41 @@ IF (LumiverseCore_INCLUDE_OLA)
     ${PROJECT_SOURCE_DIR}/LumiverseCore/DMX/OLAInterface.h
     ${PROJECT_SOURCE_DIR}/LumiverseCore/DMX/OLAInterface.cpp)
 ENDIF (LumiverseCore_INCLUDE_OLA)
+
+# Add OSC code if used
+IF (LumiverseCore_INCLUDE_OSC)
+  SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE}
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/osc/OscException.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/osc/OscHostEndianness.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/osc/OscOutboundPacketStream.cpp
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/osc/OscOutboundPacketStream.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/osc/OscPacketListener.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/osc/OscPrintReceivedElements.cpp
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/osc/OscPrintReceivedElements.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/osc/OscReceivedElements.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/osc/OscTypes.cpp
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/osc/OscTypes.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/osc/OscReceivedElements.cpp
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/ip/IpEndpointName.cpp
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/ip/IpEndpointName.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/ip/NetworkingUtils.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/ip/PacketListener.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/ip/TimerListener.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/ip/UdpSocket.h
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/OscPatch.cpp
+    ${PROJECT_SOURCE_DIR}/LumiverseCore/OscPatch.h)
+  IF (WIN32)
+    SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE}
+      ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/ip/win32/NetworkingUtils.cpp
+      ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/ip/win32/UdpSocket.cpp)
+
+    SET(ACTIVE_LIBRARIES ${ACTIVE_LIBRARIES} ws2_32 winmm)
+  ELSE ()
+    SET (LUMIVERSE_CORE_SOURCE ${LUMIVERSE_CORE_SOURCE}
+      ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/ip/posix/NetworkingUtils.cpp
+      ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/ip/posix/UdpSocket.cpp)
+  ENDIF (WIN32)
+ENDIF(LumiverseCore_INCLUDE_OSC)
 
 # Build the libraries
 add_library(LumiverseCore ${LUMIVERSE_CORE_SOURCE})

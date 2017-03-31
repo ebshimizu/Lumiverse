@@ -35,6 +35,10 @@
 #include "Simulation/ArnoldAnimationPatch.h"
 #endif
 
+#ifdef USE_OSC
+#include "OscPatch.h" 
+#endif
+
 namespace Lumiverse {
   typedef function<Patch*(JSONNode&)> patchParseFunc;
 

@@ -138,6 +138,12 @@ void Rig::loadPatches(JSONNode root) {
       patch = (Patch*) new DMXPatch(*i);
       addPatch(nodeName, patch);
     }
+#ifdef USE_OSC
+    if (patchType == "osc") {
+      patch = (Patch*) new OscPatch(*i);
+      addPatch(nodeName, patch);
+    }
+#endif
 #ifdef USE_ARNOLD
 	else if (patchType == "PhotoPatch") {
 		patch = (Patch*) new PhotoPatch(*i);

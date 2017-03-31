@@ -40,11 +40,11 @@ Cue::Cue(JSONNode node) {
     string name = it->name();
 
     if (name == "upfade")
-      _upfade = it->as_float();
+      _upfade = (float)it->as_float();
     else if (name == "downfade")
-      _downfade = it->as_float();
+      _downfade = (float)it->as_float();
     else if (name == "delay")
-      _delay = it->as_float();
+      _delay = (float)it->as_float();
     else if (name == "cueData") {
       // The big one. Need to load the giant cueData map.
       // devices are the top level

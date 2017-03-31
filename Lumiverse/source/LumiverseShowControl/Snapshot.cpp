@@ -17,6 +17,8 @@ namespace ShowControl {
     for (const auto& kvp : other.m_rigData) {
       m_rigData[kvp.first] = new Device(kvp.second);
     }
+
+    _metadata = map<string, string>(other._metadata);
   }
 
   Snapshot::~Snapshot() {
