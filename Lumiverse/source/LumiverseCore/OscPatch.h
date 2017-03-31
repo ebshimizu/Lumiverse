@@ -15,14 +15,14 @@
 namespace Lumiverse {
 
 enum OscFormat {
-  FIXED_ADDR = 0,
+  PREFIXED_ADDR = 0,
   PER_DEVICE_ADDR = 1
 };
 
 class OscPatch : public Patch {
 
 public:
-  OscPatch(string address, int port, OscFormat mode = FIXED_ADDR, string pattern = "lumiverse");
+  OscPatch(string address, int port, OscFormat mode = PREFIXED_ADDR, string pattern = "lumiverse");
   OscPatch(JSONNode data);
   ~OscPatch();
 
@@ -45,7 +45,7 @@ public:
 
   /*!
   \brief Determines how the OSC messages are sent
-  Under FIXED_ADDR the OSC packet will be arranged as follows: /[pattern] [id] {params}
+  Under PREFIXED_ADDR the OSC packet will be arranged as follows: /[pattern]/[id] {params}
   Under PER_DEVICE_ADDR the OSC packed will be arranged as follows: /[id] {params}
   */
   OscFormat _mode;

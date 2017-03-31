@@ -100,8 +100,8 @@ bool OscPatch::isRunning()
 
 void OscPatch::deviceToOsc(osc::OutboundPacketStream & p, Device * d)
 {
-  if (_mode == FIXED_ADDR) {
-    p << osc::BeginMessage(string("/" + _pattern).c_str());
+  if (_mode == PREFIXED_ADDR) {
+    p << osc::BeginMessage(string("/" + _pattern + "/" + d->getId()).c_str());
   }
   else if (_mode == PER_DEVICE_ADDR) {
     p << osc::BeginMessage(string("/" + d->getId()).c_str());
@@ -117,28 +117,27 @@ void OscPatch::deviceToOsc(osc::OutboundPacketStream & p, Device * d)
     if (param->getTypeName() == "float") {
       // floats returned as percentages
       p << "float";
-      p << ((LumiverseFloat*)(param))->asPercent();
+      p << (float)((LumiverseFloat*)(param))->asPercent();
     }
     else if (param->getTypeName() == "color") {
       // colors are RGB
       LumiverseColor* c = (LumiverseColor*)(param);
       p << "color";
-      p << osc::BeginArray;
       auto rgb = c->getRGB();
-      p << rgb[0] << rgb[1] << rgb[2] << osc::EndArray;
+      p << (float)rgb[0] << (float)rgb[1] << (float)rgb[2];
     }
     else if (param->getTypeName() == "enum") {
       // enums will send their value as a percent and the name of the current setting
       p << "enum";
       LumiverseEnum* e = (LumiverseEnum*)(param);
-      p << e->asPercent();
+      p << (float)e->asPercent();
       p << e->getVal().c_str();
     }
     else if (param->getTypeName() == "orientation") {
       // orientations are basically floats but with an extra units value
       p << "orientation";
       LumiverseOrientation* o = (LumiverseOrientation*)(param);
-      p << o->getVal();
+      p << (float)o->getVal();
       p << o->getUnit();
     }
   }
@@ -170,7 +169,7 @@ void OscPatch::loadJSON(JSONNode data)
   if (mode != data.end())
     _mode = (OscFormat)mode->as_int();
   else
-    _mode = FIXED_ADDR;
+    _mode = PREFIXED_ADDR;
 }
 
 }
