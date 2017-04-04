@@ -42,6 +42,7 @@ public:
   virtual string getType() { return "osc"; }
 
   void changeAddress(string address, int port);
+  void changeInPort(int port);
   string getAddress();
   int getPort();
   bool isRunning();
@@ -70,6 +71,7 @@ protected:
 private:
   string _address;
   int _port;
+  int _inPort;
   bool _running;
 
   UdpTransmitSocket* _t;

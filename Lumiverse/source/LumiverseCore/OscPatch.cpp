@@ -3,7 +3,7 @@
 namespace Lumiverse {
 
 OscPatch::OscPatch(string address, int port, OscFormat mode, string pattern) :
-  _address(address), _port(port), _mode(mode), _pattern(pattern), _running(false)
+  _address(address), _port(port), _mode(mode), _pattern(pattern), _running(false), _inPort(9000)
 {
   _t = nullptr;
 }
@@ -76,6 +76,7 @@ JSONNode OscPatch::toJSON()
   root.push_back(JSONNode("port", _port));
   root.push_back(JSONNode("pattern", _pattern));
   root.push_back(JSONNode("mode", _mode));
+  root.push_back(JSONNode("inPort", _inPort));
 
   return root;
 }
@@ -96,6 +97,11 @@ void OscPatch::changeAddress(string address, int port)
   _port = port;
 
   // call init again to confirm changes, user must do
+}
+
+void OscPatch::changeInPort(int port)
+{
+  _inPort = port;
 }
 
 string OscPatch::getAddress()
@@ -120,60 +126,77 @@ void OscPatch::sync(const set<Device*> devices)
   // we do need to ensure order here though, so this process does disable transmit while running
   _running = false;
   // wait for loop to finish
-  this_thread::sleep_for(chrono::milliseconds(500));
+  this_thread::sleep_for(chrono::milliseconds(100));
 
-  // TODO: IN PORT CHANGABLE
-  UdpListeningReceiveSocket rcv(IpEndpointName(_address.c_str(), 9000), this);
-  std::thread rcvt(function<void()>([&rcv] { rcv.Run(); }));
+  try {
+    UdpListeningReceiveSocket rcv(IpEndpointName(_address.c_str(), _inPort), this);
+    std::thread rcvt(function<void()>([&rcv] { rcv.Run(); }));
 
-  // feed it some stuff to clear
-  char buf1[64];
-  osc::OutboundPacketStream forceReset(buf1, 64);
-  forceReset << osc::BeginMessage("/eos/reset") << osc::EndMessage;
+    // feed it some stuff to clear
+    char buf1[64];
+    osc::OutboundPacketStream forceReset(buf1, 64);
+    forceReset << osc::BeginMessage("/eos/reset") << osc::EndMessage;
 
-  Logger::log(LDEBUG, "Started sync thread");
-  _syncReady = true;
+    Logger::log(LDEBUG, "Started sync thread");
+    _syncReady = true;
 
-  for (auto d : devices) {
-    // idle until previous packets processed
+    for (auto d : devices) {
+      // idle until previous packets processed
+      while (!_syncReady) {
+        this_thread::sleep_for(chrono::milliseconds(5));
+      }
+
+      this_thread::sleep_for(chrono::milliseconds(100));
+
+      _syncDevice = d;
+      _syncParams.clear();
+
+      // sync params basically tells the listener what we're looking to sync
+      // we will know we're done after all relevant parameters have been removed.
+      // this is admittedly somewhat of a hacky way to do this
+      for (auto p : d->getParamNames()) {
+        if (p == "intensity")
+          _syncParams.insert("/eos/out/active/chan");
+        else if (p == "color")
+          _syncParams.insert("/eos/out/color/hs");
+      }
+
+      if (_syncParams.size() == 0)
+        continue;
+
+      stringstream cmd;
+      cmd << "/eos/newcmd/chan/" << d->getChannel() << "/Enter";
+
+      char buf[64];
+      osc::OutboundPacketStream p(buf, 64);
+      p << osc::BeginMessage(cmd.str().c_str()) << osc::EndMessage;
+
+      // select the new thing first
+      _t->Send(p.Data(), p.Size());
+
+      // wait for data to process in our server
+      this_thread::sleep_for(chrono::milliseconds(50));
+
+      // enable processing
+      _syncReady = false;
+
+      // trigger a reset to get all values in eos
+      _t->Send(forceReset.Data(), forceReset.Size());
+    }
+
+    // wait for processing
     while (!_syncReady) {
       this_thread::sleep_for(chrono::milliseconds(5));
     }
-    
-    // force Eos to select an invalid channel so it actually sends out
-    // the update messages guaranteed
-    _t->Send(forceReset.Data(), forceReset.Size());
 
-    _syncDevice = d;
-    _syncParams.clear();
-
-    // sync params basically tells the listener what we're looking to sync
-    // we will know we're done after all relevant parameters have been removed.
-    // this is admittedly somewhat of a hacky way to do this
-    for (auto p : d->getParamNames()) {
-      if (p == "intensity")
-        _syncParams.insert("/eos/out/active/chan");
-      else if (p == "color")
-        _syncParams.insert("/eos/out/color/hs");
-    }
-
-    _syncReady = false;
-
-    if (_syncParams.size() == 0)
-      continue;
-
-    stringstream cmd;
-    cmd << "/eos/newcmd/chan/" << d->getChannel() << "/Enter";
-
-    char buf[64];
-    osc::OutboundPacketStream p(buf, 64);
-    p << osc::BeginMessage(cmd.str().c_str()) << osc::EndMessage;
-    _t->Send(p.Data(), p.Size());
+    // reinit
+    rcv.AsynchronousBreak();
+    rcvt.join();
+  }
+  catch (exception &e) {
+    Logger::log(ERR, "Error syncing data: " + string(e.what()));
   }
 
-  // reinit
-  rcv.AsynchronousBreak();
-  rcvt.join();
   _running = true;
 }
 
@@ -182,9 +205,11 @@ void OscPatch::ProcessMessage(const osc::ReceivedMessage & m, const IpEndpointNa
   try {
     // looking for particular things in _syncParams
     string pattern = string(m.AddressPattern());
-    if (_syncParams.count(pattern) > 0) {
+    if (!_syncReady && _syncParams.count(pattern) > 0) {
       // if we have what we're looking for
       if (pattern == "/eos/out/active/chan") {
+        _syncParams.erase(pattern);
+
         // intensity, we have to parse. looking for [###]
         auto args = m.ArgumentStream();
         const char* a1;
@@ -200,26 +225,33 @@ void OscPatch::ProcessMessage(const osc::ReceivedMessage & m, const IpEndpointNa
         int intens = stoi(arg.substr(start + 1, (end - start - 1)));
 
         _syncDevice->getIntensity()->setValAsPercent((float)intens / 100.0f);
-        _syncParams.erase(pattern);
-        Logger::log(LDEBUG, "Updated intensity for " + _syncDevice->getId());
+        stringstream ss;
+        ss << "Updated intensity for " << _syncDevice->getId() << " to " << intens;
+        Logger::log(LDEBUG, ss.str());
       }
       else if (pattern == "/eos/out/color/hs") {
-        // color, we have two float args
-        auto args = m.ArgumentStream();
-        float h, s;
-        args >> h >> s >> osc::EndMessage;
-
-        auto currentHsv = _syncDevice->getColor()->getHSV();
-        _syncDevice->getColor()->setHSV(h, s / 100.0f, currentHsv[2]);
         _syncParams.erase(pattern);
-        Logger::log(LDEBUG, "Updated color for " + _syncDevice->getId());
-      }
-    }
 
-    // if we have exhausted all params, signal ready for next device
-    if (!_syncReady && _syncParams.size() == 0) {
-      _syncReady = true;
-    }
+        if (m.ArgumentCount() == 2) {
+          // color, we have two float args
+          auto args = m.ArgumentStream();
+          float h, s;
+          args >> h >> s >> osc::EndMessage;
+
+          auto currentHsv = _syncDevice->getColor()->getHSV();
+          _syncDevice->getColor()->setHSV(h, s / 100.0f, currentHsv[2]);
+
+          stringstream ss;
+          ss << "Updated color for " << _syncDevice->getId() << " to (" << h << "," << s << ")";
+          Logger::log(LDEBUG, ss.str());
+        }
+      }
+
+      // if we have exhausted all params, signal ready for next device
+      if (!_syncReady && _syncParams.size() == 0) {
+        _syncReady = true;
+      }
+    } 
   }
   catch (osc::Exception& e) {
     Logger::log(ERR, "Error parsing osc message: " + string(m.AddressPattern()));
@@ -346,6 +378,12 @@ void OscPatch::loadJSON(JSONNode data)
     _mode = (OscFormat)mode->as_int();
   else
     _mode = PREFIXED_ADDR;
+
+  auto inPort = data.find("inPort");
+  if (inPort != data.end())
+    _inPort = inPort->as_float();
+  else
+    _inPort = 9000;
 }
 
 }
