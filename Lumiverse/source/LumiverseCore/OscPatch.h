@@ -16,7 +16,8 @@ namespace Lumiverse {
 
 enum OscFormat {
   PREFIXED_ADDR = 0,
-  PER_DEVICE_ADDR = 1
+  PER_DEVICE_ADDR = 1,
+  ETC_EOS = 2
 };
 
 class OscPatch : public Patch {
@@ -46,7 +47,8 @@ public:
   /*!
   \brief Determines how the OSC messages are sent
   Under PREFIXED_ADDR the OSC packet will be arranged as follows: /[pattern]/[id] {params}
-  Under PER_DEVICE_ADDR the OSC packed will be arranged as follows: /[id] {params}
+  Under PER_DEVICE_ADDR the OSC packet will be arranged as follows: /[id] {params}
+  User ETC_EOS the OSC packet will send Eos commands to the corresponding channel number
   */
   OscFormat _mode;
 
@@ -64,6 +66,19 @@ private:
   \brief Converts a device to OSC and places the conversion in the outbound packet stream
   */
   void deviceToOsc(osc::OutboundPacketStream& p, Device* d);
+
+  /*!
+  \brief Outputs a series of ETC Eos commands to update the state
+
+  Note that this function operates on specified device paramter names. If the paramter names don't match,
+  nothing will be transmitted.
+  */
+  void deviceToEos(Device* d);
+
+  /*!
+  \brief Resets the Eos command line
+  */
+  void newEosCmd();
 
   /*!
   \brief Loads a patch from JSON data

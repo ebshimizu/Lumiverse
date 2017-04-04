@@ -433,6 +433,14 @@ IF (LumiverseCore_INCLUDE_ARNOLD)
     INSTALL(FILES ${arnoldbinfiles} DESTINATION Release/lib CONFIGURATIONS Release)
 ENDIF (LumiverseCore_INCLUDE_ARNOLD)
 
+IF (LumiverseCore_INCLUDE_OSC)
+    FILE(GLOB oscfiles ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/osc/*.h)
+    INSTALL(FILES ${oscfiles} DESTINATION include/lib/oscpack/osc)
+
+    FILE(GLOB oscfiles2 ${PROJECT_SOURCE_DIR}/LumiverseCore/lib/oscpack/ip/*.h)
+    INSTALL(FILES ${oscfiles2} DESTINATION include/lib/oscpack/ip)
+ENDIF (LumiverseCore_INCLUDE_OSC)
+
 INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION Debug/lib CONFIGURATIONS Debug)
 INSTALL(TARGETS LumiverseCore ARCHIVE DESTINATION Release/lib CONFIGURATIONS Release)
 INSTALL(TARGETS LumiverseCoreShared DESTINATION Debug/lib CONFIGURATIONS Debug)

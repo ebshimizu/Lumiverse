@@ -24,6 +24,13 @@ void OscPatch::init()
   _t = new UdpTransmitSocket(IpEndpointName(_address.c_str(), _port));
   _running = true;
 
+  if (_mode == ETC_EOS) {
+    char buf[64];
+    osc::OutboundPacketStream p(buf, 64);
+    p << osc::BeginMessage("/eos/user") << 1 << osc::EndMessage;
+    _t->Send(p.Data(), p.Size());
+  }
+
   stringstream ss;
   ss << "Osc Patch started on address " << _address << ":" << _port;
   Logger::log(INFO, ss.str());
@@ -32,12 +39,17 @@ void OscPatch::init()
 void OscPatch::update(set<Device*> devices)
 {
   for (auto d : devices) {
-    // if somehow there's a message over 10000 characters long we may have a problem
-    char buffer[10000];
-    osc::OutboundPacketStream packet(buffer, 10000);
+    if (_mode == ETC_EOS) {
+      deviceToEos(d);
+    }
+    else {
+      // if somehow there's a message over 10000 characters long we may have a problem
+      char buffer[10000];
+      osc::OutboundPacketStream packet(buffer, 10000);
 
-    deviceToOsc(packet, d);
-    _t->Send(packet.Data(), packet.Size());
+      deviceToOsc(packet, d);
+      _t->Send(packet.Data(), packet.Size());
+    }
   }
 }
 
@@ -143,6 +155,59 @@ void OscPatch::deviceToOsc(osc::OutboundPacketStream & p, Device * d)
   }
 
   p << osc::EndMessage;
+}
+
+void OscPatch::deviceToEos(Device * d)
+{
+
+  // select the proper channel
+  char buffer[128];
+  osc::OutboundPacketStream packet(buffer, 128);
+
+  stringstream ss;
+  ss << "/eos/newcmd/chan/" << d->getChannel() << "/enter";
+  packet << osc::BeginMessage(ss.str().c_str()) << osc::EndMessage;
+  _t->Send(packet.Data(), packet.Size());
+
+  // set the proper values
+  for (auto param : d->getRawParameters()) {
+    char pbuffer[256];
+    osc::OutboundPacketStream p(pbuffer, 256);
+
+    if (param.first == "intensity") {
+      // intensity maps to, well, intensity
+      p << osc::BeginMessage("/eos/at");
+      p << (int)(((LumiverseFloat*)(param.second))->asPercent() * 100);
+    }
+    else if (param.first == "color") {
+      // color maps to RGB color right now.
+      p << osc::BeginMessage("/eos/color/rgb");
+
+      auto color = ((LumiverseColor*)(param.second))->getRGB();
+      p << (float)color[0] << (float)color[1] << (float)color[2];
+    }
+    else {
+      continue;
+    }
+
+    p << osc::EndMessage;
+
+    // clear the command line
+    //newEosCmd();
+
+    // first resend the channel command
+
+    // then send the paramer
+    _t->Send(p.Data(), p.Size());
+  }
+}
+
+void OscPatch::newEosCmd()
+{
+  char buffer[128];
+  osc::OutboundPacketStream packet(buffer, 128);
+  packet << osc::BeginMessage("/eos/newcmd") << osc::EndMessage;
+  _t->Send(packet.Data(), packet.Size());
 }
 
 void OscPatch::loadJSON(JSONNode data)
