@@ -10,6 +10,8 @@
 
 #include "Patch.h"
 #include "lib/oscpack/osc/OscOutboundPacketStream.h"
+#include "lib/oscpack/osc/OscPacketListener.h"
+#include "lib/oscpack/osc/OscReceivedElements.h"
 #include "lib/oscpack/ip/UdpSocket.h"
 
 namespace Lumiverse {
@@ -20,7 +22,7 @@ enum OscFormat {
   ETC_EOS = 2
 };
 
-class OscPatch : public Patch {
+class OscPatch : public Patch, public osc::OscPacketListener {
 
 public:
   OscPatch(string address, int port, OscFormat mode = PREFIXED_ADDR, string pattern = "lumiverse");
@@ -45,6 +47,13 @@ public:
   bool isRunning();
 
   /*!
+  \brief Only active in ETC_EOS mode. Synchronizes device values with what's in EOS
+
+  Requires starting up an OSC receiver
+  */
+  void sync(const set<Device *> devices);
+
+  /*!
   \brief Determines how the OSC messages are sent
   Under PREFIXED_ADDR the OSC packet will be arranged as follows: /[pattern]/[id] {params}
   Under PER_DEVICE_ADDR the OSC packet will be arranged as follows: /[id] {params}
@@ -54,6 +63,9 @@ public:
 
   /*! \brief In fixed mode, the pattern to which messages are sent */
   string _pattern;
+
+protected:
+  virtual void ProcessMessage(const osc::ReceivedMessage& m, const IpEndpointName& remote);
 
 private:
   string _address;
@@ -84,6 +96,10 @@ private:
   \brief Loads a patch from JSON data
   */
   void loadJSON(JSONNode data);
+
+  Device* _syncDevice;
+  bool _syncReady;
+  set<string> _syncParams;
 };
 
 }
