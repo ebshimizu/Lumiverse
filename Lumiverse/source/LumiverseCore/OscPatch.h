@@ -45,6 +45,7 @@ public:
   void changeInPort(int port);
   string getAddress();
   int getPort();
+  int getInPort();
   bool isRunning();
 
   /*!

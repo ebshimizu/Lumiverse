@@ -114,6 +114,11 @@ int OscPatch::getPort()
   return _port;
 }
 
+int OscPatch::getInPort()
+{
+  return _inPort;
+}
+
 bool OscPatch::isRunning()
 {
   return _running;
