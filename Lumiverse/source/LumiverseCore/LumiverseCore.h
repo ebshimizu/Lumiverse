@@ -84,6 +84,10 @@
 #include "DMX/ArtNetInterface.h"
 #endif
 
+#ifdef USE_OSC
+#include "OscPatch.h"
+#endif
+
 #if defined(USE_ARNOLD) || defined(USE_ARNOLD_CACHING)
 #include <png.h>
 
