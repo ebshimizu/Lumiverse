@@ -50,10 +50,11 @@ public:
 
   /*!
   \brief Only active in ETC_EOS mode. Synchronizes device values with what's in EOS
+  \return true on success, false on failure
 
   Requires starting up an OSC receiver
   */
-  void sync(const set<Device *> devices);
+  bool sync(const set<Device *> devices);
 
   /*!
   \brief Determines how the OSC messages are sent

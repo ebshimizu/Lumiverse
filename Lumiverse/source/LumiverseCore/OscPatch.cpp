@@ -124,7 +124,7 @@ bool OscPatch::isRunning()
   return _running;
 }
 
-void OscPatch::sync(const set<Device*> devices)
+bool OscPatch::sync(const set<Device*> devices)
 {
   // bit clunky here but Eos echoes current parameter settings when something is selected
   // so what we'll do is just go and select each device and listen for the echoed parameters
@@ -135,6 +135,13 @@ void OscPatch::sync(const set<Device*> devices)
 
   try {
     UdpListeningReceiveSocket rcv(IpEndpointName(_address.c_str(), _inPort), this);
+
+    if (!rcv.IsBound()) {
+      Logger::log(ERR, "Eos sync: Failed to bind port.");
+      _running = true;
+      return false;
+    }
+
     std::thread rcvt(function<void()>([&rcv] { rcv.Run(); }));
 
     // feed it some stuff to clear
@@ -144,15 +151,27 @@ void OscPatch::sync(const set<Device*> devices)
 
     Logger::log(LDEBUG, "Started sync thread");
     _syncReady = true;
+    int timeoutCounter = 0;
 
     for (auto d : devices) {
       // idle until previous packets processed
       while (!_syncReady) {
         this_thread::sleep_for(chrono::milliseconds(5));
+
+        // track how long we're waiting and abort if wait too long
+        timeoutCounter += 5;
+        if (timeoutCounter > 5000) {
+          rcv.AsynchronousBreak();
+          rcvt.join();
+          Logger::log(ERR, "Eos sync timeout. Operation cancelled. Some devices may have been synchronized before abort.");
+          _running = true;
+          return false;
+        }
       }
 
       this_thread::sleep_for(chrono::milliseconds(100));
 
+      timeoutCounter = 0;
       _syncDevice = d;
       _syncParams.clear();
 
@@ -200,9 +219,11 @@ void OscPatch::sync(const set<Device*> devices)
   }
   catch (exception &e) {
     Logger::log(ERR, "Error syncing data: " + string(e.what()));
+    return false;
   }
 
   _running = true;
+  return true;
 }
 
 void OscPatch::ProcessMessage(const osc::ReceivedMessage & m, const IpEndpointName & remote)
