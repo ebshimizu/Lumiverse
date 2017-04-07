@@ -28,6 +28,17 @@ set<string> Rig::getMetadataValues(string key)
     if (d->getMetadata(key, v)) {
       vals.insert(v);
     }
+
+    // some values may be "hidden" in palettes
+    if (key == "area" || key == "system") {
+      vector<string> fp = d->getFocusPaletteNames();
+      for (auto id : fp) {
+        if (key == "area")
+          vals.insert(d->getFocusPalette(id)->_area);
+        if (key == "system")
+          vals.insert(d->getFocusPalette(id)->_system);
+      }
+    }
   }
 
   return vals;

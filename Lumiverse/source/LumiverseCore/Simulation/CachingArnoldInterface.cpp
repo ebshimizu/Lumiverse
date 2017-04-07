@@ -520,8 +520,16 @@ namespace Lumiverse {
   void CachingArnoldInterface::loadCache(const set<Device*>& devices)
   {
     for (auto& d : devices) {
-      if (load_exr(d->getMetadata("Arnold Node Name")) == 0) {
-        cached_devices[d->getMetadata("Arnold Node Name")] = new Device(d);
+      vector<string> fp = d->getFocusPaletteNames();
+      if (fp.size() > 0) {
+        for (auto& id : fp) {
+          load_exr(d->getFocusPalette(id)->_image);
+        }
+      }
+      else {
+        if (load_exr(d->getMetadata("Arnold Node Name")) == 0) {
+          cached_devices[d->getId()] = new Device(d);
+        }
       }
     }
 

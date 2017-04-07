@@ -24,7 +24,26 @@
 using namespace std;
 
 namespace Lumiverse {
- 
+  /*!
+  \brief A Focus Palette is a preset configuration for the pan and tilt of a light.
+
+  Pan and tilt are specified in percentages, so when creating them you'll likely need to convert
+  from a LumiverseOrientation or a DMX value. FocusPalettes can be assigned to devices that don't
+  have pan or tilt parameters, but doing so will really not have much effect.
+  */
+  struct FocusPalette {
+    FocusPalette() { }
+    FocusPalette(string name, float pan, float tilt, string area, string system, string image) :
+      _name(name), _pan(pan), _tilt(tilt), _area(area), _system(system), _image(image) {}
+
+    string _name;
+    float _pan;
+    float _tilt;
+    string _area;
+    string _system;
+    string _image;
+  };
+
   /*!
   * \brief A Device in Lumiverse maintains information about a lighting device.
   * 
@@ -560,6 +579,41 @@ namespace Lumiverse {
     \return The Y-normalized XYZ color of the device based on the gel and intensity.
     */
     Eigen::Vector3d getGelColor();
+
+    /*!
+    \brief Adds a new focus palette to the device
+
+    This function overwrites existing palettes.
+    */
+    void addFocusPalette(FocusPalette fp);
+
+    /*!
+    \brief Returns a pointer to the specified focus palette. This will be nullptr if specified palette doesn't exist.
+    */
+    FocusPalette* getFocusPalette(string name);
+
+    /*!
+    \brief Deletes a focus palette
+    */
+    void deleteFocusPalette(string name);
+
+    /*!
+    \brief Sets device parameters to the specified focus palette
+    */
+    void setFocusPalette(string name);
+
+    /*!
+    \brief Gets a list of focus palette names
+    */
+    vector<string> getFocusPaletteNames();
+
+    /*!
+    \brief Gets the closest palette to the current parameters of the light
+
+    Specifically, takes the palette with the smallest distance from current parameter values.
+    Note that this is not the same as matching the closest palette in 3D space.
+    */
+    FocusPalette* closestPalette();
       
   private:
     /*! \brief Sets the id for the device
@@ -673,6 +727,11 @@ namespace Lumiverse {
     * instances which need to respond to the update.
     */
     map<int, DeviceCallbackFunction> m_onMetadataChangedFunctions;
+
+    /*!
+    \brief List of focus palettes known by the device
+    */
+    map<string, FocusPalette> m_fp;
   };
 
   // Template definition

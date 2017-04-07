@@ -26,6 +26,7 @@ Device::Device(const Device& other) {
   }
 
   m_metadata = other.m_metadata;
+  m_fp = other.m_fp;
 }
 
 Device::Device(Device* other) {
@@ -39,6 +40,7 @@ Device::Device(Device* other) {
   }
 
   m_metadata = other->m_metadata;
+  m_fp = other->m_fp;
 }
 
 Device::Device(string id, Device* other) {
@@ -52,6 +54,7 @@ Device::Device(string id, Device* other) {
   }
 
   m_metadata = other->m_metadata;
+  m_fp = other->m_fp;
 }
 
 Device::~Device() {
@@ -533,6 +536,24 @@ JSONNode Device::toJSON() {
   // Add the metadata
   root.push_back(metadataToJSON());
 
+  // focus palettes
+  JSONNode palettes;
+  palettes.set_name("focusPalettes");
+  for (auto& fp : m_fp) {
+    JSONNode palette;
+    palette.push_back(JSONNode("name", fp.second._name));
+    palette.push_back(JSONNode("pan", fp.second._pan));
+    palette.push_back(JSONNode("tilt", fp.second._tilt));
+    palette.push_back(JSONNode("area", fp.second._area));
+    palette.push_back(JSONNode("system", fp.second._system));
+    palette.push_back(JSONNode("image", fp.second._image));
+
+    palette.set_name(fp.first);
+    palettes.push_back(palette);
+  }
+  
+  root.push_back(palettes);
+
   return root;
 }
 
@@ -544,12 +565,12 @@ int Device::addParameterChangedCallback(DeviceCallbackFunction func) {
 }
 
 int Device::addMetadataChangedCallback(DeviceCallbackFunction func) {
-    int id = (int)m_onMetadataChangedFunctions.size();
-    m_onMetadataChangedFunctions[id] = func;
+  int id = (int)m_onMetadataChangedFunctions.size();
+  m_onMetadataChangedFunctions[id] = func;
 
-    return (int)id;
+  return (int)id;
 }
-    
+
 void Device::deleteParameterChangedCallback(int id) {
   if (m_onParameterChangedFunctions.count(id) > 0) {
     m_onParameterChangedFunctions.erase(id);
@@ -618,6 +639,94 @@ Eigen::Vector3d Device::getGelColor() {
   return refWhites[A];
 }
 
+void Device::addFocusPalette(FocusPalette fp)
+{
+  m_fp[fp._name] = fp;
+}
+
+FocusPalette * Device::getFocusPalette(string name)
+{
+  if (m_fp.count(name) > 0) {
+    return &(m_fp[name]);
+  }
+
+  return nullptr;
+}
+
+void Device::deleteFocusPalette(string name)
+{
+  if (m_fp.count(name) > 0)
+    m_fp.erase(name);
+}
+
+void Device::setFocusPalette(string name)
+{
+  // check palette exists
+  if (m_fp.count(name) > 0) {
+    FocusPalette fp = m_fp[name];
+    // check for pan and tilt params, must be exactly named that
+    if (paramExists("pan") && paramExists("tilt")) {
+      // set pan and tilt
+      getParam<LumiverseOrientation>("pan")->setValAsPercent(fp._pan);
+      getParam<LumiverseOrientation>("tilt")->setValAsPercent(fp._tilt);
+
+      // update metadata, if provided
+      if (fp._area != "") {
+        setMetadata("area", fp._area);
+      }
+
+      if (fp._system != "") {
+        setMetadata("system", fp._system);
+      }
+
+      setMetadata("lastFocusPalette", fp._name);
+    }
+  }
+}
+
+vector<string> Device::getFocusPaletteNames()
+{
+  vector<string> names;
+  for (auto& fp : m_fp) {
+    names.push_back(fp.first);
+  }
+
+  return names;
+}
+
+FocusPalette * Device::closestPalette()
+{
+  if (m_fp.size() == 0)
+    return nullptr;
+
+  if (paramExists("pan") && paramExists("tilt")) {
+    float minDist = FLT_MAX;
+    FocusPalette* best = nullptr;
+    float pan = getParam<LumiverseOrientation>("pan")->asPercent();
+    float tilt = getParam<LumiverseOrientation>("tilt")->asPercent();
+
+    // check all distances, euclidean
+    for (auto& fp : m_fp) {
+      float dist = sqrt(pow(fp.second._pan - pan, 2) + pow(fp.second._tilt - tilt, 2));
+
+      if (dist < minDist) {
+        minDist = dist;
+        best = &(m_fp[fp.first]);
+      }
+
+      // if the minDist is ever 0, we have a perfect match so return instantly
+      if (dist - minDist == 0)
+        break;
+    }
+
+    return best;
+  }
+  else {
+    return nullptr;
+  }
+
+}
+
 JSONNode Device::parametersToJSON() {
   JSONNode params;
   params.set_name("parameters");
@@ -665,6 +774,16 @@ void Device::loadJSON(const JSONNode data) {
       while (meta != metaData.end()) {
         setMetadata(meta->name(), meta->as_string());
         ++meta;
+      }
+    }
+    else if (nodeName == "focusPalettes") {
+      JSONNode fp = *i;
+      
+      auto fpStart = fp.begin();
+      while (fpStart != fp.end()) {
+        JSONNode palette = *fpStart;
+        addFocusPalette(FocusPalette(palette["name"].as_string(), palette["pan"].as_float(), palette["tilt"].as_float(),
+          palette["area"].as_string(), palette["system"].as_string(), palette["image"].as_string()));
       }
     }
     else {

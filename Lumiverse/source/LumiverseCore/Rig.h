@@ -312,11 +312,11 @@ namespace Lumiverse {
     *
     * \param filename Path to file
     * \param overwrite If the file specified by filename exists, the file will be
-    * overwritten if this variable is set to `true`
+    * overwritten if this variable is set to `true` (default)
     * \return True on success, false on failure.
     * \sa toJSON()
     */
-    bool save(string filename, bool overwrite = false);
+    bool save(string filename, bool overwrite = true);
 
     /*!
     * \brief Gets the JSON data for the rig.
