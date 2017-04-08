@@ -117,6 +117,12 @@ void Compositor::render(const std::set<Device*> &devices) {
   for (Device *device : devices) {
 	  std::string name = device->getMetadata("Arnold Node Name");
 
+    // check if the device is using palettes instead
+    auto fp = device->closestPalette();
+    if (fp != nullptr) {
+      name = fp->_image;
+    }
+
 	  // Only composite active layers
 	  EXRLayer *layer = this->get_layer_by_name(name.c_str());
 	  if (layer == nullptr || !layer->is_active()) {

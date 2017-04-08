@@ -180,16 +180,32 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
 	  }
   }
 
-#ifdef USE_ARNOLD
-  m_interface->setDriverFileName(basepath, filename);
-#endif
+  bool success = false;
+  float* bp = nullptr;
+  int cid;
+  int w = getWidth();
+  int h = getHeight();
 
-  updateLight(frame.devices);
-  bool success = ArnoldPatch::renderLoop(devices);
+  if (CachingArnoldInterface* ci = dynamic_cast<CachingArnoldInterface*>(m_interface)) {
+#ifdef USE_ARNOLD
+    success = ci->render(devices, w, h, cid) == AI_SUCCESS;
+#else
+    success = ci->render(devices, w, h, cid) == 0;
+#endif
+    // we need to pull the proper buffer from the right context
+    bp = ci->getBufferForContext(cid);
+    frame.clear();
+  }
+  else {
+    updateLight(devices);
+    success = ArnoldPatch::renderLoop(devices);
+    frame.clear();
+    bp = getBufferPointer();
+  }
 
   if (success) {
-    unsigned char *bytes = new unsigned char[getWidth() * getHeight() * 4];
-    floats_to_bytes(bytes, getBufferPointer(), getWidth(), getHeight());
+    unsigned char *bytes = new unsigned char[w * h * 4];
+    floats_to_bytes(bytes, bp, w, h);
 
     string file = basepath + "/" + filename + ".png";
 
@@ -198,6 +214,10 @@ void ArnoldAnimationPatch::renderSingleFrame(const set<Device*>& devices, string
       err_ss << "Error to write png: " << filename;
       Logger::log(ERR, err_ss.str());
     }
+  }
+
+  if (CachingArnoldInterface* ci = dynamic_cast<CachingArnoldInterface*>(m_interface)) {
+    ci->closeContext(cid);
   }
 }
 

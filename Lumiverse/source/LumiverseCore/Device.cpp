@@ -714,8 +714,8 @@ FocusPalette * Device::closestPalette()
         best = &(m_fp[fp.first]);
       }
 
-      // if the minDist is ever 0, we have a perfect match so return instantly
-      if (dist - minDist == 0)
+      // if we ever have an exact match, break immediately
+      if (minDist == 0)
         break;
     }
 
@@ -784,6 +784,8 @@ void Device::loadJSON(const JSONNode data) {
         JSONNode palette = *fpStart;
         addFocusPalette(FocusPalette(palette["name"].as_string(), palette["pan"].as_float(), palette["tilt"].as_float(),
           palette["area"].as_string(), palette["system"].as_string(), palette["image"].as_string()));
+
+        ++fpStart;
       }
     }
     else {
