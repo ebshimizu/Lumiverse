@@ -525,6 +525,8 @@ namespace Lumiverse {
         for (auto& id : fp) {
           load_exr(d->getFocusPalette(id)->_image);
         }
+
+        cached_devices[d->getId()] = new Device(d);
       }
       else {
         if (load_exr(d->getMetadata("Arnold Node Name")) == 0) {
