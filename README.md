@@ -1,6 +1,6 @@
 # About
 Lumiverse is a framework for lighting control applications. See the [project website](http://lumiverse.cs.cmu.edu) for more details.
-The latest stable version is [v2.4](https://github.com/ebshimizu/Lumiverse/tree/v2.4)
+The latest stable version is [v2.5](https://github.com/ebshimizu/Lumiverse/tree/v2.5)
 
 ## Build instructions
 See the [project website](http://lumiverse.cs.cmu.edu) for build instructions.
