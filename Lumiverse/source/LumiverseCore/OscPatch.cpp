@@ -355,6 +355,15 @@ void OscPatch::deviceToEos(Device * d)
       auto color = ((LumiverseColor*)(param.second))->getRGB();
       p << (float)color[0] << (float)color[1] << (float)color[2];
     }
+    if (param.first == "pan") {
+      // specifically pull out pan in the pan/tilt pair
+      p << osc::BeginMessage("/eos/pantilt/xy");
+      
+      float pan = ((LumiverseOrientation*)(param.second))->asPercent();
+      float tilt = d->getParam<LumiverseOrientation>("tilt")->asPercent();
+
+      p << pan << tilt;
+    }
     else {
       continue;
     }
