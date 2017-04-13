@@ -338,8 +338,16 @@ void OscPatch::deviceToEos(Device * d)
   char buffer[128];
   osc::OutboundPacketStream packet(buffer, 128);
 
+  int intens = (int)(d->getIntensity()->asPercent() * 100);
+
   stringstream ss;
-  ss << "/eos/newcmd/chan/" << d->getChannel() << "/at/" << (int)(d->getIntensity()->asPercent() * 100) << "/enter";
+  ss << "/eos/newcmd/chan/" << d->getChannel() << "/at/";
+  
+  if (intens < 10) {
+    ss << "0";
+  }
+  ss << intens << "/enter";
+
   packet << osc::BeginMessage(ss.str().c_str()) << osc::EndMessage;
   _t->Send(packet.Data(), packet.Size());
 
@@ -355,7 +363,7 @@ void OscPatch::deviceToEos(Device * d)
       auto color = ((LumiverseColor*)(param.second))->getRGB();
       p << (float)color[0] << (float)color[1] << (float)color[2];
     }
-    if (param.first == "pan") {
+    else if (param.first == "pan") {
       // specifically pull out pan in the pan/tilt pair
       p << osc::BeginMessage("/eos/pantilt/xy");
       
