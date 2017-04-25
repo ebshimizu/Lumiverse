@@ -1,4 +1,5 @@
 #include "OscPatch.h"
+#include <regex>
 
 namespace Lumiverse {
 
@@ -226,6 +227,62 @@ bool OscPatch::sync(const set<Device*> devices)
   return true;
 }
 
+set<int> OscPatch::getEosSelection()
+{
+  // more clunk
+  _running = false;
+  // wait for loop to finish
+  this_thread::sleep_for(chrono::milliseconds(100));
+
+  try {
+    UdpListeningReceiveSocket rcv(IpEndpointName(_address.c_str(), _inPort), this);
+
+    if (!rcv.IsBound()) {
+      Logger::log(ERR, "Eos sync: Failed to bind port.");
+      _running = true;
+      return set<int>();
+    }
+
+    std::thread rcvt(function<void()>([&rcv] { rcv.Run(); }));
+
+    // feed it some stuff to clear
+    _syncChan = set<int>();
+    _syncReady = false;
+    _syncParams.clear();
+    _syncParams.insert("/eos/out/get/chans");
+
+    char buf1[64];
+    osc::OutboundPacketStream get(buf1, 64);
+    get << osc::BeginMessage("/eos/get/chans") << osc::EndMessage;
+    _t->Send(get.Data(), get.Size());
+
+    Logger::log(LDEBUG, "Started sync thread");
+    int timeoutCounter = 0;
+
+    while (!_syncReady) {
+      this_thread::sleep_for(chrono::milliseconds(5));
+
+      // track how long we're waiting and abort if wait too long
+      timeoutCounter += 5;
+      if (timeoutCounter > 5000) {
+        rcv.AsynchronousBreak();
+        rcvt.join();
+        Logger::log(ERR, "Eos sync timeout. Operation cancelled. Some devices may have been synchronized before abort.");
+        _running = true;
+        return set<int>();
+      }
+    }
+
+    rcv.AsynchronousBreak();
+    rcvt.join();
+    return _syncChan;
+  }
+  catch (exception &e) {
+    Logger::log(ERR, "Error getting channel selection " + string(e.what()));
+    return set<int>();
+  }
+}
+
 void OscPatch::ProcessMessage(const osc::ReceivedMessage & m, const IpEndpointName & remote)
 {
   try {
@@ -270,6 +327,20 @@ void OscPatch::ProcessMessage(const osc::ReceivedMessage & m, const IpEndpointNa
           stringstream ss;
           ss << "Updated color for " << _syncDevice->getId() << " to (" << h << "," << s << ")";
           Logger::log(LDEBUG, ss.str());
+        }
+      }
+      else if (pattern == "/eos/out/get/chans") {
+        _syncParams.erase(pattern);
+
+        if (m.ArgumentCount() == 1) {
+          auto args = m.ArgumentStream();
+          const char* a;
+          args >> a >> osc::EndMessage;
+          string chans(a);
+
+          processSelection(chans);
+
+          Logger::log(LDEBUG, "Processed selection string " + chans);
         }
       }
 
@@ -427,6 +498,48 @@ void OscPatch::loadJSON(JSONNode data)
     _inPort = inPort->as_float();
   else
     _inPort = 9000;
+}
+
+void Lumiverse::OscPatch::processSelection(string chans)
+{
+  if (chans == "")
+    return;
+
+  // since regexes are being problematic at the moment (for some reason???)
+  // we'll manually parse it
+  int i = 0;
+  while (i < chans.size()) {
+    int start = i;
+
+    // read until we hit - or +
+    int end = chans.find_first_of("-,", start);
+
+    if (end == string::npos || chans[end] == ',') {
+      // single channel
+      _syncChan.insert(stoi(chans.substr(start, end)));
+    }
+    else if (chans[end] == '-') {
+      // range
+      int c1 = stoi(chans.substr(start, end));
+
+      // find next starting after the -
+      int rangeEnd = chans.find_first_of(",", end + 1);
+
+      int c2 = stoi(chans.substr(end + 1, rangeEnd));
+
+      // insert the range (inclusive)
+      for (int j = c1; j <= c2; j++) {
+        _syncChan.insert(j);
+      }
+
+      end = rangeEnd;
+    }
+
+    if (end == string::npos)
+      break;
+
+    i = end + 1;
+  }
 }
 
 }

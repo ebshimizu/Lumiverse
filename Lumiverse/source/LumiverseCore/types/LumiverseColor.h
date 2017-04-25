@@ -267,6 +267,7 @@ namespace Lumiverse {
     /*!
     \brief Assuming the color has Red, Green, and Blue color channels, this function
     computes the HSV of the RGB color.
+    Hue is [0,360), Sat and Val are [0,1]
     */
     Eigen::Vector3d getHSV(RGBColorSpace cs = sRGB);
 
@@ -339,6 +340,7 @@ namespace Lumiverse {
     /*!
     \brief Sets the RGB channels of the color using a HSV specified color.
     If the color does not have just RGB channels this operation will fail and return false.
+    H is expected to be [0, 360), S and V are expected to be [0, 1]
 
     \return True on success, false on failure
     */

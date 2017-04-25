@@ -57,6 +57,11 @@ public:
   bool sync(const set<Device *> devices);
 
   /*!
+  \brief Returns the selected device channels from Eos
+  */
+  set<int> getEosSelection();
+
+  /*!
   \brief Determines how the OSC messages are sent
   Under PREFIXED_ADDR the OSC packet will be arranged as follows: /[pattern]/[id] {params}
   Under PER_DEVICE_ADDR the OSC packet will be arranged as follows: /[id] {params}
@@ -101,9 +106,15 @@ private:
   */
   void loadJSON(JSONNode data);
 
+  /*!
+  \brief Processes an Eos selection string
+  */
+  void processSelection(string chans);
+
   Device* _syncDevice;
   bool _syncReady;
   set<string> _syncParams;
+  set<int> _syncChan;
 };
 
 }
