@@ -136,7 +136,7 @@ void Compositor::render(const std::set<Device*> &devices) {
 
     Eigen::Vector3d modulator(1, 1, 1);
     
-    if (device->getColor() != nullptr)
+    if (device->getColor() != nullptr && !device->metadataExists("fixed"))
 	    modulator = device->getColor()->getRGB();
 
 	  float r = modulator.x() * intensity_shift * _exposure;
